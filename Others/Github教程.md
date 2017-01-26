@@ -62,7 +62,7 @@ drwxr-xr-x 1 Vincent Huang 197609    0 Jan 26 21:49 ../
 
 其中，`id_rsa`是私有密匙，而`id_rsa.pub`是公共密匙。进入SSH密匙生成的路径，使用无格式编辑器（如NotePad++）打开SSH密匙文件，复制对应的SSH密匙并添加到Github等版本库托管网站。如下图所示：
 
-![sshkeys](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\sshkeys.png)
+![sshkeys](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/sshkeys.png)
 
 ### **使用GPG密匙给标签和提交操作签名**
 
@@ -175,5 +175,7 @@ HwCIG0I=
 
 > 注意，请使用你自己的GPG密匙ID，这里的GPG密匙ID是上面检查输出结果中横线分隔行下面的`A19EE68C5C3457F2`）
 
-然后复制得到的GPG密匙（在-----BEGIN PGP PUBLIC KEY BLOCK-----到-----END PGP PUBLIC KEY BLOCK-----之间的内容），粘贴到你的Github上。如下图所示：![gpgkeys](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\gpgkeys.png)
+然后复制得到的GPG密匙（在-----BEGIN PGP PUBLIC KEY BLOCK-----到-----END PGP PUBLIC KEY BLOCK-----之间的内容），粘贴到你的Github上。如下图所示：
+
+![gpgkeys](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/gpgkeys.png)
 
