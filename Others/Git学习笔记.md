@@ -1,7 +1,7 @@
 
-## **Git起步**
+## **1.Git起步**
 
-### **版本控制系统的发展**
+### **1.1版本控制系统的发展**
 
 版本控制系统（Version Control System，简称VCS）依次经历了以下发展阶段：
 
@@ -29,7 +29,7 @@
 
 Git具有很多优点，如快速、设计简单、支持非线性开发模式（允许成千上万个并行开发的分支）、完全分布式、能高效管理超大规模项目。在Git中的绝大多数操作都只需要访问本地文件和资源，只有推送更新到服务器时才使用到网络连接。要浏览项目的历史，只需直接从本地数据库中读取。Git中所有数据在存储前都计算校验和，然后以校验和来引用。这意味着任何改动都会被Git知晓。Git一般只在原来快照的基础上添加数据（即使你执行了删除某个文件的操作），所以Git可以找回每一次的更新。
 
-### **Git简介**
+### **1.2Git简介**
 
 Git的发展经历了以下历史：
 
@@ -55,7 +55,7 @@ Git中的文件有三种状态：已提交（`committed`）、已修改（`modif
 
 Git GUI界面和命令行两种操作模式（安装Git时，可以选择安装Git GUI和Git Bash，分别用于两种模式的操作），但GUI软件只实现了Git的部分功能功能，所以建议一定要学会命令行模式，然后GUI模式就不在话下了。
 
-### **Git的安装**
+### **1.3Git的安装**
 
 #### **在 Linux 上安装**
 
@@ -210,7 +210,7 @@ $ git clone git://github.com/schacon/grit.git mygrit
 
 工作原理如下图所示：
 
-![filestatuslifecycle](F:\StudyNotes\Others\appendix\filestatuslifecycle.png)
+![filestatuslifecycle](.\appendix\filestatuslifecycle.png)
 
 #### **查看文件状态**
 
@@ -246,7 +246,7 @@ nothing to commit, working directory clean
 
 使用Windows的童鞋千万不要使用Windows自带的**记事本**编辑任何提交的文本文件。原因是Microsoft记事本在每个文件开头添加了0xefbbbf（十六进制）的字符，你会遇到很多不可思议的问题，比如，网页第一行可能会显示一个“?”，明明正确的程序一编译就报语法错误，等等。建议你下载[Notepad++](http://notepad-plus-plus.org/)代替记事本，不但功能强大，而且免费！记得把Notepad++的默认编码设置为UTF-8 without BOM即可。
 
-![notepad](F:\StudyNotes\Others\appendix\notepad.png)
+![notepad](.\appendix\notepad.png)
 
 下面我们在项目下创建一个新的README.md文件：
 
@@ -1306,4 +1306,747 @@ $ git reset HEAD -- fileA
 ```shell
 $ git config --global alias.visual '!gitk'
 ```
+
+## **3.Git分支**
+
+先来理解Git的工作过程。在进行提交操作时，Git会保存一个提交对象（`commit object`），该提交对象会包含一个指向暂存内容快照的指针，而且还包含了作者的姓名和邮箱、提交时输入的信息以及指向它的父对象的指针。首次提交产生的提交对象没有父对象，普通提交操作产生的提交对象有一个父对象，而由多个分支合并产生的提交对象有多个父对象。
+
+假设有一个刚刚本地初始化的工作目录，里面刚添加了三个将要被暂存和提交的文件。执行：
+
+```shell
+$ git add README test.rb LICENSE
+```
+
+暂存操作会根据SHA-1哈希算法为每一个文件计算校验和，然后会把当前版本的文件快照保存到Git仓库中（Git使用`blob`对象来保存它们），最终将校验和加入到暂存区域等待提交。
+
+```shell
+$ git commit -m 'The initial commit of my project'
+```
+
+进行提交操作时，Git会先计算每一个子目录（本例中只有项目根目录）的校验和，然后在Git仓库中这些校验和保存为树对象。 随后，Git便会创建一个提交对象，它除了包含上面提到的那些信息外，还包含指向这个树对象（项目根目录）的指针。如此一来，Git就可以在需要的时候重现此次保存的快照。
+
+现在，Git仓库中有五个对象：三`blob`对象（保存着文件快照）、一个树对象（记录着目录结构和`blob`对象索引）以及一个提交对象（包含着指向前面树对象的指针和所有提交信息）。结构如下图所示：
+
+![branch1](.\appendix\branch1.png)
+
+做些修改后再次提交，那么这次产生的提交对象会包含一个指向上次提交对象（父对象）的指针。结构如下图所示：
+
+![branch2](.\appendix\branch2.png)
+
+Git的分支(branch)本质上仅仅是指向提交对象的可变指针。Git的默认分支名字是`master`。 在多次提交操作之后，你其实已经有一个指向最后那个提交对象的`master`分支。它会在每次的提交操作中自动向前移动。`master`分支与其他分支没有区别，只是它是由`git init`命令默认创建的，多数人都懒得去改动它。分支的存在形式如下图中的v1.0分支所示：
+
+![branch3](.\appendix\branch3.png)
+
+### **3.1分支简介**
+
+#### **3.1.1分支创建**
+
+创建新分支很简单，只需要执行：
+
+```shell
+$ git branch testing
+```
+
+这会在当前所在的提交对象上创建一个指针。testing即为分支的名称。下图中的`master`分支和`testing`分支都指向了同一个提交历史：
+
+![branch4](.\appendix\branch4.png)
+
+Git提供了一个指向当前所在的本地分支的HEADER指针，通过该指针Git可以判断当前在哪一个分支上（可将HEAD想象为当前分支的别名）。在上面的例子中，仍然在`master`分支上，因为`git branch`命令仅仅 创建 一个新分支，并不会自动切换到新分支中去。
+
+![branch5](.\appendix\branch5.png)
+
+#### **3.1.2分支切换**
+
+切换到一个已存在的分支，就执行：
+
+```shell
+$ git checkout testing
+```
+
+这样 HEAD 就指向 testing 分支了：
+
+![branch6](.\appendix\branch6.png)
+
+再提交一次：
+
+```shell
+$ vim test.rb
+$ git commit -a -m 'made a change'
+```
+
+![branch7](.\appendix\branch7.png)
+
+如图所示，你的`testing`分支向前移动了，但是`master`分支却没有，它仍然指向运行`git checkout`时所
+指的对象。现在我们切换回`master`分支看看：
+
+```shell
+$ git checkout master
+```
+
+![branch8](.\appendix\branch8.png)
+
+这条命令做了两件事：一是使HEAD指回`master`分支，二是将工作目录恢复成`master`分支所指向的快照内容。在切换分支时，一定要注意你工作目录里的文件会被改变。如果是切换到一个较旧的分支，你的工作目录会恢复到该分支最后一次提交时的样子。如果Git不能干净利落地完成这个任务，它将禁止切换分支。
+
+不妨再稍微做些修改并提交：
+
+```shell
+$ vim test.rb
+$ git commit -a -m 'made other changes'
+```
+
+上述两次改动针对的是不同分支：你可以在不同分支间不断地来回切换和工作，并在时机成熟时将它们合并起来。而所有这些工作，你需要的命令只有`branch`、`checkout`和`commit`。
+
+![branch9](.\appendix\branch9.png)
+
+可以使用` git log` 命令查看分叉历史，如运行`git log --oneline --decorate --graph --all` ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况：
+
+```shell
+$ git log --oneline --decorate --graph --all
+* c2b9e (HEAD, master) made other changes
+| * 87ab2 (testing) made a change
+|/
+* f30ab add feature #32 - ability to add new formats to the
+* 34ac2 fixed bug #1328 - stack overflow under certain conditions
+* 98ca9 initial commit of my project
+```
+
+由于Git的分支实质上仅是包含所指对象校验和（长度为 40 的 SHA-1 值字符串）的文件，所以它的创建和销毁都异常高效。而过去大多数版本控制系统在创建分支时，将所有的项目文件都复制一遍，并保存到一个特定的目录。所需时间的长短，完全取决于项目的规模。而在Git中，任何规模的项目都能在瞬间创建新分支。由于每次提交都会记录父对象，所以寻找恰当的合并基础（译注：即共同祖先）也是同样的简单和高效。
+
+### **3.2分支的新建与合并**
+
+现实中可能有这样一个情景：开发某个网站，为实现某个新的需求创建一个分支，并在这个分支上开展工作。然后，你突然接到一个电话说有个很严重的问题需要紧急修补，那么可以按照下面的方式处理：
+
+1. 切换到你的线上分支（production branch）；
+2. 为这个紧急任务新建一个分支，并在其中修复它；
+3. 在测试通过之后，切换回线上分支，然后合并这个修补分支，最后将改动推送到线上分支；
+4. 切换回你最初工作的分支上，继续工作。
+
+#### **3.2.1新建分支**
+
+假设你正在你的项目上工作，并且已经有一些提交，此时状态如下图所示：
+
+![branch10](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch10.png)
+
+现在，你决定要解决你的公司使用的问题追踪系统中的 #53 问题。想要新建一个分支并同时切换到那个分支上，你可以运行一个带有 `-b` 参数的 `git checkout` 命令：
+
+```shell
+$ git checkout -b iss53
+Switched to a new branch "iss53"
+```
+
+上面的一条命令等效于：
+
+```shell
+$ git branch iss53
+$ git checkout iss53
+```
+
+此时状态如下图所示：
+
+![branch11](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch11.png)
+
+开始尝试修复问题，在提交了若干次更新后，`iss53` 分支的指针也会随着向前推进，因为它就是当前分支：
+
+```shell
+$ vim index.html
+$ git commit -a -m 'added a new footer [issue 53]'
+```
+
+此时状态如如下图所示：
+
+![branch12](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch12.png)
+
+现在你就接到了那个网站问题的紧急电话，需要马上修补。此时仅需要切换回 `master` 分支，然后创建新的分支解决问题就行了。不过在切换分支之前，应该先提交你当前分支中的修改，否则那些还没有提交的修改会和你即将检出的分支产生冲突从而阻止Git 为你切换分支。提交了所有修改之后，就可以正常切换到 `master` 分区了：
+
+```shell
+$ git checkout master
+    Switched to branch "master"
+```
+
+此时工作目录中的内容和你在解决问题 #53 之前一模一样，你可以集中精力进行紧急修补。Git 会把工作目录的内容恢复为检出某分支时它所指向的那个提交对象的快照。它会自动添加、删除和修改文件以确保目录的内容和你当时提交时完全一样。我们创建一个紧急修补分支 `hotfix` 来开展工作，直到搞定：
+
+```shell
+$ git checkout -b hotfix
+Switched to a new branch 'hotfix'
+$ vim index.html
+$ git commit -a -m 'fixed the broken email address'
+[hotfix 1fb7853] fixed the broken email address
+ 1 file changed, 2 insertions(+)
+```
+
+![branch13](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch13.png)
+
+运行测试后，确认修改是正确的，然后将其合并回你的 `master` 分支来部署到线上。 合并分支可以使用`git merge` 命令来达到上述目的：
+
+```shell
+$ git checkout master
+$ git merge hotfix
+Updating f42c576..3a0874c
+Fast-forward
+ index.html | 2 ++
+ 1 file changed, 2 insertions(+)
+```
+
+在合并的时候，你应该注意到了"快进（fast-forward）"这个词。由于当前 `master` 分支所指向的提交是你当前提交（有关 `hotfix` 的提交）的直接上游，所以 Git 只是简单的将指针向前移动。 也就是说，当你试图合并两个分支时，如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候，只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧。这就叫做 **快进（fast-forward）**。
+
+现在，最新的修改已经在 `master` 分支所指向的提交快照中，你可以着手发布该修复了。
+
+![branch14](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch14.png)
+
+问题的解决方案发布之后，在准备回到`iss53` 分支之前应该先删除 `hotfix` 分支，因为 `master` 分支已经指向了同一个位置，也就不再需要`hotfix`了。可以使用带 `-d` 选项的 `git branch` 命令来删除分支：
+
+```shell
+$ git branch -d hotfix
+Deleted branch hotfix (3a0874c).
+```
+
+现在你可以切换回`iss53` 分支继续继续你之前的工作：
+
+```shell
+$ git checkout iss53
+Switched to branch "iss53"
+$ vim index.html
+$ git commit -a -m 'finished the new footer [issue 53]'
+[iss53 ad82d7a] finished the new footer [issue 53]
+1 file changed, 1 insertion(+)
+```
+
+![branch15](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch15.png)
+
+你在 `hotfix` 分支上所做的工作并没有包含到 `iss53` 分支中。如果你需要拉取 `hotfix` 所做的修改，你可以使
+用 `git merge master` 命令将 `master` 分支合并入 `iss53` 分支，或者你也可以等到 `iss53` 分支完成其使命，
+再将其合并回 `master` 分支。
+
+#### **3.2.2分支的合并**
+
+假设你已经修正了 #53 问题，并且打算将 `iss53` 分支合并入 master 分支。这和之前你合并 `hotfix` 分支所做的工作差不多，只需要检出到你想合并入的分支，然后运行 `git merge` 命令：
+
+```shell
+$ git checkout master
+Switched to branch 'master'
+$ git merge iss53
+Merge made by the 'recursive' strategy.
+index.html | 1 +
+1 file changed, 1 insertion(+)
+```
+
+这和你之前合并 `hotfix` 分支的时候看起来有一点不一样：`master` 分支所在提交并不是` iss53` 分支所在提交的直接祖先，Git 不得不做一些额外的工作。出现这种情况的时候，Git 会使用两个分支的末端所指的快照（C4 和 C5）以及这两个分支的工作祖先（C2），做一个简单的三方合并计算。
+
+![branch16](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch16.png)
+
+Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提交指向它。这个被称作一次**合并提交**，它的特别之处在于他有**不止一个父提交**。值得一提的是 Git 可以自己决定选择哪个共同祖先才是最佳合并基础。
+
+![branch17](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch17.png)
+
+既然你的修改已经合并进来了，你已经不再需要 `iss53` 分支了。现在你可以在任务追踪系统中关闭此项任务，并删除这个分支。
+
+```shell
+$ git branch -d iss53
+```
+
+#### **3.2.3遇到冲突时的分支合并**
+
+时候合并操作不会如此顺利。如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们。 如果你对 #53 问题的修改和有关 hotfix 的修改都涉及到同一个文件的同一处，在合并它们的时候就会产生合并冲突：
+
+```shell
+$ git merge iss53
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+出现冲突后 Git 会暂停下来，等待你去解决合并产生的冲突。你可以在合并冲突后的任意时刻使用 `git status` 命令来查看那些因包含合并冲突而处于未合并（unmerged）状态的文件：
+
+```shell
+$ git status
+On branch master
+You have unmerged paths.
+ (fix conflicts and run "git commit")
+
+Unmerged paths:
+ (use "git add <file>..." to mark resolution)
+
+ both modified: index.html
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+任何因包含合并冲突而有待解决的文件，都会以未合并状态标识出来。Git 会在有冲突的文件中加入标准的冲突解决标记，这样你可以打开这些包含冲突的文件然后手动解决冲突。出现冲突的文件会包含一些特殊区段，看起来像下面这个样子：
+
+```shell
+<<<<<<< HEAD:index.html
+<div id="footer">contact : email.support@github.com</div>
+=======
+<div id="footer">
+ please contact us at support@github.com
+</div>
+>>>>>>> iss53:index.html
+```
+
+这表示 `HEAD` 所指示的版本（也就是你的 `master` 分支所在的位置，因为你在运行 `merge` 命令的时候已经检出
+到了这个分支）在这个区段的上半部分（======= 的上半部分），而 `iss53` 分支所指示的版本在 ======= 的
+下半部分。 为了解决冲突，你必须选择使用由 ======= 分割的两部分中的一个，或者你也可以自行合并这些内
+容。 例如，你可以通过把这段内容换成下面的样子来解决冲突：
+
+```html
+<div id="footer">
+please contact us at email.support@github.com
+</div>
+```
+
+上述的冲突解决方案仅保留了其中一个分支的修改，并且 <<<<<<< , ======= , 和 >>>>>>> 这些行被完全删除了。在你解决了所有文件里的冲突之后，对每个文件**使用 `git add` 命令来将其标记为冲突已解决**。一旦暂存这些原本有冲突的文件，Git 就会将它们标记为冲突已解决。
+
+如果你想使用图形化工具来解决冲突，你可以运行 `git mergetool`，该命令会为你启动一个合适的可视化合并
+工具，并带领你一步一步解决这些冲突：
+
+```shell
+$ git mergetool
+
+This message is displayed because 'merge.tool' is not configured.
+See 'git mergetool --tool-help' or 'git help config' for more details.
+'git mergetool' will now attempt to use one of the following tools:
+opendiff kdiff3 tkdiff xxdiff meld tortoisemerge gvimdiff diffuse
+diffmerge ecmerge p4merge araxis bc3 codecompare vimdiff emerge
+Merging:
+index.html
+
+Normal merge conflict for 'index.html':
+ {local}: modified file
+ {remote}: modified file
+Hit return to start merge resolution tool (opendiff):
+```
+
+如果你想使用除默认工具（在这里 Git 使用 `opendiff` 做为默认的合并工具，因为作者在 Mac 上运行该程序）外的其他合并工具，你可以在 “下列工具中（one of the following tools）” 这句后面看到所有支持的合并工具。 然后输入你喜欢的工具名字就可以了。等你退出合并工具之后，Git 会询问刚才的合并是否成功。如果你回答是，Git 会暂存那些文件以表明冲突已解决， 你可以再次运行 `git status` 来确认所有的合并冲突都已被解决：
+
+```shell
+$ git status
+On branch master
+All conflicts fixed but you are still merging.
+ (use "git commit" to conclude merge)
+
+Changes to be committed:
+
+ modified: index.html
+```
+
+如果你对结果感到满意，并且确定之前有冲突的的文件都已经暂存了，这时你可以输入 `git commit` 来完成合并提交。默认情况下提交信息看起来像下面这个样子：
+
+```shell
+Merge branch 'iss53'
+
+Conflicts:
+ index.html
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified: index.html
+#
+```
+
+如果你觉得上述的信息不够充分，不能完全体现分支合并的过程，你可以修改上述信息，添加一些细节给未来检视这个合并的读者一些帮助，告诉他们你是如何解决合并冲突的，以及理由是什么。
+
+### **3.3分支管理**
+
+`git branch` 命令不只是可以创建与删除分支。如果不加任何参数运行它，会得到当前所有分支的一个列表：
+
+```shell
+$ git branch
+ iss53
+* master
+ testing
+```
+
+注意 `master` 分支前的 * 字符：它代表现在检出的那一个分支（也就是说，当前 HEAD 指针所指向的分支）。如果需要查看每一个分支的最后一次提交，可以运行 `git branch -v` 命令：
+
+```shell
+$ git branch -v
+ iss53 93b412c fix javascript issue
+* master 7a98805 Merge branch 'iss53'
+ testing 782fd34 add scott to the author list in the readmes
+```
+
+`--merged` 与 `--no-merged` 这两个有用的选项可以过滤这个列表中已经合并或尚未合并到当前分支的分支。比如用 `git branch --merge` 查看哪些分支已被并入当前分支（译注：也就是说哪些分支是当前分支的直接上游）：
+
+```shell
+$ git branch --merged
+ iss53
+* master
+```
+
+之前我们已经合并了 `iss53`，所以在这里会看到它。一般来说，列表中没有 `*` 的分支通常都可以用 `git branch -d` 来删掉。原因很简单，既然已经把它们所包含的工作整合到了其他分支，删掉也不会损失什么。
+
+另外可以用 `git branch --no-merged` 查看尚未合并的工作：
+
+```shell
+$ git branch --no-merged
+    testing
+```
+
+它会显示还未合并进来的分支。由于这些分支中还包含着尚未合并进来的工作成果，所以简单地用 `git branch -d` 删除该分支会提示错误，因为那样做会丢失数据：
+
+```shell
+$ git branch -d testing
+    error: The branch 'testing' is not an ancestor of your current HEAD.
+    If you are sure you want to delete it, run 'git branch -D testing'.
+```
+
+不过，如果你确实想要删除该分支上的改动，可以用大写的删除选项 `-D` 强制执行，就像上面提示信息中给出的那样。
+
+### **3.4 利用分支进行开发的工作流程**
+
+#### **3.4.1长期分支**
+
+你可以同时拥有多个开放的分支，每个分支用于完成特定的任务，随着开发的推进，你可以随时把某个特性分支的成果并到其他分支中。许多使用 Git 的开发者都喜欢用这种方式来开展工作，比如仅在 `master` 分支中保留完全稳定的代码，即已经发布或即将发布的代码。与此同时，他们还有一个名为 `develop` 或 `next` 的平行分支，专门用于后续的开发，或仅用于稳定性测试 。当然并不是说一定要绝对稳定，不过一旦进入某种稳定状态，便可以把它合并到 `master` 里。这样，在确保这些已完成的特性分支（短期分支，比如之前的 `iss53` 分支）能够通过所有测试，并且不会引入更多错误之后，就可以并到主干分支中，等待下一次的发布。
+
+本质上我们刚才谈论的，是随着提交对象不断右移的指针。稳定分支的指针总是在提交历史中落后一大截，而前沿分支总是比较靠前。如下图所示。
+
+![branch18](.\appendix\branch18.png)
+
+或者把它们想象成工作流水线（work silos），或许更好理解一些，经过测试的提交对象集合被遴选到更稳定的流水线。如下图所示。
+
+![branch19](.\appendix\branch19.png)
+
+你可以用这招维护不同层次的稳定性。某些大项目还会有个 `proposed`（建议） `pu`（proposed updates，建议更新）分支，它包含着那些可能还没有成熟到进入 `next` 或 `master` 的内容。这么做的目的是拥有不同层次的稳定性：当这些分支进入到更稳定的水平时，再把它们合并到更高层分支中去。再次说明下，使用多个长期分支的做法并非必需，不过一般来说，对于特大型项目或特复杂的项目，这么做确实更容易管理。
+
+#### **3.4.2特性分支**
+
+在任何规模的项目中都可以使用特性（Topic）分支。一个特性分支是指一个短期的，用来实现单一特性或与其相关工作的分支。比如之前我们创建了 `iss53` 和 `hotfix` 这两个特性分支，在提交了若干更新后，把它们合并到主干分支，然后删除。因为你的工作分散在不同的流水线里，每个分支里的改变都和它的目标特性相关，浏览代码之类的事情因而变得更简单了。你可以把作出的改变保持在特性分支中几分钟，几天甚至几个月，等它们成熟以后再合并，而不用在乎它们建立的顺序或者进度。
+
+现在我们来看一个实际的例子。请看下图，由下往上，起先我们在 `master` 工作到 C1，然后开始一个新分支 `iss91` 尝试修复 91 号缺陷，提交到 C6 的时候，又冒出一个解决该问题的新办法，于是从之前 C4 的地方又分出一个分支 `iss91v2`，干到 C8 的时候，又回到主干 `master` 中提交了 C9 和 C10，再回到 `iss91v2` 继续工作，提交 C11，接着，又冒出个不太确定的想法，从 `master` 的最新提交 C10 处开了个新的分支 `dumbidea` 做些试验。
+
+![branch20](.\appendix\branch20.png)
+
+现在，假定两件事情：我们最终决定使用第二个解决方案，即 `iss91v2` 中的办法；另外，我们把 `dumbidea` 分支拿给同事们看了以后，发现它竟然是个天才之作。所以接下来，我们准备抛弃原来的 `iss91` 分支（实际上会丢弃 C5 和 C6），直接在主干中并入另外两个分支。最终的提交历史将变成下图所示。
+
+![branch21](.\appendix\branch21.png)
+
+### **3.5远程分支**
+
+远程引用是对远程仓库的引用（指针），包括分支、标签等等。你可以通过 `git ls-remote `(remote) 来显式地获得远程引用的完整列表，或者通过 `git remote show` (remote) 获得远程分支的更多信息。 然而，一个更常见的做法是利用**远程分支**。
+
+远程分支（remote branch）是对远程仓库中的分支的索引。它们是一些无法移动的本地分支；只有在 Git 进行网络交互时才会更新。远程分支就像是书签，提醒着你上次连接远程仓库时上面各分支的位置。
+
+> 远程仓库名字 `origin` 与分支名字 `master` 一样，在 Git 中并没有任何特别的含义一样。 同时 `master` 是当你运行 `git init` 时默认的起始分支名字，原因仅仅是它的广泛使用，`origin` 是当你运行 `git clone` 时默认的远程仓库名字。 如果你运行 `git clone -o booyah`，那么你默认的远程分支名字将会是 `booyah/master`。
+
+我们用 `(远程仓库名)/(分支名)` 这样的形式表示远程分支。比如我们想看看上次同 `origin` 仓库通讯时 `master` 分支的样子，就应该查看`origin/master` 分支。如果你和同伴一起修复某个问题，但他们先推送了一个 `iss53` 分支到远程仓库，虽然你可能也有一个本地的 `iss53` 分支，但指向服务器上最新更新的却应该是 `origin/iss53` 分支。
+
+不妨举例说明。假设你们团队有个地址为 `git.ourcompany.com` 的 Git 服务器。如果你从这里克隆，Git 会自动为你将此远程仓库命名为 `origin`，并下载其中所有的数据，建立一个指向它的 `master` 分支的指针，在本地命名为 `origin/master`，但你无法在本地更改其数据。接着，Git 建立一个属于你自己的本地 `master` 分支，始于 `origin` 上 `master` 分支相同的位置，你可以就此开始工作。如下图所示。
+
+![branch22](.\appendix\branch22.png)
+
+如果你在本地 `master` 分支做了些改动，与此同时，其他人向 `git.ourcompany.com` 推送了他们的更新，那么服务器上的 `master` 分支就会向前推进，而于此同时，你在本地的提交历史正朝向不同方向发展。不过只要你不和服务器通讯，你的 `origin/master` 指针仍然保持原位不会移动。如下图所示。
+
+![branch24](.\appendix\branch24.png)
+
+可以运行 `git fetch origin` 来同步远程服务器上的数据到本地。该命令首先找到 `origin` 是哪个服务器（本例为 `git.ourcompany.com`），从上面获取你尚未拥有的数据，更新你本地的数据库，然后把 `origin/master` 的指针移到它最新的位置上。如下图所示。
+
+![branch23](.\appendix\branch23.png)
+
+为了演示拥有多个远程分支（在不同的远程服务器上）的项目是如何工作的，我们假设你还有另一个仅供你的敏捷开发小组使用的内部服务器 `git.team1.ourcompany.com`。可以用 `git remote add` 命令把它加为当前项目的远程分支之一。我们把它命名为 `teamone`，以便代替完整的 Git URL 以方便使用。如下图所示。
+
+![branch25](.\appendix\branch25.png)
+
+现在你可以用 `git fetch teamone` 来获取小组服务器上你还没有的数据了。由于当前该服务器上的内容是你 `origin` 服务器上的子集，Git 不会下载任何数据，而只是简单地创建一个名为 `teamone/master` 的远程分支，指向 `teamone` 服务器上 `master` 分支所在的提交对象 `31b8e`。如下图所示。
+
+![branch26](.\appendix\branch26.png)
+
+
+
+#### **3.5.1推送本地分支**
+
+要想和其他人分享某个本地分支，你需要把它推送到一个你拥有写权限的远程仓库。你创建的本地分支不会因为你的写入操作而被自动同步到你引入的远程服务器上，你需要明确地执行推送分支的操作。换句话说，对于无意分享的分支，你尽管保留为私人分支好了，而只推送那些协同工作要用到的特性分支。如果你有个叫 `serverfix` 的分支需要和他人一起开发，可以运行 `git push (远程仓库名) (分支名)`：
+
+```shell
+$ git push origin serverfix
+    Counting objects: 20, done.
+    Compressing objects: 100% (14/14), done.
+    Writing objects: 100% (15/15), 1.74 KiB, done.
+    Total 15 (delta 5), reused 0 (delta 0)
+    To git@github.com:schacon/simplegit.git
+    * [new branch] serverfix -> serverfix
+```
+
+这里有些工作被简化了。Git 自动把 `serverfix` 分支名扩展为 `refs/heads/serverfix:refs/heads/serverfix`，意为“推送本地的 `serverfix `分支来更新远程仓库上的 `serverfix` 分支”。详细请参考Git 内部原理章节。你也可以运行 `git push origin serverfix:serverfix` 来实现相同的效果，它的意思是“推送本地的 `serverfix` 分支，将其作为远程仓库的 `serverfix`分支。如果并不想让远程仓库上的分支叫做 `serverfix`，可以运行 `git push origin serverfix:awesomebranch` 来将本地的 `serverfix `分支推送到远程仓库上的 `awesomebranch` 分支。
+
+下一次其他协作者从服务器上抓取数据时，他们会在本地生成一个远程分支 `origin/serverfix`，指向服务器的 `serverfix` 分支的引用：
+
+```shell
+$ git push origin serverfix
+    Counting objects: 20, done.
+    Compressing objects: 100% (14/14), done.
+    Writing objects: 100% (15/15), 1.74 KiB, done.
+    Total 15 (delta 5), reused 0 (delta 0)
+    To git@github.com:schacon/simplegit.git
+    * [new branch] serverfix -> serverfix
+```
+
+值得注意的是，在 `fetch` 操作下载好新的远程分支之后，你仍然无法在本地编辑该远程仓库中的分支。换句话说，在本例中，你不会有一个新的 `serverfix` 分支，有的只是一个你无法移动的 `origin/serverfix` 指针。如果要把该远程分支的内容合并到当前分支，可以运行 `git merge origin/serverfix`。如果想要一份自己的 `serverfix` 来开发，可以在远程分支的基础上分化出一个新的分支来：
+
+```shell
+$ git checkout -b serverfix origin/serverfix
+    Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
+    Switched to a new branch "serverfix"
+```
+
+这会给你一个用于工作的本地分支，并且起点位于 `origin/serverfix`。
+
+#### **3.5.2跟踪远程分支**
+
+从远程分支 `checkout` 出来的本地分支，称为 **跟踪分支(tracking branch)**。跟踪分支是一种和某个远程分支有直接联系的本地分支。在跟踪分支里输入 `git push`，Git 会自行推断应该向哪个服务器的哪个分支推送数据。同样，在这些分支里运行 `git pull` 会获取所有远程索引，并把它们的数据都合并到本地分支中来。
+
+在克隆仓库时，Git 通常会自动创建一个名为 `master` 的分支来跟踪 `origin/master`。这正是 `git push` 和 `git pull` 一开始就能正常工作的原因。当然，你可以随心所欲地设定为其它跟踪分支，比如 `origin` 上除了 `master` 之外的其它分支。刚才我们已经看到了这样的一个例子：`git checkout -b [branch] [remotename]/[branch]`。如果你有 1.6.2 以上版本的 Git，还可以用 `--track` 选项简化：
+
+```shell
+$ git checkout --track origin/serverfix
+    Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
+    Switched to a new branch "serverfix"
+```
+
+要为本地分支设定不同于远程分支的名字，只需在第一个版本的命令里换个名字：
+
+````shell
+$ git checkout -b sf origin/serverfix
+    Branch sf set up to track remote branch refs/remotes/origin/serverfix.
+    Switched to a new branch "sf"
+````
+
+现在你的本地分支 `sf` 会自动将推送和抓取数据的位置定位到 `origin/serverfix` 了。
+
+设置已有的本地分支跟踪一个刚刚拉取下来的远程分支，或者想要修改正在跟踪的上游分支，你可以在任意时间
+使用 `-u` 或 `--set-upstream-to` 选项运行 `git branch` 来显式地设置。
+
+````shell
+$ git branch -u origin/serverfix
+Branch serverfix set up to track remote branch serverfix from origin.
+````
+
+#### **3.5.3拉取**
+
+当 `git fetch` 命令从服务器上抓取本地没有的数据时，它并不会修改工作目录中的内容。 它只会获取数据然后让你自己合并。 然而，有一个命令叫作 `git pull` 在大多数情况下它的含义是一个 `git fetch` 紧接着一个 `git merge` 命令。 如果有一个像之前章节中演示的设置好的跟踪分支，不管它是显式地设置还是通过 `clone` 或 `checkout` 命令为你创建的，`git pull` 都会查找当前分支所跟踪的服务器与分支，从服务器上抓取数据然后尝试合并入那个远程分支。
+
+由于 `git pull` 的魔法经常令人困惑所以通常单独显式地使用 `fetch` 与 `merge` 命令会更好一些。
+
+#### **3.5.4删除远程分支**
+
+如果不再需要某个远程分支了，比如搞定了某个特性并把它合并进了远程的 `master` 分支（或任何其他存放稳定代码的分支），可以用这个非常无厘头的语法来删除它：`git push [远程名] :[分支名]`。如果想在服务器上删除 `serverfix` 分支，运行下面的命令：
+
+````shell
+$ git push origin :serverfix
+    To git@github.com:schacon/simplegit.git
+    - [deleted] serverfix
+````
+
+> 注意：当设置好跟踪分支后，可以通过 `@{upstream}` 或 `@{u}` 快捷方式来引用它。 所以在 `master` 分支时并且它正在跟踪 `origin/master` 时，如果愿意的话可以使用 `git merge @{u}` 来取代 `git merge origin/master`。
+
+如果想要查看设置的所有跟踪分支，可以使用 `git branch` 的 `-vv` 选项。 这会将所有的本地分支列出来并且包含更多的信息，如每一个分支正在跟踪哪个远程分支与本地分支是否是领先、落后或是都有。
+
+````shell
+$ git branch -vv
+ iss53 7e424c3 [origin/iss53: ahead 2] forgot the brackets
+ master 1ae2a45 [origin/master] deploying index fix
+* serverfix f8674d9 [teamone/server-fix-good: ahead 3, behind 1] this
+should do it
+ testing 5ea463a trying something new
+````
+
+这里可以看到 `iss53 `分支正在跟踪 `origin/iss53` 并且 `ahead` 是 2，意味着本地有两个提交还没有推送到服务器上。也能看到 `master` 分支正在跟踪 `origin/master` 分支并且是最新的。 接下来可以看到 `serverfix` 分支正在跟踪 `teamone` 服务器上的 `server-fix-good` 分支并且领先 3 落后 1，意味着服务器上有一次提交还没有合并入同时本地有三次提交还没有推送。最后看到 `testing` 分支并没有跟踪任何远程分支。
+
+需要重点注意的一点是这些数字的值来自于你从每个服务器上最后一次抓取的数据。 这个命令并没有连接服务
+器，它只会告诉你关于本地缓存的服务器数据。 如果想要统计最新的领先与落后数字，需要在运行此命令前抓
+取所有的远程仓库。 可以先后执行 `git fetch --al` 和 `git branch -vv`。
+
+### **3.6变基**
+
+把一个分支中的修改整合到另一个分支的办法有两种：`merge` 和 `rebase`。
+
+#### **3.6.1变基的基本操作**
+
+回顾之前有关合并的一节，如下图所示，你会看到开发进程分叉到两个不同分支，又各自提交了更新。
+
+![branch27](.\appendix\branch27.png)
+
+之前介绍过，最容易的整合分支的方法是 `merge` 命令，它会把两个分支最新的快照（C3 和 C4）以及二者最新的共同祖先（C2）进行三方合并，合并的结果是产生一个新的提交对象（C5）。如图所示。
+
+![branch28](.\appendix\branch28.png)
+
+其实，还有另外一个选择：你可以把在 C3 里产生的变化补丁在 C4 的基础上重新打一遍。在 Git 里，这种操作叫做**`变基（rebase）`**。有了 `rebase` 命令，就可以把在一个分支里提交的改变移到另一个分支里重放一遍。在上面这个例子中，运行：
+
+````shell
+$ git checkout experiment
+    $ git rebase master
+    First, rewinding head to replay your work on top of it...
+    Applying: added staged command
+````
+
+它的原理是首先找到这两个分支（即当前分支 `experiment`、变基操作的目标基底分支 `master`）的最近共同祖先 C2，然后对比当前分支（也就是要进行变基的分支 `experiment`）相对于该祖先的历次提交（这里只有一个 C3），生成一系列文件补丁，然后以基底分支（也就是主干分支 `master`）最后一个提交对象（C4）为新的出发点，逐个应用之前准备好的补丁文件，最后会生成一个新的合并提交对象（C3'），从而改写 `experiment` 的提交历史，使它成为 `master` 分支的直接下游。如下图所示。
+
+![branch29](.\appendix\branch29.png)
+
+现在回到 `master` 分支，进行一次快进合并：
+
+![branch30](.\appendix\branch30.png)
+
+现在的 C3' 对应的快照，其实和普通的三方合并，即上个例子中的 C5 对应的快照内容一模一样了。虽然最后整合得到的结果没有任何区别，但变基能产生一个更为整洁的提交历史。如果视察一个变基过的分支的历史记录，看起来会更清楚：仿佛所有修改都是在一根线上先后进行的，尽管实际上它们原本是同时并行发生的。
+
+一般我们这样做的目的是为了确保在向远程分支推送时能保持提交历史的整洁，比如向某个别人维护的项目贡献代码时。 在这种情况下，你首先在自己的分支里进行开发，当开发完成时你需要先将你的代码变基到 `origin/master`上，然后再向主项目提交修改。 这样的话，该项目的维护者就不再需要进行整合工作，只需要快进合并便可（译注：实际上是把解决分支补丁同最新主干代码之间冲突的责任，化转为由提交补丁的人来解决）。
+
+变基，还是三方合并，都会得到相同的快照内容，只不过提交历史不同罢了。变基是将一系列提交按照原有次序依次应用到另一分支上，而合并是把最终结果合在一起。
+
+#### **3.6.2更有趣的变基例子**
+
+变基也可以放到其他分支进行，并不一定要在目标分支上应用。以下图的历史为例，我们为了给服务器端代码添加一些功能而创建了特性分支 `server`，然后提交 C3 和 C4。然后又从 C3 的地方再增加一个 `client` 分支来对客户端代码进行一些相应修改，所以提交了 C8 和 C9。最后，又回到 `server` 分支提交了 C10。
+
+![branch31](C:\Users\Vincent Huang\Desktop\studynotes\Others\appendix\branch31.png)
+
+假设你希望将 `client` 中的修改合并到主分支并发布，但暂时并不想合并 `server `中的修改，因为它们还需要经
+过更全面的测试。 这时，你就可以使用 `git rebase` 命令的 `--onto` 选项，选中在 `client` 分支里但不在
+`server` 分支里的修改（即 C8 和 C9），将它们在 `master` 分支上重演：
+
+```shell
+$ git rebase --onto master server client
+```
+
+以上命令的意思是：“取出 `client` 分支，找出 `client` 上处于 `client` 分支和 `server` 分支的共同祖先之后的修改，然
+后把它们在 `master` 分支上重演一遍”。 这理解起来有一点复杂，不过效果非常酷。
+
+![branch32](.\appendix\branch32.png)
+
+现在可以快进 `master` 分支了：
+
+```shell
+$ git checkout master
+    $ git merge client
+```
+
+![branch33](.\appendix\branch33.png)
+
+现在我们决定把 `server` 分支的变化也包含进来。我们可以直接把 `server` 分支衍合到 `master`，而不用手工切换到 `server` 分支后再执行变基操作 — `git rebase [basebranch] [topicbranch]` 命令会先取出特性分支 `server`，然后在主分支 `master` 上重演：
+
+```shell
+$ git rebase master server
+```
+
+于是，server 的进度应用到 master 的基础上，如下图所示：
+
+![branch34](.\appendix\branch34.png)
+
+然后就可以快进主干分支 `master` 了：
+
+```shell
+$ git checkout master
+    $ git merge server
+```
+
+现在 `client` 和 `server` 分支的变化都已经集成到主干分支来了，可以删掉它们了。最终我们的提交历史会变成如下图所示：
+
+![branch36](.\appendix\branch36.png)
+
+#### **3.6.3变基的风险**
+
+使用变基得遵守一条准则：**一旦分支中的提交对象发布到公共仓库，就千万不要对该分支进行变基操作。**如果你遵循这条金科玉律，就不会出差错。
+
+变基操作的实质是丢弃一些现有的提交，然后相应地新建一些内容一样但实际上不同的提交。如果你已经将提交推送至某个仓库，而其他人也已经从该仓库拉取提交并进行了后续工作，此时，如果你用 `git rebase` 命令重新整理了提交并再次推送，你的同伴因此将不得不再次将他们手头的工作与你的提交进行整合，如果接下来你还要拉取并整合他们修改过的提交，事情就会变得一团糟。
+
+让我们来看一个在公开的仓库上执行变基操作所带来的问题。假设你从一个中央服务器克隆然后在它的基础上进行了一些开发。你的提交历史如图所示：
+
+![branch37](.\appendix\branch37.png)
+
+然后，某人又向中央服务器提交了一些修改，其中还包括一次合并。你抓取了这些在远程分支上的修改，并将其合并到你本地的开发分支，然后你的提交历史就会变成这样：
+
+![branch38](.\appendix\branch38.png)
+
+接下来，那个推送 C6 上来的人决定用变基取代之前的合并操作；继而又用 `git push --force` 覆盖了服务器上的历史，得到 C4'。而之后当你再从服务器上下载最新提交后，会得到：
+
+![branch39](.\appendix\branch39.png)
+
+下载更新后需要合并，但此时变基产生的提交对象 C4' 的 SHA-1 校验值和之前 C4 完全不同，所以 Git 会把它们当作新的提交对象处理，而实际上此刻你的提交历史 C7 中早已经包含了 C4 的修改内容，于是合并操作会把 C7 和 C4' 合并为 C8：
+
+![branch40](.\appendix\branch40.png)
+
+C8 这一步的合并是迟早会发生的，因为只有这样你才能和其他协作者提交的内容保持同步。而在 C8 之后，你的提交历史里就会同时包含 C4 和 C4'，两者有着不同的 SHA-1 校验值，如果用 `git log` 查看历史，会看到两个提交拥有相同的作者日期与说明，令人费解。而更糟的是，当你把这样的历史推送到服务器后，会再次把这些变基后的提交引入到中央服务器，进一步困扰其他人（译注：这个例子中，出问题的责任方是那个发布了 C6 后又用变基发布 C4' 的人，其他人会因此反馈双重历史到共享主干，从而混淆大家的视听。）。
+
+如果把变基当成一种在推送之前清理提交历史的手段，而且仅仅变基那些尚未公开的提交对象，就没问题。如果变基那些已经公开的提交对象，并且已经有人基于这些提交对象开展了后续开发工作的话，就会出现叫人沮丧的麻烦。
+
+### **4.服务器上的 Git**
+
+如果想与他人合作，还需要一个远程的 Git 仓库。尽管技术上可以从个人的仓库里推送和拉取修改内容，但我们不鼓励这样做，因为一不留心就很容易弄混其他人的进度。另外，你也一定希望合作者们即使在你的电脑未联机时亦能存取仓库获取数据 —— 拥有一个更稳定的公共仓库十分有用。因此，更好的合作方式是建立一个大家都可以访问的共享仓库，从那里推送和拉取数据。我们将把这个仓库称为 "Git 服务器"；代理一个 Git 仓库只需要花费很少的资源，几乎从不需要整个服务器来支持它的运行。
+
+远程仓库通常只是一个**裸仓库（bare repository）** — 即一个没有当前工作目录的仓库。因为该仓库只是一个合作媒介，所以不需要从硬盘上取出最新版本的快照；仓库里存放的仅仅是 Git 的数据。简单地说，裸仓库就是你工作目录中 `.git` 子目录内的内容。
+
+#### **4.1协议**
+
+架设一台 Git 服务器并不难。第一步是选择与服务器通讯的协议。Git 可以使用四种主要的协议来传输数据：本地传输，SSH 协议，Git 协议和 HTTP 协议。除了 HTTP 协议外，其他所有协议都要求在服务器端安装并运行 Git。下面分别介绍一下哪些情形应该使用（或避免使用）这些协议。
+
+##### **4.1.1本地协议**
+
+最基本的就是**本地协议（Local protocol）**，所谓的远程仓库在该协议中的表示，就是硬盘上的另一个目录。这常见于团队每一个成员都对一个共享的文件系统（例如 NFS）拥有访问权，或者比较少见的多人共用同一台电脑的情况。后面一种情况并不安全，因为所有代码仓库实例都储存在同一台电脑里，增加了灾难性数据损失的可能性。
+
+如果你使用一个共享的文件系统，就可以在一个本地文件系统中克隆仓库，推送和获取。克隆的时候只需要将远程仓库的路径作为 URL 使用，比如下面这样：
+
+````shell
+$ git clone /opt/git/project.git
+````
+
+或者这样：
+
+````shell
+$ git clone file:///opt/git/project.git
+````
+
+如果在 URL 开头明确使用 `file://`，那么 Git 会以一种略微不同的方式运行。如果你只给出路径，Git 会尝试使用硬链接或直接复制它所需要的文件。如果指定 file://，Git 会触发平时用于网路传输资料的进程，那通常是传输效率较低的方法。使用 `file://` 前缀的主要目的是取得一个没有外部参考（extraneous references）或对象（object）的干净版本库副本 ——一般指从其他版本控制系统导入的，或类似情形。我们这里仅仅使用普通路径，这样更快。
+
+要增加一个本地版本库到现有的 Git 项目，可以执行如下的命令：
+
+```shell
+$ git remote add local_proj /opt/git/project.git
+```
+
+然后，就可以像在网络上一样从远端版本库推送和拉取更新了。
+
+**优点**
+
+基于文件仓库的优点在于它的简单，同时保留了现存文件的权限和网络访问权限。如果你的团队已经有一个全体共享的文件系统，建立仓库就十分容易了。你只需把一份裸仓库的副本放在大家都能访问的地方，然后像对其他共享目录一样设置读写权限就可以了。
+
+这也是从别人工作目录中获取工作成果的快捷方法。假如你和你的同事在一个项目中合作，他们想让你检出一些东西的时候，运行类似 `git pull /home/john/project` 通常会比他们推送到服务器，而你再从服务器获取简单得多。
+
+**缺点**
+
+这种方法的缺点是，与基本的网络连接访问相比，难以控制从不同位置来的访问权限。如果你想从家里的笔记本电脑上推送，就要先挂载远程硬盘，这和基于网络连接的访问相比更加困难和缓慢。
+
+另一个很重要的问题是该方法不一定就是最快的，尤其是对于共享挂载的文件系统。本地仓库只有在你对数据访问速度快的时候才快。在同一个服务器上，如果二者同时允许 Git 访问本地硬盘，通过 NFS 访问仓库通常会比 SSH 慢。
+
+##### **4.1.2SSH 协议**
+
+Git 使用的传输协议中最常见的可能就是 SSH 了。这是因为大多数环境已经支持通过 SSH 对服务器的访问 — 即便还没有，架设起来也很容易。SSH 也是唯一一个同时支持读写操作的网络协议。另外两个网络协议（HTTP 和 Git）通常都是只读的，所以虽然二者对大多数人都可用，但执行写操作时还是需要 SSH。SSH 同时也是一个验证授权的网络协议；而因为其普遍性，一般架设和使用都很容易。
+
+通过 SSH 克隆一个 Git 仓库，你可以像下面这样给出 `ssh://` 的 URL：
+
+```shell
+$ git clone ssh://user@server/project.git
+```
+
+或者不指明某个协议——这时 Git 会默认使用 SSH ：
+
+```shell
+$ git clone user@server:project.git
+```
+
+如果不指明用户，Git 会默认使用当前登录的用户名连接服务器。
+
+**优点**
+
+使用 SSH 的好处有很多。首先，如果你想拥有对网络仓库的写权限，基本上不可能不使用 SSH。其次，SSH 架设相对比较简单——SSH 守护进程很常见，很多网络管理员都有一些使用经验，而且很多操作系统都自带了它或者相关的管理工具。再次，通过 SSH 进行访问是安全的——所有数据传输都是加密和授权的。最后，和 Git 及本地协议一样，SSH 也很高效，会在传输之前尽可能压缩数据。
+
+**缺点**
+
+SSH 的限制在于你不能通过它实现仓库的匿名访问。即使仅为读取数据，人们也必须在能通过 SSH 访问主机的前提下才能访问仓库，这使得 SSH 不利于开源的项目。如果你仅仅在公司网络里使用，SSH 可能是你唯一需要使用的协议。如果想允许对项目的匿名只读访问，那么除了为自己推送而架设 SSH 协议之外，还需要支持其他协议以便他人访问读取。
 

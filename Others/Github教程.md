@@ -179,3 +179,19 @@ HwCIG0I=
 
 ![gpgkeys](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/gpgkeys.png)
 
+## 让Git记住你的密码
+
+为了避免每次push都让你登陆Github，可以让Git记住你的密码。如果你使用的是Windows操作系统，打开Git Bash，执行下面的命令即可：
+
+```shell
+$ git config --global credential.helper wincred
+```
+
+其他操作系统可以执行：
+
+```
+$ git config --global credential.helper store
+```
+
+这样以后每次push就不用输入输入用户名和密码了。
+
