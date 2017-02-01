@@ -207,48 +207,7 @@ $ git init --bare --shared
 
 另一个办法是让 SSH 服务器通过某个 LDAP 服务，或者其他已经设定好的集中授权机制，来进行授权。只要每个用户可以获得主机的 `shell` 访问权限，任何 SSH 授权机制你都可视为是有效的。
 
-### **4.3 生成 SSH 公钥**
-
-大多数 Git 服务器都会选择使用 SSH 公钥来进行授权。系统中的每个用户都必须提供一个公钥用于授权，没有的话就要生成一个。生成公钥的过程在所有操作系统上都差不多。首先先确认一下是否已经有一个公钥了。SSH 公钥默认储存在账户的主目录下的 `~/.ssh` 目录。进去看看：
-
-```shell
-$ cd ~/.ssh
-    $ ls
-    authorized_keys2 id_dsa known_hosts
-    config id_dsa.pub
-```
-
-关键是看有没有用 `something` 和 `something.pub` 来命名的一对文件，这个 `something` 通常就是 `id_dsa` 或 `id_rsa`。有 `.pub` 后缀的文件就是公钥，另一个文件则是密钥。假如没有这些文件，或者干脆连 `.ssh` 目录都没有，可以用 `ssh-keygen` 来创建。该程序在 Linux/Mac 系统上由 SSH 包提供，而在 Windows 上则包含在 MSysGit 包里：
-
-```shell
-$ ssh-keygen
-    Generating public/private rsa key pair.
-    Enter file in which to save the key (/Users/schacon/.ssh/id_rsa):
-    Enter passphrase (empty for no passphrase):
-    Enter same passphrase again:
-    Your identification has been saved in /Users/schacon/.ssh/id_rsa.
-    Your public key has been saved in /Users/schacon/.ssh/id_rsa.pub.
-    The key fingerprint is:
-    43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a schacon@agadorlaptop.local
-```
-
-它先要求你确认保存公钥的位置（`.ssh/id_rsa`），然后它会让你重复一个密码两次，如果不想在使用公钥的时候输入密码，可以留空。
-
-现在，所有做过这一步的用户都得把它们的公钥给你或者 Git 服务器的管理员（假设 SSH 服务被设定为使用公钥机制）。他们只需要复制 `.pub` 文件的内容然后发邮件给管理员。公钥的样子大致如下：
-
-```
-$ cat ~/.ssh/id_rsa.pub
-    ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
-    GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3
-    Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA
-    t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
-    mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
-    NrRFi9wrf+M7Q== schacon@agadorlaptop.local
-```
-
-关于在多个操作系统上设立相同 SSH 公钥的教程，可以查阅 GitHub 上有关 SSH 公钥的向导：`http://github.com/guides/providing-your-ssh-key` 或该页面在下面的译文：**使用SSH连接到Github**“。
-
-### **4.4 架设服务器**
+### **4.3 架设服务器**
 
 现在来看看如何配置服务器端的 SSH 访问。本例中，我们将使用 `authorized_keys` 方法来对用户进行认证。同时我们假设你使用的操作系统是标准的 Linux 发行版，比如 Ubuntu。 首先，创建一个操作系统用户 `git`，并为其建立一个 `.ssh` 目录：
 
@@ -338,7 +297,7 @@ $ ssh git@gitserver
     Connection to gitserver closed.
 ```
 
-### **4.5 公共访问**
+### **4.4 公共访问**
 
 匿名的读取权限该怎么实现呢？也许除了内部私有的项目之外，你还需要托管一些开源项目。或者因为要用一些自动化的服务器来进行编译，或者有一些经常变化的服务器群组，而又不想整天生成新的 SSH 密钥——总之，你需要简单的匿名读取权限。
 
@@ -389,7 +348,7 @@ $ git clone http://git.gitserver/project.git
 
 这一招可以让你在几分钟内为相当数量的用户架设好基于 HTTP 的读取权限。另一个提供非授权访问的简单方法是开启一个 Git 守护进程，不过这将要求该进程作为后台进程常驻。
 
-### **4.6 Smart HTTP**
+### **4.5 Smart HTTP**
 
 我们一般通过 SSH 进行授权访问，通过 git:// 进行无授权访问，但是还有一种协议可以同时实现以上两种方式的访问。设置 Smart HTTP 一般只需要在服务器上启用一个 Git 自带的名为 git-http-backend 的 CGI 脚本。该 CGI 脚本将会读取由 `git fetch` 或 `git push` 命令向 HTTP URL 发送的请求路径和头部信息，来判断该客户端是否支持 HTTP 通信（不低于 1.6.6 版本的客户端支持此特性）。如果 CGI 发现该客户端支持智能（Smart）模式，它将会以智能模式与它进行通信，否则它将会回落到哑（Dumb）模式下（因此它可以对某些老的客户端实现向下兼容）。
 
@@ -446,7 +405,7 @@ $ htdigest -c /opt/git/.htpasswd "Git Access" schacon
 
 > 欲了解更多的有关配置 Apache 授权访问的信息，请通过以下链接浏览 Apache 文档：http://httpd.apache.org/docs/current/howto/auth.html
 
-### **4.7 GitWeb**
+### **4.6 GitWeb**
 
 现在我们的项目已经有了可读可写和只读的连接方式，不过如果能有一个简单的 web 界面访问就更好了。Git 自带一个叫做 GitWeb 的 CGI 脚本，运行效果可以到 `http://git.kernel.org` 这样的站点体验。如下图所示：
 
@@ -495,7 +454,7 @@ $ git clone git://git.kernel.org/pub/scm/git/git.git
 
 不难想象，GitWeb 可以使用任何兼容 CGI 的网页服务来运行；如果偏向使用其他 web 服务器，配置也不会很麻烦。现在，通过 `http://gitserver` 就可以在线访问仓库了，在 `http://git.server` 上还可以通过 HTTP 克隆和获取仓库的内容。
 
-### **4.8 GitLab**
+### **4.7 GitLab**
 
 虽然 GitWeb 相当简单。 但如果你正在寻找一个更现代，功能更全的 Git 服务器，这里有几个开源的解决方案可供你选择安装。 因为 GitLab 是其中最出名的一个，我们将它作为示例并讨论它的安装和使用。 这比 GitWeb 要复杂的多并且需要更多的维护，但它的确是一个功能更全的选择。
 
@@ -567,7 +526,7 @@ web 用户界面提供了几个有用的获取版本库信息的网页。 每一
 
 这个部分主要聚焦于在 GitLab 中与 Git 相关的特性，但是 GitLab 作为一个成熟的系统，它提供了许多其他产品来帮助你协同工作，例如项目 wiki 与系统维护工具。 GitLab 的一个优点在于，服务器设置和运行以后，你将很少需要调整配置文件或通过 SSH 连接服务器；绝大多数的管理和日常使用都可以在浏览器界面中完成。
 
-### **4.9 Gitosis**
+### **4.8 Gitosis**
 
 把所有用户的公钥保存在 `authorized_keys` 文件的做法，只能凑和一阵子，当用户数量达到几百人的规模（几百号人的团队基本都在500强了，相信找个高水平的Linux管理员问题不大），管理起来就会十分痛苦。每次改删用户都必须登录服务器不去说，这种做法还缺少必要的权限管理——每个人都对所有项目拥有完整的读写权限。
 
@@ -759,7 +718,7 @@ Gitosis 也具有简单的访问控制功能。如果想让 John 只有读权限
 > - 要方便管理公钥，用[Gitosis](https://github.com/sitaramc/gitolite)；
 > - 要像SVN那样变态地控制权限，用[Gitolite](https://github.com/sitaramc/gitolite)。
 
-### **4.10 Git 守护进程**
+### **4.9 Git 守护进程**
 
 对于提供公共的，非授权的只读访问，我们可以抛弃 HTTP 协议，改用 Git 自己的协议，这主要是出于性能和速度的考虑。Git 协议远比 HTTP 协议高效，因而访问速度也快，所以它能节省很多用户的时间。
 
@@ -839,13 +798,208 @@ $projects_list = "/home/git/gitosis/projects.list";
 
 在提交并推送过之后，GitWeb 就会自动开始显示 iphone_project 项目的细节和历史。
 
-### **4.11 Git 托管服务**
+### **4.10 Git 托管服务**
 
-如果不想设立自己的 Git 服务器，你可以选择将你的 Git 项目托管到一个外部专业的托管网站。这带来了一些好处：一个托管网站可以用来快速建立并开始项目，且无需进行服务器维护和监控工作。 即使你在内部设立并且运行了自己的服务器，你仍然可以把你的开源代码托管在公共托管网站 - 这通常更有助于开源社区来发现和帮助你。
+如果不想设立自己的 Git 服务器，你可以选择将你的 Git 项目托管到一个外部专业的托管网站。这带来了一些好处：一个托管网站可以用来快速建立并开始项目，且无需进行服务器维护和监控工作。 即使你在内部设立并且运行了自己的服务器，你仍然可以把你的开源代码托管在公共托管网站——这通常更有助于开源社区来发现和帮助你。
 
 现在，有非常多的托管供你选择，每个选择都有不同的优缺点。欲查看最新列表，请浏览 Git 维基的 GitHosting 页面 https://git.wiki.kernel.org/index.php/GitHosting。
 
 我们会在后面详细讲解 GitHub，GitHub作为目前最大的 Git 托管平台，你很可能需要与托管在 GitHub 上的项目进行交互，而且你也很可能并不想去设立你自己的 Git 服务器。
+
+##### **4.10.1 使用SSH连接到Github**
+
+GitHub 是最大的 Git 版本库托管商，国内比较有名的版本库托管商如开源中国的[码云](http://git.oschina.net/)，口碑也不错，网速快，但是没有Github活跃，毕竟Github是全世界的程序猿活动的舞台。
+
+使用SSH协议可以验证到远程服务器或服务的连接。通过SSH密匙，你就可以不用每次访问Github时都输入用户名和密码。生成SSH密匙之前，可以先检查是否本机上是否已经有SSH密匙了（SSH密匙一般位于用户主目录下的`.ssh`目录下），打开Git Bash，执行：
+
+```
+$ ls -al ~/.ssh
+total 38
+drwxr-xr-x 1 Vincent Huang 197609    0 Jan 22 12:55 ./
+drwxr-xr-x 1 Vincent Huang 197609    0 Jan 26 20:43 ../
+-rw-r--r-- 1 Vincent Huang 197609 3243 Jan 21 01:18 id_rsa
+-rw-r--r-- 1 Vincent Huang 197609  743 Jan 21 01:18 id_rsa.pub
+```
+
+默认情况下，公共密匙的文件名是以下文件名之一：
+
+- id\_dsa.pub
+- id\_ecdsa.pub
+- id\_ed25519.pub
+- id\_rsa.pub
+
+如果有（例如名为`id\_rsa.pub` 和 `id\_rsa`）就可以添加到Github等版本库托管网站了。如果没有，就必须创建一个SSH密匙。打开Git Bash执行：
+
+```shell
+$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/Username/.ssh/id_rsa):
+Created directory '/c/Users/Username/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/Vincent Huang/.ssh/id_rsa.
+Your public key has been saved in /c/Users/Vincent Huang/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:PgMLyghOsRirX+Ml+7v7JmhzbIX1KQ1vdIueyteI5mM your_email@example.com
+The key's randomart image is:
++---[RSA 4096]----+
+|                 |
+|                 |
+|..               |
+|.oo     o . .    |
+|+o  . .oS* + .   |
+|=o . ..+o B .    |
+|o.o +oo.+= +     |
+| . o+==.Eo= .    |
+|  ..o==@=+       |
++----[SHA256]-----+
+```
+
+根据指定的邮箱作为标签来创建SSH密匙。可以指定生成，密匙的路径，直接敲回车表示使用推荐的默认路径；然后输入密码，直接敲回车表示没有密码。再次检查是否存在SSH密匙：
+
+```
+$ ls -al ~/.ssh
+total 28
+drwxr-xr-x 1 Vincent Huang 197609    0 Jan 26 21:49 ./
+drwxr-xr-x 1 Vincent Huang 197609    0 Jan 26 21:49 ../
+-rw-r--r-- 1 Vincent Huang 197609 3243 Jan 26 21:49 id_rsa
+-rw-r--r-- 1 Vincent Huang 197609  748 Jan 26 21:49 id_rsa.pub
+```
+
+其中，`id_rsa`是私有密匙，而`id_rsa.pub`是公共密匙。进入SSH密匙生成的路径，使用无格式编辑器（如NotePad++）打开SSH密匙文件，复制对应的SSH密匙并添加到Github等版本库托管网站。如下图所示：
+
+![sshkeys](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/sshkeys.png)
+
+##### **4.10.2 使用GPG密匙给标签和提交操作签名**
+
+GPG即GNU Privacy Guard ，用来签名和验证可信赖的标签（`tag`）和提交（`commit`）。你可以生成一个GPG密匙，并将其添加到你的Github帐号。这样，你在Github上授权的标签（`tag`）和提交（`commit`）将会被Github以安全的方式验证，别人可以确信上面的改动是你本人做的。
+
+先下载并安装[GPG命令行工具](https://www.gnupg.org/download/)，Windows下建议下载仅包含GnuPG组件的[Gpg4win-Vanilla ](https://files.gpg4win.org/gpg4win-vanilla-2.3.3.exe)，下载完成后像一般软件一样安装即可。
+
+在生成GPG密匙之前可以检查是否已经有了GPG密匙。
+
+```shell
+$ gpg --list-secret-keys --keyid-format LONG
+```
+
+打开Git Bash，执行`gpg --gen-key`：
+
+```shell
+$ gpg --gen-key
+gpg (GnuPG) 1.4.20; Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection?
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 4096
+Requested keysize is 4096 bits
+Please specify how long the key should be valid.
+         0 = key does not expire
+      <n>  = key expires in n days
+      <n>w = key expires in n weeks
+      <n>m = key expires in n months
+      <n>y = key expires in n years
+Key is valid for? (0) 1y
+Key expires at Fri Jan 26 20:46:17 2018
+Is this correct? (y/N) y
+
+You need a user ID to identify your key; the software constructs the user ID
+from the Real Name, Comment and Email Address in this form:
+    "Heinrich Heine (Der Dichter) <heinrichh@duesseldorf.de>"
+
+Real name: yourname characters
+Email address: youremailname@example.com
+Comment: this is my home computer`s signature
+You selected this USER-ID:
+    "yourname characters (this is my home computer`s signature) <youremailname@example.com>"
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
+You need a Passphrase to protect your secret key.
+
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+.+++++
+.....+++++
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+.....................+++++
+....+++++
+gpg: key 5C3457F2 marked as ultimately trusted
+public and secret key created and signed.
+
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2018-01-26
+pub   4096R/5C3457F2 2017-01-26 [expires: 2018-01-26]
+      Key fingerprint = 548D 778C 30A8 8570 4114  4580 A19E E68C 5C34 57F2
+uid                 yourname charaters (this is my home computer`s signature)<youremailname@example.com>
+sub   4096R/62C7AFC2 2017-01-26 [expires: 2018-01-26]
+```
+
+然后按照提示：
+
+1. 指定密匙的算法类型，或者直接按回车键使用默认的`RSA and RSA` 类型；
+2. 然后输入期望的密匙大小，推荐最大的`4096` ；
+3. 然后选择密匙的有效期，这里输入`1y`（一年的有效期）；
+4. 确认以上设置是否正确；
+5. 然后输入用户ID信息（输入的邮箱必须是Github上验证过的邮箱），再输入密码。
+
+再次检查是否已经有了GPG密匙：
+
+```shell
+$ gpg --list-secret-keys --keyid-format LONG
+/c/Users/Username/.gnupg/secring.gpg
+-----------------------------------------
+sec   4096R/A19EE68C5C3457F2 2017-01-26 [expires: 2018-01-26]
+uid                yourname charaters (this is my home computer`s signature)<youremailname@example.com>
+ssb   4096R/CCAE904C62C7AFC2 2017-01-26
+```
+
+上面是Windows系统上的显示结果。然后执行以下命令：
+
+```shell
+$ gpg --armor --export A19EE68C5C3457F2
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1
+
+mQINBFiJ8H......WDj7ve
+HwCIG0I=
+=vDKF
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+> 注意，请使用你自己的GPG密匙ID，这里的GPG密匙ID是上面检查输出结果中横线分隔行下面的`A19EE68C5C3457F2`）
+
+然后复制得到的GPG密匙（在-----BEGIN PGP PUBLIC KEY BLOCK-----到-----END PGP PUBLIC KEY BLOCK-----之间的内容），粘贴到你的Github上。如下图所示：
+
+![gpgkeys](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/gpgkeys.png)
+
+##### **4.10.3 让Git记住你的密码**
+
+为了避免每次push都让你登陆Github，可以让Git记住你的密码。如果你使用的是Windows操作系统，打开Git Bash，执行下面的命令即可：
+
+```shell
+$ git config --global credential.helper wincred
+```
+
+其他操作系统可以执行：
+
+```
+$ git config --global credential.helper store
+```
+
+这样以后每次push就不用输入输入用户名和密码了。
 
 ## **5. 分布式 Git**
 
