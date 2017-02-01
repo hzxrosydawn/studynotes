@@ -15,7 +15,7 @@ drwxr-xr-x 1 Vincent Huang 197609    0 Jan 26 20:43 ../
 -rw-r--r-- 1 Vincent Huang 197609  743 Jan 21 01:18 id_rsa.pub
 ```
 
-默认情况下，公共密匙的文件名是以下下列之一：
+默认情况下，公共密匙的文件名是以下文件名之一：
 
 - id\_dsa.pub
 - id\_ecdsa.pub
