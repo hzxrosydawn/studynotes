@@ -6,12 +6,12 @@
 
 ```shell
 $ git config --global user.name "John Doe"
-    $ git config --global user.email johndoe@example.com
+$ git config --global user.email johndoe@example.com
 ```
 
 从现在开始，你会了解到一些类似以上但更为有趣的设置选项来自定义 Git。
 
-先过一遍第一章中提到的 Git 配置细节。Git 使用一系列的配置文件来存储你定义的偏好，它首先会查找`/etc/gitconfig`文件，该文件含有 对系统上所有用户及他们所拥有的仓库都生效的配置值（译注：gitconfig是全局配置文件）， 如果传递`--system`选项给`git config`命令， Git 会读写这个文件。
+先过一遍第一章中提到的 Git 配置细节。Git 使用一系列的配置文件来存储你定义的偏好，它首先会查找`/etc/gitconfig`文件，该文件含有对系统上所有用户及他们所拥有的仓库都生效的配置值（译注：gitconfig是全局配置文件）， 如果传递`--system`选项给`git config`命令， Git 会读写这个文件。
 
 接下来 Git 会查找每个用户的`~/.gitconfig`文件，你能传递`--global`选项让 Git读写该文件。
 
@@ -52,8 +52,9 @@ subject line
 设置`commit.template`，当运行`git commit`时， Git 会在你的编辑器中显示以上的内容， 设置`commit.template`如下：
 
 ```shell
-$ git config --global commit.template $HOME/.gitmessage.txt
-    $ git commit
+$ git config --global commit.template 
+$ HOME/.gitmessage.txt
+$ git commit
 ```
 
 然后当你提交时，在编辑器中显示的提交信息如下：
@@ -420,7 +421,7 @@ Git 成功且简洁地显示出我增加的文本"Let’s see if this works"。�
 
 ```shell
 $ echo '*.png diff=exif' >> .gitattributes
-    $ git config diff.exif.textconv exiftool
+$ git config diff.exif.textconv exiftool
 ```
 
 如果在项目中替换了一个图像文件，运行`git diff`命令的结果如下：
@@ -488,7 +489,7 @@ $ rm text.txt
 
 ```shell
 $ git config --global filter.indent.clean indent
-    $ git config --global filter.indent.smudge cat
+$ git config --global filter.indent.smudge cat
 ```
 
 于是，当你暂存`*.c`文件时，`indent`程序会被触发，在把它们签出之前，`cat`程序会被触发。但`cat`程序在这里没什么实际作用。这样的组合，使C源代码在暂存前被`indent`程序过滤，非常有效。
@@ -506,25 +507,25 @@ $ git config --global filter.indent.clean indent
 
 ```shell
 $ git config filter.dater.smudge expand_date
-    $ git config filter.dater.clean 'perl -pe "s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/"'
+$ git config filter.dater.clean 'perl -pe "s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/"'
 ```
 
 这个Perl小程序会删除`$Date$`字符串里多余的字符，恢复`$Date$`原貌。到目前为止，你的过滤器已经设置完毕，可以开始测试了。打开一个文件，在文件中输入`$Date$`关键字，然后设置 Git 属性：
 
 ```shell
 $ echo '# $Date$' > date_test.txt
-    $ echo 'date*.txt filter=dater' >> .gitattributes
+$ echo 'date*.txt filter=dater' >> .gitattributes
 ```
 
 如果暂存该文件，之后再签出，你会发现关键字被替换了：
 
 ```shell
 $ git add date_test.txt .gitattributes
-    $ git commit -m "Testing date expansion in Git"
-    $ rm date_test.txt
-    $ git checkout date_test.txt
-    $ cat date_test.txt
-    # $Date: Tue Apr 21 07:26:52 2009 -0700$
+$ git commit -m "Testing date expansion in Git"
+$ rm date_test.txt
+$ git checkout date_test.txt
+$ cat date_test.txt
+# $Date: Tue Apr 21 07:26:52 2009 -0700$
 ```
 
 虽说这项技术对自定义应用来说很有用，但还是要小心，因为`.gitattributes`文件会随着项目一起提交，而过滤器（例如：`dater`）不会，所以，过滤器不会在所有地方都生效。当你在设计这些过滤器时要注意，即使它们无法正常工作，也要让整个项目运作下去。
@@ -551,16 +552,16 @@ test/ export-ignore
 
 ```shell
 $ echo 'Last commit date: $Format:%cd$' > LAST_COMMIT
-    $ echo "LAST_COMMIT export-subst" >> .gitattributes
-    $ git add LAST_COMMIT .gitattributes
-    $ git commit -am 'adding LAST_COMMIT file for archives'
+$ echo "LAST_COMMIT export-subst" >> .gitattributes
+$ git add LAST_COMMIT .gitattributes
+$ git commit -am 'adding LAST_COMMIT file for archives'
 ```
 
 运行`git archive`后，打开该文件，会发现其内容如下：
 
 ```shell
 $ cat LAST_COMMIT
-    Last commit date: $Format:Tue Apr 21 08:38:48 2009 -0700$
+Last commit date: $Format:Tue Apr 21 08:38:48 2009 -0700$
 ```
 
 #### **7.2.4 合并策略**
@@ -577,8 +578,8 @@ database.xml merge=ours
 
 ```shell
 $ git merge topic
-    Auto-merging database.xml
-    Merge made by recursive.
+Auto-merging database.xml
+Merge made by recursive.
 ```
 
 这样，database.xml会保持原样。
@@ -653,13 +654,11 @@ update 脚本和 `pre-receive` 脚本十分类似。不同之处在于它会�
 
 ```shell
 #!/usr/bin/env ruby
-
-    $refname = ARGV[0]
-    $oldrev = ARGV[1]
-    $newrev = ARGV[2]
-    $user = ENV['USER']
-
-    puts "Enforcing Policies... \n(#{$refname}) (#{$oldrev[0,6]}) (#{$newrev[0,6]})"
+$refname = ARGV[0]
+$oldrev = ARGV[1]
+$newrev = ARGV[2]
+$user = ENV['USER']
+puts "Enforcing Policies... \n(#{$refname}) (#{$oldrev[0,6]}) (#{$newrev[0,6]})"
 ```
 
 没错，我在用全局变量。别鄙视我——这样比较利于演示过程。
@@ -1066,15 +1065,15 @@ Git 是一套内容寻址文件系统。很不错。不过这是什么意思呢�
 
 ```
 $ mkdir test
-    $ cd test
-    $ git init
-    Initialized empty Git repository in /tmp/test/.git/
-    $ find .git/objects
+$ cd test
+$ git init
+Initialized empty Git repository in /tmp/test/.git/
+$ find .git/objects
     .git/objects
     .git/objects/info
     .git/objects/pack
-    $ find .git/objects -type f
-    $
+$ find .git/objects -type f
+$
 ```
 
 Git 初始化了 `objects` 目录，同时在该目录下创建了 `pack` 和 `info` 子目录，但是该目录下没有其他常规文件。我们往这个 Git 数据库里存储一些文本：
