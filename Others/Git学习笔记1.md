@@ -7,25 +7,25 @@
 
 **本地版本控制系统**（Local Version Control Systems）采用复制整个项目目录的形式来保存不同的版本，其原理如下图所示：
 
-![local_version_control.png](.\appendix\local_version_control.png)
+![local_version_control.png](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/local_version_control.png)
 
 **集中式版本控制系统**（Centralized Version Control Systems，简称CVCS）使用一个单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端实时连到这台服务器，取出最新的文件或者提交更新。其原理如下图所示：
 
-![centralized_version_control.png](.\appendix\centralized_version_control.png)
+![centralized_version_control.png](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/centralized_version_control.png)
 
 这种VCS的缺点是中央服务器宕机所有人都无法进行协同工作，一旦中央服务器出现问题就可能丢失所有更新记录。
 
 **分布式版本控制系统**（Distributed Version Control System，简称DVCS）如Git、Mercurial、Bazaar以及Darcs等，客户端并不只提取最新版本的文件快照，而是把代码仓库完整地镜像下来。这么一来，任何一处协同工作用的服务器发生故障，事后都可以用任何一个镜像出来的本地仓库来恢复。 你可以根据需要设定不同的协作流程，比如层次模型式的工作流，而这在以前的集中式系统中是无法实现的。其原理如下图所示：
 
-![distributed_version_control.png](.\appendix\distributed_version_control.png)
+![distributed_version_control.png](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/distributed_version_control.png)
 
 大部分DVCS以文件变更列表的方式存储信息，即将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异。其原理如下图所示：
 
-![other_sytem_stores_data_for_each_file.png](.\appendix\other_sytem_stores_data_for_each_file.png)
+![other_sytem_stores_data_for_each_file.png](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/other_sytem_stores_data_for_each_file.png)
 
 而Git把数据看作是对文件系统的一组快照，即对当时的全部文件制作一个快照并保存这个快照的索引。为了高效，如果文件没有修改，Git不再重新存储该文件，而是只保留一个链接指向之前存储的文件。Git对待数据更像是一个快照流。其原理如下图所示：
 
-![git_stores_data_as_snapshots.png](.\appendix\git_stores_data_as_snapshots.png)
+![git_stores_data_as_snapshots.png](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/git_stores_data_as_snapshots.png)
 
 Git具有很多优点，如快速、设计简单、支持非线性开发模式（允许成千上万个并行开发的分支）、完全分布式、能高效管理超大规模项目。在Git中的绝大多数操作都只需要访问本地文件和资源，只有推送更新到服务器时才使用到网络连接。要浏览项目的历史，只需直接从本地数据库中读取。Git中所有数据在存储前都计算校验和，然后以校验和来引用。这意味着任何改动都会被Git知晓。Git一般只在原来快照的基础上添加数据（即使你执行了删除某个文件的操作），所以Git可以找回每一次的更新。
 
@@ -42,7 +42,7 @@ Git的发展经历了以下历史：
 
 Git中的文件有三种状态：已提交（`committed`）、已修改（`modified）`和已暂存（`staged`）。已提交表示数据已经安全地保存在本地数据库中。已修改表示修改了文件，但还没保存到数据库中。已暂存表示对一个已修改文件的当前版本做了标记，使之包含在下次提交的快照中。由此引入Git项目的三个工作区域的概念：Git仓库（`git directory`）、工作目录（`working directory`）以及暂存区域（`staging area`）。
 
-![three_states.png](.\appendix\three_states.png)
+![three_states.png](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/three_states.png)
 
 - **Git 仓库**是Git用来保存项目的元数据和对象数据库的地方。这是Git中最重要的部分，从其它计算机克隆仓库时，拷贝的就是这里的数据。有时候也被叫做版本库；
 - **工作目录**是对项目的某个版本独立提取出来的内容。 这些 Git仓库的压缩数据库中提取出来的文件，放在磁盘上供你使用或修改；
@@ -51,7 +51,7 @@ Git中的文件有三种状态：已提交（`committed`）、已修改（`modif
 
 工作区、版本库中的暂存区和版本库之间的关系如下图所示。
 
-![gitstructure](.\appendix\gitstructure.png)
+![gitstructure](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/gitstructure.png)
 
 Git GUI界面和命令行两种操作模式（安装Git时，可以选择安装Git GUI和Git Bash，分别用于两种模式的操作），但GUI软件只实现了Git的部分功能功能，所以建议一定要学会命令行模式，然后GUI模式就不在话下了。
 
@@ -79,7 +79,7 @@ $ sudo apt-get install git
 
 安装界面如下所示：
 
-![gitmacinstall](.\appendix\gitmacinstall.png)
+![gitmacinstall](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/gitmacinstall.png)
 
 #### **1.3.3 在 Windows 上安装**
 
@@ -87,7 +87,7 @@ $ sudo apt-get install git
 
 安装包下载地址：[http://msysgit.github.io/](http://msysgit.github.io/)
 
-![gitGUi](.\appendix\gitGUi.png)
+![gitGUi](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/gitGUi.png)
 
 ### **1.4 初次运行Git前的配置**
 
@@ -210,7 +210,7 @@ $ git clone git://github.com/schacon/grit.git mygrit
 
 工作原理如下图所示：
 
-![filestatuslifecycle](.\appendix\filestatuslifecycle.png)
+![filestatuslifecycle](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/filestatuslifecycle.png)
 
 #### **2.2.1 查看文件状态**
 
@@ -246,7 +246,7 @@ nothing to commit, working directory clean
 
 使用Windows的童鞋千万不要使用Windows自带的**记事本**编辑任何提交的文本文件。原因是Microsoft记事本在每个文件开头添加了0xefbbbf（十六进制）的字符，你会遇到很多不可思议的问题，比如，网页第一行可能会显示一个“?”，明明正确的程序一编译就报语法错误，等等。建议你下载[Notepad++](http://notepad-plus-plus.org/)代替记事本，不但功能强大，而且免费！记得把Notepad++的默认编码设置为UTF-8 without BOM即可。
 
-![notepad](.\appendix\notepad.png)
+![notepad](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/notepad.png)
 
 下面我们在项目下创建一个新的README.md文件：
 
@@ -1327,15 +1327,15 @@ $ git commit -m 'The initial commit of my project'
 
 现在，Git仓库中有五个对象：三`blob`对象（保存着文件快照）、一个树对象（记录着目录结构和`blob`对象索引）以及一个提交对象（包含着指向前面树对象的指针和所有提交信息）。结构如下图所示：
 
-![branch1](.\appendix\branch1.png)
+![branch1](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch1.png)
 
 做些修改后再次提交，那么这次产生的提交对象会包含一个指向上次提交对象（父对象）的指针。结构如下图所示：
 
-![branch2](.\appendix\branch2.png)
+![branch2](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch2.png)
 
 Git的分支(branch)本质上仅仅是指向提交对象的可变指针。Git的默认分支名字是`master`。 在多次提交操作之后，你其实已经有一个指向最后那个提交对象的`master`分支。它会在每次的提交操作中自动向前移动。`master`分支与其他分支没有区别，只是它是由`git init`命令默认创建的，多数人都懒得去改动它。分支的存在形式如下图中的v1.0分支所示：
 
-![branch3](.\appendix\branch3.png)
+![branch3](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch3.png)
 
 ### **3.1 分支简介**
 
@@ -1349,11 +1349,11 @@ $ git branch testing
 
 这会在当前所在的提交对象上创建一个指针。testing即为分支的名称。下图中的`master`分支和`testing`分支都指向了同一个提交历史：
 
-![branch4](.\appendix\branch4.png)
+![branch4](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch4.png)
 
 Git提供了一个指向当前所在的本地分支的HEADER指针，通过该指针Git可以判断当前在哪一个分支上（可将HEAD想象为当前分支的别名）。在上面的例子中，仍然在`master`分支上，因为`git branch`命令仅仅 创建 一个新分支，并不会自动切换到新分支中去。
 
-![branch5](.\appendix\branch5.png)
+![branch5](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch5.png)
 
 #### **3.1.2 分支切换**
 
@@ -1365,7 +1365,7 @@ $ git checkout testing
 
 这样 HEAD 就指向 testing 分支了：
 
-![branch6](.\appendix\branch6.png)
+![branch6](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch6.png)
 
 再提交一次：
 
@@ -1374,7 +1374,7 @@ $ vim test.rb
 $ git commit -a -m 'made a change'
 ```
 
-![branch7](.\appendix\branch7.png)
+![branch7](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch7.png)
 
 如图所示，你的`testing`分支向前移动了，但是`master`分支却没有，它仍然指向运行`git checkout`时所
 指的对象。现在我们切换回`master`分支看看：
@@ -1383,7 +1383,7 @@ $ git commit -a -m 'made a change'
 $ git checkout master
 ```
 
-![branch8](.\appendix\branch8.png)
+![branch8](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch8.png)
 
 这条命令做了两件事：一是使HEAD指回`master`分支，二是将工作目录恢复成`master`分支所指向的快照内容。在切换分支时，一定要注意你工作目录里的文件会被改变。如果是切换到一个较旧的分支，你的工作目录会恢复到该分支最后一次提交时的样子。如果Git不能干净利落地完成这个任务，它将禁止切换分支。
 
@@ -1396,7 +1396,7 @@ $ git commit -a -m 'made other changes'
 
 上述两次改动针对的是不同分支：你可以在不同分支间不断地来回切换和工作，并在时机成熟时将它们合并起来。而所有这些工作，你需要的命令只有`branch`、`checkout`和`commit`。
 
-![branch9](.\appendix\branch9.png)
+![branch9](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch9.png)
 
 可以使用` git log` 命令查看分叉历史，如运行`git log --oneline --decorate --graph --all` ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况：
 
@@ -1709,11 +1709,11 @@ $ git branch -d testing
 
 本质上我们刚才谈论的，是随着提交对象不断右移的指针。稳定分支的指针总是在提交历史中落后一大截，而前沿分支总是比较靠前。如下图所示。
 
-![branch18](.\appendix\branch18.png)
+![branch18](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch18.png)
 
 或者把它们想象成工作流水线（work silos），或许更好理解一些，经过测试的提交对象集合被遴选到更稳定的流水线。如下图所示。
 
-![branch19](.\appendix\branch19.png)
+![branch19](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch19.png)
 
 你可以用这招维护不同层次的稳定性。某些大项目还会有个 `proposed`（建议） `pu`（proposed updates，建议更新）分支，它包含着那些可能还没有成熟到进入 `next` 或 `master` 的内容。这么做的目的是拥有不同层次的稳定性：当这些分支进入到更稳定的水平时，再把它们合并到更高层分支中去。再次说明下，使用多个长期分支的做法并非必需，不过一般来说，对于特大型项目或特复杂的项目，这么做确实更容易管理。
 
@@ -1723,11 +1723,11 @@ $ git branch -d testing
 
 现在我们来看一个实际的例子。请看下图，由下往上，起先我们在 `master` 工作到 C1，然后开始一个新分支 `iss91` 尝试修复 91 号缺陷，提交到 C6 的时候，又冒出一个解决该问题的新办法，于是从之前 C4 的地方又分出一个分支 `iss91v2`，干到 C8 的时候，又回到主干 `master` 中提交了 C9 和 C10，再回到 `iss91v2` 继续工作，提交 C11，接着，又冒出个不太确定的想法，从 `master` 的最新提交 C10 处开了个新的分支 `dumbidea` 做些试验。
 
-![branch20](.\appendix\branch20.png)
+![branch20](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch20.png)
 
 现在，假定两件事情：我们最终决定使用第二个解决方案，即 `iss91v2` 中的办法；另外，我们把 `dumbidea` 分支拿给同事们看了以后，发现它竟然是个天才之作。所以接下来，我们准备抛弃原来的 `iss91` 分支（实际上会丢弃 C5 和 C6），直接在主干中并入另外两个分支。最终的提交历史将变成下图所示。
 
-![branch21](.\appendix\branch21.png)
+![branch21](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch21.png)
 
 ### **3.5 远程分支**
 
@@ -1741,23 +1741,23 @@ $ git branch -d testing
 
 不妨举例说明。假设你们团队有个地址为 `git.ourcompany.com` 的 Git 服务器。如果你从这里克隆，Git 会自动为你将此远程仓库命名为 `origin`，并下载其中所有的数据，建立一个指向它的 `master` 分支的指针，在本地命名为 `origin/master`，但你无法在本地更改其数据。接着，Git 建立一个属于你自己的本地 `master` 分支，始于 `origin` 上 `master` 分支相同的位置，你可以就此开始工作。如下图所示。
 
-![branch22](.\appendix\branch22.png)
+![branch22](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch22.png)
 
 如果你在本地 `master` 分支做了些改动，与此同时，其他人向 `git.ourcompany.com` 推送了他们的更新，那么服务器上的 `master` 分支就会向前推进，而于此同时，你在本地的提交历史正朝向不同方向发展。不过只要你不和服务器通讯，你的 `origin/master` 指针仍然保持原位不会移动。如下图所示。
 
-![branch24](.\appendix\branch24.png)
+![branch24](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch24.png)
 
 可以运行 `git fetch origin` 来同步远程服务器上的数据到本地。该命令首先找到 `origin` 是哪个服务器（本例为 `git.ourcompany.com`），从上面获取你尚未拥有的数据，更新你本地的数据库，然后把 `origin/master` 的指针移到它最新的位置上。如下图所示。
 
-![branch23](.\appendix\branch23.png)
+![branch23](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch23.png)
 
 为了演示拥有多个远程分支（在不同的远程服务器上）的项目是如何工作的，我们假设你还有另一个仅供你的敏捷开发小组使用的内部服务器 `git.team1.ourcompany.com`。可以用 `git remote add` 命令把它加为当前项目的远程分支之一。我们把它命名为 `teamone`，以便代替完整的 Git URL 以方便使用。如下图所示。
 
-![branch25](.\appendix\branch25.png)
+![branch25](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch25.png)
 
 现在你可以用 `git fetch teamone` 来获取小组服务器上你还没有的数据了。由于当前该服务器上的内容是你 `origin` 服务器上的子集，Git 不会下载任何数据，而只是简单地创建一个名为 `teamone/master` 的远程分支，指向 `teamone` 服务器上 `master` 分支所在的提交对象 `31b8e`。如下图所示。
 
-![branch26](.\appendix\branch26.png)
+![branch26](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch26.png)
 
 
 
@@ -1872,11 +1872,11 @@ should do it
 
 回顾之前有关合并的一节，如下图所示，你会看到开发进程分叉到两个不同分支，又各自提交了更新。
 
-![branch27](.\appendix\branch27.png)
+![branch27](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch27.png)
 
 之前介绍过，最容易的整合分支的方法是 `merge` 命令，它会把两个分支最新的快照（C3 和 C4）以及二者最新的共同祖先（C2）进行三方合并，合并的结果是产生一个新的提交对象（C5）。如图所示。
 
-![branch28](.\appendix\branch28.png)
+![branch28](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch28.png)
 
 其实，还有另外一个选择：你可以把在 C3 里产生的变化补丁在 C4 的基础上重新打一遍。在 Git 里，这种操作叫做**`变基（rebase）`**。有了 `rebase` 命令，就可以把在一个分支里提交的改变移到另一个分支里重放一遍。在上面这个例子中，运行：
 
@@ -1889,11 +1889,11 @@ $ git checkout experiment
 
 它的原理是首先找到这两个分支（即当前分支 `experiment`、变基操作的目标基底分支 `master`）的最近共同祖先 C2，然后对比当前分支（也就是要进行变基的分支 `experiment`）相对于该祖先的历次提交（这里只有一个 C3），生成一系列文件补丁，然后以基底分支（也就是主干分支 `master`）最后一个提交对象（C4）为新的出发点，逐个应用之前准备好的补丁文件，最后会生成一个新的合并提交对象（C3'），从而改写 `experiment` 的提交历史，使它成为 `master` 分支的直接下游。如下图所示。
 
-![branch29](.\appendix\branch29.png)
+![branch29](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch29.png)
 
 现在回到 `master` 分支，进行一次快进合并：
 
-![branch30](.\appendix\branch30.png)
+![branch30](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch30.png)
 
 现在的 C3' 对应的快照，其实和普通的三方合并，即上个例子中的 C5 对应的快照内容一模一样了。虽然最后整合得到的结果没有任何区别，但变基能产生一个更为整洁的提交历史。如果视察一个变基过的分支的历史记录，看起来会更清楚：仿佛所有修改都是在一根线上先后进行的，尽管实际上它们原本是同时并行发生的。
 
@@ -1918,7 +1918,7 @@ $ git rebase --onto master server client
 以上命令的意思是：“取出 `client` 分支，找出 `client` 上处于 `client` 分支和 `server` 分支的共同祖先之后的修改，然
 后把它们在 `master` 分支上重演一遍”。 这理解起来有一点复杂，不过效果非常酷。
 
-![branch32](.\appendix\branch32.png)
+![branch32](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch32.png)
 
 现在可以快进 `master` 分支了：
 
@@ -1927,7 +1927,7 @@ $ git checkout master
     $ git merge client
 ```
 
-![branch33](.\appendix\branch33.png)
+![branch33](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch33.png)
 
 现在我们决定把 `server` 分支的变化也包含进来。我们可以直接把 `server` 分支衍合到 `master`，而不用手工切换到 `server` 分支后再执行变基操作 — `git rebase [basebranch] [topicbranch]` 命令会先取出特性分支 `server`，然后在主分支 `master` 上重演：
 
@@ -1937,7 +1937,7 @@ $ git rebase master server
 
 于是，server 的进度应用到 master 的基础上，如下图所示：
 
-![branch34](.\appendix\branch34.png)
+![branch34](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch34.png)
 
 然后就可以快进主干分支 `master` 了：
 
@@ -1948,7 +1948,7 @@ $ git checkout master
 
 现在 `client` 和 `server` 分支的变化都已经集成到主干分支来了，可以删掉它们了。最终我们的提交历史会变成如下图所示：
 
-![branch36](.\appendix\branch36.png)
+![branch36](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch36.png)
 
 #### **3.6.3 变基的风险**
 
@@ -1958,19 +1958,19 @@ $ git checkout master
 
 让我们来看一个在公开的仓库上执行变基操作所带来的问题。假设你从一个中央服务器克隆然后在它的基础上进行了一些开发。你的提交历史如图所示：
 
-![branch37](.\appendix\branch37.png)
+![branch37](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch37.png)
 
 然后，某人又向中央服务器提交了一些修改，其中还包括一次合并。你抓取了这些在远程分支上的修改，并将其合并到你本地的开发分支，然后你的提交历史就会变成这样：
 
-![branch38](.\appendix\branch38.png)
+![branch38](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch38.png)
 
 接下来，那个推送 C6 上来的人决定用变基取代之前的合并操作；继而又用 `git push --force` 覆盖了服务器上的历史，得到 C4'。而之后当你再从服务器上下载最新提交后，会得到：
 
-![branch39](.\appendix\branch39.png)
+![branch39](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch39.png)
 
 下载更新后需要合并，但此时变基产生的提交对象 C4' 的 SHA-1 校验值和之前 C4 完全不同，所以 Git 会把它们当作新的提交对象处理，而实际上此刻你的提交历史 C7 中早已经包含了 C4 的修改内容，于是合并操作会把 C7 和 C4' 合并为 C8：
 
-![branch40](.\appendix\branch40.png)
+![branch40](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/branch40.png)
 
 C8 这一步的合并是迟早会发生的，因为只有这样你才能和其他协作者提交的内容保持同步。而在 C8 之后，你的提交历史里就会同时包含 C4 和 C4'，两者有着不同的 SHA-1 校验值，如果用 `git log` 查看历史，会看到两个提交拥有相同的作者日期与说明，令人费解。而更糟的是，当你把这样的历史推送到服务器后，会再次把这些变基后的提交引入到中央服务器，进一步困扰其他人（译注：这个例子中，出问题的责任方是那个发布了 C6 后又用变基发布 C4' 的人，其他人会因此反馈双重历史到共享主干，从而混淆大家的视听。）。
 

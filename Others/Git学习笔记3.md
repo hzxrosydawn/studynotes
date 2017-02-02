@@ -230,7 +230,7 @@ $ git diff 32d1776b1^ 32d1776b1
 
 命令行居然没有发现diff命令的输出，其实，Git 调用了刚刚设置的P4Merge，它看起来像下图所示：
 
-![tools1](.\appendix\tools1.png)
+![tools1](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/tools1.png)
 
 当你设法合并两个分支，结果却有冲突时，运行`git mergetool`，Git 会调用P4Merge让你通过图形界面来解决冲突。
 
@@ -473,11 +473,11 @@ $ rm text.txt
 
 因此，你能写自己的过滤器，在提交文件到暂存区或签出文件时替换关键字。有2种过滤器，"clean"和"smudge"。在 `.gitattributes`文件中，你能对特定的路径设置一个过滤器，然后设置处理文件的脚本，这些脚本会在文件签出前（"smudge"，见下图）
 
-![tools2](.\appendix\tools2.png)
+![tools2](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/tools2.png)
 
 和提交到暂存区前（"clean"，见下图）被调用。这些过滤器能够做各种有趣的事。
 
-![tools3](.\appendix\tools3.png)
+![tools3](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/tools3.png)
 
 这里举一个简单的例子：在暂存前，用`indent`（缩进）程序过滤所有C源代码。在`.gitattributes`文件中设置"indent"过滤器过滤`*.c`文件：
 
@@ -1167,7 +1167,7 @@ $ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
 
 从概念上来讲，Git 保存的数据如下图所示：
 
-![principle1](.\appendix\principle1.png)
+![principle1](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/principle1.png)
 
 你可以自己创建 tree 。通常 Git 根据你的暂存区域或 index 来创建并写入一个 tree 。因此要创建一个 tree 对象的话首先要通过将一些文件暂存从而创建一个 index 。可以使用 plumbing 命令 `update-index` 为一个单独文件 ── test.txt 文件的第一个版本 ──　创建一个 index　。通过该命令人为的将 test.txt 文件的首个版本加入到了一个新的暂存区域中。由于该文件原先并不在暂存区域中 (甚至就连暂存区域也还没被创建出来呢) ，必须传入 `--add`参数;由于要添加的文件并不在当前目录下而是在数据库中，必须传入 `--cacheinfo` 参数。同时指定了文件模式，SHA-1 值和文件名：
 
@@ -1226,7 +1226,7 @@ $ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 
 如果从刚写入的新 tree 对象创建一个工作目录，将得到位于工作目录顶级的两个文件和一个名为 `bak` 的子目录，该子目录包含了 test.txt 文件的第一个版本。可以将 Git 用来包含这些内容的数据想象成如下图所示：
 
-![principle2](.\appendix\principle2.png)
+![principle2](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/principle2.png)
 
 #### **9.2.2 commit (提交) 对象**
 
@@ -1312,7 +1312,7 @@ $ find .git/objects -type f
 
 如果你按照以上描述进行了操作，可以得到如下图所示的对象图：
 
-![principle3](.\appendix\principle3.png)
+![principle3](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/principle3.png)
 
 #### **9.2.3 对象存储**
 
@@ -1418,7 +1418,7 @@ $ git log --pretty=oneline test
 
 现在，你的 Git 数据库应该看起来像如下图所示：
 
-![principle4](.\appendix\principle4.png)
+![principle4](https://github.com/hzxrosydawn/studynotes/blob/master/Others/appendix/principle4.png)
 
 每当你执行 `git branch (分支名称)` 这样的命令，Git 基本上就是执行 `update-ref` 命令，把你现在所在分支中最后一次提交的 SHA-1 值，添加到你要创建的分支的引用。
 
