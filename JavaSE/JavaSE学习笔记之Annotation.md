@@ -1,4 +1,4 @@
-##**Annotation简介**
+## **Annotation简介**
 从JDK1.5开始，Java增加了对元数据（Metadata）的支持，也就是Annotation（注释），这种Annotation与其他的注释有一定的区别，也有一定的联系。Annotation其实就是代码里的特殊标记，这些标记可以在编译、类加载、运行时被读取，并执行相应的处理。
 
 通过使用Annotation注释，程序员可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充的信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或进行部署。
@@ -16,7 +16,7 @@ public interface Annotation{
 	   String toString(); 
 }
 ```
-##**系统内建的Annotation**
+## **系统内建的Annotation**
 Annotation必须使用工具来处理，工具负责提取Annotation里包含的元数据，工具还会根据这些元数据增加额外的功能。我们先看一下Java提供的5个基本Annotation的用法 --- 使用Annotation时要在其前面增加@符号，并把该Annotation当成一个修饰符使用，用于修饰它支持的程序元素。
 
 - @Override: 覆写的Annotation；
@@ -26,13 +26,15 @@ Annotation必须使用工具来处理，工具负责提取Annotation里包含的
 - @FunctionanlInterface：函数式接口，Java8新增的。
 
 以上的Annotation都是java.lang.annotation.Annotation接口的子类。在Java中都有各自的定义：
-| Annotation        | Java中的声明                                 |
-| ----------------- | ---------------------------------------- |
-| @Override         | @Target(value=Method)<br>@Retention(value=SOURCE)<br>public @interface Override |
-| @Deprecated       | @Documented<br>@Retention(value=RUNTIME)<br>public @interface Deprecated |
-| @SuppressWarnings | @Target(value={TYPE,FIELD,METHOD,PARAMETER,CONSTRUCTOR,LOCAL_VARIABLE<br>@Retention(value=SOURCE)<br>public @interface SuppressWarnings |
+| Annotation            | Java中的声明                                 |
+| --------------------- | ---------------------------------------- |
+| @Override             | @Target(value=Method)<br>@Retention(value=SOURCE)<br>public @interface Override |
+| @Deprecated           | @Documented<br>@Retention(value=RUNTIME)<br>public @interface Deprecated |
+| @SuppressWarnings     | @Target(value={TYPE,FIELD,METHOD,PARAMETER,CONSTRUCTOR,LOCAL_VARIABLE<br>@Retention(value=SOURCE)<br>public @interface SuppressWarnings |
+| @SafeVarargs          | @Documented<br>@Target(value={CONSTRUCTOR,METHOD})<br>@Retention(value=RUNTIME)<br>public @interface SafeVarargs |
+| @FunctionanlInterface | @Documented<br>@Target(value=TYPE)<br>@Retention(value=RUNTIME)<br>public @interface FunctionalInterface |
 
-###**@Override 限定重写父类方法**
+### **@Override 限定重写父类方法**
 @Override就是用来指定方法覆载的，它可以**强制一个子类必须覆盖父类的方法**。主要在方法覆写时使用，用于保证方法覆写的正确性。
 
 范例：观察@Override注释的作用
@@ -93,7 +95,7 @@ OverrideAnnotationDemo02.java:8: error: method does not override or implement a 
 编译错误
 ```
 @Override的使用限制：@Override在使用时**只能在方法上应用**；而其他元素，如类、属性等是不能使用此Annotation的。
-###**@Deprecated 标示已过时**
+### **@Deprecated 标示已过时**
 @Deprecated注释用于表示某个程序元素（类、方法等）已过时，当其他程序使用已过时的类、方法时，编译器将会给出警告。
 
 @Deprecated注释的主要功能是用来声明一个不建议使用的方法。如果在程序中使用了此方法，则在编译时将会出现警告信息。
@@ -114,7 +116,7 @@ public class DeprecatedAnnotationDemo01{
 }  
 ```
 以上的Demo类中的getInfo()方法上使用了@Deprecated注释声明，表示此方法不建议用户继续使用，所以在编译时将会出现一下的警告信息：
-```java
+```shell
 Note: DeprecatedAnnotationDemo01.java uses or overrides a deprecated API.  
 Note: Recompile with -Xlint:deprecation for details.  
 ```
@@ -137,7 +139,7 @@ public class DeprecatedAnnotationDemo02{
 }  
 ```
 编译时出现警告：
-```java
+```shell
 Note: DeprecatedAnnotationDemo02.java uses or overrides a deprecated API.  
 Note: Recompile with -Xlint:deprecation for details.  
 ```
@@ -145,7 +147,7 @@ Thread类中的@Deprecated声明，在Thread类中有3个方法是使用了@Depr
 
 @Deprecated的作用与文档注释中的@deprecated标记的作用基本相同，但它们的用法不同，前者是JDK1.5才支持的注解，无须放在文档注释语法（/**...**/）中，而是直接用于修饰程序中的程序单元，如方法、类、接口等等。
 
-###**@SuppressWarnings 抑制编译器警告**
+### **@SuppressWarnings 抑制编译器警告**
 @SuppressWarnings指示被该Annotation修饰的程序元素（以及该程序元素中的所有子元素）取消显示指定的编译器警告。
 
 @SuppressWarnings会抑制作用于该程序元素的所有子元素。例如，使用@SuppressWarnings修饰某个类取消显示某个编译器警告，同时又修饰该类中的某个方法取消显示另一个编译器警告，那么该方法将会同时取消显示这两个编译器警告。
@@ -258,7 +260,7 @@ public class ErrorUtils{
     }  
 }  
 ```
-上面程序代码中Line5处发生了 “ 堆污染 ” 。由于该方法有个形参是List<String>...类型，个数是可变的形参相当于数组。但是，Java又不支持泛型数组，因此程序只能把List<String>...当成List[]处理。这就发生了 堆污染。
+上面程序代码中Line5处发生了 “ 堆污染 ” 。由于该方法有个形参是List&lt;String>...类型，个数是可变的形参相当于数组。但是，Java又不支持泛型数组，因此程序只能把List&lt;String>...当成List[]处理。这就发生了 堆污染。
 如果，不希望看到这个警告，可以使用如下3种方式来 “压制”这个警告：
 
 - 使用@SafeVarargs修饰引发该警告的方法或构造器；
@@ -267,7 +269,7 @@ public class ErrorUtils{
 
 第3种方式一般比较少用，通常选择第1种或第2种方式，尤其是使用@SafeVarargs修饰引发该警告的方法或构造器，它是Java 7专门为压制“堆污染”警告提供的。
 
-###**@FunctionalInterface与Java8的函数式接口**
+### **@FunctionalInterface与Java8的函数式接口**
 Java8规定：如果接口只有一个抽象方法（可以包含多个默认方法和多个static静态方法），那么该接口就是函数式接口。Java8的函数式接口是专为Lambda表达式准备的，而@FunctionalInterface就是用来指定某个接口必须是函数式接口的，只能用来修饰接口。
 范列：限制某个接口必须定义为函数式接口。
 ```java
@@ -285,9 +287,9 @@ pulic interface FunInterface {
 
 在上面的代码中可能看不出@FunctionInterface发挥的作用，它只是告诉编译器检查它修饰的接口必须是一个函数式接口。如果在增加一个抽象方法，就会在编译时出现所修饰的接口不是函数式接口的出错提示。
 
-##**JDK的元Annotation**
+## **JDK的元Annotation**
 JDK除了在java.lang下提供5个基本的Annotation之外，还在java.lang.annotation包下提供了6个Meta Annotation（元Annotation），其中有5个元Annotation用于修饰其他的Annotation定义。
-###**@Retention**
+### **@Retention**
 @Retention只能用于修饰一个Annotation定义，用于指定被修饰的Annotation可以保留多长时间（保存范围）。@Retention包含一个RetentionPolicy类型的value成员变量，所以使用@Retention时必须为该value成员变量指定值。
 ```java
 //@Retention的定义：  
@@ -300,9 +302,9 @@ public @interface Retention{
 ```
 Retention定义中的RetentionPolicy变量用于指定Annotation的保存范围。 其包含一下3个范围：
 
-- RetentionPolicy.CLASS: 编译器将把Annotation记录在class文件中。当运行Java程序时，JVM不再保留Annotation。**此Annotation类型将保留在程序源文件（*.java）和编译之后的类文件（*.class）中。在使用此类时，这些Annotation信息不会被加载到虚拟机（JVM）中。如果一个Annotation声明时没有指定范围，则默认是此范围**；
-- RetentionPolicy.RUNTIME: 编译器将把Annotation记录在class文件中。当运行Java程序时，JVM也会保留Annotation，程序可以通过反射获取该Annotation信息。此Annotation类型的信息保留在源文件（.java）、类文件（*.class）中，在执行时也会加载到JVM中；
-- RetentionPolicy.SOURCE:  Annotation只保留在源代码中，编译器直接丢弃这种Annotation。  此Annotation类型的信息只会保留在程序源文件（.java）中，编译之后不会保存在编译好的类文件（*.class）中。
+- RetentionPolicy.CLASS: 编译器将把Annotation记录在class文件中。当运行Java程序时，JVM不再保留Annotation。**此Annotation类型将保留在程序源文件（\*.java）和编译之后的类文件（\*.class）中。在使用此类时，这些Annotation信息不会被加载到虚拟机（JVM）中。如果一个Annotation声明时没有指定范围，则默认是此范围**；
+- RetentionPolicy.RUNTIME: 编译器将把Annotation记录在class文件中。当运行Java程序时，JVM也会保留Annotation，程序可以通过反射获取该Annotation信息。此Annotation类型的信息保留在源文件（\*.java）、类文件（\*.class）中，在执行时也会加载到JVM中；
+- RetentionPolicy.SOURCE:  Annotation只保留在源代码中，编译器直接丢弃这种Annotation。此Annotation类型的信息只会保留在程序源文件（\*.java）中，编译之后不会保存在编译好的类文件（\*.class）中。
 ```java
 @Rentention(RententionPolicy.SOURCE)
 public @interface Testable{}
@@ -327,7 +329,7 @@ public @interface MyDefaultRetentionAnnotation{
 ```
 上面定义的Annotation在程序运行时起作用，这是一种比较常见的使用方式，而如果此时将其设置成其他范围，则以后在Annotation的应用中肯定是无法访问到的。
 要想让一个Annotation起作用，必须结合Java中的反射机制。 
-###**@Target**
+### **@Target**
 @Target元Annotation也只能修饰一个Annotation定义，它也包含一个名为value的成员变量，用于被修饰的Annotation能用于修饰哪些程序单元。该成员变量的值只能是以下几个：
 
 - ElementType.ANNOTATION_TYPE：指定该策略的Annotation只能修饰Annotation；
@@ -340,7 +342,7 @@ public @interface MyDefaultRetentionAnnotation{
 - ElementType.TYPE：指定该策略的Annotation能修饰类、接口（包括注解）或枚举定义。
 
 与@Retention类似的是，@Target也可以在括号里直接指定value值，无须使用name=value形式。
-###**@Documented**
+### **@Documented**
 @Documented用于指定被该元Annotation修饰的Annotation类将被javadoc工具提取成文档，所有使用该Annotation修饰的程序元素API文档将会包含该Annotation说明。
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -361,7 +363,7 @@ public class MyTest {
 }
 ```
 使用javadoc工具为上面两份java文件生成API文档后将包含@Testable的信息。
-###**@Inherited**
+### **@Inherited**
 @Inherited元Annotation指定被它修饰的Annotation将具有继承性，被它修饰的Annotation修饰的类的子类将自动具有继承性。
 ```java
 @Target(ElementType.TYPE)
@@ -382,9 +384,9 @@ public class InheritbaleTest extends Base {
 	}
 }
 ```
-上面代码将输出ture。、
-##**使用自定义Annotation**
-###**自定义Annotation**
+上面代码将输出ture。
+## **使用自定义Annotation**
+### **自定义Annotation**
  使用@interface关键字来定义新的Annotation，如： 
 ```java
  public @interface Test {
@@ -437,7 +439,7 @@ public class Test {
 - 标记Annotation：不包含成员变量的Annotation称为标记。通过其自身的存在来提供信息；
 - 元数据Annotation：包含成员变量的Annotation因为可以接收更多的元数据，所以称为元数据Annotation。
 
-###**提取Annotation信息**
+### **提取Annotation信息**
 
 Annotation接口是所有注解类的父接口。JDK5在java.lang.reflect包下新增了AnnotatedElement接口，该接口代表程序中可以接受注解的程序元素，该接口有以下子类：
 
@@ -447,16 +449,15 @@ Annotation接口是所有注解类的父接口。JDK5在java.lang.reflect包下�
 - Method：类的方法定义；
 - Package：类的包定义。
 
-这些类主要是用于反射的工具类。只有在定义Annotation时使用了@Retention(RetentionPolicy.RUNTIME)修饰，该Annotation才会在运行时可见，JVM才会在装载*.class文件时才能读取保存在\*.class文件中的Annotation，才能通过java.lang.reflect包下反射API获取某个类的AnnotatedElement对象之后，获取该程序元素对象的Annotation信息。
-
+这些类主要是用于反射的工具类。只有在定义Annotation时使用了@Retention(RetentionPolicy.RUNTIME)修饰，该Annotation才会在运行时可见，JVM才会在装载\*.class文件时才能读取保存在\*.class文件中的Annotation，才能通过java.lang.reflect包下反射API获取某个类的AnnotatedElement对象之后，获取该程序元素对象的Annotation信息。
 
 - &lt;T extends Annotation> T	getAnnotation(Class&lt;T> annotationClass)：返回该程序元素上指定类型的注解，如果不存在则返回null；
-    - default &lt;T extends Annotation> TgetDeclaredAnnotation(Class&lt;T> annotationClass)：Java8新增的，用于获取直接修饰该程序元素、指定类型的Annotation，如果不存在则返回null；
-    - Annotation[] getAnnotations()：返回该程序元素的所有注解；
-    - Annotation[] getDeclaredAnnotations()：返回直接修饰该程序元素、指定类型的Annotation；
-    - default booleanisAnnotationPresent(Class&lt;? extends Annotation> annotationClass)：返回该程序元素上是否存在指定类型的注解；
-    - default &lt;T extends Annotation> T[]getAnnotationsByType(Class&lt;T> annotationClass)：该方法与前面的getAnnotation()方法类似。由于Java8新增了重复注解，此方法用于返回修饰该程序元素、指定类型的多个Annotation；
-    - default &lt;T extends Annotation>T[]getDeclaredAnnotationsByType(Class&lt;T> annotationClass)：该方法与前面的getDeclaredAnnotation()方法类似。由于Java8新增了重复注解，此方法用于返回直接修饰该程序元素、指定类型的多个Annotation。
+- default &lt;T extends Annotation> TgetDeclaredAnnotation(Class&lt;T> annotationClass)：Java8新增的，用于获取直接修饰该程序元素、指定类型的Annotation，如果不存在则返回null；
+- Annotation[] getAnnotations()：返回该程序元素的所有注解；
+- Annotation[] getDeclaredAnnotations()：返回直接修饰该程序元素、指定类型的Annotation；
+- default booleanisAnnotationPresent(Class&lt;? extends Annotation> annotationClass)：返回该程序元素上是否存在指定类型的注解；
+- default<T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass)：该方法与前面的getAnnotation()方法类似。由于Java8新增了重复注解，此方法用于返回修饰该程序元素、指定类型的多个Annotation；
+- default&lt;T extends Annotation>T[] getDeclaredAnnotationsByType(Class&lt;T> annotationClass)：该方法与前面的getDeclaredAnnotation()方法类似。由于Java8新增了重复注解，此方法用于返回直接修饰该程序元素、指定类型的多个Annotation。
 
 获取Test类的info方法里的所有注解：
 ```java
@@ -482,7 +483,7 @@ for (Annotation tag : aArray) {
 	}
 }
 ```
-###**使用Annotation示例**
+### **使用Annotation示例**
  下面的@Testable注解接口用于标记哪些方法是可测试的：
 ```java
 // 使用JDK的元数据Annotation：Retention
@@ -534,8 +535,9 @@ public @interface Testable
 	{
 	}
 }
-​```下面的注解工具类分析目标类，如果目标类中的方法使用了@Testable注解修饰，则通过反射来运行该测试方法：
-​```java
+```
+下面的注解工具类分析目标类，如果目标类中的方法使用了@Testable注解修饰，则通过反射来运行该测试方法：
+```java
 public class ProcessorTest
 {
 	public static void process(String clazz)
@@ -646,7 +648,7 @@ class CancelListener implements ActionListener
 ```java
 public class ActionListenerInstaller
 {
-	// 处理Annotation的方法，其中obj是包含Annotation的对象
+	// 处理Annotation的方法，其中obj是使用Annotation修饰的对象
 	public static void processAnnotations(Object obj)
 	{
 		try
@@ -683,7 +685,7 @@ public class ActionListenerInstaller
 	}
 }
 ```
-###**Java8新增的重复注解**
+### **Java8新增的重复注解**
 在Java8以前，对同一个元素使用多个相同类型的注解需要使用Annotation“容器”：
 ```java
 @Results({@Retention(name="failure", location=""failed.jsp), 
@@ -753,7 +755,7 @@ public class FkTagTest
 } 
 ```
 上面程序依然可以获得FkTags注解可以看出重复注解只是老语法的简化，重复注解依然会被当成是“容器”注解的value成员变量的数组元素。
-##**编译时处理Annotation**
+## **编译时处理Annotation**
 APT(Annotation Processing Tool )作为一种注解处理工具，用于检测源代码文件。并对查找到的源码中Annotation信息进行处理。处理过程中可以生产额外的源文件和其他文件（取决于程序编码），APT还可以编译它自己生成的源文件和原来的源文件，将他们一起生成.class文件。由此可见，APT简化了开发者的工作量。
 
 Java的javac.exe命令有一个processor选项，该选项可以指定一个Annotation处理器，指定的处理器将在编译时提取并处理源文件中的Annotation信息。
