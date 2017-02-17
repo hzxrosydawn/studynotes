@@ -1,6 +1,6 @@
-[Platform Versions](http://developer.android.com/about/dashboards/index.html)的控制面板会定时更新，通过统计访问Google Play Store的设备数量，来显示运行每个版本的不同尺寸密度安卓设备的分布。
-
 ### **支持多种屏幕**
+
+[Platform Versions](http://developer.android.com/about/dashboards/index.html)的控制面板会定时更新，通过统计访问Google Play Store的设备数量，来显示运行每个版本的不同尺寸密度安卓设备的分布。
 
 虽然从 Android 1.6（API 级别 4）开始，Android系统为使应用适用于不同的屏幕，会进行缩放和大小调整，但仍应针对不同的屏幕尺寸和密度优化应用，这样可以最大程度优化所有设备上的用户体验。
 

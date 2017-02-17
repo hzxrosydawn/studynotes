@@ -583,7 +583,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 一个 Activity 甚至可以启动设备上其他应用中存在的 Activity。例如，如果应用想要发送电子邮件，则可定义一个 Intent 来执行“发送”操作并加入一些数据，如电子邮件地址和电子邮件。 然后，系统将打开其他应用中声明自己可以处理此类 Intent 的 Activity。在这个例子中，Intent 是要发送电子邮件，因此将启动电子邮件应用的“撰写”Activity（如果多个 Activity 支持相同 Intent，则系统会让用户选择要使用哪一个 Activity）。发送电子邮件时，电子邮件 Activity 将恢复（resume），就好像该 Activity 是您的应用的一部分。 即使这两个 Activity 可能来自不同的应用，但是 Android 仍会将 Activity 保留在相同的任务中，以维护这种无缝的用户体验。
 
-**任务**（task）是指在执行特定作业时与用户交互的一系列 Activity。 这些 Activity 按照各自的打开顺序排列在堆栈（即**返回栈**）中。
+**任务**（task）是指在执行特定作业时与用户交互的一系列Activity。 这些Activity按照各自的打开顺序排列在堆栈（即**返回栈**）中。
 
 设备主屏幕是大多数任务的起点。当用户触摸应用启动器中的图标（或主屏幕上的快捷方式）时，该应用的任务将出现在前台。 如果应用不存在任务（应用最近未曾使用），则会创建一个新任务，并且该应用的“主”Activity 将作为堆栈中的根 Activity 打开。
 
@@ -619,17 +619,11 @@ Activity 和任务的默认行为总结如下：
 
 即使来自其他任务，Activity 也可以多次实例化。
 
-#### **保存 Activity 状态**
-
-正如上文所述，当 Activity 停止时，系统的默认行为会保留其状态。 这样一来，当用户导航回到上一个 Activity 时，其用户界面与用户离开时一样。 但是，在 Activity 被销毁且必须重建时，您可以而且**应当**主动使用回调方法保留 Activity 的状态。
-
-系统停止您的一个 Activity 时（例如，新 Activity 启动或任务转到前台），如果系统需要回收系统内存资源，则可能会完全销毁该 Activity。 发生这种情况时，有关该 Activity 状态的信息将会丢失。如果发生这种情况，系统仍会知道该 Activity 存在于返回栈中，但是当该 Activity 被置于堆栈顶部时，系统一定会重建 Activity（而不是恢复 Activity）。 为了避免用户的工作丢失，您应主动通过在 Activity 中实现[onSaveInstanceState()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onSaveInstanceState(android.os.Bundle))回调方法来保留工作。
-
 #### 管理任务
 
-Android 管理任务和返回栈的方式（如上所述，即：将所有连续启动的 Activity 放入同一任务和“后进先出”堆栈中）非常适用于大多数应用，而您不必担心 Activity 如何与任务关联或者如何存在于返回栈中。 但是，您可能会决定要中断正常行为。 也许您希望应用中的 Activity 在启动时开始新任务（而不是放置在当前任务中）；或者，当启动 Activity 时，您希望将其现有实例上移一层（而不是在返回栈的顶部创建新实例）；或者，您希望在用户离开任务时，清除返回栈中除根 Activity 以外的所有其他 Activity。
+Android管理任务和返回栈的方式（如上所述，即：将所有连续启动的Activity放入同一任务和“后进先出”堆栈中）非常适用于大多数应用，而您不必担心Activity如何与任务关联或者如何存在于返回栈中。 但是，您可能会决定要中断正常行为。 也许您希望应用中的Activity在启动时开始新任务（而不是放置在当前任务中）；或者，当启动Activity时，您希望将其现有实例上移一层（而不是在返回栈的顶部创建新实例）；或者，您希望在用户离开任务时，清除返回栈中除根Activity以外的所有其他Activity。
 
-通过使用清单文件元素中的属性和传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的 Intent 中的标志，您可以执行所有这些操作以及其他操作。
+通过使用清单文件元素中的属性和传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))Intent中的标志，您可以执行所有这些操作以及其他操作。
 
 在这一方面，您可以使用的主要属性包括：
 
@@ -661,147 +655,313 @@ Android 管理任务和返回栈的方式（如上所述，即：将所有连续
 
 启动模式允许您定义 Activity 的新实例如何与当前任务关联。 您可以通过两种方法定义不同的启动模式：
 
-- [使用清单文件](https://developer.android.com/guide/components/tasks-and-back-stack.html?hl=zh-cn#ManifestForTasks)
-
-在清单文件中声明 Activity 时，您可以指定 Activity 在启动时应该如何与任务关联。
-
-- [使用 Intent 标志](https://developer.android.com/guide/components/tasks-and-back-stack.html?hl=zh-cn#IntentFlagsForTasks)
-
-调用[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))时，可以在[Intent](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn)中加入一个标志，用于声明新 Activity 如何（或是否）与当前任务关联。
-
-因此，如果 Activity A 启动 Activity B，则 Activity B 可以在其清单文件中定义它应该如何与当前任务关联（如果可能），并且 Activity A 还可以请求 Activity B 应该如何与当前任务关联。如果这两个 Activity 均定义 Activity B 应该如何与任务关联，则 Activity A 的请求（如 Intent 中所定义）优先级要高于 Activity B 
-
-的请求（如其清单文件中所定义）。
-
-**注**：某些适用于清单文件的启动模式不可用作 Intent 标志，同样，某些可用作 Intent 标志的启动模式无法在清单文件中定义。
-
-使用清单文件
+##### 使用清单文件
 
 在清单文件中声明 Activity 时，您可以使用元素的[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性指定 Activity 应该如何与任务关联。
 
 [launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性指定有关应如何将 Activity 启动到任务中的指令。您可以分配给[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性的启动模式共有四种：
 
-"standard"（默认模式）
+###### **"standard"**
 
-默认。系统在启动 Activity 的任务中创建 Activity 的新实例并向其传送 Intent。Activity 可以多次实例化，而每个实例均可属于不同的任务，并且一个任务可以拥有多个实例。
+**标准模式** ：这是Activity启动的默认模式。系统在启动一个目标Activity时，不管当前栈中是否已存在该Activity的实例，总是为目标Activity创建一个新实例并将其推入栈中。该模式下的一个Activity类可以多次实例化，而每个实例均可属于不同的任务，并且一个任务可以拥有多个实例。
 
-"singleTop"
+例如， 如果栈中的Activity实例的顺序从下往上依次是A、B、C、D 类的实例，此时在D类实例中通过Intent跳转到A类实例，那么栈中从下往上的顺序依次是A、B、C、D 类的实例，点击返回键后，接下来显示的顺序是 D、C、B、A，依次摧毁。
 
-如果当前任务的顶部已存在 Activity 的一个实例，则系统会通过调用该实例的[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))方法向其传送 Intent，而不是创建 Activity 的新实例。Activity 可以多次实例化，而每个实例均可属于不同的任务，并且一个任务可以拥有多个实例（但前提是位于返回栈顶部的 Activity 并不是 Activity 的现有实例）。**
+###### **"singleTop"**
 
-例如，假设任务的返回栈包含根 Activity A 以及 Activity B、C 和位于顶部的 D（堆栈是 A-B-C-D；D 位于顶部）。收到针对 D 类 Activity 的 Intent。如果 D 具有默认的"standard"启动模式，则会启动该类的新实例，且堆栈会变成 A-B-C-D-D。但是，如果 D 的启动模式是"singleTop"，则 D 的现有实例会通过[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))接收 Intent，因为它位于堆栈的顶部；而堆栈仍为 A-B-C-D。但是，如果收到针对 B 类 Activity 的 Intent，则会向堆栈添加 B 的新实例，即便其启动模式为"singleTop"也是如此。
+**栈顶复用模式** ：如果将要启动的目标Activity在当前任务的顶部已存在一个实例，则系统不会为目标Activity创建新的新实例，而是复用当前顶部的实例（通过调用该实例的[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))方法向其传送 Intent）。如果当前任务的顶部不存在将要启动的目标Activity的实例，则该模式的处理方式同standard模式，即为目标Activity创建一个实例并将其推入栈中。该模式下的一个Activity类可以多次实例化，而每个实例均可属于不同的任务，并且一个任务可以拥有多个实例（但前提是位于返回栈顶部的Activity并不是Activity的现有实例）。
 
-**注**：为某个 Activity 创建新实例时，用户可以按*“返回”*按钮返回到前一个 Activity。 但是，当 Activity 的现有实例处理新 Intent 时，则在新 Intent 到达[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))之前，用户无法按*“返回”*按钮返回到 Activity 的状态。
+例如， 如果栈中的Activity实例的顺序从下往上依次是A、B、C、D类的实例 ，此时系统接收到一个启动D类Activity的Intent，如果D类Activity的启动模式是"singleTop"，由于其实例位于堆栈的顶部，那么栈中从下往上的顺序依旧是A、B、C、D 类的实例。如果此时收到一个启动B类Activity的Intent，则会向堆栈添加一个新的B类Activity实例，即便B类Activity的启动模式"singleTop"也是如此。应用实例：三条推送，点进去都是一个Activity。
 
-"singleTask"
+**注**：为某个Activity创建新实例时，用户可以按返回键返回到前一个Activity。 但是，当Activity的现有实例处理新Intent时，则在新Intent到达[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))之前，用户无法通过按返回键返回到前一个Activity的状态。
 
-系统创建新任务并实例化位于新任务底部的 Activity。但是，如果该 Activity 的一个实例已存在于一个单独的任务中，则系统会通过调用现有实例的[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))方法向其传送 Intent，而不是创建新实例。一次只能存在 Activity 的一个实例。
+###### **"singleTask"**
 
-**注**：尽管 Activity 在新任务中启动，但是用户按*“返回”*按钮仍会返回到前一个 Activity。
+**栈内复用模式** ：在该模式下，某Activity类的实例在堆栈中只能有一个。分为以下三种情况：
 
-"singleInstance".
+- 如果将要启动的目标Activity不存在，则创建一个目标Activity的实例并将其推入栈中；
+- 如果将要启动的目标Activity的实例已存在于某堆栈的顶部，则系统会直接复用该实例（通过调用现有实例的[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))方法向其传送Intent），而不是创建新实例。这种情况与singleTop相同。一次只能存在目标Activity的一个实例；
+- 如果将要启动的目标Activity的实例已存在，但没有位于堆栈顶部，系统就将该实例上面的所有其他Activity实例弹出，从而使目标Activity实例转入栈顶。
 
-与"singleTask"相同，只是系统不会将任何其他 Activity 启动到包含实例的任务中。该 Activity 始终是其任务唯一仅有的成员；由此 Activity 启动的任何 Activity 均在单独的任务中打开。
+该模式通常应用于首页，首页肯定得在栈底部，也只能在栈底部。
 
-我们再来看另一示例，Android 浏览器应用声明网络浏览器 Activity 应始终在其自己的任务中打开（通过在元素中指定singleTask启动模式）。这意味着，如果您的应用发出打开 Android 浏览器的 Intent，则其 Activity 与您的应用位于*不同*的任务中。相反，系统会为浏览器启动新任务，或者如果浏览器已有任务正在后台运行，则会将该任务上移一层以处理新 Intent。
+**注**：尽管Activity在新任务中启动，但是用户按返回键仍会返回到前一个Activity。
 
-无论 Activity 是在新任务中启动，还是在与启动 Activity 相同的任务中启动，用户按*“返回”*按钮始终会转到前一个 Activity。 但是，如果启动指定singleTask启动模式的 Activity，则当某后台任务中存在该 Activity 的实例时，整个任务都会转移到前台。此时，返回栈包括上移到堆栈顶部的任务中的所有 Activity。 图 4 显示了这种情况。
+###### **"singleInstance"**
 
-**图 4.**显示如何将启动模式为“singleTask”的 Activity 添加到返回栈。 如果 Activity 已经是某个拥有自己的返回栈的后台任务的一部分，则整个返回栈也会上移到当前任务的顶部。
+**单实例模式** ：与"singleTask"相同，只是系统不会将其他要启动Activity的实例到包含到当前Activity实例的堆栈顶部中，即当前Activity始终是其Task栈中唯一仅有的成员；由此Activity启动的任何Activity均在单独的任务中打开。
 
-如需了解有关在清单文件中使用启动模式的详细信息，请参阅元素文档，其中更详细地讨论了launchMode属性和可接受的值。
+例如，堆栈1中的Activity实例顺序从下往上依次是A、B、C类的实例，C类实例中通过Intent跳转到了一个D类实例（D类的启动模式为singleInstance），那么则会新建一个堆栈2，栈1中结构依旧为A、B、C列的实例，堆栈2中仅有一个D类实例，此时屏幕中显示D类实例，之后在D类实例中通过Intent跳转到一个D类实例，则堆栈2中不会推入新的D类实例，所以2个栈中的情况没发生改变。如果从当前D类实例跳转到了一个C类实例，那么就会根据C类对应的启动模式在堆栈1中进行对应的操作：C类如果定义为standard模式，那么从D类实例跳转到C类实例后，堆栈1的结构为A、B、C、C，此时点击返回键，还是在C类实例中，堆栈1的顺序变为A、B、C，而不会回到D类实例。
 
-**注**：使用[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性为 Activity 指定的行为可由 Intent 附带的 Activity 启动标志替代，下文将对此进行讨论。
+我们再来看另一示例，Android浏览器应用声明浏览器Activity应始终在其自己的任务中打开（通过在元素中指定singleTask启动模式）。这意味着，如果您的应用发出打开Android浏览器的Intent，则其Activity与您的应用位于不同的任务中。相反，系统会为浏览器启动新任务，或者如果浏览器已有任务正在后台运行，则会将该任务上移一层以处理新Intent。
 
-## 使用 Intent 标志
+无论将要启动的Activity是在新任务中启动，还是在与当前Activity相同的任务中启动，用户按返回键始终会转到前一个Activity。 但是，如果将要启动的Activity指定为singleTask启动模式，则当某后台任务中存在该Activity的实例时，整个任务都会转移到前台。此时，返回栈中包含了上移到堆栈顶部的任务中的所有Activity。 下图显示了这种情况。
 
-启动 Activity 时，您可以通过在传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的 Intent 中加入相应的标志，修改 Activity 与其任务的默认关联方式。可用于修改默认行为的标志包括：
+![diagram_backstack_singletask_multiactivity](C:\Users\Vincent Huang\Desktop\studynotes\Android\四大组件\appendix\diagram_backstack_singletask_multiactivity.png)
 
-[FLAG_ACTIVITY_NEW_TASK](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_NEW_TASK)
+上图显示了如何将启动模式为“singleTask”的Activity 添加到返回栈。 如果将要启动的Activity的实例已经是某个拥有自己的返回栈的后台任务的一部分，则整个返回栈也会上移到当前任务的顶部。
 
-在新任务中启动 Activity。如果已为正在启动的 Activity 运行任务，则该任务会转到前台并恢复其最后状态，同时 Activity 会在[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))中收到新 Intent。
+**注**：使用[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性为Activity指定的行为可由Intent附带的Activity 启动标志替代，下文将对此进行讨论。
 
-正如前文所述，这会产生与"singleTask"[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)值相同的行为。
+##### 使用Intent标志
 
-[FLAG_ACTIVITY_SINGLE_TOP](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_SINGLE_TOP)
+启动 Activity 时，您可以通过在传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的Intent实例中加入相应的标志，修改Activity与其任务的默认关联方式。可用于修改默认行为的标志包括：
 
-如果正在启动的 Activity 是当前 Activity（位于返回栈的顶部），则 现有实例会接收对[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))的调用，而不是创建 Activity 的新实例。
+- [FLAG_ACTIVITY_NEW_TASK](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_NEW_TASK)
+  在新任务中启动Activity。如果已为正在启动的Activity运行任务，则该任务会转到前台并恢复其最后状态，同时Activity会在[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))中收到新 Intent。一般用在Service中启动Activity的场景，因为Service中并不存在于Activity栈中。
 
-正如前文所述，这会产生与"singleTop"[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)值相同的行为。
+  正如前文所述，这会产生与"singleTask"[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)值相同的行为。
 
-[FLAG_ACTIVITY_CLEAR_TOP](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_CLEAR_TOP)
 
-如果正在启动的 Activity 已在当前任务中运行，则会销毁当前任务顶部的所有 Activity，并通过[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))将此 Intent 传递给 Activity 已恢复的实例（现在位于顶部），而不是启动该 Activity 的新实例。
+- [FLAG_ACTIVITY_SINGLE_TOP](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_SINGLE_TOP)
+  如果正在启动的Activity是当前Activity（位于返回栈的顶部），则 现有实例会接收对[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))的调用，而不是创建Activity的新实例。
 
-产生这种行为的[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性没有值。
+  正如前文所述，这会产生与"singleTop"[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)值相同的行为。
 
-FLAG_ACTIVITY_CLEAR_TOP通常与FLAG_ACTIVITY_NEW_TASK结合使用。一起使用时，通过这些标志，可以找到其他任务中的现有 Activity，并将其放入可从中响应 Intent 的位置。
 
-**注**：如果指定 Activity 的启动模式为"standard"，则该 Activity 也会从堆栈中移除，并在其位置启动一个新实例，以便处理传入的 Intent。 这是因为当启动模式为"standard"时，将始终为新 Intent 创建新实例。
+- [FLAG_ACTIVITY_CLEAR_TOP](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_CLEAR_TOP)
+  如果正在启动的Activity已在当前任务中运行，则会销毁当前任务顶部的所有Activity，并通过[onNewIntent()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#onNewIntent(android.content.Intent))将此Intent传递给Activity已恢复的实例（现在位于顶部），而不是启动该Activity的新实例。
 
-## 处理关联
+  产生这种行为的[launchMode](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode)属性没有值。
 
-*“关联”*指示 Activity 优先属于哪个任务。默认情况下，同一应用中的所有 Activity 彼此关联。 因此，默认情况下，同一应用中的所有 Activity 优先位于相同任务中。 不过，您可以修改 Activity 的默认关联。 在不同应用中定义的 Activity 可以共享关联，或者可为在同一应用中定义的 Activity 分配不同的任务关联。
 
-可以使用元素的[taskAffinity](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#aff)属性修改任何给定 Activity 的关联。
+- [Intent.FLAG_ACTIVITY_NO_HISTORY](https://developer.android.com/reference/android/content/Intent.html#FLAG_ACTIVITY_NO_HISTORY)
 
-[taskAffinity](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#aff)属性取字符串值，该值必须不同于在元素中声明的默认软件包名称，因为系统使用该名称标识应用的默认任务关联。
+  使用这种模式启动Activity，当该Activity启动其他Activity后，该Activity就消失了，不会保留在堆栈中。例如，如果栈中的Activity实例的顺序从下往上依次是A、B类的实例，在B类实例中以这种模式启动一个C类实例，该C类实例再启动一个D类实例，则当前堆栈中Activity实例的顺序从下往上依次是A、B、D。
+
+  FLAG_ACTIVITY_CLEAR_TOP通常与FLAG_ACTIVITY_NEW_TASK结合使用。一起使用时，通过这些标志，可以找到其他任务中的现有Activity，并将其放入可从中响应Intent的位置。
+
+  **注意**：如果指定Activity启动模式为"standard"，则该Activity也会从堆栈中移除，并在其位置启动一个新实例，以便处理传入的Intent。 这是因为当启动模式为"standard"时，将始终为新Intent创建新实例。
+
+如果将要启动的目标Activity通过以上两种都指定了其启动方式，那么将**优先使用Intent标志定义的启动模式**。
+
+**注：某些适用于清单文件的启动模式不可用作Intent标志，同样，某些可用作Intent标志的启动模式无法在清单文件中定义**。
+
+#### 处理关联
+
+**关联（**affinity**）**指示Activity优先属于哪个任务。默认情况下，同一应用中的所有Activity彼此关联。 因此，默认情况下，同一应用中的所有Activity优先位于相同任务中。 不过，您可以修改Activity的默认关联。 在不同应用中定义的Activity可以共享关联，或者可为在同一应用中定义的Activity分配不同的任务关联。
+
+可以使用元素的[taskAffinity](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#aff)属性修改任何给定Activity的关联。
+
+[taskAffinity](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#aff)属性值为某个包名的字符串，该属性值必须不同于在元素中声明的默认软件包名称，因为**系统使用该名称标识应用的默认任务关联**。
 
 在两种情况下，关联会起作用：
 
-启动 Activity 的 Intent 包含[FLAG_ACTIVITY_NEW_TASK](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_NEW_TASK)标志。
+- 启动Activity的Intent包含[FLAG_ACTIVITY_NEW_TASK](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_NEW_TASK)标志。
 
-默认情况下，新 Activity 会启动到调用[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的 Activity 任务中。它将推入与调用方相同的返回栈。 但是，如果传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的 Intent 包含[FLAG_ACTIVITY_NEW_TASK](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_NEW_TASK)标志，则系统会寻找其他任务来储存新 Activity。这通常是新任务，但未做强制要求。 如果现有任务与新 Activity 具有相同关联，则会将 Activity 启动到该任务中。 否则，将开始新任务。
+  默认情况下，将要启动的Activity会启动到调用[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的Activity所在的任务中。它将推入与调用方相同的返回栈。 但是，如果传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的Intent包含[FLAG_ACTIVITY_NEW_TASK](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#FLAG_ACTIVITY_NEW_TASK)标志，则系统会寻找其他任务来储存新Activity。这通常是新任务，但未做强制要求。如果现有任务与新Activity具有相同关联，则会将Activity启动到该任务中。否则，将开始新任务。
 
-如果此标志导致 Activity 开始新任务，且用户按*“主页”*按钮离开，则必须为用户提供导航回任务的方式。 有些实体（如通知管理器）始终在外部任务中启动 Activity，而从不作为其自身的一部分启动 Activity，因此它们始终将FLAG_ACTIVITY_NEW_TASK放入传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的 Intent 中。请注意，如果 Activity 能够由可以使用此标志的外部实体调用，则用户可以通过独立方式返回到启动的任务，例如，使用启动器图标（任务的根 Activity 具有[CATEGORY_LAUNCHER](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#CATEGORY_LAUNCHER)Intent 过滤器；请参阅下面的[启动任务](https://developer.android.com/guide/components/tasks-and-back-stack.html?hl=zh-cn#Starting)部分）。
+  如果此标志导致Activity开始新任务，且用户按Home键离开，则必须为用户提供回到该任务的导航方式。 有些实体（如通知管理器）始终在外部任务中启动Activity，而从不作为其自身的一部分启动Activity，因此它们始终将FLAG_ACTIVITY_NEW_TASK放入传递给[startActivity()](https://developer.android.com/reference/android/app/Activity.html?hl=zh-cn#startActivity(android.content.Intent))的Intent中。请注意，如果一个Activity能够由可以使用此标志的外部实体调用，则用户可以通过独立方式返回到启动的任务，例如，使用启动器图标。
 
-Activity 将其[allowTaskReparenting](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#reparent)属性设置为"true"。
+- Activity将其[allowTaskReparenting](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#reparent)属性设置为"true"。
 
-在这种情况下，Activity 可以从其启动的任务移动到与其具有关联的任务（如果该任务出现在前台）。
+  在这种情况下，Activity可以从其启动的任务移动到与其具有关联的任务（如果该任务出现在前台）。
 
-例如，假设将报告所选城市天气状况的 Activity 定义为旅行应用的一部分。 它与同一应用中的其他 Activity 具有相同的关联（默认应用关联），并允许利用此属性重定父级。当您的一个 Activity 启动天气预报 Activity 时，它最初所属的任务与您的 Activity 相同。 但是，当旅行应用的任务出现在前台时，系统会将天气预报 Activity 重新分配给该任务并显示在其中。
+  例如，假设将报告所选城市天气状况的Activity定义为旅行应用的一部分。 它与同一应用中的其他Activity具有相同的关联（默认应用关联），并允许利用此属性重定父级。当您的一个Activity启动天气预报Activity时，它最初所属的任务与您的Activity相同。 但是，当旅行应用的任务出现在前台时，系统会将天气预报Activity重新分配给该任务并显示在其中。
 
-**提示**：如果从用户的角度来看，一个.apk文件包含多个“应用”，则您可能需要使用[taskAffinity](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#aff)属性将不同关联分配给与每个“应用”相关的 Activity。
+  **提示**：如果从用户的角度来看，一个.apk文件包含多个“应用”，则您可能需要使用[taskAffinity](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#aff)属性将不同关联分配给与每个“应用”相关的Activity。
 
-## 清理返回栈
+#### 清理返回栈
 
-如果用户长时间离开任务，则系统会清除所有 Activity 的任务，根 Activity 除外。 当用户再次返回到任务时，仅恢复根 Activity。系统这样做的原因是，经过很长一段时间后，用户可能已经放弃之前执行的操作，返回到任务是要开始执行新的操作。
+如果用户长时间离开任务，则系统会清除所有Activity的任务，根Activity除外。 当用户再次返回到任务时，仅恢复Activity。系统这样做的原因是，经过很长一段时间后，用户可能已经放弃之前执行的操作，返回到任务是要开始执行新的操作。
 
-您可以使用下列几个 Activity 属性修改此行为：
+您可以使用下列几个Activity属性修改此行为：
 
 [alwaysRetainTaskState](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#always)
 
-如果在任务的根 Activity 中将此属性设置为"true"，则不会发生刚才所述的默认行为。即使在很长一段时间后，任务仍将所有 Activity 保留在其堆栈中。
+如果在任务的根Activity中将此属性设置为"true"，则不会发生刚才所述的默认行为。即使在很长一段时间后，任务仍将所有Activity保留在其堆栈中。其堆栈将不接受任何清理命令，一直保持当前堆栈状态，相当于给了其所在任务一道”免死金牌”。
 
 [clearTaskOnLaunch](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#clear)
 
-如果在任务的根 Activity 中将此属性设置为"true"，则每当用户离开任务然后返回时，系统都会将堆栈清除到只剩下根 Activity。 换而言之，它与[alwaysRetainTaskState](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#always)正好相反。 即使只离开任务片刻时间，用户也始终会返回到任务的初始状态。
+如果在任务的根Activity中将此属性设置为"true"，则每当用户离开任务然后返回时，系统都会将堆栈清除到只剩下根Activity。 换而言之，它与[alwaysRetainTaskState](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#always)正好相反。 即使只离开任务片刻时间，用户也始终会返回到任务的初始状态。
 
 [finishOnTaskLaunch](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#finish)
 
-此属性类似于[clearTaskOnLaunch](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#clear)，但它对单个 Activity 起作用，而非整个任务。 此外，它还有可能会导致任何 Activity 停止，包括根 Activity。 设置为"true"时，Activity 仍是任务的一部分，但是仅限于当前会话。如果用户离开然后返回任务，则任务将不复存在。
+此属性类似于[clearTaskOnLaunch](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#clear)，但它对单个Activity起作用，而非整个任务。 此外，它还有可能会导致任何Activity停止，包括根Activity。 设置为"true"时，Activity仍是任务的一部分，但是仅限于当前会话。如果用户离开然后返回任务，则任务将不复存在。
 
-启动任务
+#### 启动任务
 
-通过为 Activity 提供一个以"android.intent.action.MAIN"为指定操作、以"android.intent.category.LAUNCHER"为指定类别的 Intent 过滤器，您可以将 Activity 设置为任务的入口点。 例如：
+通过为Activity提供一个以android.intent.action.MAIN为指定操作（action）、以android.intent.category.LAUNCHER为指定类别（category）的 Intent 过滤器，您可以将Activity设置为任务的入口点。 例如：
 
-...
+```xml
+<activity ... >
+    <intent-filter ... >
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+    ...
+</activity>
+```
 
-此类 Intent 过滤器会使 Activity 的图标和标签显示在应用启动器中，让用户能够启动 Activity 并在启动之后随时返回到创建的任务中。
+此类Intent过滤器会使Activity的图标和标签显示在应用启动器中，让用户能够启动Activity并在启动之后随时返回到创建的任务中。
 
-第二个功能非常重要：用户必须能够在离开任务后，再使用此 Activity 启动器返回该任务。 因此，只有在 Activity 具有[ACTION_MAIN](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#ACTION_MAIN)和[CATEGORY_LAUNCHER](https://developer.android.com/reference/android/content/Intent.html?hl=zh-cn#CATEGORY_LAUNCHER)过滤器时，才应该使用将 Activity 标记为“始终启动任务”的两种[启动模式](https://developer.android.com/guide/components/tasks-and-back-stack.html?hl=zh-cn#LaunchModes)，即"singleTask"和"singleInstance"。例如，我们可以想像一下如果缺少过滤器会发生什么情况： Intent 启动一个"singleTask"Activity，从而启动一个新任务，并且用户花了些时间处理该任务。然后，用户按*“主页”*按钮。 任务现已发送到后台，而且不可见。现在，用户无法返回到任务，因为该任务未显示在应用启动器中。
+第二个功能非常重要：用户必须能够在离开任务后，再使用此Activity启动器返回该任务。 因此，只有在Activity具有ACTION_MAIN和CATEGORY_LAUNCHER过滤器时，才应该使用将Activity标记为“始终启动任务”的两种启动模式，即 "singleTask" 和 "singleInstance"。例如，我们可以想像一下如果缺少过滤器会发生什么情况：Intent启动一个 "singleTask"的Activity，从而启动一个新任务，并且用户花了些时间处理该任务。然后，用户按下Home键。 任务现已发送到后台，而且不可见。现在，用户无法返回到任务，因为该任务未显示在应用启动器中。
 
-如果您并不想用户能够返回到 Activity，对于这些情况，请将元素的[finishOnTaskLaunch](https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#finish)设置为"true"（请参阅[清理堆栈](https://developer.android.com/guide/components/tasks-and-back-stack.html?hl=zh-cn#Clearing)）。
+如果您并不想用户能够返回到Activity，对于这些情况，请将元素的 [finishOnTaskLaunch](https://developer.android.com/guide/topics/manifest/activity-element.html#finish) 设置为"true"。
 
-有关如何在概览屏幕中显示和管理任务与 Activity 的更多信息，请参阅[概览屏幕](https://developer.android.com/guide/components/recents.html?hl=zh-cn)。
-
-
+### **进程和应用的生命周期**
 
 
 
+# Processes and Application Lifecycle
 
+In most cases, every Android application runs in its own Linux process. This process is created for the application when some of its code needs to be run, and will remain running until it is no longer needed *and* the system needs to reclaim its memory for use by other applications.
 
+An unusual and fundamental feature of Android is that an application process's lifetime is *not* directly controlled by the application itself. Instead, it is determined by the system through a combination of the parts of the application that the system knows are running, how important these things are to the user, and how much overall memory is available in the system.
 
+It is important that application developers understand how different application components (in particular `Activity`, `Service`, and `BroadcastReceiver`) impact the lifetime of the application's process. **Not using these components correctly can result in the system killing the application's process while it is doing important work.**
 
+A common example of a process life-cycle bug is a `BroadcastReceiver` that starts a thread when it receives an Intent in its `BroadcastReceiver.onReceive()` method, and then returns from the function. Once it returns, the system considers the BroadcastReceiver to be no longer active, and thus, its hosting process no longer needed (unless other application components are active in it). So, the system may kill the process at any time to reclaim memory, and in doing so, it terminates the spawned thread running in the process. The solution to this problem is typically to schedule a `JobService` from the BroadcastReceiver, so the system knows that there is still active work being done in the process.
 
+To determine which processes should be killed when low on memory, Android places each process into an "importance hierarchy" based on the components running in them and the state of those components. These process types are (in order of importance):
+
+1. A **foreground process** is one that is required for what the user is currently doing. Various application components can cause its containing process to be considered foreground in different ways. A process is considered to be in the foreground if any of the following conditions hold:It is running an `Activity` at the top of the screen that the user is interacting with (its `onResume()` method has been called).It has a `BroadcastReceiver` that is currently running (its `BroadcastReceiver.onReceive()` method is executing).It has a `Service` that is currently executing code in one of its callbacks (`Service.onCreate()`, `Service.onStart()`, or `Service.onDestroy()`).
+
+2. There will only ever be a few such processes in the system, and these will only be killed as a last resort if memory is so low that not even these processes can continue to run. Generally, at this point, the device has reached a memory paging state, so this action is required in order to keep the user interface responsive.
+
+3. A **visible process** is doing work that the user is currently aware of, so killing it would have a noticeable negative impact on the user experience. A process is considered foreground in the following conditions:It is running an `Activity` that is visible to the user on-screen but not in the foreground (its `onPause()` method has been called). This may occur, for example, if the foreground Activity is displayed as a dialog that allows the previous Activity to be seen behind it.It has a `Service` that is running as a foreground service, through `Service.startForeground()` (which is asking the system to treat the service as something the user is aware of, or essentially visible to them).It is hosting a service that the system is using for a particular feature that the user is aware, such as a live wallpaper, input method service, etc.The number of these processes running in the system is less bounded than foreground processes, but still relatively controlled. These processes are considered extremely important and will not be killed unless doing so is required to keep all foreground processes running.
+
+4. A **service process** is one holding a `Service` that has been started with the `startService()` method. Though these processes are not directly visible to the user, they are generally doing things that the user cares about (such as background network data upload or download), so the system will always keep such processes running unless there is not enough memory to retain all foreground and visible process.Services that have been running for a long time (such as 30 minutes or more) may be demoted in importance to allow their process to drop to the cached LRU list described next. This helps avoid situations where very long running services with memory leaks or other problems consume so much RAM that they prevent the system from making effective use of cached processes.
+
+5. A **cached process** is one that is not currently needed, so the system is free to kill it as desired when memory is needed elsewhere. In a normally behaving system, these are the only processes involved in memory management: a well running system will have multiple cached processes always available (for more efficient switching between applications) and regularly kill the oldest ones as needed. Only in very critical (and undesireable) situations will the system get to a point where all cached processes are killed and it must start killing service processes.These processes often hold one or more `Activity` instances that are not currently visible to the user (the `onStop()` method has been called and returned). Provided they implement their Activity life-cycle correctly (see `Activity` for more details), when the system kills such processes it will not impact the user's experience when returning to that app: it can restore the previously saved state when the associated activity is recreated in a new process.These processes are kept in a pseudo-LRU list, where the last process on the list is the first killed to reclaim memory. The exact policy of ordering on this list is an implementation detail of the platform, but generally it will try to keep more useful processes (one hosting the user's home application, the last activity they saw, etc) before other types of processes. Other policies for killing processes may also be applied: hard limits on the number of processes allowed, limits on the amount of time a process can stay continually cached, etc.
+
+When deciding how to classify a process, the system will base its decision on the most important level found among all the components currently active in the process. See the `Activity`, `Service`, and `BroadcastReceiver` documentation for more detail on how each of these components contribute to the overall life-cycle of a process. The documentation for each of these classes describes in more detail how they impact the overall life-cycle of their application.
+
+A process's priority may also be increased based on other dependencies a process has to it. For example, if process A has bound to a `Service` with the `Context.BIND_AUTO_CREATE` flag or is using a `ContentProvider` in process B, then process B's classification will always be at least as important as process A's.
+
+### **概览屏幕**
+
+概览屏幕（Recents screen，也称为最新动态屏幕、**最近任务列表或最近使用的应用**）是一个系统级别 UI，其中列出了最近访问过的Activity和任务。 用户可以浏览该列表并选择要恢复的任务，也可以通过滑动清除任务将其从列表中移除。 对于 Android 5.0版本（API 级别 21），包含不同文档的同一Activity的多个实例可能会以任务的形式显示在概览屏幕中。 例如，Google Drive可能对多个 Google 文档中的每个文档均执行一个任务。 每个文档均以任务的形式显示在概览屏幕中。下图显示了三个Google Drive文档的概览屏幕，每个文档分别以一个单独的任务表示。
+
+![recents](C:\Users\Vincent Huang\Desktop\studynotes\Android\四大组件\appendix\recents.png)
+
+通常，您应该允许系统定义任务和Activity在概览屏幕中的显示方法，并且无需修改此行为。不过，应用可以确定Activity在概览屏幕中的显示方式和时间。 您可以使用[ActivityManager.AppTask](https://developer.android.com/reference/android/app/ActivityManager.AppTask.html)类来管理任务，使用Intent类的Activity标志来指定某个Activity添加到概览屏幕或从中移除的时间。 此外，您也可以使用\<activity>属性在清单文件中设置该行为。
+
+#### **将任务添加到概览屏幕**
+
+通过使用Intent类的标志添加任务，您可以更好地控制某文档在概览屏幕中打开或重新打开的时间和方式。 使用\<activity> 属性时，您可以选择始终在新任务中打开文档，或选择对文档重复使用现有任务。
+
+##### **使用Intent标志添加任务**
+
+为Activity创建新文档时，可调用ActivityManager.AppTask类的startActivity()方法，以向其传递启动Activity的Intent。要插入**逻辑换行符**以便系统将Activity视为新任务显示在概览屏幕中，可在启动Activity的Intent的addFlags()方法中传递 [FLAG_ACTIVITY_NEW_DOCUMENT](https://developer.android.com/reference/android/content/Intent.html#FLAG_ACTIVITY_NEW_DOCUMENT)标志。
+
+注：FLAG_ACTIVITY_NEW_DOCUMENT标志取代了FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET标志，后者自Android 5.0（API 级别 21）起已弃用。
+
+如果在创建新文档时设置FLAG_ACTIVITY_MULTIPLE_TASK标志，则系统始终会以目标Activity作为根创建新任务。此设置允许同一文档在多个任务中打开。以下代码演示了主Activity如何执行此操作：
+
+DocumentCentricActivity.java
+
+```java
+public void createNewDocument(View view) {
+      final Intent newDocumentIntent = newDocumentIntent();
+      if (useMultipleTasks) {
+          newDocumentIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+      }
+      startActivity(newDocumentIntent);
+  }
+
+  private Intent newDocumentIntent() {
+      boolean useMultipleTasks = mCheckbox.isChecked();
+      final Intent newDocumentIntent = new Intent(this, NewDocumentActivity.class);
+      newDocumentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+      newDocumentIntent.putExtra(KEY_EXTRA_NEW_DOCUMENT_COUNTER, incrementAndGet());
+      return newDocumentIntent;
+  }
+
+  private static int incrementAndGet() {
+      Log.d(TAG, "incrementAndGet(): " + mDocumentCounter);
+      return mDocumentCounter++;
+  }
+}
+```
+
+注：使用FLAG_ACTIVITY_NEW_DOCUMENT标志启动的Activity必须具有在清单文件中设置的android:launchMode="standard"属性值（默认）。
+
+当主Activity启动新Activity时，系统会搜遍现有任务，看看是否有任务的Intent与Activity的Intent组件名称和Intent数据相匹配。 如果未找到任务或者Intent包含FLAG_ACTIVITY_MULTIPLE_TASK标志，则会以该Activity作为其根创建新任务。如果找到的话，则会将该任务转到前台并将新Intent传递给onNewIntent()。新Activity将获得Intent并在概览屏幕中创建新文档，如下例所示：
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_new_document);
+    mDocumentCount = getIntent()
+            .getIntExtra(DocumentCentricActivity.KEY_EXTRA_NEW_DOCUMENT_COUNTER, 0);
+    mDocumentCounterTextView = (TextView) findViewById(
+            R.id.hello_new_document_text_view);
+    setDocumentCounterText(R.string.hello_new_document_counter);
+}
+
+@Override
+protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    /* If FLAG_ACTIVITY_MULTIPLE_TASK has not been used, this activity
+    is reused to create a new document.
+     */
+    setDocumentCounterText(R.string.reusing_document_counter);
+}
+```
+
+##### **使用Activity属性添加任务**
+
+此外，Activity 还可以在其清单文件中指定始终通过使用 \<activity> 属性 android:documentLaunchMode 进入新任务。 此属性有四个值，会在用户使用该应用打开文档时产生以下效果：
+
+- "intoExisting"
+
+该 Activity 会对文档重复使用现有任务。这与不设置 FLAG_ACTIVITY_MULTIPLE_TASK 标志、但设置 FLAG_ACTIVITY_NEW_DOCUMENT 标志所产生的效果相同，如上文的使用 Intent 标志添加任务中所述。
+
+- "always"
+
+该 Activity 为文档创建新任务，即便文档已打开也是如此。使用此值与同时设置 FLAG_ACTIVITY_NEW_DOCUMENT 和 FLAG_ACTIVITY_MULTIPLE_TASK 标志所产生的效果相同。
+
+- "none”"
+
+该 Activity 不会为文档创建新任务。概览屏幕将按其默认方式对待此 Activity：为应用显示单个任务，该任务将从用户上次调用的任意 Activity 开始继续执行。
+
+- "never"
+
+该 Activity 不会为文档创建新任务。设置此值会替代 FLAG_ACTIVITY_NEW_DOCUMENT 和 FLAG_ACTIVITY_MULTIPLE_TASK 标志的行为（如果在 Intent 中设置了其中一个标志），并且概览屏幕将为应用显示单个任务，该任务将从用户上次调用的任意 Activity 开始继续执行。
+注：对于除 none 和 never 以外的值，必须使用 launchMode="standard" 定义 Activity。如果未指定此属性，则使用 documentLaunchMode="none"。
+
+#### **移除任务**
+
+默认情况下，在 Activity 结束后，文档任务会从概览屏幕中自动移除。 您可以使用 ActivityManager.AppTask 类、Intent 标志或 \<activity> 属性替代此行为。
+
+通过将 \<activity> 属性 android:excludeFromRecents 设置为 true，您可以始终将任务从概览屏幕中完全排除。
+
+您可以通过将 \<activity> 属性 android:maxRecents 设置为整型值，设置应用能够包括在概览屏幕中的最大任务数。默认值为 16。达到最大任务数后，最近最少使用的任务将从概览屏幕中移除。 android:maxRecents 的最大值为 50（内存不足的设备上为 25）；小于 1 的值无效。
+
+##### **使用AppTask类移除任务**
+
+在于概览屏幕创建新任务的 Activity 中，您可以通过调用 finishAndRemoveTask() 方法指定何时移除该任务以及结束所有与之相关的 Activity。
+
+NewDocumentActivity.java
+
+```java
+public void onRemoveFromRecents(View view) {
+    // The document is no longer needed; remove its task.
+    finishAndRemoveTask();
+}
+```
+
+注：如下所述，使用 finishAndRemoveTask() 方法代替使用 FLAG_ACTIVITY_RETAIN_IN_RECENTS 标记。
+
+##### **保留已完成的任务**
+
+若要将任务保留在概览屏幕中（即使其 Activity 已完成），可在启动 Activity 的 Intent 的 addFlags() 方法中传递 FLAG_ACTIVITY_RETAIN_IN_RECENTS 标志。
+
+DocumentCentricActivity.java
+
+```java
+private Intent newDocumentIntent() {
+
+    final Intent newDocumentIntent = new Intent(this, NewDocumentActivity.class);
+    newDocumentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+      android.content.Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS);
+    newDocumentIntent.putExtra(KEY_EXTRA_NEW_DOCUMENT_COUNTER, incrementAndGet());
+    return newDocumentIntent;
+
+}
+```
+
+要达到同样的效果，请将 \<activity> 属性 android:autoRemoveFromRecents 设置为 false。文档 Activity 的默认值为 true，常规 Activity 的默认值为 false。如前所述，使用此属性替代 FLAG_ACTIVITY_RETAIN_IN_RECENTS 标志。
 
