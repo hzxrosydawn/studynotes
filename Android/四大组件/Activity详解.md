@@ -107,7 +107,7 @@ startActivity(sendIntent);
 
 下图为Activity生命周期的简图。
 
-![activity_lifecycle](appendix\activity_lifecycle.png)
+![](appendix/activity_lifecycle.png)
 
 当用户开始离开某个Activity时，系统就调用方法来取消（dismantle ）该Activity。在某些情况下，这种取消是局部的。该Activity仍存在于内存中（比如当用户切换到另一个应用时），还可以回到前台来。如果用户返回到该Activity，该Activity就从用户离开的地方恢复（resume）。系统中和Activity一起的进程被杀掉的可能性依赖于Activity当时的状态。
 
