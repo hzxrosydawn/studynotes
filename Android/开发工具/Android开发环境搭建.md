@@ -1,45 +1,92 @@
 ##**1.安装JAVA开发环境**
  因为Android本地开发使用的是JAVA语言，所以首先要安装JAVA开发环境。到Oracle的官方网站上可以下载到最新版本的JDK，根据开发平台选择对应的最新JDK。
- 下载地址：
- http://www.oracle.com/technetwork/java/javase/downloads/index.html
+ 下载地址：http://www.oracle.com/technetwork/java/javase/downloads/index.html
 ![这里写图片描述](http://img.blog.csdn.net/20161126120154856)
- 点击Java SE Downloads,然后选择Accept License Agreement之后，根据开发平台选择对应的最新JDK：
+点击Java SE Downloads，然后选择Accept License Agreement之后，根据开发平台选择对应的最新JDK：
 ![这里写图片描述](http://img.blog.csdn.net/20161126110753763)
-32位Linux平台的Windows选择Linux x86，64位Linux平台的Linux选择Linux x64，32位Windows平台的选择Windows x86，64位Windows平台的选择Windows x64。
-下载之后，安装即可。
+32位Linux平台的Windows选择Linux x86，64位Linux平台的Linux选择Linux x64，32位Windows平台的选择Windows x86，64位Windows平台的选择Windows x64。下载之后，安装即可。
+
 **Linux平台安装JDK**：
+
 将下载的tar.gz文件解压到任意目录，推荐/usr/share/目录下或者/home/目录下，以/usr/share/目录为例：
+
 进入下载目录输入以下命令：
-$ tar
+
 **Windows平台正常安装即可**：
 ![这里写图片描述](http://img.blog.csdn.net/20161126112530731)
-开发工具：该选项是JDK的核心，包含了JDK运行所必需的命令。该选项已经包含了JRE，就无须再安装公共JRE；
-源代码：该选项将会安装Java核心类库的源代码；
+
+- 开发工具：该选项是JDK的核心，包含了JDK运行所必需的命令。该选项会安装一个私有JRE，如果仅开发Java程序，就无须再安装下面的公共JRE了；
+- 源代码：该选项将会安装Java核心类库的源代码；
+- 公共JRE是一个独立的JRE系统，会单独安装在系统的其他路径下。公用JRE会向Internet Explorer浏览器和系统中注册java运行环境。通过这种方式，系统任何应用程序都可以使用公用JRE。由于现在在网页上执行APPLET的机会越来越少，而且完全可以选择使用JDK目录下的JRE来运行Java程序，因此没有太大必要安装公共JRE。
+
 安装到： 建议自定义安装目录。
+
+安装完毕后，在目录下面有五个文件夹、一个src类库源码压缩包和几个声明文件，其他五个文件夹分别是：bin、db、include、lib、 jre，db这个文件看业务需求~
+
+bin：最主要的是编译器(javac.exe)；
+
+db：jdk从1.6之后内置了Derby数据库，它是是一个纯用Java实现的内存数据库，属于Apache的一个开源项目。用Java实现的，所以可以在任何平台上运行；另外一个特点是体积小，免安装，只需要几个小jar包就可以运行了。
+
+include：java和JVM交互用的头文件；
+
+lib：常用类库
+
+jre：Java运行环境
+
+JVM（ Java Virtual Machine）就是我们常说的Java虚拟机，它是Java实现跨平台的最核心的部分，所有的Java程序会首先被编译为.class的类文件，这种类文件可以在虚拟机上执行，.class文件并不直接与机器的操作系统相对应，而是经过虚拟机间接与操作系统交互，由虚拟机将程序解释给本地系统执行，类似于C#中的CLR。
+
+虽然JVM是运行Java程序的核心虚拟机，但是JVM不能单独搞定.class的执行，还需要其他的诸如类加载器、字节码校验器和大量类库。
+
+JRE是一个包含了JVM可执行文件、设置文件、所需库文件和其他一些扩展。
+
+JDK包含JRE，而JRE包含JVM，总的来说JDK是用于java程序的开发,而jre则是只能运行class而没有编译的功能，Eclipse、IntelliJ IDEA等其他IDE有自己的编译器而不是用JDK bin目录中自带的，所以在安装时只需选中jre路径就ok了。
 
 ##**2.设置JAVA环境变量**
 Linux平台添加Java环境变量：
 
-Windows平台以Win10为例，添加Java环境变量：
+安装好后，配置环境变量：计算机——>右击——>属性——>高级系统设置设置—>环境变量：
 右键此电脑——>属性： 
 ![这里写图片描述](http://img.blog.csdn.net/20161126113507516)
 高级系统设置： 
 ![这里写图片描述](http://img.blog.csdn.net/20161126114446907)
 环境变量： 
 ![这里写图片描述](http://img.blog.csdn.net/20161126114517127)
-用户变量仅对对应的用户有效，系统变量对所有用户有效，这里选择用户变量。选中Path——>编辑： 
-![这里写图片描述](http://img.blog.csdn.net/20161126114548850)
-分别复制JDK安装目录的bin子目录和jre子目录的绝对路径，通过新建添加到Path环境变量中： 
-![这里写图片描述](http://img.blog.csdn.net/20161126114703850)
-![这里写图片描述](http://img.blog.csdn.net/20161126114742412)
-![这里写图片描述](http://img.blog.csdn.net/20161126114629678)
-![这里写图片描述](http://img.blog.csdn.net/20161126114815476)
+用户变量仅对对应的用户有效，系统变量对所有用户有效，这里选择系统变量。
+
+新建系统变量
+
+变量名：JAVA_HOME 变量值：C:\Program Files\Java\jdk1.7.0（这个是你安装JDK时的路径，按照实际情况改成你自己的目录）然后确定。
+
+然后在系统变量里找到Classpath，没有的话新建一个。（不区分大小写）
+
+把这个路径添加到变量值的最前面——.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar;
+
+注意：最前面有一个点号和分号
+
+然后在系统变量里找到PATH，没有的话新建一个。（不区分大小写）
+
+把这个路径添加到变量值里面——%JAVA_HOME%\bin;%JAVA_HOME%\jre\bin;
+
+注意，最好添加到最前面
+
+检验JDK是否安装并配置成功
+
+快捷键——WIN+R：输入cmd，打开命令提示符
+
+输入java -version，回车
+
+输入javac -version，回车
+
+如果出现如下信息，则安装和配置成功！
+
+
+
 一路确定，Java环境变量设置完毕。
 检查Java环境变量设置是否有效：
 运行Win+R快捷键调出运行窗口，输入cmd，调出命令行窗口，在输入”java -version“命令会看到java的版本信息，说明java环境变量设置成功：
-![这里写图片描述](http://img.blog.csdn.net/20161126115925037)
-![这里写图片描述](http://img.blog.csdn.net/20161126115942105)
- 
+
+
+
 
 ##**下载Android SDK**
 由于GFW对Google服务器的阻挡，已经不能直接打开Google的网站下载最新的SDK，但是我们可以在国内的一些网站上下载到各平台的SDK，如：
@@ -99,14 +146,14 @@ Android Virtual Device是Android开发的虚拟机，现在的新版虚拟镜像
 第一个选项是以前已经安装或者使用过的导入前面所提到的ASCache文件夹，导入就可以恢复配置和项目缓存，没有的话就选择第二个吧。点OK之后就是这个样子了。
 ![这里写图片描述](http://img.blog.csdn.net/20161126143433336)
 在新建一个项目之前，这里先普及Android Studio和Eclipse在某些概念不同的地方。Android Studio 中，有一些概念是和 Eclipse 不同的，从 Eclipse 迁移至 Android Studio 会有很多上手不顺的情况发生，当然在明确了概念的不同之后，还是容易可以切换过来。
-对比	|Eclipse|	Android Studio
----|---|---
-工作区	|workspace	|project
-项目	|project	|module
-引用	|preference	|module dependency
+| 对比   | Eclipse    | Android Studio    |
+| ---- | ---------- | ----------------- |
+| 工作区  | workspace  | project           |
+| 项目   | project    | module            |
+| 引用   | preference | module dependency |
 简单的来说，android Stduio，把一个项目比喻成一个工程的一个个模块，外部的依赖也是一个个模块，这样一个项目的结构就很清晰明了。当然也有一个缺点，就是一个窗口只能打开一个project,不能像Eclipse那样一次一个窗口打开多个项目。
 另外，**新版AS可以导入以前的Eclipse项目哦！**
- 
+
 ###**设置字体和配色**
 是不是觉得白色太亮瞎，字体和配色都太丑，没关系，接下来自定义字体和配色。
 这里有很多种配色方案文件：
