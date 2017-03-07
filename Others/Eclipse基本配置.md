@@ -1,3 +1,8 @@
+---
+typora-root-url: ./
+typora-copy-images-to: appendix
+---
+
 ## Eclipse基本配置
 
 ### 添加javadoc
@@ -52,6 +57,10 @@ http://www.eclipsecolorthemes.org/
 2. 在使用过程中，Eclipse会在拼写错误的单词下面显示红色的波浪线,，这时你只要按下Ctrl+1就可以看到供选择的匹配项。不过Eclipse在最佳匹配这方面做得差强人意,，大伙就将就下吧。
 
 
+### 更改文件编码
 
+为了避免数据库的查询出现乱码和错误，需要将文件的编码格式改为UTF-8。点击 “Window”-> “Preferences” -> “General” -> “Workspace”，将下面的“Text file encoding”框里的单选按钮改为“Other：UTF-8”。
+
+![eclipse_utf_8](appendix/eclipse_utf_8.png)
 
 
