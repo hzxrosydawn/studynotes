@@ -42,7 +42,7 @@ http://www.eclipsecolorthemes.org/
 
 1. 首先下载Servlet源码文件：http://tomcat.apache.org/download-90.cgi，我下载的文件名为”apache-tomcat-9.0.0.M17-src.zip“
 
-![Servlet_Source_Code](C:\Users\Administrator\Desktop\studynotes\Others\appendix\Servlet_Source_Code.png)
+![Servlet_Source_Code](appendix/Servlet_Source_Code.png)
 
 2. 点击 “Window”-> "Preferences" -> “Java” -> “Installed JRES” -> ”Edit“ -> ”Add External JARs“，选择下载好的”apache-tomcat-9.0.0.M17-src.zip“即可。
 

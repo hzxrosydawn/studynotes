@@ -1,19 +1,19 @@
 参考：http://www.w3school.com.cn/sql/sql_syntax.asp
- 
+
 ##**SQL语句简介**
 首先说**数据库**，数据库仅是存储数据的地方，而对数据库数据的访问、操作等管理数据库的功能是通过数据库管理系统（Database Management System, DBSM）完成的，习惯上把数据库和DBSM统称为数据库，一般说的数据就是两者的集合。DBMS有一个数据字典（也称为系统表），负责存储它所拥有的事务信息，这种关于数据的数据称为元数据（Meta Data）。
-	
+​	
  目前关系型数据库是最成熟、应用最广的数据库结构类型。对于关系数据库，最基本的存储单元就是数据表（table），可以把数据表抽象成一张二维表格，每一行代表一个记录，每一列是一个字段，创建数据表时通常需要指定含有多少列、列的名称及列数据的类型，而行数是动态改变的不需要在创建时指定行数。每个数据表还应该指定一个特殊的列来唯一表示每一行记录的信息，称为主键列。数据库可以抽象为含有大量数据表的集合。
- 
+
 而**SQL（Structured Query Language，结构化查询语句）**是一门ANSI的标准计算机语言，用来访问和操作数据库系统，取回和更新数据库中的数据。SQL 可与数据库程序协同工作，比如MS Access、DB2、Informix、MS SQL Server、Oracle、Sybase以及其他数据库系统。不幸地是，存在着很多不同版本的 SQL 语言，但是为了与 ANSI 标准相兼容，它们必须以相似的方式共同地来支持一些主要的关键词（如SELECT、UPDATE、DELETE、INSERT、WHERE等）。除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展！
 
 **标准的SQL语句有以下几种类型**:
 
- - **查询语句**: 主要由select关键字完成，是SQL中功能最多、最复杂的语句；
- - **DDL（Database Definition Language，数据库定义语言）语句**：主要由create、alter、drop、truncate四个关键字构成，用于操作数据库对象；
- - **DML(Database Manipulation Language，数据库操作语言)语句**：主要由insert、delete和update四个关键字构成，用于在数据库中插入、删除和更新数据；
- - **DCL（Database Control Language，数据库控制语言）语句**：主要由grank和revoke两个关键字构成。DCL语句为用于为数据库用户授权，或者回收指定用户的权限，通常无需程序员操作。
-注意：**SQL 对大小写不敏感**，也就是说，SELECT与select是相同的。在每条SQL语句的末端使用分号标志一条SQL语句的结束。
+- **查询语句**: 主要由select关键字完成，是SQL中功能最多、最复杂的语句；
+- **DDL（Database Definition Language，数据库定义语言）语句**：主要由create、alter、drop、truncate四个关键字构成，用于操作数据库对象；
+- **DML(Database Manipulation Language，数据库操作语言)语句**：主要由insert、delete和update四个关键字构成，用于在数据库中插入、删除和更新数据；
+- **DCL（Database Control Language，数据库控制语言）语句**：主要由grank和revoke两个关键字构成。DCL语句为用于为数据库用户授权，或者回收指定用户的权限，通常无需程序员操作。
+  注意：**SQL 对大小写不敏感**，也就是说，SELECT与select是相同的。在每条SQL语句的末端使用分号标志一条SQL语句的结束。
 
 
 ##**查询语句**
@@ -35,16 +35,16 @@ FROM "table_name";
 ###**子查询语句：**
 子查询就是在查询语句中再嵌套一个查询，可以多层嵌套。子查询可以出现在两个位置：
 
- - 出现在FROM后被当成数据表，实质是一个临时视图，称为行内视图（Inline View）；
- - 出现在WHERE条件中作为过滤条件。
+- 出现在FROM后被当成数据表，实质是一个临时视图，称为行内视图（Inline View）；
+- 出现在WHERE条件中作为过滤条件。
 
 使用子查询可以注意一下几点：
 
- - 子查询要用圆括号括起来；
- - 被当成数据表时（在FROM后），可以给其其别名。尤其是作为前缀限定数据列时，必须给子查询起别名；
- - 当成过滤条件时（在WHERE条件中），将子查询放在比较运算符的右边可以增加可读性；
- - 当成过滤条件时，单行子查询使用单行运算符，多行子查询使用多行运算符。
- 
+- 子查询要用圆括号括起来；
+- 被当成数据表时（在FROM后），可以给其其别名。尤其是作为前缀限定数据列时，必须给子查询起别名；
+- 当成过滤条件时（在WHERE条件中），将子查询放在比较运算符的右边可以增加可读性；
+- 当成过滤条件时，单行子查询使用单行运算符，多行子查询使用多行运算符。
+
 **子查询实例1**：
 SELECT * 
 FROM student_table
@@ -61,48 +61,66 @@ SELECT "column_name"
 FROM "table_name"
 WHERE "condition";
 其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。WHERE 子句中的运算符：
-运算符	|描述
-----|----
-=	|等于
-<>	|不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=
->	|大于
-<	|小于
-\>=	|大于等于
-<=	|小于等于
-+、-、*、/|四则运算符
-:=|赋值
-expr1 between expr2 and expr3|在某个范围内(相当于>=和<=)
-expr1 in(expr2, expr3, ...)	|任选其一
-expr1 WHERE exits(expr2)|如果expr2有返回记录，则执行expr1<br>注释：expr1、expr2...不仅可以是常量、也可以是变量和列名。
-IS NULL |是否为null
-IS NOT NULL|是否不为null
-ANY	|与比较运算符结合表示满足任一比较条件
-ALL |与运算符结合使用表示满足所有的比较条件
-LIKE pattern	|模糊搜索。搜索模式有pattern语句指定。
-NOT LIKE| 与LIKE相反
-AND|同时满足两个条件
-OR|满足两个条件之一
-NOT|不满足某个条件
-\>ANY(expr)|只要大于expr中的最小值即可
-&lt;ANY(expr) |只要小于expr中的最大值即可
-\>ALL(expr)|只要大于expr中的最大值即可
-&lt;ALL(expr)|只要小于expr中的最小值即可
-=ANY(expr)|相当于in(expr)
+| 运算符                           | 描述                                       |
+| ----------------------------- | ---------------------------------------- |
+| =                             | 等于                                       |
+| <>                            | 不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=          |
+| >                             | 大于                                       |
+| <                             | 小于                                       |
+| \>=                           | 大于等于                                     |
+| <=                            | 小于等于                                     |
+| +、-、*、/                       | 四则运算符                                    |
+| :=                            | 赋值                                       |
+| expr1 between expr2 and expr3 | 在某个范围内(相当于>=和<=)                         |
+| expr1 in(expr2, expr3, ...)   | 任选其一                                     |
+| expr1 WHERE exits(expr2)      | 如果expr2有返回记录，则执行expr1<br>注释：expr1、expr2...不仅可以是常量、也可以是变量和列名。 |
+| IS NULL                       | 是否为null                                  |
+| IS NOT NULL                   | 是否不为null                                 |
+| ANY                           | 与比较运算符结合表示满足任一比较条件                       |
+| ALL                           | 与运算符结合使用表示满足所有的比较条件                      |
+| LIKE pattern                  | 模糊搜索。搜索模式有pattern语句指定。                   |
+| NOT LIKE                      | 与LIKE相反                                  |
+| AND                           | 同时满足两个条件                                 |
+| OR                            | 满足两个条件之一                                 |
+| NOT                           | 不满足某个条件                                  |
+| \>ANY(expr)                   | 只要大于expr中的最小值即可                          |
+| &lt;ANY(expr)                 | 只要小于expr中的最大值即可                          |
+| \>ALL(expr)                   | 只要大于expr中的最大值即可                          |
+| &lt;ALL(expr)                 | 只要小于expr中的最小值即可                          |
+| =ANY(expr)                    | 相当于in(expr)                              |
 SQL中LIKE运算符有几个通配符：
 
- - 下划线"\_"：匹配任意一个字符。
- 从"Persons" 表中选取名字的第一个字符之后是 "eorge" 的人：
- SELECT * FROM Persons WHERE FirstName LIKE '_eorge'；
- - 百分号"%"：匹配任意多个字符。
- 如果要查找以 "美"开头的字符串，则可以使用：WHERE LIKE '美%'；
- - [charlist]	：字符列中的任何单一字符。
-从 "Persons" 表中选取居住的城市以 "A" 或 "L" 或 "N" 开头的人：
-SELECT * FROM Persons WHERE City LIKE '[ALN]%'；
- - [^charlist]或者[!charlist]：不在字符列中的任何单一字符。
- 从"Persons" 表中选取居住的城市不以 "A" 或 "L" 或 "N" 开头的人：
-SELECT * FROM Persons WHERE City LIKE '[!ALN]%'
- - 如果要匹配下划线和百分号本身，则**使用ESCAPE关键字定义转义字符**。
- 使用ESCAPE定义 '\'为转移字符，下面匹配以下划线开头的任意字符WHERE LIKE '\\_%' ESCAPE '\'；
+- 下划线"\_"：匹配任意一个字符。
+   从"Persons" 表中选取名字的第一个字符之后是 "eorge" 的人：
+
+   ```sql
+   SELECT * FROM Persons WHERE FirstName LIKE '_eorge';
+   ```
+
+- 百分号"%"：匹配任意多个字符。如果要查找以 "美"开头的字符串，则可以使用：
+
+   ```sql
+   SELECT * FROM Persons WHERE FirstName LIKE '美%';
+   ```
+
+- [charlist]：字符列中的任何单一字符。从 "Persons" 表中选取居住的城市以 "A" 或 "L" 或 "N" 开头的人：
+
+   ```sql
+   SELECT * FROM Persons WHERE City LIKE '[ALN]%';
+   ```
+
+- [^charlist]或者[!charlist]：不在字符列中的任何单一字符。从"Persons" 表中选取居住的城市不以 "A" 或 "L" 或 "N" 开头的人：
+
+   ```sql
+   SELECT * FROM Persons WHERE City LIKE '[!ALN]%';
+   ```
+
+- 如果要匹配**下划线和百分号**本身，则**使用ESCAPE关键字定义转义字符**。
+   使用ESCAPE定义 '\'为转移字符，下面匹配以下划线开头的任意字符：
+
+   ```sql
+   SELECT * FROM Persons WHERE LIKE '\\_%' ESCAPE '\';
+   ```
 
 ####**ORDER BY 关键字**
 ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。
@@ -114,6 +132,9 @@ FROM table_name
 [WHERE "condition"]
 \#优先按column_name1排序，若这样还有重复，则在此基础上按照column_name2排序
 ORDER BY column\_name1 [ASC|DESC], [column_name2 [ASC|DESC]] ...;
+
+> ascending：升序。descending：降序。
+
 ####**GROUP BY关键字**
 GROUP BY关键字用于按照某些列的分组信息（该列中相同的记录为一组）查找信息。
 **GROUP BY关键字语法**：
@@ -138,7 +159,7 @@ FROM "table_name"
 HAVING (arithmetic function condition)
 [ORDER BY "column_name" [ASC, DESC]];
 上面的语句要求只对满足HAVING子句中对聚合函数计算结果的筛选条件来进行分组。
- 
+
 ####**IN关键字**：
 IN 操作符允许我们在 WHERE 子句中规定多个值。
 **IN 语法**：
@@ -146,13 +167,13 @@ IN 操作符允许我们在 WHERE 子句中规定多个值。
 SELECT column_name(s)
 FROM table_name IN (value1,value2,...);上面的语句从column\_name列中查找指定值的数据记录。
 2. 
-SELECT column_name(s)
-FROM table_name
-WHERE column_name2 IN (value1,value2,...);
-上面的语句从查找column\_name2中值为value1和value2的column_name(s)列记录。
-从Persons表中选取姓氏为 Adams 和 Carter 的人：
-SELECT * FROM Persons
-WHERE LastName IN ('Adams','Carter');
+   SELECT column_name(s)
+   FROM table_name
+   WHERE column_name2 IN (value1,value2,...);
+   上面的语句从查找column\_name2中值为value1和value2的column_name(s)列记录。
+   从Persons表中选取姓氏为 Adams 和 Carter 的人：
+   SELECT * FROM Persons
+   WHERE LastName IN ('Adams','Carter');
 ####**BETWEEN 操作符**
 操作符 BETWEEN ... AND 会选取介于两个值之间的数据范围。这些值可以是数值、文本或者日期。
 **BETWEEN 语法**:
@@ -171,13 +192,13 @@ SELECT * FROM Persons
 WHERE LastName
 NOT BETWEEN 'Adams' AND 'Carter'
 **重要事项：不同的数据库对 BETWEEN...AND 操作符的处理方式是有差异的**。某些数据库会列出介于 "Adams" 和 "Carter" 之间的人，但不包括 "Adams" 和 "Carter" ；某些数据库会列出介于 "Adams" 和 "Carter" 之间并包括 "Adams" 和 "Carter" 的人；而另一些数据库会列出介于 "Adams" 和 "Carter" 之间的人，包括 "Adams" ，但不包括 "Carter" 。所以，**请检查你的数据库是如何处理 BETWEEN....AND 操作符的**！
- 
+
 ####**SELECT中的表达式及别名：** 
 SELECT之后不仅可以使列名或者\*，还可以是算术表达式、变量、常量或者函数表达式，还可以在SELECT语句中使用算术运算符（+、-、*、/），从而形成算术表达式，规则如下：
 
- - 对于列值为数值型的列可以使用“+、-、*、/”与变量和常量运算；
- -  对于列值为时间、日期型的列可以使用“+、-”与变量和常量运算；
- - 运算符不仅可以在列、常量和变量之间运算，还可以在多列之间运算。  
+- 对于列值为数值型的列可以使用“+、-、*、/”与变量和常量运算；
+- 对于列值为时间、日期型的列可以使用“+、-”与变量和常量运算；
+- 运算符不仅可以在列、常量和变量之间运算，还可以在多列之间运算。  
 
 也可以为算术表达式、变量、常量或者函数表达式使用AS关键字起一个别名，如果别名中包含特殊字符，或者强制大小写敏感，可以为别名添加双引号。
 **表的起别名语法**：
@@ -201,7 +222,7 @@ WHERE  id > 3;
 SELECT 3+5
 FROM Person
 WHERE 3 < 5;
-####**TOP 子句**
+####**TOP, LIMIT, ROWNUM子句**
 TOP 子句用于规定要返回的记录的数目。
 对于拥有数千条记录的大型表来说，TOP 子句是非常有用的。
 注释：并非所有的数据库系统都支持 TOP 子句。
@@ -300,12 +321,12 @@ INSERT INTO  "table_name" [("column1" [, "column2"]...)]  VALUES ("value1" [, "v
 INSERT INTO Person (Firstname, Lastname) VALUES ('Katy', 'Perry');
 注意：
 
- - 如果省略了数据表名后的所有列，则默认为所有列按列的顺序依次插入值；
- - 如果不想列出列名，又不想指定所有列的值，则可以为那些无法确定值的列分配null，如：
-\#如果已经指定Id列为主键列，则插入一条新数据时，主键列会自增，系统会自动分配该行主键的值
-\#所以该行的主键赋值为null没有问题，系统会自动添加相应的值：
-INSERT INTO Person values(NULL, NULL,  NULL, '北清路', '北京市');
- - 因为外键列的值必须是被参照列的已有值，所以向从表中插入记录之前，应该先向主表中插入记录，否则从表外键列就只能为NULL。外键列不保证必须存在被参照的记录，故外键列可以为NULL，如果想保证从表的每条记录都有对应的主表记录存在，则添加非空、外键两个约束。
+- 如果省略了数据表名后的所有列，则默认为所有列按列的顺序依次插入值；
+- 如果不想列出列名，又不想指定所有列的值，则可以为那些无法确定值的列分配null，如：
+  \#如果已经指定Id列为主键列，则插入一条新数据时，主键列会自增，系统会自动分配该行主键的值
+  \#所以该行的主键赋值为null没有问题，系统会自动添加相应的值：
+  INSERT INTO Person values(NULL, NULL,  NULL, '北清路', '北京市');
+- 因为外键列的值必须是被参照列的已有值，所以向从表中插入记录之前，应该先向主表中插入记录，否则从表外键列就只能为NULL。外键列不保证必须存在被参照的记录，故外键列可以为NULL，如果想保证从表的每条记录都有对应的主表记录存在，则添加非空、外键两个约束。
 
 2.**通过带子查询的插入语句一次插入多行记录语法**：
 INSERT INTO  "table\_name1" [("column1" [, "column2"]...)]  SELECT ("column3" [, "column4"]...) FROM "table_name2" WHERE "condition"]；
@@ -325,117 +346,120 @@ DELETE FROM "table_name"
 [WHERE "condition"];
 **注意**：
 
- - 当主表记录被从表记录参照时，主表记录不能被删除，只有先将主表中被参照的记录删除后，才可以删除从表记录；
- - 如果定义外键约束时定义了主表记录和从表记录之间的级联删除ON DELETE CASCADE，或者使用ON DELETE SET NULL用于指定当主表记录被删除时，从表中的参照记录把外键列的值设为null。
+- 当主表记录被从表记录参照时，主表记录不能被删除，只有先将主表中被参照的记录删除后，才可以删除从表记录；
+- 如果定义外键约束时定义了主表记录和从表记录之间的级联删除ON DELETE CASCADE，或者使用ON DELETE SET NULL用于指定当主表记录被删除时，从表中的参照记录把外键列的值设为null。
 ##**数据类型**
 ###**通用的数据类型**：
-数据类型	|描述
-----|----
-CHARACTER(n)	|字符/字符串。固定长度 n。
-VARCHAR(n) 或CHARACTER VARYING(n)	|字符/字符串。可变长度。最大长度 n。
-BINARY(n)	|二进制串。固定长度 n。
-BOOLEAN	|存储 TRUE 或 FALSE 值
-VARBINARY(n)或BINARY VARYING(n)	|二进制串。可变长度。最大长度 n。
-INTEGER(p)	|整数值（没有小数点）。精度 p。
-SMALLINT	|整数值（没有小数点）。精度 5。
-INTEGER	|整数值（没有小数点）。精度 10。
-BIGINT	|整数值（没有小数点）。精度 19。
-DECIMAL(p,s)	|精确数值，精度 p，小数点后位数 s。例如：decimal(5,2) 是一个小数点前有 3 位数小数点后有 2 位数的数字。
-NUMERIC(p,s)	|精确数值，精度 p，小数点后位数 s。（与 DECIMAL 相同）
-FLOAT(p)	|近似数值，尾数精度 p。一个采用以 10 为基数的指数计数法的浮点数。该类型的 size 参数由一个指定最小精度的单一数字组成。
-REAL	|近似数值，尾数精度 7。
-FLOAT	|近似数值，尾数精度 16。
-DOUBLE PRECISION	|近似数值，尾数精度 16。
-DATE	|存储年、月、日的值。
-TIME	|存储小时、分、秒的值。
-TIMESTAMP	|存储年、月、日、小时、分、秒的值。
-INTERVAL	|由一些整数字段组成，代表一段时间，取决于区间的类型。
-ARRAY	|元素的固定长度的有序集合
-MULTISET	|元素的可变长度的无序集合
-XML	|存储 XML 数据
+| 数据类型                             | 描述                                       |
+| -------------------------------- | ---------------------------------------- |
+| CHARACTER(n)                     | 字符/字符串。固定长度 n。                           |
+| VARCHAR(n) 或CHARACTER VARYING(n) | 字符/字符串。可变长度。最大长度 n。                      |
+| BINARY(n)                        | 二进制串。固定长度 n。                             |
+| BOOLEAN                          | 存储 TRUE 或 FALSE 值                        |
+| VARBINARY(n)或BINARY VARYING(n)   | 二进制串。可变长度。最大长度 n。                        |
+| INTEGER(p)                       | 整数值（没有小数点）。精度 p。                         |
+| SMALLINT                         | 整数值（没有小数点）。精度 5。                         |
+| INTEGER                          | 整数值（没有小数点）。精度 10。                        |
+| BIGINT                           | 整数值（没有小数点）。精度 19。                        |
+| DECIMAL(p,s)                     | 精确数值，精度 p，小数点后位数 s。例如：decimal(5,2) 是一个小数点前有 3 位数小数点后有 2 位数的数字。 |
+| NUMERIC(p,s)                     | 精确数值，精度 p，小数点后位数 s。（与 DECIMAL 相同）        |
+| FLOAT(p)                         | 近似数值，尾数精度 p。一个采用以 10 为基数的指数计数法的浮点数。该类型的 size 参数由一个指定最小精度的单一数字组成。 |
+| REAL                             | 近似数值，尾数精度 7。                             |
+| FLOAT                            | 近似数值，尾数精度 16。                            |
+| DOUBLE PRECISION                 | 近似数值，尾数精度 16。                            |
+| DATE                             | 存储年、月、日的值。                               |
+| TIME                             | 存储小时、分、秒的值。                              |
+| TIMESTAMP                        | 存储年、月、日、小时、分、秒的值。                        |
+| INTERVAL                         | 由一些整数字段组成，代表一段时间，取决于区间的类型。               |
+| ARRAY                            | 元素的固定长度的有序集合                             |
+| MULTISET                         | 元素的可变长度的无序集合                             |
+| XML                              | 存储 XML 数据                                |
 ###**数据类型快速参考手册**
 然而，不同的数据库对数据类型定义提供不同的选择。下面的表格显示了各种不同的数据库平台上一些数据类型的通用名称：
-数据类型	|Access	|SQLServer	|Oracle|	MySQL	|PostgreSQL
----|----|----|---|----
-boolean	|Yes/No	|Bit	|Byte	|N/A	|Boolean
-integer	|Number (integer)	|Int	|Number	|Int<br>Integer|Int<br>Integer
-float	|Number (single)	|Float<br>Real	|Number	|Float	|Numeric
-currency	|Currency	|Money	|N/A	|N/A	|Money
-string (fixed)	|N/A	|Char	|Char	|Char	|Char
-string (variable)|Text (<256)<br>Memo (65k+)|Varchar|Varchar<br>Varchar2	|Varchar|Varchar
-binary object|OLE Object Memo|Binary (fixed up to 8K)<br>Varbinary (<8K)<br>Image(<2GB)|	Long<br>Raw	|Blob<br>Text	|Binary<br>Varbinary
+| 数据类型              | Access                     | SQLServer                                | Oracle              | MySQL          | PostgreSQL          |
+| ----------------- | -------------------------- | ---------------------------------------- | ------------------- | -------------- | ------------------- |
+| boolean           | Yes/No                     | Bit                                      | Byte                | N/A            | Boolean             |
+| integer           | Number (integer)           | Int                                      | Number              | Int<br>Integer | Int<br>Integer      |
+| float             | Number (single)            | Float<br>Real                            | Number              | Float          | Numeric             |
+| currency          | Currency                   | Money                                    | N/A                 | N/A            | Money               |
+| string (fixed)    | N/A                        | Char                                     | Char                | Char           | Char                |
+| string (variable) | Text (<256)<br>Memo (65k+) | Varchar                                  | Varchar<br>Varchar2 | Varchar        | Varchar             |
+| binary object     | OLE Object Memo            | Binary (fixed up to 8K)<br>Varbinary (<8K)<br>Image(<2GB) | Long<br>Raw         | Blob<br>Text   | Binary<br>Varbinary |
 注释：在不同的数据库中，同一种数据类型可能有不同的名称。即使名称相同，尺寸和其他细节也可能不同！ 请总是检查文档！
+
 ###**Microsoft Access 数据类型**
-数据类型	|	描述		|		存储		
-------		|-------		|:---------		
-Text			|用于文本或文本与数字的组合	|最多 255 个字符
-Memo		|Memo 用于更大数量的文本。<br>注意：无法对 memo 字段进行排序。不过它们是可搜索的		|最多存储 65,536 个字符
-Byte			|允许 0 到 255 的数字				|1 字节
-Integer		|允许介于 -32,768 到 32,767 之间的数字	|2 字节
-Long		|允许介于 -2,147,483,648 与 2,147,483,647 之间的全部数字	|4 字节
-Single	|单精度浮点。处理大多数小数|	4 字节
-Double	|双精度浮点。处理大多数小数|	8 字节
-Currency	|用于货币。支持 15 位的元，外加 4 位小数。<br>注释：您可以选择使用哪个国家的货币。|8 字节
-AutoNumber	|AutoNumber 字段自动为每条记录分配数字，通常从 1 开始。	|4 字节
-Date/Time	|用于日期和时间	|8 字节
-Yes/No	|逻辑字段，可以显示为 Yes/No、True/False 或 On/Off。<br>在代码中，使用常量 True 和 False （等价于 1 和 0）<br>注释：Yes/No 字段中不允许 Null 值|1 比特
-Ole Object	|可以存储图片、音频、视频或其他 BLOBs (Binary Large OBjects)	|最多 1GB
-Hyperlink	|包含指向其他文件的链接，包括网页	 
-Lookup Wizard	|允许你创建一个可从下列列表中进行选择的选项列表	|4 字节
+
+| 数据类型          | 描述                                       | 存储              |
+| ------------- | ---------------------------------------- | --------------- |
+| Text          | 用于文本或文本与数字的组合                            | 最多 255 个字符      |
+| Memo          | Memo 用于更大数量的文本。<br>注意：无法对 memo 字段进行排序。不过它们是可搜索的 | 最多存储 65,536 个字符 |
+| Byte          | 允许 0 到 255 的数字                           | 1 字节            |
+| Integer       | 允许介于 -32,768 到 32,767 之间的数字              | 2 字节            |
+| Long          | 允许介于 -2,147,483,648 与 2,147,483,647 之间的全部数字 | 4 字节            |
+| Single        | 单精度浮点。处理大多数小数                            | 4 字节            |
+| Double        | 双精度浮点。处理大多数小数                            | 8 字节            |
+| Currency      | 用于货币。支持 15 位的元，外加 4 位小数。<br>注释：您可以选择使用哪个国家的货币。 | 8 字节            |
+| AutoNumber    | AutoNumber 字段自动为每条记录分配数字，通常从 1 开始。       | 4 字节            |
+| Date/Time     | 用于日期和时间                                  | 8 字节            |
+| Yes/No        | 逻辑字段，可以显示为 Yes/No、True/False 或 On/Off。<br>在代码中，使用常量 True 和 False （等价于 1 和 0）<br>注释：Yes/No 字段中不允许 Null 值 | 1 比特            |
+| Ole Object    | 可以存储图片、音频、视频或其他 BLOBs (Binary Large OBjects) | 最多 1GB          |
+| Hyperlink     | 包含指向其他文件的链接，包括网页                         |                 |
+| Lookup Wizard | 允许你创建一个可从下列列表中进行选择的选项列表                  | 4 字节            |
+
 ###**MySQL 数据类型**
 在 MySQL 中，有三种主要的类型：文本、数字和日期/时间类型。
 **Text 类型：**
-数据类型	|描述
-------|-----
-CHAR(size)	|保存固定长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的长度.最多 255 个字符。
-VARCHAR(size)|保存可变长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的最大长度。最多 255 个字符。<br>注释：如果值的长度大于 255，则被转换为 TEXT 类型。
-TINYTEXT	|存放最大长度为 255 个字符的字符串。
-TEXT	|存放最大长度为 65,535 个字符的字符串。
-BLOB	|用于 BLOBs (Binary Large OBjects)。存放最多 65,535 字节的数据。
-MEDIUMTEXT	|存放最大长度为 16,777,215 个字符的字符串。
-MEDIUMBLOB	|用于 BLOBs (Binary Large OBjects)。存放最多 16,777,215 字节的数据。
-LONGTEXT	|存放最大长度为 4,294,967,295 个字符的字符串。
-LONGBLOB	|用于 BLOBs (Binary Large OBjects)。存放最多 4,294,967,295 字节的数据。
-ENUM(x,y,z,etc.)	|允许你输入可能值的列表。可以在 ENUM 列表中列出最大 65535 个值。如果列表中不存在插入的值，则插入空值。<br>注释：这些值是按照你输入的顺序存储的。可以按照此格式输入可能的值：ENUM('X','Y','Z')
-SET	|与 ENUM 类似，SET 最多只能包含 64 个列表项，不过 SET 可存储一个以上的值。
+| 数据类型             | 描述                                       |
+| ---------------- | ---------------------------------------- |
+| CHAR(size)       | 保存固定长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的长度。最多 255 个字符。 |
+| VARCHAR(size)    | 保存可变长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的最大长度。最多 255 个字符。<br>注释：如果值的长度大于 255，则被转换为 TEXT 类型。 |
+| TINYTEXT         | 存放最大长度为 255 个字符的字符串。                     |
+| TEXT             | 存放最大长度为 65,535 个字符的字符串。                  |
+| BLOB             | 用于 BLOBs (Binary Large OBjects)。存放最多 65,535 字节的数据。 |
+| MEDIUMTEXT       | 存放最大长度为 16,777,215 个字符的字符串。              |
+| MEDIUMBLOB       | 用于 BLOBs (Binary Large OBjects)。存放最多 16,777,215 字节的数据。 |
+| LONGTEXT         | 存放最大长度为 4,294,967,295 个字符的字符串。           |
+| LONGBLOB         | 用于 BLOBs (Binary Large OBjects)。存放最多 4,294,967,295 字节的数据。 |
+| ENUM(x,y,z,etc.) | 允许你输入可能值的列表。可以在 ENUM 列表中列出最大 65535 个值。如果列表中不存在插入的值，则插入空值。<br>注释：这些值是按照你输入的顺序存储的。可以按照此格式输入可能的值：ENUM('X','Y','Z') |
+| SET              | 与 ENUM 类似，SET 最多只能包含 64 个列表项，不过 SET 可存储一个以上的值。 |
 **Number 类型**：
-数据类型	|描述
-----|-----
-TINYINT(size)	|-128 到 127 常规。0 到 255 无符号*。在括号中规定最大位数。
-SMALLINT(size)	|-32768 到 32767 常规。0 到 65535 无符号*。在括号中规定最大位数。
-MEDIUMINT(size)	|-8388608 到 8388607 普通。0 to 16777215 无符号*。在括号中规定最大位数。
-INT(size)	|-2147483648 到 2147483647 常规。0 到 4294967295 无符号*。在括号中规定最大位数。
-BIGINT(size)	|-9223372036854775808 到 9223372036854775807 常规。0 到18446744073709551615 无符号*。在括号中规定最大位数。
-FLOAT(size,d)	|带有浮动小数点的小数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。
-DOUBLE(size,d)	|带有浮动小数点的大数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。
-DECIMAL(size,d)	|作为字符串存储的 DOUBLE 类型，允许固定的小数点。
+| 数据类型            | 描述                                       |
+| --------------- | ---------------------------------------- |
+| TINYINT(size)   | -128 到 127 常规。0 到 255 无符号*。在括号中规定最大位数。   |
+| SMALLINT(size)  | -32768 到 32767 常规。0 到 65535 无符号*。在括号中规定最大位数。 |
+| MEDIUMINT(size) | -8388608 到 8388607 普通。0 to 16777215 无符号*。在括号中规定最大位数。 |
+| INT(size)       | -2147483648 到 2147483647 常规。0 到 4294967295 无符号*。在括号中规定最大位数。 |
+| BIGINT(size)    | -9223372036854775808 到 9223372036854775807 常规。0 到18446744073709551615 无符号*。在括号中规定最大位数。 |
+| FLOAT(size,d)   | 带有浮动小数点的小数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。 |
+| DOUBLE(size,d)  | 带有浮动小数点的大数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。 |
+| DECIMAL(size,d) | 作为字符串存储的 DOUBLE 类型，允许固定的小数点。             |
 * 这些整数类型拥有额外的选项 UNSIGNED。通常，整数可以是负数或正数。如果添加 UNSIGNED 属性，那么范围将从 0 开始，而不是某个负数。
-**Date 类型：**
-数据类型	|描述
-----|----
-DATE()	|日期。格式：YYYY-MM-DD<br>注释：支持的范围是从 '1000-01-01' 到 '9999-12-31'
-DATETIME()	|*日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59'
-TIMESTAMP()	|*时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC
-TIME()	|时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59'
-YEAR()	|2 位或 4 位格式的年。<br>注释：4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。
+  **Date 类型：**
+  | 数据类型        | 描述                                       |
+  | ----------- | ---------------------------------------- |
+  | DATE()      | 日期。格式：YYYY-MM-DD<br>注释：支持的范围是从 '1000-01-01' 到 '9999-12-31' |
+  | DATETIME()  | *日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
+  | TIMESTAMP() | *时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
+  | TIME()      | 时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59' |
+  | YEAR()      | 2 位或 4 位格式的年。<br>注释：4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。 |
 * 即便 DATETIME 和 TIMESTAMP 返回相同的格式，它们的工作方式很不同。在 INSERT 或 UPDATE 查询中，TIMESTAMP 自动把自身设置为当前的日期和时间。TIMESTAMP 也接受不同的格式，比如 YYYYMMDDHHMMSS、YYMMDDHHMMSS、YYYYMMDD 或 YYMMDD。
 
- 
+
 ###**SQL Server 数据类型**
 **Character 字符串：**
-数据类型	|描述	|存储
-----|----|----
-char(n)	|固定长度的字符串。最多 8,000 个字符。	|n
-varchar(n)	|可变长度的字符串。最多 8,000 个字符。	 
-varchar(max)	|可变长度的字符串。最多 1,073,741,824 个字符。	 
-text	|可变长度的字符串。最多 2GB 字符数据。
+| 数据类型         | 描述                             | 存储   |
+| ------------ | ------------------------------ | ---- |
+| char(n)      | 固定长度的字符串。最多 8,000 个字符。         | n    |
+| varchar(n)   | 可变长度的字符串。最多 8,000 个字符。         |      |
+| varchar(max) | 可变长度的字符串。最多 1,073,741,824 个字符。 |      |
+| text         | 可变长度的字符串。最多 2GB 字符数据。          |      |
 **Unicode 字符串：**
-数据类型	|描述	|存储
----|---|----
-nchar(n)	|固定长度的 Unicode 数据。最多 4,000 个字符。	 
-nvarchar(n)	|可变长度的 Unicode 数据。最多 4,000 个字符。	 
-nvarchar(max)	|可变长度的 Unicode 数据。最多 536,870,912 个字符。	 
-ntext	|可变长度的 Unicode 数据。最多 2GB 字符数据。	 
+| 数据类型          | 描述                                   | 存储   |
+| ------------- | ------------------------------------ | ---- |
+| nchar(n)      | 固定长度的 Unicode 数据。最多 4,000 个字符。       |      |
+| nvarchar(n)   | 可变长度的 Unicode 数据。最多 4,000 个字符。       |      |
+| nvarchar(max) | 可变长度的 Unicode 数据。最多 536,870,912 个字符。 |      |
+| ntext         | 可变长度的 Unicode 数据。最多 2GB 字符数据。        |      |
 **Binary 类型：**
 数据类型	|描述		|存储
 ---	|----	|---
@@ -445,36 +469,36 @@ varbinary(n)	|可变长度的二进制数据。最多 8,000 字节。
 varbinary(max)	|可变长度的二进制数据。最多 2GB 字节。	 
 image	|可变长度的二进制数据。最多 2GB。	 
 **Number 类型：**
-数据类型	|描述	|存储
------|-----|----
-tinyint	|允许从 0 到 255 的所有数字	|1 字节
-smallint	|允许从 -32,768 到 32,767 的所有数字。	|2 字节
-int	|允许从 -2,147,483,648 到 2,147,483,647 的所有数字。|	4 字节
-bigint	|允许介于 -9,223,372,036,854,775,808 和 9,223,372,036,854,775,807 之间的所有数字。	|8 字节
-decimal(p,s)	|固定精度和比例的数字。允许从 -10^38 +1 到 10^38 -1 之间的数字。<br>p 参数指示可以存储的最大位数（小数点左侧和右侧）。p 必须是 1 到 38 之间的值。默认是 18。<br>s 参数指示小数点右侧存储的最大位数。s 必须是 0 到 p 之间的值。默认是 0。|5-17 字节
-numeric(p,s)	|固定精度和比例的数字。允许从 -10^38 +1 到 10^38 -1 之间的数字。<br>p 参数指示可以存储的最大位数（小数点左侧和右侧）。p 必须是 1 到 38 之间的值。默认是 18。<br>s 参数指示小数点右侧存储的最大位数。s 必须是 0 到 p 之间的值。默认是 0。	|5-17 字节
-smallmoney	|介于 -214,748.3648 和 214,748.3647 之间的货币数据。	|4 字节
-money	|介于 -922,337,203,685,477.5808 和 922,337,203,685,477.5807 之间的货币数据。	|8 字节
-float(n)	|从 -1.79E + 308 到 1.79E + 308 的浮动精度数字数据。 参数 n 指示该字段保存 4 字节还是 8 字节。float(24) 保存 4 字节，而 float(53) 保存 8 字节。n 的默认值是 53。	|4 或 8 字节
-real	|从 -3.40E + 38 到 3.40E + 38 的浮动精度数字数据。	|4 字节
+| 数据类型         | 描述                                       | 存储       |
+| ------------ | ---------------------------------------- | -------- |
+| tinyint      | 允许从 0 到 255 的所有数字                        | 1 字节     |
+| smallint     | 允许从 -32,768 到 32,767 的所有数字。              | 2 字节     |
+| int          | 允许从 -2,147,483,648 到 2,147,483,647 的所有数字。 | 4 字节     |
+| bigint       | 允许介于 -9,223,372,036,854,775,808 和 9,223,372,036,854,775,807 之间的所有数字。 | 8 字节     |
+| decimal(p,s) | 固定精度和比例的数字。允许从 -10^38 +1 到 10^38 -1 之间的数字。<br>p 参数指示可以存储的最大位数（小数点左侧和右侧）。p 必须是 1 到 38 之间的值。默认是 18。<br>s 参数指示小数点右侧存储的最大位数。s 必须是 0 到 p 之间的值。默认是 0。 | 5-17 字节  |
+| numeric(p,s) | 固定精度和比例的数字。允许从 -10^38 +1 到 10^38 -1 之间的数字。<br>p 参数指示可以存储的最大位数（小数点左侧和右侧）。p 必须是 1 到 38 之间的值。默认是 18。<br>s 参数指示小数点右侧存储的最大位数。s 必须是 0 到 p 之间的值。默认是 0。 | 5-17 字节  |
+| smallmoney   | 介于 -214,748.3648 和 214,748.3647 之间的货币数据。 | 4 字节     |
+| money        | 介于 -922,337,203,685,477.5808 和 922,337,203,685,477.5807 之间的货币数据。 | 8 字节     |
+| float(n)     | 从 -1.79E + 308 到 1.79E + 308 的浮动精度数字数据。 参数 n 指示该字段保存 4 字节还是 8 字节。float(24) 保存 4 字节，而 float(53) 保存 8 字节。n 的默认值是 53。 | 4 或 8 字节 |
+| real         | 从 -3.40E + 38 到 3.40E + 38 的浮动精度数字数据。    | 4 字节     |
 **Date 类型：**
-数据类型	|描述	|存储
----|---|---
-datetime	|从 1753 年 1 月 1 日 到 9999 年 12 月 31 日，精度为 3.33 毫秒。	|8 bytes
-datetime2	|从 1753 年 1 月 1 日 到 9999 年 12 月 31 日，精度为 100 纳秒。	|6-8 bytes
-smalldatetime	|从 1900 年 1 月 1 日 到 2079 年 6 月 6 日，精度为 1 分钟。	|4 bytes
-date	|仅存储日期。从 0001 年 1 月 1 日 到 9999 年 12 月 31 日。	|3 bytes
-time	|仅存储时间。精度为 100 纳秒。	|3-5 bytes
-datetimeoffset	|与 datetime2 相同，外加时区偏移。	|8-10 bytes
-timestamp	|存储唯一的数字，每当创建或修改某行时，该数字会更新。timestamp 基于内部时钟，不对应真实时间。每个表只能有一个 timestamp 变量。	 
+| 数据类型           | 描述                                       | 存储         |
+| -------------- | ---------------------------------------- | ---------- |
+| datetime       | 从 1753 年 1 月 1 日 到 9999 年 12 月 31 日，精度为 3.33 毫秒。 | 8 bytes    |
+| datetime2      | 从 1753 年 1 月 1 日 到 9999 年 12 月 31 日，精度为 100 纳秒。 | 6-8 bytes  |
+| smalldatetime  | 从 1900 年 1 月 1 日 到 2079 年 6 月 6 日，精度为 1 分钟。 | 4 bytes    |
+| date           | 仅存储日期。从 0001 年 1 月 1 日 到 9999 年 12 月 31 日。 | 3 bytes    |
+| time           | 仅存储时间。精度为 100 纳秒。                        | 3-5 bytes  |
+| datetimeoffset | 与 datetime2 相同，外加时区偏移。                   | 8-10 bytes |
+| timestamp      | 存储唯一的数字，每当创建或修改某行时，该数字会更新。timestamp 基于内部时钟，不对应真实时间。每个表只能有一个 timestamp 变量。 |            |
 **其他数据类型：**
-数据类型	|描述
----|---
-sql_variant	|存储最多 8,000 字节不同数据类型的数据，除了 text、ntext 以及 timestamp。
-uniqueidentifier	|存储全局标识符 (GUID)。
-xml	|存储 XML 格式化数据。最多 2GB。
-cursor	|存储对用于数据库操作的指针的引用。
-table	|存储结果集，供稍后处理。
+| 数据类型             | 描述                                       |
+| ---------------- | ---------------------------------------- |
+| sql_variant      | 存储最多 8,000 字节不同数据类型的数据，除了 text、ntext 以及 timestamp。 |
+| uniqueidentifier | 存储全局标识符 (GUID)。                          |
+| xml              | 存储 XML 格式化数据。最多 2GB。                     |
+| cursor           | 存储对用于数据库操作的指针的引用。                        |
+| table            | 存储结果集，供稍后处理。                             |
 
 
 ##**DDL语句**
@@ -483,7 +507,10 @@ table	|存储结果集，供稍后处理。
 ###**CREATE语句**
 用于创建数据库对象（如database、table、index、view、schema、domain等）。
 ####**创建数据库语法**：
-CREATE DATABASE [IF NOT EXITS] "database_name";
+CREATE DATABASE [IF NOT EXISTS] "database_name";
+
+> 注意：实际输入时，database_name为数据库名，不要加引号。上面加引号只是为了突出显示自定义名称。
+
 ####**创建数据表语法**：
 CREATE TABLE "table_name"
 ("column 1" "data type for column 1" [column 1 constraint(s)],#零到多个列定
@@ -495,9 +522,9 @@ CREATE TABLE "table_name" AS
 [SQL Statement];
 **注意**：
 
- - 表名和列名必须以字母开头，后面可跟不超过30个字符的字母、数字和下划线的组合，表名和列名不能使用SQL的保留字（如select、drop等）;
- - 也可使用insert into语句向空表写入数据；
- - 不同数据库所允许的数据类型不同，务必参考所用数据库的参考手册；
+- 表名和列名必须以字母开头，后面可跟不超过30个字符的字母、数字和下划线的组合，表名和列名不能使用SQL的保留字（如select、drop等）;
+- 也可使用insert into语句向空表写入数据；
+- 不同数据库所允许的数据类型不同，务必参考所用数据库的参考手册；
 
 **创建数据表实例**：
 1.
@@ -531,11 +558,11 @@ CREATE UNIQUE INDEX IDX_Person_Firstname ON TABLE Person (Firstname); #不允许
 CREATE INDEX IDX_Person_Name ON TABLE Person (Firstname, Lastname); #可以出现Firstname和Lastname都相同的记录
 **索引介绍**：
 
- - 索引 (Index) 就相当于书本的目录，便于快速查找。索引虽然从属于数据表，但它和数据表一样属于数据库对象，独立存放于系统表中。在不读取整个表的情况下，索引使数据库应用程序可以更快地查找数据；
- - 更新一个包含索引的表需要比更新一个没有索引的表花费更多的时间，这是由于索引本身也需要更新。为了提高性能，理想的做法是仅仅在常常被搜索的列（以及表）上面必要地创建索引。即使创建索引，索引的类型最好是整型。即使不是整型，可以考虑创建代理整型键，或者直接使用一个类型为整型、与被索引列的记录一一对应的一个列；
- - 索引的命名并没有一个固定的方式。通常会用的方式是在名称前加一个字首，例如 "IDX_" ，来避免与资料库中的其他物件混淆。另外，在索引名之内包括表格名及栏位名也是一个好的方式。；
- - 当在数据表上定义主键约束、唯一约束和外键约束时，系统会为该数据列自动创建对应的索引；
- - 只能为一张表创建索引，多张表则不行。创建索引的列必须NOT NULL。
+- 索引 (Index) 就相当于书本的目录，便于快速查找。索引虽然从属于数据表，但它和数据表一样属于数据库对象，独立存放于系统表中。在不读取整个表的情况下，索引使数据库应用程序可以更快地查找数据；
+- 更新一个包含索引的表需要比更新一个没有索引的表花费更多的时间，这是由于索引本身也需要更新。为了提高性能，理想的做法是仅仅在常常被搜索的列（以及表）上面必要地创建索引。即使创建索引，索引的类型最好是整型。即使不是整型，可以考虑创建代理整型键，或者直接使用一个类型为整型、与被索引列的记录一一对应的一个列；
+- 索引的命名并没有一个固定的方式。通常会用的方式是在名称前加一个字首，例如 "IDX_" ，来避免与资料库中的其他物件混淆。另外，在索引名之内包括表格名及栏位名也是一个好的方式。；
+- 当在数据表上定义主键约束、唯一约束和外键约束时，系统会为该数据列自动创建对应的索引；
+- 只能为一张表创建索引，多张表则不行。创建索引的列必须NOT NULL。
 ###**DROP命令**
 DROP命令用于删除数据库对象(如DATABASE、TABLE等)
 ####**删除数据库语法**：
@@ -553,12 +580,12 @@ ALTER TABLE "table_name"  DROP  INDEX  "index_name";
 ####**删除视图语法**：
 DROP VIEW "view_name";
 ###**ALTER TABLE语句**
- - ALTER TABLE用于修改数据表，包括增加、删除列定义以及删除重命名列等操作。ALTER TABLE也可以被用来作其他的改变，例如改变主键定义；
- - 修改数据表里的已有数据有可能会失败，因为修改的结果有可能与定义原数据的规则不一致；
- - 修改数据列的默认值只会对后续插入的数据有效，对已存在的数据没有影响。
-**修改数据表的语法**:  
-ALTER TABLE数据表名 [修改方式];
-[修改方式] 的详细写法会依我们想要达到的目标而有所不同。[修改方式] 如下：  
+- ALTER TABLE用于修改数据表，包括增加、删除列定义以及删除重命名列等操作。ALTER TABLE也可以被用来作其他的改变，例如改变主键定义；
+- 修改数据表里的已有数据有可能会失败，因为修改的结果有可能与定义原数据的规则不一致；
+- 修改数据列的默认值只会对后续插入的数据有效，对已存在的数据没有影响。
+  **修改数据表的语法**:  
+  ALTER TABLE数据表名 [修改方式];
+  [修改方式] 的详细写法会依我们想要达到的目标而有所不同。[修改方式] 如下：  
    **添加一列**: ADD "column1"  "data type of column1"  [default "default value"]  [constraint(s)1];
    **添加多列**: ADD "column1"  "data type of column1" [default "default value1]  [constraint(s)1], "column2"  "data type of colulmn2" [default "default value2"]  [constraint(s)2];
    **添加实例**：
@@ -581,18 +608,18 @@ ALTER TABLE数据表名 [修改方式];
    **删除约束**：DROP CONSTRAIN | INDEX "constraint_name"
    PS：INDEX用在MySQL，CONSTRAINT用在Orcle和SQL Server
     **注意**： [修改方式]可以为花括号括起来的多个列定义（多个ADD、MODIFY语句）。另外，ADD的列在原表中不存在，ALTER和MODIFY的列必须已存在。
-**ALTER TABLE语法实例**：
-ALTER TABLE Person ADD gender char(6) default 'male';
-ALTER TABLE Person DROp gender;
-ALTER TABLE Person CHANGE Address Addr char(50);
-ALTER TABLE Person MODIFY Addr char(60) after Id;
-ALTER TABLE Person RENAME TO Students;
+  **ALTER TABLE语法实例**：
+  ALTER TABLE Person ADD gender char(6) default 'male';
+  ALTER TABLE Person DROp gender;
+  ALTER TABLE Person CHANGE Address Addr char(50);
+  ALTER TABLE Person MODIFY Addr char(60) after Id;
+  ALTER TABLE Person RENAME TO Students;
 ###**TRUNCATE TABLE语句**
 TRUNCATE TABLE命令用于清空一个数据表的内容，与DROP TABLE相比，该命令不会删除数据表，数据表依然存在。
 **清除表结构的语法**：
 TRUNCATE TABLE "table_name";
 ###**USE关键字**
-USE关键字用在MySQL and SQL Server中，用于使用一个数据库。
+USE关键字用在MySQL and SQL Server中，用于使用一个数据库。一般用于操作一个数据库。
 **使用数据库的语法**：
 USE "database_name";
 在MySQL中可以通过指定 [Database Name].[Table Name]来使用多个数据库的多张表，如果某张表所在的数据正在使用中，可以省略数据库名：
@@ -607,13 +634,13 @@ WHERE ... ;
 用于限制加入表的数据的类型。可以在创建表时规定约束（通过 CREATE TABLE 语句），或者在表创建之后也可以（通过 ALTER TABLE 语句）。
 主要有以下几种约束：
 
- - NOT NULL, 非空约束：确保某列的值不为null；
- - DEFAULT, 默认约束：为非空列提供某一默认值；
- - UNIQUE, 唯一约束：某列的值不可重复；
- - Primary Key，主键约束：用于唯一表示一行记录；
- - Foreign Key，外键约束：指定该行记录从属于主表的一条记录，保证参照的完整性；
- - CHECK, 检查：用于保证每列的所有值都满足一个布尔表达式。
-    
+- NOT NULL, 非空约束：确保某列的值不为null；
+- DEFAULT, 默认约束：为非空列提供某一默认值；
+- UNIQUE, 唯一约束：某列的值不可重复；
+- Primary Key，主键约束：用于唯一表示一行记录；
+- Foreign Key，外键约束：指定该行记录从属于主表的一条记录，保证参照的完整性；
+- CHECK, 检查：用于保证每列的所有值都满足一个布尔表达式。
+
 根据约束的范围分为：单行约束和多行约束
 
 ###**NOT NULL 约束**
@@ -833,7 +860,7 @@ CACHE 10
 INSERT INTO Persons (P_Id,FirstName,LastName)
 VALUES (seq_person.nextval,'Lars','Monsen')
 上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 的赋值是来自 seq_person 序列的下一个数字。"FirstName" 会被设置为 "Bill"，"LastName" 列会被设置为 "Gates"。
- 
+
 ###**FOREIGN KEY 约束**
 一个表中的FOREIGN KEY约束指向另一个表中的 PRIMARY KEY。让我们通过一个例子来解释外键。请看下面两个表：
 "Persons" 表：
@@ -954,7 +981,7 @@ MySQL:
 ALTER TABLE Persons
 DROP CHECK chk_Person
 ___
- 
+
 ##**集合操作**
 ###**UNION 操作符**
 UNION 操作符用于合并两个或多个 SELECT 语句的结果集，相当于OR逻辑运算。
@@ -990,25 +1017,25 @@ SELECT column_name(s) FROM table2;
 当我们处理日期时，最难的任务恐怕是确保所插入的日期的格式，与数据库中日期列的格式相匹配。
 只要您的数据包含的只是日期部分，运行查询就不会出问题。但是，如果涉及时间部分，情况就有点复杂了。如果希望使查询简单且更易维护，那么请**不要在日期中使用时间部分**！
 **MySQL Date 函数**
-函数	|描述
----|---
-NOW()	|返回当前的日期和时间
-CURDATE()	|返回当前的日期
-CURTIME()	|返回当前的时间
-DATE()	|提取日期或日期/时间表达式的日期部分
-EXTRACT()	|返回日期/时间的单独部分
-DATE_ADD()	|向日期添加指定的时间间隔
-DATE_SUB()	|从日期减去指定的时间间隔
-DATEDIFF()	|返回两个日期之间的天数
-DATE_FORMAT()	|用不同的格式显示日期/时间
+| 函数            | 描述                 |
+| ------------- | ------------------ |
+| NOW()         | 返回当前的日期和时间         |
+| CURDATE()     | 返回当前的日期            |
+| CURTIME()     | 返回当前的时间            |
+| DATE()        | 提取日期或日期/时间表达式的日期部分 |
+| EXTRACT()     | 返回日期/时间的单独部分       |
+| DATE_ADD()    | 向日期添加指定的时间间隔       |
+| DATE_SUB()    | 从日期减去指定的时间间隔       |
+| DATEDIFF()    | 返回两个日期之间的天数        |
+| DATE_FORMAT() | 用不同的格式显示日期/时间      |
 **SQL Server Date 函数**
-函数	|描述
----|---
-GETDATE()	|返回当前的日期和时间
-DATEPART()	|返回日期/时间的单独部分
-DATEADD()	|在日期中添加或减去指定的时间间隔
-DATEDIFF()	|返回两个日期之间的时间
-CONVERT()	|用不同的格式显示日期/时间
+| 函数         | 描述               |
+| ---------- | ---------------- |
+| GETDATE()  | 返回当前的日期和时间       |
+| DATEPART() | 返回日期/时间的单独部分     |
+| DATEADD()  | 在日期中添加或减去指定的时间间隔 |
+| DATEDIFF() | 返回两个日期之间的时间      |
+| CONVERT()  | 用不同的格式显示日期/时间    |
 **SQL Date 数据类型**
 MySQL 使用下列数据类型在数据库中存储日期或日期/时间值：
 DATE - 格式：YYYY-MM-DD
@@ -1049,13 +1076,13 @@ FROM Products
 SQL Aggregate 函数（聚合函数）计算从列中取得的值，返回一个单一的值。
 有用的 Aggregate 函数：
 
- - AVG() – 返回平均值
- - COUNT() – 返回行数
- - FIRST() – 返回第一个记录的值
- - LAST() – 返回最后一个记录的值
- - MAX() – 返回最大值
- - MIN() – 返回最小值
- - SUM() – 返回总和
+- AVG() – 返回平均值
+- COUNT() – 返回行数
+- FIRST() – 返回第一个记录的值
+- LAST() – 返回最后一个记录的值
+- MAX() – 返回最大值
+- MIN() – 返回最小值
+- SUM() – 返回总和
 
 ####**AVG() 函数**
 AVG() 函数返回数值列的平均值。
@@ -1127,11 +1154,11 @@ SELECT LOWER(column\_name) FROM table_name;
 MID() 函数用于从文本字段中提取字符。
 **MID() 语法**：
 SELECT MID(column\_name,start[,length]) FROM table_name;
-参数	|描述
----|---
-column_name	|必需。要提取字符的字段。
-start	|必需。规定开始位置（起始值是 1）。
-length	|可选。要返回的字符数。如果省略，则 MID() 函数返回剩余文本。
+| 参数          | 描述                                |
+| ----------- | --------------------------------- |
+| column_name | 必需。要提取字符的字段。                      |
+| start       | 必需。规定开始位置（起始值是 1）。                |
+| length      | 可选。要返回的字符数。如果省略，则 MID() 函数返回剩余文本。 |
 ####**LEN() 函数**
 LEN() 函数返回文本字段中值的长度。
 **LEN() 语法**
@@ -1142,10 +1169,10 @@ ROUND() 函数
 ROUND() 函数用于把数值字段舍入为指定的小数位数。
 SQL ROUND() 语法
 SELECT ROUND(column\_name,decimals) FROM table_name;
-参数	|描述
----|----
-column_name	|必需。要舍入的字段。
-decimals	|必需。规定要返回的小数位数。
+| 参数          | 描述             |
+| ----------- | -------------- |
+| column_name | 必需。要舍入的字段。     |
+| decimals    | 必需。规定要返回的小数位数。 |
 ####**NOW() 函数**
 NOW() 函数返回当前系统的日期和时间。
 **NOW() 语法**
@@ -1154,7 +1181,7 @@ SELECT NOW() FROM table_name;
 FORMAT() 函数用于对字段的显示进行格式化。
 **FORMAT() 语法**
 SELECT FORMAT(column\_name,format) FROM table_name;
-参数|描述
----|---
-column_name	|必需。要格式化的字段。
-format	|必需。规定格式。
+| 参数          | 描述          |
+| ----------- | ----------- |
+| column_name | 必需。要格式化的字段。 |
+| format      | 必需。规定格式。    |
