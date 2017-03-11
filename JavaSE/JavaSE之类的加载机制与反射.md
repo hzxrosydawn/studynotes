@@ -17,7 +17,7 @@ Java虚拟机把描述类的数据从Class文件加载到内存，并对数据�
 
 ####**类的连接**
 生成Class对象之后，接着会进入连接阶段，将类的二进制数据合并到JRE中，类的连接又可分为如下三个阶段：
- 
+
 1. 验证：检验被加载的Class文件中的字节流包含的信息符合当前虚拟机的要求，而且不会危害虚拟机自身的安全、并和其他类协调一致；
 2. 准备：正式为类变量分配内存并设置类变量初始值（数据类型默认的零值（如0、0L、null、false等），而不是被在Java代码中被显式地赋予的值）的阶段，这些内存都将在方法区中进行分配；
 3. 解析：将类的二进制数据中的符号引用替换成直接引用。
@@ -25,13 +25,13 @@ Java虚拟机把描述类的数据从Class文件加载到内存，并对数据�
 ####**类的初始化**
 在类的初始化阶段阶段，JVM负责对类进行初始化，主要是对**类变量**进行初始化。初始化步骤如下：
 
- - 假如这个类还没有被加载和连接，那么先加载并连接该类；
- - 假如该类的直接父类没有被初始化，那么先初始化其直接父类，依次初始化到Object类；
- - 假如该类有初始化语句，则系统依次执行这些初始化语句。
- 
+- 假如这个类还没有被加载和连接，那么先加载并连接该类；
+- 假如该类的直接父类没有被初始化，那么先初始化其直接父类，依次初始化到Object类；
+- 假如该类有初始化语句，则系统依次执行这些初始化语句。
+
 ####**类的初始化时机**
 Java程序**首次**使用下面6种方式来使用某个类或接口时，JVM就会初始化该类或接口：
- 
+
 - 创建该类的实例：使用new操作符、反射和反序列化；
 - 调用类或接口的类方法；
 - 调用类或接口的类变量，或为该类变量赋值；
@@ -49,9 +49,9 @@ Java程序**首次**使用下面6种方式来使用某个类或接口时，JVM�
 ####**类加载器种类**
 一旦一个类被加载到JVM中，就不会再次加载该类。在JVM中，一个类使用其全限定类名和加载器名作为其唯一标识。当JVM启动时，会形成由三个类加载器组成的初始类加载器层次结构：
 
- - **启动（Bootstrap）类加载器）**：该类又称为原始（或根）类加载器，是由C语言实现的（是最顶级的类加载器了，所以启动类加载器是无法被Java程序直接引用的），负责加载存放在%JAVA\_HOME%\jre\lib目录下的核心类，或使用java.exe命令时被-Xbootclasspath选项或-D选项指定sun.boot.class.path系统属性值可以指定的附加的类且能被虚拟机识别的类库（如rt.jar，所有的java.\*开头的类均被Bootstrap ClassLoader加载）；
- -  **扩展（Extension）类加载器**：该加载器由sun.misc.Launcher\$ExtClassLoader实现，可以直接使用扩展类加载器，负责加载JRE扩展目录（%JAVA\_HOME%\jre\lib\ext或由java.ext.dirs系统属性指定的目录）中JAR包中的类。可通过这种方式为Java扩展核心类以外的功能，只要把自己开发的类打包成JAR文件，然后放入%JAVA\_HOME%\jre\lib\ext目录下即可。在使用Java运行程序时，也可以指定其搜索路径，例如：java -D java.ext.dirs=d:\projects\testproj\classes HelloWorld；
- - **系统（System ）类加载器**：该类又称为应用类加载器，由sun.misc.Launcher\$AppClassLoader实现的，可以直接使用扩展类加载器，负责在JVM启动时来自java命令的-classpath选项、java.class.path系统属性，或CLASSPATH环境变量所指定的JAR包和类路径。可以使用ClassLoader的静态方法getSystemClassLoader()来获取系统类加载器。在使用Java运行程序时，也可以加上-cp来覆盖原有的Classpath设置，例如： java -cp ./lavasoft/classes HelloWorld。
+- **启动（Bootstrap）类加载器）**：该类又称为原始（或根）类加载器，是由C语言实现的（是最顶级的类加载器了，所以启动类加载器是无法被Java程序直接引用的），负责加载存放在%JAVA\_HOME%\jre\lib目录下的核心类，或使用java.exe命令时被-Xbootclasspath选项或-D选项指定sun.boot.class.path系统属性值可以指定的附加的类且能被虚拟机识别的类库（如rt.jar，所有的java.\*开头的类均被Bootstrap ClassLoader加载）；
+- **扩展（Extension）类加载器**：该加载器由sun.misc.Launcher\$ExtClassLoader实现，可以直接使用扩展类加载器，负责加载JRE扩展目录（%JAVA\_HOME%\jre\lib\ext或由java.ext.dirs系统属性指定的目录）中JAR包中的类。可通过这种方式为Java扩展核心类以外的功能，只要把自己开发的类打包成JAR文件，然后放入%JAVA\_HOME%\jre\lib\ext目录下即可。在使用Java运行程序时，也可以指定其搜索路径，例如：java -D java.ext.dirs=d:\projects\testproj\classes HelloWorld；
+- **系统（System ）类加载器**：该类又称为应用类加载器，由sun.misc.Launcher\$AppClassLoader实现的，可以直接使用扩展类加载器，负责在JVM启动时来自java命令的-classpath选项、java.class.path系统属性，或CLASSPATH环境变量所指定的JAR包和类路径。可以使用ClassLoader的静态方法getSystemClassLoader()来获取系统类加载器。在使用Java运行程序时，也可以加上-cp来覆盖原有的Classpath设置，例如： java -cp ./lavasoft/classes HelloWorld。
 
 ####**JVM的三种类加载机制**
 
@@ -320,7 +320,7 @@ public class Hello
 
 输出：
 >CompileClassLoadr:正在编译 Hello.java...
- 运行Hello的参数：自定义的加载器
+> 运行Hello的参数：自定义的加载器
 
 **URLClassLoader**
 该类加载器用于从指向 JAR 文件和目录的 URL 的搜索路径加载类和资源。该类是ClassLoader的实现类，是系统类加载器和扩展类加载器的父类（从继承角度来说），可以直接使用该类。这里假定任何以 '/' 结束的 URL 都是指向目录的。如果不是以该字符结束，则认为该 URL 指向一个将根据需要打开的 JAR 文件。 
@@ -386,10 +386,10 @@ JAVA反射机制是在运行状态中，对于任意一个类，都能够知道�
 ####**访问Class对象**
 每个类被加载之后，系统为其生成一个Class类的对象，获取该Class类对象有以下几种方式：
 
- - 使用Class类的forName(String clazzName)静态方法。需要指定类的全限定类名；
- - 调用某个类的class属性来获取该类对应的Class对象；
- - 调用某个对象的getClass()方法。这个方法继承自Object类。
- 
+- 使用Class类的forName(String clazzName)静态方法。需要指定类的全限定类名；
+- 调用某个类的class属性来获取该类对应的Class对象；
+- 调用某个对象的getClass()方法。这个方法继承自Object类。
+
 大部分时候推荐使用第二种方法，这样不需要调用方法，性能更好，程序在编译阶段就可以检查需要访问的Class对象是否存在。如果只提供了一个类的全限定名的字符串，那么只能使用第一种方法。
 
 
@@ -404,15 +404,15 @@ Class 没有公共构造方法，其对象是在加载类时由 Java 虚拟机�
 - **static Class&lt;?> forName(String name, boolean initialize, ClassLoader loader)**：使用给定的类加载器，返回与带有给定字符串名的类或接口相关联的 Class 对象；
 - Constructor&lt;T> **getConstructor(Class&lt;?>... parameterTypes)**：返回该Class对象对应类或接口的、具有指定形参列表的构造器；
 - Constructor&lt;?>[] **getConstructors()**：返回该Class对象对应类或接口或接口或接口的所有公共构造方法；
-- Constructor&lt;T> **getDeclaredConstructor(Class&lt;?>... parameterTypes)**：返回该Class对象对应类或接口或接口的、具有指定形参列表的构造器，与构造器的访问权限无关；
+- Constructor<T> **getDeclaredConstructor(Class<?>... parameterTypes)**：返回该Class对象对应类或接口或接口的、具有指定形参列表的构造器，与构造器的访问权限无关，即返回所有访问修饰符修饰的构造器；
 - Constructor&lt;?>[] **getDeclaredConstructors()**：返回该Class对象对应类或接口的所有构造方法，与构造器的访问权限无关； 
 - Constructor&lt;?> getEnclosingConstructor()：如果该 Class 对象表示构造方法中的一个本地或匿名类，则返回 Constructor 对象，它表示底层类的立即封闭构造方法； 
 - String **getCanonicalName()**：返回 Java Language Specification 中所定义的底层类的规范化名称； 
-- Class&lt;?>[] **getClasses()**：返回一个包含某些 Class 对象的数组，这些对象表示属于此 Class 对象所表示的类的成员的所有公共类和接口；
--Class&lt;?>[] **getDeclaredClasses()**：返回 Class 对象对应类里所包含的全部内部类；   
--Class&lt;?>[] **getDeclaringClasses()**：返回 Class 对象对应类所在的外部类； 
+- Class<?>[] **getClasses()**：返回一个包含某些 Class 对象的数组，这些对象表示属于此 Class 对象所表示的类的所有public修饰的的内部成员类和接口；
+  -Class&lt;?>[] **getDeclaredClasses()**：返回 Class 对象对应类里所包含的全部内部类；   
+  -Class&lt;?>[] **getDeclaringClasses()**：返回 Class 对象对应类所在的外部类； 
 - Class&lt;?> getEnclosingClass()：返回底层类的立即封闭类； 
-- Class&lt;? super T> **getSuperclass()**：返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的超类的 Class； 
+- Class<? super T> **getSuperclass()**：返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的超类的 Class； 
 - Type **getGenericSuperclass()**：返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的**直接**超类的 Type；
 - ClassLoader **getClassLoader()**：返回该类的类加载器；
 - &lt;A extends Annotation> A **getAnnotation(Class&lt;A> annotationClass)**：获取该Class对象对应类或接口上指定名称的注解，不存在返回null； 
@@ -430,7 +430,7 @@ Class 没有公共构造方法，其对象是在加载类时由 Java 虚拟机�
 - Field **getField(String name)**：返回该Class对象对应的类或接口的、具有指定名称的public成员变量；
 - Field[] **getFields()**：返回该Class对象对应的类或接口所有的public成员变量；
 - Field **getDeclaredField(String name)**：返回该Class对象对应的类或接口的、具有指定名称的任何访问权限成员变量； 
-- Field[] **getDeclaredFields()**：返回该Class对象对应的类或接口所有任何访问权限的成员变量；
+- Field[] **getDeclaredFields()**：返回该Class对象对应的类或接口所有任何访问权限的成员变量，但不包括从父类继承的字段；
 - Type[] **getGenericInterfaces()**：返回表示某些接口的 Type，这些接口由此对象所表示的类或接口直接实现；
 - Class&lt;?>[] **getInterfaces()**：确定此对象所表示的类或接口实现的接口； 
 - int **getModifiers()**：返回此类或接口以整数编码的 Java 语言修饰符。使用Modifier工具类解析返回的整数； 
@@ -594,27 +594,27 @@ Java8在java.lang.reflect包下新增了一个Executable抽象基类，该类对
 方法摘要：
 
 - AnnotatedType[]	**getAnnotatedExceptionTypes()**：返回一个AnnotatedType对象构成的数组，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定声明异常的类型的使用；
-- AnnotatedType[]	**getAnnotatedParameterTypes()**：返回一个AnnotatedType对象构成的数组，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定形参的类型的使用；
-- AnnotatedType	getAnnotatedReceiverType()：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定接收者的类型的使用；
-- abstract AnnotatedType	**getAnnotatedReturnType()**：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定返回值的类型的使用；
+ - AnnotatedType[]**getAnnotatedParameterTypes()**：返回一个AnnotatedType对象构成的数组，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定形参的类型的使用；
+ - AnnotatedTypegetAnnotatedReceiverType()：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定接收者的类型的使用；
+ - abstract AnnotatedType**getAnnotatedReturnType()**：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定返回值的类型的使用；
 - &lt;T extends Annotation> T **getAnnotation(Class&lt;T> - annotationClass)**：如果该元素存在特定类型的注解，则返回这样一个注解，否则返回null；
 - &lt;T extends Annotation> T[] **getAnnotationsByType(Class&lt;T> - annotationClass)**：返回该元素相关的注解组成的数组；
 - Annotation[] **getDeclaredAnnotations()**：返回该元素上直接呈现的注解组成的数组；
 - abstract Class&lt;?> **getDeclaringClass()**：返回代表声明该对象代表的执行体的类或接口所对应的Class对象；
-- abstract Class&lt;?>[]	**getExceptionTypes()**：返回一个Class对象组成的数组。Class对象代表了该对象代表的执行体在下面声明抛出的异常类型；
-- Type[]	**getGenericExceptionTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体代表的执行体所抛出的声明异常类型；
-- Type[]	**getGenericParameterTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体所声明的形参类型，数组元素的顺序按照声明的顺序；
+ - abstract Class&lt;?>[]**getExceptionTypes()**：返回一个Class对象组成的数组。Class对象代表了该对象代表的执行体在下面声明抛出的异常类型；
+ - Type[]**getGenericExceptionTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体代表的执行体所抛出的声明异常类型；
+ - Type[]**getGenericParameterTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体所声明的形参类型，数组元素的顺序按照声明的顺序；
 - abstract int **getModifiers()**：返回修饰该Executable对象的修饰符；
-- abstract String	**getName()**：返回该Executable对象所代表执行体的名字；
-- abstract Annotation[][]	**getParameterAnnotations()**：返回一个Annotation对象组成的数组，Annotation对象用于修饰形参，数组元素的顺序按照声明的顺序；
-- int	**getParameterCount()**：返回该对象所代表执行体的形参（无论是显式声明还是隐式声明）的数目；
-- Parameter[]	**getParameters()**：返回一个由Parameter对象构成的数组，这些Parameter对象代表了该Executable对象所代表的执行体中所有的参数；
-- abstract Class&lt;?>[]	**getParameterTypes()**：返回一个由Class对象组成的数组，这些Class对象代表了该Executable对象所代表的执行体的形参类型。数组元素按照声明的顺序；
+ - abstract String**getName()**：返回该Executable对象所代表执行体的名字；
+ - abstract Annotation[][]**getParameterAnnotations()**：返回一个Annotation对象组成的数组，Annotation对象用于修饰形参，数组元素的顺序按照声明的顺序；
+ - int**getParameterCount()**：返回该对象所代表执行体的形参（无论是显式声明还是隐式声明）的数目；
+ - Parameter[]**getParameters()**：返回一个由Parameter对象构成的数组，这些Parameter对象代表了该Executable对象所代表的执行体中所有的参数；
+ - abstract Class&lt;?>[]**getParameterTypes()**：返回一个由Class对象组成的数组，这些Class对象代表了该Executable对象所代表的执行体的形参类型。数组元素按照声明的顺序；
 - abstract TypeVariable&lt;?>[] getTypeParameters()：返回一个由TypeVariable对象构成的数组，这些TypeVariable对象代表该GenericDeclaration对象按声明顺序声明的一般变量类型；
-- boolean	**isSynthetic()**：如果该Executable对象是一个合成构造器，则返回true，否则返回false；
+ - boolean**isSynthetic()**：如果该Executable对象是一个合成构造器，则返回true，否则返回false；
 - boolean   **isNamePresent()**：判断该类的class文件中是否包含了方法的形参信息；
-- boolean	**isVarArgs()**：如果该Executable对象声明为是参数可变的，则返回true，否则返回false；
-- abstract String	**toGenericString()**：返回一个描述该Executable对象的字符串，包括任何类型参数；- 
+ - boolean**isVarArgs()**：如果该Executable对象声明为是参数可变的，则返回true，否则返回false；
+ - abstract String**toGenericString()**：返回一个描述该Executable对象的字符串，包括任何类型参数；- 
 
 示例：
 ```java
@@ -664,9 +664,9 @@ javac -parameters -d . MethodParameterTest.java
 ####**创建对象**
 通过反射创建对象有两种方式：
 
- - 使用Class对象的newInstance()方法来创建该Class对象对应类的实例。这种方式要求该Class对象对应的类有默认构造器，因为执行该方法实际是执行默认构造器。这种方式较常用；
- - 先调用用Class对象的getConstructor()方法来获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建该Class对象对应类的实例。通过这种方式可以选择使用指定的构造器。
- 
+- 使用Class对象的newInstance()方法来创建该Class对象对应类的实例。这种方式要求该Class对象对应的类有默认构造器，因为执行该方法实际是执行默认构造器。这种方式较常用；
+- 先调用用Class对象的getConstructor()方法来获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建该Class对象对应类的实例。通过这种方式可以选择使用指定的构造器。
+
 示例1：
 ```java
 public class ObjectPoolFactory
@@ -756,24 +756,20 @@ public class CreateJFrame
 
 - Object invoke(Object obj, Object... args)：obj为执行该方法的主调，args为传入的实参；
 
-该方法的程序必须有执行对应方法的权限，不能用于执行private修饰的方法，如果需要访问private修饰的方法，则可以先调用setAccessiable(boolean flag)方法，该方法属于Method类的父类AccessibleObject类，用于设定是否取消访问权限的检查。所以Constructor、Filed都可以使用该方法。
+**该方法的程序必须有执行对应方法的权限，不能用于执行private修饰的方法，如果需要访问private修饰的方法，则可以先调用setAccessiable(boolean flag)方法**，该方法属于Method类的父类AccessibleObject类，用于设定是否取消访问权限的检查。所以Constructor、Filed都可以使用该方法。
 示例：
 ```java
-public class ExtendedObjectPoolFactory
-{
+public class ExtendedObjectPoolFactory {
 	// 定义一个对象池,前面是对象名，后面是实际对象
 	private Map<String ,Object> objectPool = new HashMap<>();
 	private Properties config = new Properties();
 	// 从指定属性文件中初始化Properties对象
-	public void init(String fileName)
-	{
+	public void init(String fileName) {
 		try(
-			FileInputStream fis = new FileInputStream(fileName))
-		{
+			FileInputStream fis = new FileInputStream(fileName)) {
 			config.load(fis);
 		}
-		catch (IOException ex)
-		{
+		catch (IOException ex) {
 			System.out.println("读取" + fileName + "异常");
 		}
 	}
@@ -781,8 +777,7 @@ public class ExtendedObjectPoolFactory
 	// 该方法只要传入一个字符串类名，程序可以根据该类名生成Java对象
 	private Object createObject(String clazzName)
 		throws InstantiationException
-		, IllegalAccessException , ClassNotFoundException
-	{
+		, IllegalAccessException , ClassNotFoundException {
 		// 根据字符串来获取对应的Class对象
 		Class<?> clazz =Class.forName(clazzName);
 		// 使用clazz对应类的默认构造器创建实例
@@ -791,15 +786,12 @@ public class ExtendedObjectPoolFactory
 	// 该方法根据指定文件来初始化对象池，
 	// 它会根据配置文件来创建对象
 	public void initPool()throws InstantiationException
-		,IllegalAccessException , ClassNotFoundException
-	{
-		for (String name : config.stringPropertyNames())
-		{
+		,IllegalAccessException , ClassNotFoundException {
+		for (String name : config.stringPropertyNames()) {
 			// 每取出一对key-value对，如果key中不包含百分号（%）
 			// 这就标明是根据value来创建一个对象
 			// 调用createObject创建对象，并将对象添加到对象池中
-			if (!name.contains("%"))
-			{
+			if (!name.contains("%")) {
 				objectPool.put(name ,
 					createObject(config.getProperty(name)));
 			}
@@ -807,15 +799,12 @@ public class ExtendedObjectPoolFactory
 	}
 	// 该方法将会根据属性文件来调用指定对象的setter方法
 	public void initProperty()throws InvocationTargetException
-		,IllegalAccessException,NoSuchMethodException
-	{
-		for (String name : config.stringPropertyNames())
-		{
+		,IllegalAccessException,NoSuchMethodException {
+		for (String name : config.stringPropertyNames()) {
 			// 每取出一对key-value对，如果key中包含百分号（%）
 			// 即可认为该key用于控制调用对象的setter方法设置值，
 			// %前半为对象名字，后半控制setter方法名
-			if (name.contains("%"))
-			{
+			if (name.contains("%"))	{
 				// 将配置文件中key按%分割
 				String[] objAndProp = name.split("%");
 				// 取出调用setter方法的参数值
@@ -834,14 +823,12 @@ public class ExtendedObjectPoolFactory
 			}
 		}
 	}
-	public Object getObject(String name)
-	{
+	public Object getObject(String name) {
 		// 从objectPool中取出指定name对应的对象。
 		return objectPool.get(name);
 	}
 	public static void main(String[] args)
-		throws Exception
-	{
+		throws Exception {
 		ExtendedObjectPoolFactory epf = new ExtendedObjectPoolFactory();
 		epf.init("extObj.txt");
 		epf.initPool();
@@ -860,8 +847,8 @@ a%title=Test Title
 ####**访问成员变量**
 通过Class对象的getFields方法或getField方法来获取该类所包括的全部成员变量或指定成员变量。Filed类提供了以下两种方法：
 
- - getXxx(Object obj)：获取obj对象的该成员变量的值。此处的Xxx是对应8种基本类型，如果成员变量为引用类型，则去掉Xxx；
- - setXxx(Object obj, Xxx val)：将Obj对像的该成员变量设置成val值。此处的Xxx同上。
+- getXxx(Object obj)：获取obj对象的该成员变量的值。此处的Xxx是对应8种基本类型，如果成员变量为引用类型，则去掉Xxx；
+- setXxx(Object obj, Xxx val)：将Obj对像的该成员变量设置成val值。此处的Xxx同上。
 
 示例：
 ```java
@@ -904,9 +891,9 @@ public class FieldTest
 ####**访问数组**
 java.lang.reflect包下还有一个Array类，该类对象代表所有的数组。Array类常用方法如下：
 
- - static Object newInstance(Class&lt;?> componentType, int... length)：创建一个具有指定元素类型、指定维度的新数组；
- - static xxx getXxx(Object array, int index)：返回Array数组中第index个元素。此处的Xxx是对应8种基本类型，如果成员变量为引用类型，则该方法编程get(Object array, int index)；
- - static void setXxx(Object array, int index, xxx val)：将array数组中第index个元素的值设置为val。此处的Xxx是对应8种基本类型，如果成员变量为引用类型，则该方法编程set(Object array, int index, Object val)；
+- static Object newInstance(Class&lt;?> componentType, int... length)：创建一个具有指定元素类型、指定维度的新数组；
+- static xxx getXxx(Object array, int index)：返回Array数组中第index个元素。此处的Xxx是对应8种基本类型，如果成员变量为引用类型，则该方法编程get(Object array, int index)；
+- static void setXxx(Object array, int index, xxx val)：将array数组中第index个元素的值设置为val。此处的Xxx是对应8种基本类型，如果成员变量为引用类型，则该方法编程set(Object array, int index, Object val)；
 
 示:1：
 ```java
@@ -975,14 +962,14 @@ java.lang.reflect包下提供了一个Proxy类和InvocationHandler接口，通�
 Proxy是所有动态代理类的父类。如果在程序中为一个或多个接口动态地生成实现类，就可以使用Proxy来创建动态代理类；如果需要为一个或多个接口动态地创建实例，也可以使用Proxy来创建动态代理实例。
 Proxy提供了以下两个静态方法来创建动态代理类和动态代理实例：
 
- - **static Class&lt;?> getProxyClass(ClassLoader loader, Class&lt;?>... interfaces)**：创建一个动态代理类所对应的Class对象，该代理类将实现interfaces所指定的多个接口。第一个ClassLoader参数指定生成动态代理类的类加载器；
- - **static Object newProxyInstance(ClassLoader loader, Class&lt;?>[] interfaces, InvocationHandler h)**：直接创建一个动态代理对象，该代理对象的实现类实现了interfaces指定的系列接口，执行代理对象的每个方法时都会被替换执行InvocationHandler对象的invoke方法。
+- **static Class&lt;?> getProxyClass(ClassLoader loader, Class&lt;?>... interfaces)**：创建一个动态代理类所对应的Class对象，该代理类将实现interfaces所指定的多个接口。第一个ClassLoader参数指定生成动态代理类的类加载器；
+- **static Object newProxyInstance(ClassLoader loader, Class&lt;?>[] interfaces, InvocationHandler h)**：直接创建一个动态代理对象，该代理对象的实现类实现了interfaces指定的系列接口，执行代理对象的每个方法时都会被替换执行InvocationHandler对象的invoke方法。
 
 即使使用第一个方法生成动态代理类之后，如果程序需要通过代理类来创建对象，依然需要传入一个InvocationHandler对象。总之，系统生成的每个代理对象都有一个与之关联的InvocationHandler对象。当执行动态代理对象里的方法时，实际上会替换成调用InvocationHandler对象的invoke方法，该方法的三个参数如下
 
- - proxy：代表动态代理对象；
- - method：代表正在执行的方法；
- - args：代表调用目标方法时传入的实参。
+- proxy：代表动态代理对象；
+- method：代表正在执行的方法；
+- args：代表调用目标方法时传入的实参。
 
 示例：
 ```java
@@ -1201,8 +1188,8 @@ Type gType = f.getGenericType();
 ```
 然后将Type对象强制转换ParameterizedType对象，ParameterizedType代表被参数化的类型，也就是增加了泛型限制的类型。ParameterizedType类提供了如下两个方法：
 
- - getRawType()：返回没有泛型信息的原始类型；
- - getActualArguments()：返回泛型参数的类型。
+- getRawType()：返回没有泛型信息的原始类型；
+- getActualArguments()：返回泛型参数的类型。
 
 获取泛型类型的示例：
 ```java

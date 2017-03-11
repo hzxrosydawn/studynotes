@@ -1,38 +1,58 @@
 参考：http://www.w3school.com.cn/sql/sql_syntax.asp
 
-##**SQL语句简介**
-首先说**数据库**，数据库仅是存储数据的地方，而对数据库数据的访问、操作等管理数据库的功能是通过数据库管理系统（Database Management System, DBSM）完成的，习惯上把数据库和DBSM统称为数据库，一般说的数据就是两者的集合。DBMS有一个数据字典（也称为系统表），负责存储它所拥有的事务信息，这种关于数据的数据称为元数据（Meta Data）。
-​	
- 目前关系型数据库是最成熟、应用最广的数据库结构类型。对于关系数据库，最基本的存储单元就是数据表（table），可以把数据表抽象成一张二维表格，每一行代表一个记录，每一列是一个字段，创建数据表时通常需要指定含有多少列、列的名称及列数据的类型，而行数是动态改变的不需要在创建时指定行数。每个数据表还应该指定一个特殊的列来唯一表示每一行记录的信息，称为主键列。数据库可以抽象为含有大量数据表的集合。
+##SQL语句简介
+**SQL（Structured Query Language，结构化查询语句）**是一门ANSI的标准计算机语言，用来访问和操作数据库系统，取回和更新数据库中的数据。SQL 可与数据库程序协同工作，比如MS Access、DB2、Informix、MS SQL Server、Oracle、Sybase以及其他数据库系统。不幸地是，存在着很多不同版本的 SQL 语言，但是为了与 ANSI 标准相兼容，它们必须以相似的方式共同地来支持一些主要的关键词（如SELECT、UPDATE、DELETE、INSERT、WHERE等）。除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展！
 
-而**SQL（Structured Query Language，结构化查询语句）**是一门ANSI的标准计算机语言，用来访问和操作数据库系统，取回和更新数据库中的数据。SQL 可与数据库程序协同工作，比如MS Access、DB2、Informix、MS SQL Server、Oracle、Sybase以及其他数据库系统。不幸地是，存在着很多不同版本的 SQL 语言，但是为了与 ANSI 标准相兼容，它们必须以相似的方式共同地来支持一些主要的关键词（如SELECT、UPDATE、DELETE、INSERT、WHERE等）。除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展！
+SQL 可以实现：
 
-**标准的SQL语句有以下几种类型**:
+- SQL 面向数据库执行查询
+- SQL 可从数据库取回数据
+- SQL 可在数据库中插入新的记录
+- SQL 可更新数据库中的数据
+- SQL 可从数据库删除记录
+- SQL 可创建新数据库
+- SQL 可在数据库中创建新表
+- SQL 可在数据库中创建存储过程
+- SQL 可在数据库中创建视图
+- SQL 可以设置表、存储过程和视图的权限
+
+**标准的SQL语句有以下几种类型**：
 
 - **查询语句**: 主要由select关键字完成，是SQL中功能最多、最复杂的语句；
-- **DDL（Database Definition Language，数据库定义语言）语句**：主要由create、alter、drop、truncate四个关键字构成，用于操作数据库对象；
-- **DML(Database Manipulation Language，数据库操作语言)语句**：主要由insert、delete和update四个关键字构成，用于在数据库中插入、删除和更新数据；
+
+- **DDL（Database Definition Language，数据库定义语言）语句**：主要由CREATE、ALTER、DROP、TRUNCATE四个关键字构成，用于操作数据库对象；
+
+- **DML(Database Manipulation Language，数据库操作语言)语句**：主要由INSERT、DELETE和UPDATE三个关键字构成，用于在数据库中插入、删除和更新数据；
+
 - **DCL（Database Control Language，数据库控制语言）语句**：主要由grank和revoke两个关键字构成。DCL语句为用于为数据库用户授权，或者回收指定用户的权限，通常无需程序员操作。
-  注意：**SQL 对大小写不敏感**，也就是说，SELECT与select是相同的。在每条SQL语句的末端使用分号标志一条SQL语句的结束。
+
+>注意：**SQL 对大小写不敏感**，也就是说，SELECT与select是相同的，不过为了便于阅读时分辨内容，一般将SQL语句要素大写。在每条SQL语句的末端使用英文分号标志一条SQL语句的结束。
 
 
-##**查询语句**
-###**SELECT 语句**：
+##查询语句
+###SELECT 语句
 SELECT 语句用于从数据库中选取数据。结果被存储在一个结果表中，称为结果集。可以选取表中一列、多列、所有列的数据。
-**查询语法：**
-SELECT column_name1[, column_name2] ....
-FROM table_name;
+**查询语法**：
+
+```sql
+SELECT column_name1 [, column_name2]... FROM table_name;
+```
+
 与
+
+```sql
 SELECT * FROM table_name;
-###**SELECT DISTINCT 语句**
+```
+
+###SELECT  DISTINCT 语句
 在表中，一个列可能会包含多个重复值，有时您也许希望仅仅列出不同（DISRINCT）的值。DISTINCT 关键词用于返回唯一不同的值。
-**唯一查询语句：**
-SELECT DISTINCT column_name,column_name
-FROM table_name;
-**SELECT UNIQUE**效果与SELECT DISTINCT相同，但是仅对于Oracle数据库有效：
-SELECT UNIQUE "column_name"
-FROM "table_name";
-###**子查询语句：**
+**唯一查询语句**：
+
+```sql
+SELECT DISTINCT column_name1 [, column_name2]... FROM table_name;
+```
+
+###子查询语句
 子查询就是在查询语句中再嵌套一个查询，可以多层嵌套。子查询可以出现在两个位置：
 
 - 出现在FROM后被当成数据表，实质是一个临时视图，称为行内视图（Inline View）；
@@ -40,27 +60,30 @@ FROM "table_name";
 
 使用子查询可以注意一下几点：
 
-- 子查询要用圆括号括起来；
-- 被当成数据表时（在FROM后），可以给其其别名。尤其是作为前缀限定数据列时，必须给子查询起别名；
-- 当成过滤条件时（在WHERE条件中），将子查询放在比较运算符的右边可以增加可读性；
-- 当成过滤条件时，单行子查询使用单行运算符，多行子查询使用多行运算符。
+- **子查询要用圆括号括起来**；
+- 被当成数据表时（在FROM后），可以给其起一个别名。尤其是作为前缀限定数据列时，必须给子查询起别名；
+- 当成过滤条件时（在WHERE条件中），**将子查询放在比较运算符的右边可以增加可读性**；
+- 当成过滤条件时，**单行子查询使用单行运算符，多行子查询使用多行运算符**。
 
 **子查询实例1**：
-SELECT * 
-FROM student_table
-WHERE java_teacher > 
-\#返回单行、单列的子查询被当成标量处理
-(SELECT teacher_id 
-FROM teacher_table 
-WHERE teacher_name = 'Vincent'); 
-如果子查询返回多个值，需要使用IN、ALL、ANY等关键字。
-####**WHERE子句**
-WHERE 子句用于提取那些满足指定条件的记录。WHERE子句是相当于if语句条件限定，如果没有WHERE子句，则默认WHERE子句为TRUE，这样全部记录都会修改。
-**WHERE子查询语法**:
-SELECT "column_name"
-FROM "table_name"
-WHERE "condition";
-其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。WHERE 子句中的运算符：
+
+```sql
+SELECT * FROM student_table 
+WHERE java_teacher > (SELECT teacher_id FROM teacher_table WHERE teacher_name = 'Vincent'); 
+```
+
+上面的实例中，返回单行、单列的子查询结果被当成了标量处理。如果子查询返回多个值，需要使用IN、ALL、ANY等关键字。
+
+####WHERE 子句
+WHERE 子句用于提取那些满足指定条件的记录。WHERE 子句是相当于if条件限定语句，如果没有WHERE 子句，则默认WHERE 子句为TRUE，这样全部记录都会修改。
+**WHERE子查询语法**：
+
+```sql
+SELECT column_name FROM table_name WHERE condition;
+```
+
+其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。WHERE 子句中的运算符如下表所示：
+
 | 运算符                           | 描述                                       |
 | ----------------------------- | ---------------------------------------- |
 | =                             | 等于                                       |
@@ -71,23 +94,25 @@ WHERE "condition";
 | <=                            | 小于等于                                     |
 | +、-、*、/                       | 四则运算符                                    |
 | :=                            | 赋值                                       |
-| expr1 between expr2 and expr3 | 在某个范围内(相当于>=和<=)                         |
-| expr1 in(expr2, expr3, ...)   | 任选其一                                     |
-| expr1 WHERE exits(expr2)      | 如果expr2有返回记录，则执行expr1<br>注释：expr1、expr2...不仅可以是常量、也可以是变量和列名。 |
+| expr1 BETWEEN expr2 AND expr3 | 在某个范围内(相当于同时指定>=和<=)                     |
+| expr1 IN (expr2, expr3, ...)  | 为括号中所有值中的一个值                             |
+| expr1 WHERE EXISTS (expr2)    | 如果expr2有返回记录，则执行expr1。其中expr1、expr2不仅可以是常量、也可以是变量名和列名 |
 | IS NULL                       | 是否为null                                  |
 | IS NOT NULL                   | 是否不为null                                 |
 | ANY                           | 与比较运算符结合表示满足任一比较条件                       |
 | ALL                           | 与运算符结合使用表示满足所有的比较条件                      |
-| LIKE pattern                  | 模糊搜索。搜索模式有pattern语句指定。                   |
-| NOT LIKE                      | 与LIKE相反                                  |
-| AND                           | 同时满足两个条件                                 |
-| OR                            | 满足两个条件之一                                 |
-| NOT                           | 不满足某个条件                                  |
-| \>ANY(expr)                   | 只要大于expr中的最小值即可                          |
-| &lt;ANY(expr)                 | 只要小于expr中的最大值即可                          |
-| \>ALL(expr)                   | 只要大于expr中的最大值即可                          |
-| &lt;ALL(expr)                 | 只要小于expr中的最小值即可                          |
-| =ANY(expr)                    | 相当于in(expr)                              |
+| LIKE pattern                  | 模糊搜索。搜索模式由pattern语句指定                    |
+| NOT LIKE pattern              | 与LIKE相反                                  |
+| expr1 AND expr2               | 同时满足两个条件                                 |
+| expr1 OR expr2                | 满足两个条件之一                                 |
+| NOT expr                      | 不满足某个条件                                  |
+| \>ANY (expr)                  | 只要大于expr中的最小值即可                          |
+| <ANY (expr)                   | 只要小于expr中的最大值即可                          |
+| \>ALL (expr)                  | 只要大于expr中的最大值即可                          |
+| <ALL (expr)                   | 只要小于expr中的最小值即可                          |
+| =ANY (expr)                   | 相当于IN (expr)                             |
+##### LIKE 运算符
+
 SQL中LIKE运算符有几个通配符：
 
 - 下划线"\_"：匹配任意一个字符。
@@ -116,142 +141,254 @@ SQL中LIKE运算符有几个通配符：
    ```
 
 - 如果要匹配**下划线和百分号**本身，则**使用ESCAPE关键字定义转义字符**。
-   使用ESCAPE定义 '\'为转移字符，下面匹配以下划线开头的任意字符：
+   使用ESCAPE定义 '\'为转义字符，下面匹配以下划线开头的任意字符：
 
    ```sql
    SELECT * FROM Persons WHERE LIKE '\\_%' ESCAPE '\';
    ```
 
-####**ORDER BY 关键字**
-ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。
-ORDER BY 关键字默认按照升序（ASC）对记录进行排序。如果需要按照降序对记录进行排序，您可以使用 DESC关键字。
+##### IN 操作符
 
-**ORDER BY 语法**：
-SELECT column\_name1[, column_name2] ...
-FROM table_name
-[WHERE "condition"]
-\#优先按column_name1排序，若这样还有重复，则在此基础上按照column_name2排序
-ORDER BY column\_name1 [ASC|DESC], [column_name2 [ASC|DESC]] ...;
-
-> ascending：升序。descending：降序。
-
-####**GROUP BY关键字**
-GROUP BY关键字用于按照某些列的分组信息（该列中相同的记录为一组）查找信息。
-**GROUP BY关键字语法**：
-1.单列分组模式
-SELECT "column\_name1", SUM("column_name2")
-FROM "table_name"
-GROUP BY "column_name1";
-上面的语句查找出按照column\_name1相同记录组成的组合排列的column\_name1列和SUM("column_name2")新列组成的行内视图。其中SUM函数可以换为其他聚合函数。
-2.多列分组模式
-SELECT "column\_name1", "column\_name2", ... "column\_nameN", Function("column_nameN+1")
-FROM "table_name"
-GROUP BY "column\_name1", "column\_name2", ... "column_nameN";
-上面语句从若干表中选出若干列，一般结合SELECT中的至少一个运算符（包括COUNT, SUM, MAX, MIN,  AVG等）一起使用，然后在GROUP BY后添加除了参与运算的列以外的全部列，作为分组的参考。
-3.结合HAVING子句实现条件分组
-在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与聚合函数一起使用。
-HAVING 子句可以让我们筛选分组后的各组数据。
-####**HAVING 语句**语法：
-SELECT ["column\_name1"], Function("column_name2")
-FROM "table_name"
-[WHERE condition]
-[GROUP BY "column_name1"]
-HAVING (arithmetic function condition)
-[ORDER BY "column_name" [ASC, DESC]];
-上面的语句要求只对满足HAVING子句中对聚合函数计算结果的筛选条件来进行分组。
-
-####**IN关键字**：
 IN 操作符允许我们在 WHERE 子句中规定多个值。
-**IN 语法**：
-1.
+**IN 关键字语法1**：
+
+```sql
 SELECT column_name(s)
-FROM table_name IN (value1,value2,...);上面的语句从column\_name列中查找指定值的数据记录。
-2. 
-   SELECT column_name(s)
-   FROM table_name
-   WHERE column_name2 IN (value1,value2,...);
-   上面的语句从查找column\_name2中值为value1和value2的column_name(s)列记录。
-   从Persons表中选取姓氏为 Adams 和 Carter 的人：
-   SELECT * FROM Persons
-   WHERE LastName IN ('Adams','Carter');
-####**BETWEEN 操作符**
-操作符 BETWEEN ... AND 会选取介于两个值之间的数据范围。这些值可以是数值、文本或者日期。
-**BETWEEN 语法**:
+FROM table_name IN (value1,value2,...);
+```
+
+上面的语句从column\_name列中查找指定值的数据记录。
+
+**IN 关键字语法2**：
+
+```sql
+SELECT column_name(s)
+FROM table_name
+WHERE column_name2 IN (value1,value2,...);
+```
+
+上面的语句从查找column\_name2中值为value1和value2的column_name(s)列记录。
+
+例如，从Persons表中选取姓氏为 Adams 和 Carter 的人：
+
+```sql
+SELECT * FROM Persons
+WHERE LastName IN ('Adams','Carter');
+```
+
+##### BETWEEN 操作符
+
+操作符 BETWEEN AND会选取介于两个值之间的数据范围。这些值可以是数值、文本或者日期。
+
+**BETWEEN 关键字语法**：
+
+```sql
 SELECT column_name(s)
 FROM table_name
 WHERE column_name
 BETWEEN value1 AND value2;
-实例1：
+```
+
+**BETWEEN 关键字实例1**：
+
+```sql
 SELECT * FROM Persons
 WHERE LastName
 BETWEEN 'Adams' AND 'Carter';
+```
+
 上面语句以字母顺序显示介于 "Adams"（包括）和 "Carter"（不包括）之间的人。
-实例 2
-如需使用上面的例子显示范围之外的人，请使用 NOT 操作符：
+
+**BETWEEN 关键字实例2**：
+
+如需使用上面的例子显示范围之外的人，请使用 NOT 操作符。
+
+```sql
 SELECT * FROM Persons
 WHERE LastName
-NOT BETWEEN 'Adams' AND 'Carter'
-**重要事项：不同的数据库对 BETWEEN...AND 操作符的处理方式是有差异的**。某些数据库会列出介于 "Adams" 和 "Carter" 之间的人，但不包括 "Adams" 和 "Carter" ；某些数据库会列出介于 "Adams" 和 "Carter" 之间并包括 "Adams" 和 "Carter" 的人；而另一些数据库会列出介于 "Adams" 和 "Carter" 之间的人，包括 "Adams" ，但不包括 "Carter" 。所以，**请检查你的数据库是如何处理 BETWEEN....AND 操作符的**！
+NOT BETWEEN 'Adams' AND 'Carter';
+```
 
-####**SELECT中的表达式及别名：** 
-SELECT之后不仅可以使列名或者\*，还可以是算术表达式、变量、常量或者函数表达式，还可以在SELECT语句中使用算术运算符（+、-、*、/），从而形成算术表达式，规则如下：
+> **注意：不同的数据库对 BETWEEN AND 操作符的处理方式是有差异的**。某些数据库会列出介于 "Adams" 和 "Carter" 之间的人，但不包括 "Adams" 和 "Carter" ；某些数据库会列出介于 "Adams" 和 "Carter" 之间并包括 "Adams" 和 "Carter" 的人；而另一些数据库会列出介于 "Adams" 和 "Carter" 之间的人，包括 "Adams" ，但不包括 "Carter" 。所以，**请检查你的数据库是如何处理 BETWEEN....AND 操作符的手册！**
+
+####ORDER BY 关键字
+
+ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。
+ORDER BY 关键字默认按照升序（可省略表示升序的ASC关键字）对记录进行排序。如果需要按照降序对记录进行排序，您可以使用 DESC关键字。
+
+**ORDER BY 语法**：
+
+```sql
+SELECT column_name1 [, column_name2]...
+FROM table_name
+[WHERE condition]
+ORDER BY column_name1 [ASC|DESC] [, column_name2 [ASC|DESC]]...;
+```
+
+上面的语法中，优先按column_name1排序，若这样有相同结果，则在此基础上按照column_name2排序，依次类推。
+
+> ascend：升序；descend：降序。
+
+####GROUP BY 关键字
+GROUP BY关键字用于按照某些列的分组信息（该列中相同的记录为一组）查找数据。
+**GROUP BY 关键字语法**：
+
+1. 单列分组模式
+
+```sql
+SELECT column_name1, SUM(column_name2)
+FROM table_name
+GROUP BY column_name1;
+```
+
+上面的语句查找出按照column\_name1相同记录组成的组合排列的column\_name1列和SUM("column_name2")新列组成的行内视图。其中SUM函数可以换为其他聚合函数。
+
+2. 多列分组模式
+
+```sql
+SELECT column_name1, column_name2, ... column_nameN, Function(column_nameN+1)
+FROM table_name
+GROUP BY column_name1, column_name2, ... column_nameN;
+```
+
+上面语句从若干表中选出若干列，一般结合SELECT中的至少一个运算符（包括COUNT, SUM, MAX, MIN,  AVG等函数）一起使用，然后在GROUP BY后添加除了参与运算的列以外的全部列，作为分组的参考。
+
+3. 结合HAVING 子句实现条件分组
+
+在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与聚合函数一起使用。
+HAVING 子句可以让我们筛选分组后的各组数据。
+
+####HAVING 子句
+
+**HAVING 子句语法**：
+
+```sql
+SELECT [column_name1], Function(column_name2)
+FROM table_name
+[WHERE condition]
+[GROUP BY column_name1]
+HAVING (arithmetic function condition)
+[ORDER BY column_name [ASC|DESC]];
+```
+
+上面的语句要求只对满足 HAVING 子句中对聚合函数计算结果的筛选条件来进行分组。
+
+####SELECT 中的表达式及别名 
+SELECT 之后不仅可以使列名或者\*，还可以是算术表达式、变量、常量或者函数表达式，还可以在 SELECT 语句中使用算术运算符（+、-、*、/），从而形成算术表达式，规则如下：
 
 - 对于列值为数值型的列可以使用“+、-、*、/”与变量和常量运算；
 - 对于列值为时间、日期型的列可以使用“+、-”与变量和常量运算；
 - 运算符不仅可以在列、常量和变量之间运算，还可以在多列之间运算。  
 
-也可以为算术表达式、变量、常量或者函数表达式使用AS关键字起一个别名，如果别名中包含特殊字符，或者强制大小写敏感，可以为别名添加双引号。
+也可以为算术表达式、变量、常量或者函数表达式使用 AS 关键字起一个别名，**如果别名中包含特殊字符，或者强制大小写敏感，可以为别名添加双引号或方括号**。
+
+在下面的情况下，使用别名很有用：
+
+- 在查询中涉及超过一个表；
+- 在查询中使用了函数；
+- 列名称很长或者可读性差；
+- 需要把两个列或者多个列结合在一起。
+
 **表的起别名语法**：
-SELECT column_name(s)
-FROM table_name
-AS alias_name;
+
+```sql
+SELECT column_name1 [, column_name2]....
+FROM table_name AS alias_name
+WHERE [condition];
+```
+
 **列的起别名语法**：
+
+```sql
 SELECT column_name AS alias_name
-FROM table_name;
+FROM table_name
+WHERE [condition];
+```
+
 **实例1**：
-SELECT Id + 5 AS "My Id",  Firsname,  2*3 AS Num
+
+```sql
+SELECT Id+5 "My Id",  Firsname [My Name],  2*3 [My Num]
 FROM Person
 WHERE  id > 3;
-如果需要选择多列，每列都要起别名，那么可以省略AS关键字。不仅可以为列起别名，还可以为数据表起别名。
+```
+
+如果需要选择多列，每列都要起别名，那么可以省略 AS 关键字。
+
 **实例2**：
+
+```sql
 SELECT Id + 5 "My Id", CONCAT(Firstname, Lastname) "My Name"
 FROM  Person person_table
 WHERE  id > 3;
-甚至SELECT和WHERE中都不含列名
+```
+
+**可以使用圆括号将几个列组合在一起创建一个别名**。
+
 **实例3**：
-SELECT 3+5
-FROM Person
-WHERE 3 < 5;
+
+```sql
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+FROM Customers AS c, Orders AS o
+WHERE c.CustomerName = 'Alfreds Futterkiste';
+```
+
+上面的例子与下面不使用别名的例子作用相同：
+
+```sql
+SELECT Orders.OrderID, Orders.OrderDate, Customers.CustomerName
+FROM Customers, Orders
+WHERE Customers.CustomerName='Alfreds Futterkiste';
+```
+
 ####**TOP, LIMIT, ROWNUM子句**
-TOP 子句用于规定要返回的记录的数目。
-对于拥有数千条记录的大型表来说，TOP 子句是非常有用的。
-注释：并非所有的数据库系统都支持 TOP 子句。
-**SQL Server 语法**：
-SELECT TOP number| PERCENT column_name(s)
+TOP 子句用于规定要返回的记录的数目。对于拥有数千条记录的大型表来说，TOP 子句是非常有用的。
+
+> 注意：并非所有的数据库系统都支持 TOP 子句。
+
+**SQL Server / MS Access 语法**：
+
+```sql
+SELECT TOP number [PERCENT] column_name(s)
 FROM table_name
-从上面的 "Persons" 表中选取头两条记录
-实例1：
-SELECT TOP 2 * FROM Persons
-我们希望从上面的 "Persons" 表中选取 50% 的记录
-实例2：
-SELECT TOP 50 PERCENT * FROM Persons
-PS：MySQL 和 Oracle 中的 SQL SELECT TOP 是等价的
-**MySQL 语法**
+```
+
+按具体数目或百分比显示结果。
+
+**实例1**：
+
+```sql
+SELECT TOP 2 * FROM Persons;
+```
+
+上面的实例用于从上面的 "Persons" 表中选取头两条记录
+
+**实例2**：
+
+```sql
+SELECT TOP 50 PERCENT * FROM Persons;
+```
+
+上面的实例用于从上面的 "Persons" 表中选取 50% 的记录。
+
+注意：MySQL 和 Oracle 中的 SQL SELECT TOP 是等价的。不过，一般MySQL使用LIMIT关键字，Oracle使用ROWNUM关键字。
+
+**MySQL 语法**：
+
+```sql
 SELECT column_name(s)
 FROM table_name
-LIMIT number
-例子
-SELECT *
-FROM Persons
-LIMIT 5
-**Oracle 语法**
+LIMIT number;
+```
+
+**Oracle 语法**：
+
+```sql
 SELECT column_name(s)
 FROM table_name
-WHERE ROWNUM <= number
-例子
-SELECT *
-FROM Persons
-WHERE ROWNUM <= 5
+WHERE ROWNUM <= number;
+```
+
 ##**连接查询**：
  连接查询通过JOIN关键字及其衍生类型完成。JOIN 子句用于把来自两个或多个表的行结合起来，得到完整的结果。
 
@@ -304,50 +441,81 @@ CROSS JOIN 关键字用于将两个表的数据分别相乘，得到一个N*M的
 SELECT column_name(s)
 FROM table1
 CROSS  JOIN table2
-##**DML语句**
-DML语句主要用于操作表格中的数据，常用的功能有INSERT INTO/ UPDATE/DELETE FROM"数据表的数据"。
-###**INSERT INTO语句**：
-INSERT INTO命令用于向数据表中插入一行或者多行数据
-INSERT INTO 语句可以有两种编写形式。
-第一种形式无需指定要插入数据的列名，只需提供被插入的值即可：
-INSERT INTO table_name
-VALUES (value1,value2,value3,...);
-第二种形式需要指定列名及被插入的值：
-INSERT INTO table_name (column1,column2,column3,...)
-VALUES (value1,value2,value3,...);
-**1.一次插入一行记录**：
-INSERT INTO  "table_name" [("column1" [, "column2"]...)]  VALUES ("value1" [, "value2"]...)；
-实例：
+##DML语句
+DML 语句主要用于操作表格中的数据，常用的功能有 INSERT INTO / UPDATE / DELETE FROM 数据表的数据。
+###INSERT INTO语句：
+INSERT INTO 语句用于向数据表中插入一行或者多行数据，可以有两种编写形式。
+
+1. **无需指定要插入数据的列名，只需提供被插入的值即可**：
+
+   ```sql
+   INSERT INTO table_name
+   VALUES (value1,value2,value3...);
+   ```
+
+2. **需要指定列名及被插入的值**：
+
+   ```sql
+   INSERT INTO table_name (column1,column2,column3...)
+   VALUES (value1,value2,value3...);
+   ```
+
+**通过带子查询的插入语句一次插入多行记录的语法**：
+
+```sql
+INSERT INTO  table_name1 [(column_name1 [, column_name2]...)]  
+SELECT (column_name3 [, column_name4]...) 
+FROM table_name2 
+[WHERE condition];
+```
+
+**实例**：
+
+```sql
 INSERT INTO Person (Firstname, Lastname) VALUES ('Katy', 'Perry');
-注意：
+```
 
-- 如果省略了数据表名后的所有列，则默认为所有列按列的顺序依次插入值；
-- 如果不想列出列名，又不想指定所有列的值，则可以为那些无法确定值的列分配null，如：
-  \#如果已经指定Id列为主键列，则插入一条新数据时，主键列会自增，系统会自动分配该行主键的值
-  \#所以该行的主键赋值为null没有问题，系统会自动添加相应的值：
-  INSERT INTO Person values(NULL, NULL,  NULL, '北清路', '北京市');
-- 因为外键列的值必须是被参照列的已有值，所以向从表中插入记录之前，应该先向主表中插入记录，否则从表外键列就只能为NULL。外键列不保证必须存在被参照的记录，故外键列可以为NULL，如果想保证从表的每条记录都有对应的主表记录存在，则添加非空、外键两个约束。
-
-2.**通过带子查询的插入语句一次插入多行记录语法**：
-INSERT INTO  "table\_name1" [("column1" [, "column2"]...)]  SELECT ("column3" [, "column4"]...) FROM "table_name2" WHERE "condition"]；
-
-###**UPDATE语句**：
-UPDATE语句用于一次性修改数据表的一条或多条记录，通过where子句限定修改哪些行的记录。
-**UPDATE语法**：
-UPDATE "table_name"  
-SET "column1" = "value1" [, "clomun2" = "value2"]...
-WHERE "condition";
-其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。详见WHERE子句介绍。
-
-###**DELETE FROM语句**：
-使用DELETE FROM语句可以删除指定表的一行或多行记录。
-**删除一行或多行记录的语法**：
-DELETE FROM "table_name"
-[WHERE "condition"];
 **注意**：
 
-- 当主表记录被从表记录参照时，主表记录不能被删除，只有先将主表中被参照的记录删除后，才可以删除从表记录；
-- 如果定义外键约束时定义了主表记录和从表记录之间的级联删除ON DELETE CASCADE，或者使用ON DELETE SET NULL用于指定当主表记录被删除时，从表中的参照记录把外键列的值设为null。
+- 如果省略了数据表名后的所有列，则默认为所有列按列的顺序从左往右依次插入值；
+
+- 如果不想列出列名，又不想指定所有列的值，则可以为那些无法确定值的列分配null。如：
+
+  ```sql
+  #如果已经指定Id列为主键列，则插入一条新数据时，主键列会自增，系统会自动分配该行主键的值
+  #所以下面一行的主键赋值为null没有问题，系统会自动添加相应的值
+  INSERT INTO Person values(NULL, NULL,  NULL, '北清路', '北京市');
+  ```
+
+- 因为外键列的值必须是被参照列的已有值，所以向从表中插入记录之前，应该先向主表中插入记录，否则从表外键列就只能为NULL。外键列不保证必须存在被参照的记录，故外键列可以为NULL，如果想保证从表的每条记录都有对应的主表记录存在，则添加非空、外键两个约束。
+
+###UPDATE 语句
+UPDATE 语句用于一次性修改数据表的一条或多条记录，通过where子句限定修改哪些行的记录。
+
+**UPDATE语法**：
+
+```sql
+UPDATE table_name
+SET column_name1 = value1 [, clomun_name2 = value2]...
+WHERE condition;
+```
+
+其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。详见WHERE子句介绍。
+
+###DELETE FROM 语句
+DELETE FROM 语句可以删除指定表的一行或多行记录。
+
+**删除一行或多行记录的语法**：
+
+```sql
+DELETE FROM table_name
+[WHERE condition];
+```
+
+**注意**：
+
+- **当主表记录被从表记录参照时，主表记录不能被删除，只有先将主表中被参照的记录删除后，才可以删除从表记录**；
+- 如果定义外键约束时定义了主表记录和从表记录之间的级联删除ON DELETE CASCADE，或者使用ON DELETE SET NULL用于指定当主表记录被删除时，从表中的参照记录把外键列的值设为NULL。
 ##**数据类型**
 ###**通用的数据类型**：
 | 数据类型                             | 描述                                       |
@@ -501,30 +669,38 @@ image	|可变长度的二进制数据。最多 2GB。
 | table            | 存储结果集，供稍后处理。                             |
 
 
-##**DDL语句**
+##DDL 语句
 其中，可供操作的"数据库对象"一般有：database、table、index、view、function、 procedure、trigger、constraint等。
 
-###**CREATE语句**
+###CREATE 语句
 用于创建数据库对象（如database、table、index、view、schema、domain等）。
 ####**创建数据库语法**：
-CREATE DATABASE [IF NOT EXISTS] "database_name";
+```sql
+CREATE DATABASE [IF NOT EXISTS] database_name;
+```
 
-> 注意：实际输入时，database_name为数据库名，不要加引号。上面加引号只是为了突出显示自定义名称。
+> 注意：database_name为数据库名，不要加引号。
 
 ####**创建数据表语法**：
-CREATE TABLE "table_name"
-("column 1" "data type for column 1" [column 1 constraint(s)],#零到多个列定
-"column 2" "data type for column 2" [column 2 constraint(s)],#零到多个约束定义
+```sql
+CREATE TABLE [IF NOT EXISTS] table_name
+(column_name1 datatype [default expr] [column_name1 constraint(s)],
+column_name2 datatype [default expr] [column_name2 constraint(s)],
 ... 
 [table constraint(s)] );
+```
+
 有时候也可以使用子查询语句来代替列定义：
-CREATE TABLE "table_name" AS 
-[SQL Statement];
+
+```sql
+CREATE TABLE table_name AS [SQL Statement];
+```
+
 **注意**：
 
-- 表名和列名必须以字母开头，后面可跟不超过30个字符的字母、数字和下划线的组合，表名和列名不能使用SQL的保留字（如select、drop等）;
-- 也可使用insert into语句向空表写入数据；
-- 不同数据库所允许的数据类型不同，务必参考所用数据库的参考手册；
+- 表名和列名必须以字母开头，后面可跟不超过30个字符的字母、数字和下划线的组合，表名和列名不能使用SQL的保留字（如select、drop等）；
+- 也可使用 INSERT INTO 语句向空表写入数据；
+- **不同数据库所允许的数据类型不同，务必参考所用数据库的参考手册**。
 
 **创建数据表实例**：
 1.
@@ -807,15 +983,13 @@ DROP CONSTRAINT pk_PersonID
 MySQL 使用 AUTO_INCREMENT 关键字来执行 AUTO _INCREMENT 任务。
 默认地，AUTO_INCREMENT 的开始值是 1，每条新记录递增 1。
 下列 SQL 语句把 "Persons" 表中的 "P_Id" 列定义为 AUTO _INCREMENT 主键：
-CREATE TABLE Persons
-(
+CREATE TABLE Persons (
 P\_Id int NOT NULL AUTO_INCREMENT,
 LastName varchar(255) NOT NULL,
 FirstName varchar(255),
 Address varchar(255),
 City varchar(255),
-PRIMARY KEY (P_Id)
-);
+PRIMARY KEY (P_Id));
 要让 AUTO_INCREMENT 序列以其他的值起始，请使用下列 SQL 语法：
 ALTER TABLE Persons AUTO_INCREMENT=100
 要在 "Persons" 表中插入新记录，我们不必为 "P_Id" 列规定值（会自动添加一个唯一的值）：

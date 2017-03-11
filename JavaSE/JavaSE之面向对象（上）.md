@@ -16,7 +16,7 @@ typora-copy-images-to: appendix
 1. 抽象。**抽象**（abstract）就是将客观的事物抽象成各种对象的组合，将一个复杂的系统分解成多个简单的部件进行处理。抽象时忽略掉那些与当前目标无关的因素，以便更充分地注意到那些与当前目标有关的因素。抽象并不打算了解全部问题，而是选择其中有用的部分。抽象包括两个方面：过程抽象（编程中使用**方法**来模拟某个过程）和数据抽象（编程中使用某种类型的变量或值来模拟现实数据）；
 2. 继承。**继承**（extend，叫扩展更恰当，习惯上称为继承）是描述两个类之间的关系。**继承**允许一个类继承某些已有类的行为和状态，然后在持有已有类行为和状态的基础上进行扩展和修改。被继承或扩展的类叫父类（或基类），继承或扩展了的类叫做父类的子类（或派生类）。继承有单继承和多继承两种：单继承只允许从一个类继承，即只能有一个直接父类，但可以有多个间接父类；而多继承允许有多个直接父类。在Java中，除Object类（它是所有Java类的父类）以外，其它类都有父类。Java语言中只支持单继承，但可以通过实现接口来弥补单继承的不足。继承大大提高了代码的可重用性；
 3. 封装。**封装** （Encapsulation）是将对象的状态和行为隐藏在对象内部，不允许外部对象直接访问封装对象的内部信息，外部对象必须通过封装对象的类提供方法来间接访问封装对象的内部信息。良好的封装可以隐藏实现细节、限制外部的不合理访问、便于修改和维护；
-4. 多态。**多态**（polymorphism）是指允许同一个父类的不同子类的对象对同一消息做出不同的响应。Java中实现多态主要是方法的重载和方法的覆盖。利用动物这个类中定义发出叫声的功能，而动物的子类对象如猫和狗都可以发出叫声，但猫会“喵~喵~喵”，狗会“汪汪汪”。多态增强了代码的可替换性、可拓展性和灵活性。
+4. 多态。**多态**（polymorphism）是指允许同一个父类的不同子类的对象对同一消息做出不同的响应。Java中实现多态主要是方法的重载和方法的覆盖。利用动物这个类中定义发出叫声的功能，而动物的子类对象如猫和狗都可以发出叫声，但猫会“喵喵喵”，狗会“汪汪汪”。多态增强了代码的可替换性、可拓展性和灵活性。
 
 ### 类和对象
 
@@ -347,6 +347,7 @@ public class PrimitiveTransferTest {
 		System.out.println("交换结束后：\nswap方法里，变量a的值是"
 			+ a + "，变量b的值是" + b);
 	}
+  
 	public static void main(String[] args) {
 		int a = 6;
 		int b = 9;
@@ -490,6 +491,7 @@ public class Recursive {
 			return 2 * fn(n - 1) + fn(n - 2);
 		}
 	}
+  
 	public static void main(String[] args) {
 		// 输出fn(10)的结果
 		System.out.println(fn(10));
@@ -516,9 +518,11 @@ public class Overload {
 	public void test() {
 		System.out.println("无参数");
 	}
+  
 	public void test(String msg) {
 		System.out.println("重载的test方法: " + msg);
 	}
+  
 	public static void main(String[] args) {
 		Overload ol = new Overload();
 		// 调用test()时没有传入参数，因此系统调用上面没有参数的test()方法。
@@ -560,6 +564,7 @@ class Person {
 	// 定义一个类变量
 	public static int eyeNum;
 }
+
 public class PersonTest {
 	public static void main(String[] args) {
 		// 第一次主动使用Person类，该类自动初始化，则eyeNum变量开始起作用，输出0
@@ -616,6 +621,7 @@ public class VariableOverrideTest {
 		// 运行info方法
 		new VariableOverrideTest().info();
 	}
+  
 	public void info() {
 		// 实例方法里的局部变量，局部变量覆盖成员变量
 		String name = "PHP";
@@ -804,7 +810,7 @@ javac命令的“-d”选项用于指定生成.class文件的位置，“.”表
 -  构造器的名称与其类名相同；
 -  构造器的访问权限修饰符一般为public（方便创建类对象），也可以是private（[单例模式]()和[工厂模式]()）。很少使用protected和default；
 -  构造器声明中没有返回值类型，也不能使用void。注意，**声明中没有返回值类型不代表没有返回值**。构造器调用结束后**默认返回其初始化完成的对象**。没有在声明中添加返回值类型是为了与一般方法区分开来，表明了构造器的特殊性；
--  构造器的执行体一般为通过传入的实参为当前类的成员变量（如前所述，通过this调用当前类的成员变量）指定初始值，从而完成对象的初始化；
+-  构造器的执行体一般为通过传入的实参为当前类的成员变量指定初始值，从而完成对象的初始化。如前所述，在构造器中可以通过this调用当前类的成员变量（而且this还可以省略，可是通过this调用类成员实际上底层依然使用类名来调用类成员。不过不建议这么做，而是建议直接使用类名调用类成员）；
 
 一个构造器实例如下：
 
@@ -925,7 +931,7 @@ Person[name = 王二, age = 18, gender = male]
 - Java只允许单继承。即父类可以拥有多个子类，但是子类只能继承一个父类；
 - Java中所有类都是通过直接或者间接地继承了java.lang.Object类得到的。换言之Object类是Java中所有类的父类。
 
-#### 重写父类方法
+#### 重写父类实例方法
 
 一般情况下，子类总是在父类的基础上，额外增加新的成员。但有些时候，子类需要重写父类的**实例**方法。如代表动物的Animal类定义了一个代表移动的move()方法，但是不同的动物有不同的移动方式（狗是跑、鸟是飞等），因此，其子类需要重写Animal类的move()方法。如：
 
@@ -971,164 +977,282 @@ public class Bird extends Animal {
 - 两小：即重写后的子类方法的返回值类型和抛出异常的类型要小于被重写的父类方法；
 - 一大：即重写后的子类方法的返回权限应该比被重写的父类方法更大或相等；
 
-注意：**被重写的方法必须同是实例方法**，不能一个是类方法（类成员不能被重写，子类继承父类后，父类的类成员会被隐藏），而另一个是实例方法。另外，如前所述，父类中想被子类重写的实例方法应使用protected修饰。这样该方法就只能被子类访问，保证了良好的封装性。
+注意：**被重写的方法必须同是实例方法**，不能一个是类方法（类成员不能被重写，子类继承父类后，父类的类成员会被隐藏），而另一个是实例方法。另外，如前所述，父类中想被子类重写的实例方法应使用protected修饰，这样该方法就只能被子类访问，保证了良好的封装性。
 
-> 注意：**父类中private修饰的私有成员对其子类是完全隐藏的，子类无法访问父类中的私有成员**。所以，即使子类中定义了一个与父类中私有成员（成员变量或方法）声明相同（修饰符可以不同）的成员，也不是重写，而是一个新的定义。
+**父类中private修饰的私有成员对其子类是完全隐藏的，子类无法直接访问父类中的私有成员，只能通过调用从父类继承的方法来调用或改变父类的私有成员**。所以，即使子类中定义了一个与父类中私有成员（成员变量或方法）声明相同（修饰符可以不同）的成员，也不是重写，而是一个新的定义；
 
-子类对象无法直接访问父类中被覆盖了的成员（方法或成员变量）。所以，如果子类对象直接访问了一个与父类中被重写的成员（成员变量或方法）声明相同（修饰符可以不同）的成员，那么在子类对象直接访问的是属于它自己的成员，而不是父类中被重写的成员。然而，在子类的方法中可以通过**super.父类实例成员**的方式来调用父类中被覆盖的实例成员（即父类的非私有成员），通过**父类类名.父类类方法**的方式来访问父类中被覆盖的类成员。看下面的例子：
+**只能重写父类的实例方法，从而实现多态**。**而父类的其他成员（静态变量、静态方法、共实例变量）只能被子类的同名成员覆盖，不能被重写**。
+
+子类对象无法直接访问父类中被覆盖了的成员（方法或成员变量）。所以，如果子类中定义的实例成员与父类中的实例成员同名，那么子类对象直接访问该同名的成员（成员变量或方法）时访问的是属于它自己的成员，而不是父类中被重写的成员。
+
+然而，在**子类的方法中**可以通过**super.父类实例成员**的方式来调用父类中被覆盖的实例成员（即父类的非私有成员），在**子类的静态方法中**可以通过**父类类名.父类类方法**的方式来访问父类中被覆盖的类成员。看下面的例子：
 
 ```java
+class BaseClass {
+	private String testPrivateMember = "我是父类的私有变量";
 
+	protected void testInstanceMethod() {
+		System.out.println("我是父类的实例方法");
+	}
+
+	protected static void testStaticMethod() {
+		System.out.println("我是父类的类方法");
+	}
+}
+
+public class SubClass extends BaseClass {
+
+	private String testPrivateMember = "我是子类的私有变量";
+
+	// 不能重写父类的类方法，所以不能为与父类中类方法同名的子类类方法添加@Override注解
+	// 子类中定义的与父类同名的类方法属于子类本身，与父类中同名的类方法无关
+	// @Override
+	public static void testStaticMethod() {
+		System.out.println("我是子类的类方法");
+		// 可以在子类中任何静态方法体中调用父类类成员
+		BaseClass.testStaticMethod();
+	}
+
+	@Override
+	public void testInstanceMethod() {
+		// 可以在子类的实例方法中通过super关键字来调用父类中的被覆盖的方法
+		super.testInstanceMethod();
+		System.out.println("我是子类的实例方法");
+		// 无法调用父类的私有成员
+		// System.out.println(super.testPrivateMember);
+		// 即使子类的私有变量与父类的私有成员同名，也是访问子类自己的私有成员
+		System.out.println(testPrivateMember);
+		
+	}
+
+	public static void main(String[] args) {
+		SubClass subClass = new SubClass();
+		subClass.testInstanceMethod();
+		
+		// 可以在子类中任何静态方法体中调用父类类成员
+		BaseClass.testStaticMethod();
+		SubClass.testStaticMethod();
+	}
+}
 ```
 
+输出结果如下：
 
+```shell
+我是父类的实例方法
+我是子类的实例方法
+我是子类的私有变量
+我是父类的类方法
+我是子类的类方法
+我是父类的类方法
+```
 
+如果在某个方法中访问名为a的成员变量，但是没有显式指定a的调用者，那么系统会依次从该方法中、当前类中、当前类的直接父类中...一直找到Object类，直到找到名为a的变量，没有找到就报错。
 
+#### 调用父类构造器
 
-子类不能继承父类中访问权限是private的成员变量和成员方法；
+子类不会获得父类的构造器，但是可以通过super关键字在子类的构造器中调用父类的构造器，与前面在一个构造器中通过this调用另一个重载构造器相似的是，这个super调用语句也必须位于子类构造器执行体中的第一行。如下面的代码所示。
 
+```java
+class Base {
+	public double size;
+	public String name;
 
+	public Base(double size, String name) {
+		this.size = size;
+		this.name = name;
+	}
+}
 
-Java中通过**super**来实现对父类成员的访问，super用来引用当前对象的父类。super的使用有三种情况：
+public class Sub extends Base {
+	private String color;
 
-- 访问父类被隐藏的成员变量，如：super.variable;
-- 调用父类中被重写的方法，如：super.Method([paramlist])；。
-- 调用父类的构造方法，如：super([paramlist]);。
+	public Sub(double size , String name , String color) {
+		// 通过super调用来调用父类构造器的初始化过程
+		super(size , name);
+		this.color = color;
+	}
+
+	public static void main(String[] args) {
+		Sub s = new Sub(5.6, "测试对象", "红色");
+		// 输出Sub对象的三个实例变量
+		System.out.println(s.size + "--" + s.name + "--" + s.color);
+	}
+}
+```
+
+输出结果如下：
+
+```shell
+5.6--测试对象--红色
+```
+
+不管是否使用super执行父类构造器的初始化代码，子类构造器总会调用父类构造器一次。子类调用父类构造器分为以下三种情况：
+
+- 子类通过super显式调用父类构造器； 
+- 子类通过this显式调用重载的构造器，被调用的重载构造器再按其自身情况（三种调用父类构造器情况之一）调用父类构造器； 
+- 子类既没有使用super，也没有使用this，系统在执行子类构造器之前会隐式调用父类的无参数构造器。执行父类构造器时，会按照继承关系从下往上一直追朔到Object类的构造器，再依次从上往下执行父类的构造器，形成一个闭环流程。
 
 ### 多态
 
-对象的多态性是指在父类定义的属性或者方法被子类继承之后，可以具有不同的数据类型或表现出不同行为。这使得同一个属性或者方法在父类及其各个子类中具有不同的语义。例如：“几何图形”的“绘图”方法，“椭圆”和“多边形”都是“几何图形”的子类，其“绘图”的方法不一样。
+#### 多态概述
 
-Java的多态性体现在两个方面：由方法重载实现的静态多态性（编译时多态）和方法重写实现的动态多态性（运行时多态）。
+对象的多态性是指在父类的实例方法被子类继承之后，可以表现出不同行为。例如：Shape类的draw()方法，Rectangle类和Triangle类都是Shape类的子类，其子类的draw()方法却不一样。
 
-- 编译时多态：在编译阶段，具体调用哪个被重载的方法，编译器会根据参数的不同静态（参数的类型、参数的顺序、参数的个数）确定其相应的方法。（比如在构造方法和一般方法里面）；子类重写父类的方法。
+#### 多态的产生
 
-- 运行时多态：由于子类继承了父类的所有的属性（私有属性除外），所有的子类对象可以作为父类对象使用。程序中凡是使用父类对象的地方，都可以用子类对象来代替。一个对象可以通过引用子类的实例来调用子类的方法。（比如Dog类和Cat类是Animal的子类，我们定义一个方法void letSleep(Animal animal){animal.sleep();}，然后sleep这个父类中的方法，分别被子类重写。那么我们向letSleep这个方法分别传入dog（Dog类的实例）或者cat（Cat类的实例），那么该方法就会分别调用dog中的sleep()方法和cat中的sleep()方法）。
-
-  #### 重载 (overload)
-
-- 方法重载是让类以统一的方式处理不同数据类型的手段。
-
-- 一个类中可以创建多个方法，它们具有相同的名字，但具有不同的参数和不同的定义。调用方法时通过传递给它们的不同参数个数和参数类型来决定具体使用哪个方法。
-
-- 返回值类型可以相同也可以不同，无法以返回值类型作为重载方法的区分标准。
-
-#### 重写 (override)
-
-- 子类对父类的方法进行重新编写。如果在子类中的方法与其父类有相同的方法名、返回类型和参数表，我们说该方法被重写。
-- 如需父类中原有的方法，可使用super关键字，该关键字引用了当前类的父类。
-- 子类函数的访问修饰权限不能低于父类的。
-
-
-
-
-
-
-
-### 抽象类
-
-如果一个类只是描述某一类对象具有某一功能，但是却没有具体定义该功能如何实现，那么该类就是一个抽象类。比如描述人类的Human类，该Human类可能描述了人类具有工作的能力，却没有定义具体的某类人如何工作（可能是厨师做饭、作家写作、程序员编程等）。抽象类中这种描述某种功能的方法称为抽象方法。
-
-抽象类和抽象方法特点如下：
-
-- 抽象类的定义比普通类的定义增加了abstract 关键字修饰。抽象方法也使用abstract关键字来定义。抽象方法没有方法体；
-- 抽象类不一定有抽象方法，有抽象方法的类一定是抽象类；
-- 抽象类不能被实例化（即使抽象类没有抽象方法），因为它不是具体的，所以无法通过new关键字来创建抽象类的实例。抽象类只能通过多态的方式，由其具体的子类来实例化。抽象方法的声明是一条**带英文分号**的语句，没有方法体；
-- 抽象类的成员包括**成员变量**（既可以是变量，也可以是常量）、**构造器** （抽象类构造器主要用来被子类构造器调用来进行父类中数据的初始化）、**抽象方法**（也可以没有抽象方法）、**非抽象方法**（用于被子类继承达到代码复用的目的）、**初始化块**、**内部类**（接口、枚举）**5种成员**；
-- 含有抽象方法的类（直接定义一个含有抽象方法的抽象类，或继承了一个抽象类但没有实现抽象父类的所有抽象方法，或实现一个接口但没有实现接口的所有抽象方法）只能被定义成抽象类。
-
-如果说类是某些具有相同特征对象的抽象，那么抽象类则是对某些具有相同特征的类（不同的类对这些相同特征具有不同的实现）的抽象。抽象类体现了一种模板模式的设计思想，这种模板的存在避免了子类实现的随意性，子类在保留抽象父类数据的基础上进行扩展和改造。
-
-**注意**：抽象方法和空方法是不同的概念：抽象方法没有方法体，如“public abstract void work();”是一个抽象方法定义，它是一条带分号的语句；而空方法有方法体，只是方法体为空，什么都不做。如“public void work() {}”是一个空方法。
-
-下面定义一个抽象类：
+Java引用变量有两个类型：编译时类型和运行时类型。编译时类型由声明该变量时使用的类型决定，运行时类型由实际赋给该变量的对象决定。如果编译时类型和运行时类型不同，就会出现多态。
 
 ```java
-public abstract class Shape {
-	{
-		System.out.println("执行Shape的初始化块...");
-	}
-	private String color;
+class BaseClass {
+	public String book = "编程书籍";
 
-	// 定义一个计算周长的抽象方法
-	public abstract double calPerimeter();
-
-	// 定义一个返回形状的抽象方法
-	public abstract String getType();
-
-	// 定义Shape的构造器，该构造器并不是用于创建Shape对象，
-	// 而是用于被子类调用
-	public Shape() {
+	public void base() {
+		System.out.println("我是父类的普通方法");
 	}
 
-	public Shape(String color) {
-		System.out.println("执行Shape的构造器...");
-		this.color = color;
+	protected void test() {
+		System.out.println("我是父类中被覆盖的方法");
+	}
+}
+
+public class SubClass extends BaseClass {
+	// 重新定义一个book实例变量隐藏父类的book实例变量
+	public String book = "Head First Java";
+
+	// 重写父类中的实例方法
+	public void test() {
+		System.out.println("我覆盖了父类的方法");
 	}
 
-	// 省略color的setter和getter方法
-	public void setColor(String color) {
-		this.color = color;
+	public void sub() {
+		System.out.println("我是子类的普通方法");
 	}
 
-	public String getColor() {
-		return this.color;
+	public static void main(String[] args) {
+		// 下面编译时类型和运行时类型完全一样，因此不存在多态
+		BaseClass bc = new BaseClass();
+		// 输出“编程书籍”
+		System.out.println(bc.book);
+		// 下面两次调用将执行BaseClass的方法
+		bc.base();
+		bc.test();
+		// 下面编译时类型和运行时类型完全一样，因此不存在多态
+		SubClass sc = new SubClass();
+		// 输出"Head First Java"
+		System.out.println(sc.book);
+		// 下面调用将执行从父类继承到的base()方法
+		sc.base();
+		// 下面调用将执行从当前类的test()方法
+		sc.test();
+		// 下面编译时类型和运行时类型不一样，多态发生
+		BaseClass ploymophicBc = new SubClass();
+		// 输出“编程书籍”，访问的是父类对象的实例变量。说明实例成员没有多态性
+		System.out.println(ploymophicBc.book);
+		// 下面调用将执行从父类继承到的base()方法
+		ploymophicBc.base();
+		// 下面调用将执行从子类中重写的test()方法，出现了多态
+		ploymophicBc.test();
+		// 因为ploymophicBc的编译类型是BaseClass，
+		// BaseClass类没有提供sub方法,所以下面代码编译时会出现错误。
+		// ploymophicBc.sub();
 	}
 }
 ```
 
-抽象类不能创建实例，只能当做父类被子类继承。
+输出结果如下：
 
-继承抽象类的实例：
+```shell
+编程书籍
+我是父类的普通方法
+我是父类中被覆盖的方法
+Head First Java
+我是父类的普通方法
+我覆盖了父类的方法
+编程书籍
+我是父类的普通方法
+我覆盖了父类的方法
+```
+
+> 注意：与方法不同，**对象的实例变量不具备多态性**。当通过引用该变量访问访问其实例成员（实例成员或实例方法）时，系统总是试图访问它编译时所定义的实例成员，而不是它运行时所定义的实例成员。
+
+#### instanceof与引用变量的强制类型转换
+
+强制类型转换需要强制转换运算符，用法为：(type)variable。这种用法可以将variable变量转换为type型变量。关于强制类型转换需要注意以下几点：
+
+- 基本类型之间的转换只能在基本类型之间进行。即整数型、字符型和浮点型之间可以相互转换，但是数值型不能和布尔型相互转换；
+- 引用类型的转换只能在具有继承（或实现）关系两个类型之间进行。如果两个类型之间没有继承关系就会编译出错。如果将一个父类实例转换给一个子类变量，那么该父类实例实际上必须是一个子类实例才行（即编译时父类类型，运行时子类类型），否则将会抛出ClassCastException异常。
+
+为了避免发生ClassCastException异常，可以在进行强制类型转换之前先判断两者是否具有父子关系，通过instanceof运算符可以实现这点。instanceof语法为：“对象a instanceof 类B”，如果对象a的编译类型为类（或接口）B相同，或者对象a是类（或接口）B的子类（或实现类）的对象，那么该表达式结果就为true，对象a就可以强制转换为B类型的变量。否则该表达式结果就为false，进行强制转换时就会编译出错。
+
+如下面代码所示。
 
 ```java
-public class Triangle extends Shape {
-	// 定义三角形的三边
-	private double a;
-	private double b;
-	private double c;
-
-	public Triangle(String color, double a, double b, double c) {
-		super(color);
-		this.setSides(a, b, c);
-	}
-
-	public void setSides(double a, double b, double c) {
-		if (a >= b + c || b >= a + c || c >= a + b) {
-			System.out.println("三角形两边之和必须大于第三边");
-			return;
-		}
-		this.a = a;
-		this.b = b;
-		this.c = c;
-	}
-
-	// 重写Shape类的的计算周长的抽象方法
-	public double calPerimeter() {
-		return a + b + c;
-	}
-
-	// 重写Shape类的的返回形状的抽象方法
-	public String getType() {
-		return "三角形";
+public class InstanceofTest {
+	public static void main(String[] args) {
+		// 声明hello时使用Object类，则hello的编译类型是Object，
+		// Object是所有类的父类, 但hello变量的实际类型是String
+		Object hello = "Hello";
+		// String与Object类存在继承关系，故下面语句返回true
+		System.out.println("字符串是否是Object类的实例："
+			+ (hello instanceof Object));
+      	// hello变量实际上是String类型，故下面语句返回true
+		System.out.println("字符串是否是String类的实例："
+			+ (hello instanceof String)); 
+		// String实现了Comparable接口，所以返回true
+		System.out.println("字符串是否是Comparable接口的实例："
+			+ (hello instanceof Comparable));
+		String a = "Hello";
+		// String类与Math类没有继承关系，所以下面代码编译无法通过
+  		// System.out.println("字符串是否是Math类的实例：" + (a instanceof Math));
 	}
 }
 ```
 
-关于abstract关键注意以下几点：
+### 继承与组合
 
-- final修饰的类不能被继承，final修饰的方法不能被重写，故抽象类和抽象方法不能用final修饰；
-- abstract只能用于抽象类和抽象方法，不能用于修饰成员变量、局部变量和构造器；
-- static不能用于修饰抽象方法，即没有所谓的类抽象方法。如果static能用于修饰抽象方法，那么通过类调用该方法时会出现错误（无法调用一个没有方法体的方法）。虽然abstract和static不能同时修饰抽象方法，但abstract和static可以用来共同修饰内部类；
-- abstract修饰的抽象方法被子类重写才有意义，故abstract不能使用和private一起用来修饰方法，应该使用protected修饰。
+继承在带来了高度扩展性的同时也破坏了封装。为了保证父类良好的封装而不被子类随意改变，设计父类时应该遵循如下规则：
 
+- 尽量把所有父类成员变量设置成private修饰，不要让子类直接访问父类成员变量；
+- 不要让子类随意访问、修改父类的方法。辅助类工具方法应该设置成private修饰，让子类无法对其访问。如果父类中的方法需要被外部类调用，则可以将其设置成public修饰，如果不想让子类重写，可以添加final修饰。如果希望子类重写父类的方法，又不希望该方法被其他类自由访问，可以使用protected修饰； 
+- 尽量不要在父类构造器中调用将要被子类重写的方法。
 
+因该在以下必要的情况下派生子类：
 
+- 子类需要额外增加成员，而不仅仅是成员的变化；
+- 子类需要增加自己独有的行为（包括增加新的方法或重写父类的方法）。
 
+除了继承以外，组合也可以实现复用。具体做法是这样的，通过将一个类当成另一个类的内部成分而包含在其中，从而允许外部的类可以直接调用内部类的public方法。
 
+继承表达的是一种“是（is a）”关系，而组合表达的是一种“有（has a）”关系。所以，继承和组合的选择要以实际的开发需求而定。
 
+### 初始化块
 
+#### 初始化块概述
 
+初始化块也是Java的类成员（还有成员变量、方法和构造器）。一个类里可以有多个初始化块，相同类型的初始化块总是先执行前面的，再执行后面的。初始化块语法如下：
 
+```java
+[修饰符] {
+  // 多条可执行语句
+  ...
+}
+```
 
+初始化块只能使用static修饰。使用static修饰的初始化成员静态初始化块，没有static修饰的初始化块称为普通初始化块。初始化块里开始使用任何可执行语句。
 
+初始化只在创建Java对象时隐式执行，而且在执行构造器之前执行。其实，普通初始化、声明实例变量指定默认值都可以看作对象的初始化代码，他们的执行顺序与源程序中的排列顺序相同。
+
+#### 初始化和构造器
+
+如果多个重载构造器中都含有一段相同的初始化代码且无须接收参数，那么出于代码的复用性的考虑，可以将这段代码提取成初始化块中。实际上初始化块在编译时还是会被添加到构造器中的，且在构造器中所有代码之前执行。
+
+与构造器类似，创建Java对象时系统不仅会执行当前类的普通初始化块和构造器，还会按继承实现层级从下往上追朔到java.lang.Object类，从Object类的初始化、普通构造器开始，按照继承实现层级从上往下依次执行到当前类的普通初始化块、构造器。
+
+#### 静态初始化块
+
+静态初始化块是类相关的，在类初始化阶段执行，而不是创建对象时执行，所以静态初始化块总是先于普通初始化块执行。
+
+同样，系统在执行类初始化时不仅会执行当前类的静态初始化块，还会从java.lang.Object类开始，按照继承实现层级从上往下依次执行到当前类的静态初始化块。
+
+静态初始化块和声明静态成员变量时指定默认值都是类的初始化代码，他们的执行顺序与他们在源程序中的排列顺序相同。

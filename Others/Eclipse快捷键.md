@@ -35,7 +35,9 @@
 - Ctrl+Shift+Delete：删除到行末。
 - Ctrl+Shift+X：把当前选中的文本全部变味大写。
 - Ctrl+Shift+Y：把当前选中的文本全部变为小写。
-- Alt+上/下箭头：将当前行或选中的内容往上或下移动一行。在try/catch部分，这个快捷方式尤其好使。
+- Alt+上/下箭头：将当前行或选中的内容往上或下移动一行。在try-catch部分，这个快捷方式尤其好使。
+- Alt+Shift+Z：快速添加常用代码块。选中一段代码，按下这组快捷键可以在弹出的快捷菜单中快速将所选代码添加到try-catch块、do-while、while、for、if、lock、runnable、synchronized或lock等代码块中。
+- Alt+Shift+S：快速添加一些类成员。定义好一个Java类的成员变量后，按下这组快捷键可以快速添加sets和gets方法、根据已有成员变量添加构造器、使用父类构造器、重写或实现一个方法等。
 
 > 建议：关于代码的跳转和编辑框I，如果你熟悉Vim或Emacs，请安装Vim插件（请参考[Eclipse插件安装的相关介绍]()）或在Window -> Preferences -> General -> Keys中设置Scheme为Emacs。
 

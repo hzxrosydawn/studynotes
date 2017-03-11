@@ -7,6 +7,10 @@ typora-copy-images-to: appendix
 
 ### JDBC概述
 
+首先说**数据库**，数据库仅是存储数据的地方，而对数据库数据的访问、操作等管理数据库的功能是通过数据库管理系统（Database Management System, DBSM）完成的，习惯上把数据库和DBSM统称为数据库，一般说的数据就是两者的集合。DBMS有一个数据字典（也称为系统表），负责存储它所拥有的事务信息，这种关于数据的数据称为元数据（Meta Data）。
+​	
+目前**关系型数据库**是最成熟、应用最广的数据库结构类型。对于关系数据库，最基本的存储单元就是数据表（table），可以把数据表抽象成一张二维表格，每一行代表一个记录，每一列是一个字段，创建数据表时通常需要指定含有多少列、列的名称及列数据的类型，而行数是动态改变的不需要在创建时指定行数。每个数据表还应该指定一个特殊的列来唯一表示每一行记录的信息，称为主键列。数据库可以抽象为含有大量数据表的集合。
+
 JDBC全称为Java Database Connectivity，即Java数据库连接，是Java连接数据库API。主要功能如下：
 
 - 连接到数据库；
@@ -43,24 +47,32 @@ Java 8支持JDBC 4.2标准。Java实现JDBC编程主要用到以下类和接口�
   - **CallableStatement prepareCall(String sql) throws SQLException**：该方法返回一个CallableStatement对象，该对象用于调用数据库的存储过程；
   - CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException：同上。只是该方法可以通过参数来覆盖默认的结果集类型和默认的并发类型；
   - CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException：同上，只是该方法可以通过参数来覆盖默认的结果集类型、默认的并发型和默认的可保持性。
-  - PreparedStatement和CallableStatement是Statement的子类。只有获得了Statement及其子类的对象后才可以执行SQL语句。Connection接口还有以下几个常用的控制事务方法：
-  - Savepoint setSavepoint() throws SQLException：在当前事务中创建并返回一个未命名的Savepoint保存点对象；
-  - Savepoint setSavepoint(String name) throws SQLException：在当前事务中创建并返回一个指定名称的Savepoint保存点对象；
-  - void setTransactionIsolation(int level) throws SQLException：尝试改变该Connection中事务的隔离级别。可以指定为Connection接口中定义的几个常量值（Connection.TRANSACTION_READ_UNCOMMITTED，Connection.TRANSACTION_READ_COMMITTED，Connection.TRANSACTION_REPEATABLE_READ或Connection.TRANSACTION_SERIALIZABLE）；
-  - void rollback() throws SQLException：回滚事务。放弃当前事务中的更改并释放当前持有的数据库锁。该方法只能用在自动提交禁用的模式下；
-  - void rollback(Savepoint savepoint) throws SQLException：同上回滚事务到之前的一个保存点；
-  - void setAutoCommit(boolean autoCommit) throws SQLException：设置是否开启自动提交模式。自动提交模式下每一条SQL语句都会作为单独事务来执行和提交。非自动提交模式下SQL语句被组合成一个事务，通过commit方法和rollback方法来终止一个事务。新建的Connection对象默认是自动提交的；
-  - void commit() throws SQLException：永久性地改变自上次提交或回滚操作之后的操作，并释放当前Connection对象持有的任何数据库锁。该方法只能用在自动提交禁用的模式下；
-  - void close() throws SQLException：立即释放该Connection对象的数据库和JDBC资源，而不是等待他们自动关闭。**强烈建议在调用该方法之前显式提交或回退事务**。
 
-  Java 7还为Connection接口提供了以下几个方法：
+PreparedStatement和CallableStatement是Statement的子类。只有获得了Statement及其子类的对象后才可以执行SQL语句。Connection接口还有以下几个常用的控制事务方法：
 
-  - void setSchema(String schema) throws SQLException：设置该Connection对象访问数据库的Schema；
-  - String getSchema() throws SQLException：获取该Connection对象访问数据库的Schema；
-  - void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException：设置该Connection连接数据库的超时时间；
-  - void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException：获取该Connection连接数据库的超时时间。
+- Savepoint setSavepoint() throws SQLException：在当前事务中创建并返回一个未命名的Savepoint保存点对象；
+- Savepoint setSavepoint(String name) throws SQLException：在当前事务中创建并返回一个指定名称的Savepoint保存点对象；
+- void setTransactionIsolation(int level) throws SQLException：尝试改变该Connection中事务的隔离级别。可以指定为Connection接口中定义的几个常量值（Connection.TRANSACTION_READ_UNCOMMITTED，Connection.TRANSACTION_READ_COMMITTED，Connection.TRANSACTION_REPEATABLE_READ或Connection.TRANSACTION_SERIALIZABLE）；
+- void rollback() throws SQLException：回滚事务。放弃当前事务中的更改并释放当前持有的数据库锁。该方法只能用在自动提交禁用的模式下；
+- void rollback(Savepoint savepoint) throws SQLException：同上回滚事务到之前的一个保存点；
+- void setAutoCommit(boolean autoCommit) throws SQLException：设置是否开启自动提交模式。自动提交模式下每一条SQL语句都会作为单独事务来执行和提交。非自动提交模式下SQL语句被组合成一个事务，通过commit方法和rollback方法来终止一个事务。新建的Connection对象默认是自动提交的；
+- void commit() throws SQLException：永久性地改变自上次提交或回滚操作之后的操作，并释放当前Connection对象持有的任何数据库锁。该方法只能用在自动提交禁用的模式下；
+- void close() throws SQLException：立即释放该Connection对象的数据库和JDBC资源，而不是等待他们自动关闭。**强烈建议在调用该方法之前显式提交或回退事务**。
+
+Java 7还为Connection接口提供了以下几个方法：
+
+- void setSchema(String schema) throws SQLException：设置该Connection对象访问数据库的Schema；
+
+- String getSchema() throws SQLException：获取该Connection对象访问数据库的Schema；
+
+- void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException：设置该Connection连接数据库的超时时间；
+
+- void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException：获取该Connection连接数据库的超时时间。
+
+  ​
 
 - java.sql.**Statement**：代表执行SQL语句的工具接口。该接口对象可用于执行DDL、DML语句和查询语句。常用方法如下：
+
   - ResultSet **executeQuery(String sql)** throws SQLException：执行指定的**查询语句**，返回ResultSet结果集对象；
 
   - int **executeUpdate(String sql)** throws SQLException：执行INSERT、UPDATE和DELETE语句，或者DDL语句。注意：该方法不能被PreparedStatement和CallableStatement的对象调用。返回执行DML语句后受影响的行数，没有受影响行数时返回0；
@@ -184,12 +196,11 @@ Java 8支持JDBC 4.2标准。Java实现JDBC编程主要用到以下类和接口�
 5. 通过相应的Statement对象来执行SQL语句。
 
    - execute()：可以执行任何SQL语句，但比较麻烦；
-
-
--    executeUpdate()：用于执行DML、DDL语句，执行DML语句返回受SQL语句影响的行数，执行DDL语句放回0；
+   - executeUpdate()：用于执行DML、DDL语句，执行DML语句返回受SQL语句影响的行数，执行DDL语句放回0；
    - executeQuery()：只能执行查询语句，执行后返回代表查询结果的ResultSet对象。
 
-   使用PreparedStatement的执行效率比Statement的执行效率高。当SQL语句要使用参数时，PreparedStatement无须拼接SQL字符串。使用PreparedStatement还可以用于防止SQL注入。
+
+-    使用PreparedStatement的执行效率比Statement的执行效率高。当SQL语句要使用参数时，PreparedStatement无须拼接SQL字符串。使用PreparedStatement还可以用于防止SQL注入。
 
 6. 操作结果集。
 
@@ -281,7 +292,6 @@ public class ExecuteTest {
 		// 加载驱动
 		Class.forName(DRIVER);
 		try(
-			try(
 			// 获取数据库连接
 			Connection conn = DriverManager.getConnection(URL, NAME, PASSWORD);
 			// 使用Connection来创建一个Statment对象
