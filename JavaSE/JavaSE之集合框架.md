@@ -975,6 +975,8 @@ ArrayList与ArrayDeque内部以数组的形式来保存集合中的元素，因�
 
 **Map集合用于保存具有映射关系的数据。Map集合中的元素用Map.Entry内部接口对象表示，每个Map.Entry对象保存着一组key：value对，key和value都可以是任何引用类型的数据对象**。
 
+![maps](/appendix/maps.png)
+
 **Map里的key像Set里的元素一样不可重复，实际上，Java先实现了Map，然后通过包装了一个所有value都为null的Map就实现了Set。Map也包含了一个keySet()方法，用于返回Map里所有的key组成的Set集合**。
 
 Map接口常用方法如下：
@@ -1075,6 +1077,43 @@ public class MapTest2 {
 为了成功地在HashMap中存取、获取对象，应该为用作key的对象重写hashCode()和equals()方法，使两者返回一直的结果：即两个key通过equals()方法比较返回true，那么这两个key的hashCode()方法的返回值也应该相等。
 
 与HashSet类似的是，如果使用可变对象作为HashMap的key，并且程序修改了作为key的可变对象，则也可能出现与HashSet类似的情形：程序再也无法准确访问到Map中被修改过的key了。建议**尽量不要使用可变对象作为HashMap的key，就算需要使用可变对象作为HashMap的key，也不要修改作为key的可变对象**。
+
+#### 使用Properties读取属性文件
+
+**Properties类是Hashtable类的子类，用于处理属性文件。Properties类可以把Map对象和属性文件关联起来，从而可以把Map对象中的key-value对写入属性文件，也可以把属性文件中的“属性名=属性值”加载到Map对象中。由于属性文件里的属性名、属性值只能是字符串类型，所以Properties里的key、value都是字符串类型**。
+
+修改Properties里的key、value值的方法
+
+- String getProperty(String key)：获取Properties中指定属性名对应的属性值，类似于Map的get(Object key)方法
+- String getProperty(String key, String defaultValue)：该方法与前一个方法基本类似。该方法多一个功能，如果Properties中不存在指定key时，该方法返回默认值
+- Object geProperty(String key、String value)：设置属性值，类似Hashtable的put方法
+
+读、写属性文件的方法：
+
+- void load(InputStream inStream)：从属性文件（以输入流表示）中加载属性名=属性值，把加载到的属性名=属性值对追加到Properties里（由于Properties是Hashtable)的子类，它不保证key-value对之间的次序）
+- void Store(OutputStream out, String comment)：将Properties中的key-valu对写入指定属性文件（以输出流表示）
+
+```java
+public class PropertiesTest {
+    public static void main(String[] args)
+        throws Exception {
+        Properties props = new Properties();
+        // 向Properties中增加属性
+        props.setProperty("username" , "LeBron");
+        props.setProperty("teams" , "Cavaliers");
+        // 将Properties中的key-value对保存到a.ini文件中
+        props.store(new FileOutputStream("NBA.ini")
+            , "comment line");
+        // 新建一个Properties对象
+        Properties props2 = new Properties();
+        // 向Properties中增加属性
+        props2.setProperty("gender" , "male");
+        // 将a.ini文件中的key-value对追加到props2中
+        props2.load(new FileInputStream("NBA.ini") ); 
+        System.out.println(props2);
+    }
+}
+```
 
 #### LinkedHashMap实现类
 
