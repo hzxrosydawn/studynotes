@@ -825,6 +825,270 @@ apply()方法与call()方法基本功能相似，区别如下：
 
 **函数（包括匿名的内嵌函数）从来不是依附于某个特定类或对象的，它可以被分离出来单独使用，也可以称为另一对象的函数**。所以当上面实例中info()方法的调用者为window时输出的是window的name变量的值（测试名称）。
 
+### 函数的参数处理
+
+像Java一样，**JavaScript的参数传递也全部采用的是按值传递的方式**。
+
+**JavaScript中没有函数重载。如果先后定义了两个同名函数，他们的形参列表并不相同，这不是函数重载，而是后面的函数覆盖前面的函数**。
+
+```html
+<script type="text/javascript">
+	function test() {
+		alert("第一个无参数的test函数");
+	}
+	// 后面定义的函数将会覆盖前面定义的函数
+	function test(name) {
+		alert("第二个带name参数的test函数：" + name);
+	}
+	// 即使不传入参数，程序依然调用带一个参数的test函数。
+	test();
+</script>
+```
+
+**如所有弱类型的编程语言一样，JavaScript的参数列表无须类型声明，这就需要在函数调用的时候必须手动判断传入的参数类型、以及参数是否包含了需要访问的属性和方法，之后才能进行进行相关操作**（即**[鸭子类型](http://baike.baidu.com/link?url=sQh2f_830O592B-q521NCyJDP-yG6jEUqC54xLDNkkIiqheRzf3rF1MA97ruH3NAPrJ9h29NrUcEV_jK0u3JKfa8KmQ2BjfrmReUAlhKZgKpHQwuQWRAnstoED0G3DCN)**的判断）。
+
+```html
+<script type="text/javascript">
+	// 定义函数changeAge,函数需要一个参数
+	function changeAge(person) {
+		// 首先要求person必须是对象，而且person的age属性为number
+		if (typeof person == 'object' 
+			&& typeof person.age == 'number'){
+			//执行函数所需的逻辑操作
+			document.write("函数执行前person的Age值为：" 
+				+ person.age + "<br />");
+			person.age = 10;
+			document.write("函数执行中person的Age值为：" 
+				+ person.age + "<br />");
+		}
+		// 否则将输出提示，参数类型不符合
+		else {
+			document.writeln("参数类型不符合" +
+				typeof person + "<br />");
+		}
+	}
+	// 分别采用不同方式调用函数
+	changeAge();
+	changeAge('xxx');
+	changeAge(true);
+	// 采用JSON语法创建第一个对象
+	p = {abc : 34};
+	changeAge(p);
+	// 采用JSON语法创建第二个对象
+	person = {age : 25};
+	changeAge(person);
+</script>
+```
+
+### 使用对象
+
+JavaScript没有提供完善的继承语法，所以JavaScript中定义的类没有父子关系，但这些类都是Object类的子类。JavaScript通过提供一些内建类来方便地创建各自的对象。
+
+JavaScript中的对象本质上是一个关联数组，或者说更像Java中的Map数据结构，有一组key-value对组成，只是JavaScript对象的value不仅可以是值，还可以是函数，此时该函数就是该对象的方法。当value是基本类型的值或复合类型的值时，此时的value就是该对象的属性值。
+
+**当需要访问某个对象的属性时，不仅可以使用obj.propName的形式，也可以采用obj[propName]的形式，有时候必须得是这种形式**。
+
+JavaScript是一种动态语言，可以自由地为对象增加一些属性和方法，当程序为对象某个不存的属性赋值时，即可认为是为该对象增加属性。如果某个属性值是函数时，即可认为该属性变成了方法。如：
+
+```html
+<script type="text/javascript">
+	// 创建Person函数
+	function Person(name, age)	{
+		this.name = name;
+		this.age = age;
+		// 为Person对象指定info方法
+		this.info = function() {
+			//输出Person实例的name和age属性
+			document.writeln("姓名：" + this.name);
+			document.writeln("年龄：" + this.age);
+		}
+	}
+	// 创建Person实例p1
+	var p1 = new Person('diaosi', 29);
+    for (propName in p1) {
+		// 遍历Person对象的属性
+		document.writeln('p1对象的' + propName + "属性值为：" + p[propName] + "<br />");
+	}
+	// 执行p1的info方法
+	p1.info();
+	document.writeln("<hr />");
+	// 创建Person实例p2
+	var p2 = new Person('baifumei' , 20);
+	// 执行p2的info方法
+	p2.info();
+</script>
+```
+
+上面为Person类增加info()方法的方式很不好：
+
+- 性能低下：每次创建Person实例时，都会创建一个新的info函数，多个Person对象就需要创建多个info函数。这就会造成系统泄露，从而引起性能下降。实际上，info函数只需要一个就够了；
+- 使得info函数中的局部变量**产生闭包**：闭包即扩大了局部变量的作用范围（应该是局部变量仅在其函数中有效），使得局部变量一直存活到函数之外的地方。
+
+```html
+<script type="text/javascript">
+	// 创建Person函数
+	function Person() {
+		// locVal是个局部变量，原本应该该函数结束后立即失效
+		var locVal = '漏网之鱼';
+      	// 当然下面语句也可以使用有名称的方法
+      	// this.info = function abc() {
+		this.info = function() {
+			// 此处会形成闭包
+			document.writeln("locVal的值为：" + locVal);
+			return locVal;
+		}
+	}
+	var p = new Person();
+	// 调用p对象的info()方法
+	var val = p.info();
+  	// 就算出了函数，由于闭包，局部变量依然可以访问
+	// 输出val返回值，该返回值就是局部变量locVal
+	alert(val);
+</script>
+
+```
+
+通常不建议在函数定义（即类定义）中直接为该函数定义方法，而是建议使用prototype属性。JavaScript的所有类（即函数）都有一个prototype属性，当为JavaScript类的prototype属性增加函数、属性时，则可视为是对原有类型的扩展。这就是JavaScript的伪继承继承机制。
+
+```html
+<script type="text/javascript">
+	// 定义一个Person函数，同时也定义了Person类
+	function Person(name , age)	{
+		// 将局部变量name、age赋值给实例属性name、age
+		this.name = name;
+		this.age = age;
+		// 使用内嵌的函数定义了Person类的方法
+		this.info = function()	{
+			document.writeln("姓名：" + this.name + "<br />");
+			document.writeln("年龄：" + this.age + "<br />");
+		}
+	}
+	// 创建Person的实例p1
+	var p1 = new Person('李小璐' , 29);
+	// 执行Person的info方法
+	p1.info();
+	// 此处不可调用walk方法，变量p还没有walk方法
+	// 将walk方法增加到Person的prototype属性上
+	Person.prototype.couple = function(couple)	{
+		document.writeln(this.name + couple +'<br />');
+	}
+	document.writeln('<br />');
+	// 创建Person的实例p2
+	var p2 = new Person('高圆圆' , 30);
+	// 执行p2的info方法
+	p2.info();
+	document.writeln('<br />');
+	// 执行p2的couple方法
+	p2.couple('赵又廷了');
+	// 此时p1也具有了couple方法——JavaScript允许为类动态增加方法和属性
+	// 执行p1的couple方法
+	p1.couple('贾乃亮了');
+</script>
+```
+
+输出如下：
+
+```shell
+姓名：李小璐
+年龄：29
+
+姓名：高圆圆
+年龄：30
+
+高圆圆赵又廷了
+李小璐贾乃亮了
+```
+
+**这种伪继承实质上是修改了原来的类，并不是产生了一个新的子类**。因此上面实例中原来没有couple方法的Person类将不复存在。JavaScript的内建类也可以通过prototype属性进行扩展。
+
+虽然**任何时候都可以为一个类增加属性和方法，但通常建议在类定义结束以后立即增加该类所需的方法，这样可以避免造成不必要的混乱**。
+
+### 创建对象
+
+JavaScript中创建对象可以不使用任何类。JavaScript中创建对象大致有三种方式。
+
+#### 使用new关键字调用构造器创建对象
+
+JavaScript中所有的函数都可以作为构造器使用，使用new调用函数后总可以返回一个对象。如：
+
+```html
+<script type="text/javascript">
+	// 定义一个函数，同时也定义了一个Person类
+	function Person(name, age)	{
+		//将name、age形参赋值给name、age实例属性
+		this.name = name;
+		this.age = age;
+	}
+	// 分别以两种方式创建Person实例
+  	// 如果调用有参函数时没有传入参数，则该实例中对应的参数的值都未初始化，都是undefined
+	var p1 = new Person();
+	var p2 = new Person('diaosi', 29);
+	// 输出p1的属性:undefined undefined
+	document.writeln("p1的属性如下:"	+ p1.name + " " + p1.age + "<br />");
+	// 输出p2的属性:diaosi 29
+	document.writeln("p2的属性如下:" + p2.name +  " " + p2.age);
+</script>
+```
+
+#### 使用Object直接创建对象
+
+JavaScript的对象都是Object类的子类，因此可以采用如下方法创建对象：
+
+```javascript
+// 创建一个默认对象
+var myObj = new Object();
+```
+
+上面的语句创建了一个不含任何属性和方法的空对象，但由于JavaScript是动态的，可以后续为该对象动态地增加属性和方法。如：
+
+```html
+<script type="text/javascript">
+	// 创建空对象
+	var myObj = new Object();
+	// 增加属性
+	myObj.name = 'diaosi';
+	// 增加属性
+	myObj.age = 29;
+	// 输出对象的两个属性
+	document.writeln(myObj.name + myObj.age);
+</script>
+```
+
+从上面实例中为对象赋值的语句可以看出，JavaScript对象实质上就是一个关联数组。
+
+JavaScript也允许将一个已有的函数添加为对象的方法。如：
+
+```html
+<script type="text/javascript">
+	// 创建空对象
+	var myObj = new Object();
+	// 为空对象增加属性
+	myObj.name = 'diaosi';
+	myObj.age = 29;
+	// 创建一个函数
+	function abc() {
+		document.writeln("对象的name属性:" + this.name);
+		document.writeln("<br />");
+		document.writeln("对象的age属性:" + this.age);
+	};
+	// 将已有的函数添加为对象的方法，不能添加括号，否则变成了函数调用
+	myObj.info = abc;
+	document.writeln("<br />");
+	// 调用方法
+	myObj.info();
+</script>
+```
+
+> 注意：将已有函数添加为对象方法时，不能在函数名后添加括号。一旦添加了括号，就变成了函数调用，而不再是将函数本身赋给对象的方法，而是将函数的返回值赋给对象的属性。
+
+#### 使用JSON语法创建对象
+
+JSON（JavaScript Object Nation）语法提供了一种更简单的方式来创建对象，可以避免书写函数，
+
+
+
+
+
 
 
 
