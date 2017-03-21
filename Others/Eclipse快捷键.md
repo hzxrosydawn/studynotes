@@ -23,9 +23,7 @@
 - Ctrl+Alt+上/下箭头：从高亮显示的部分（当前行或选中的多行）的上/下方一行开始，复制出高亮显示部分。
 - Ctrl+Shift+F：重新格式化代码。具体的代码样式可以这样设置：打开Eclipse，选择Window -> Preferences -> Java -> Code Style，然后可以设置Clean Up、Code Templates、Formatter和Organize Imports。利用导出（Export）功能来生成配置文件，可以把这些配置文件放在Wiki上，然后团队里的每个人都可以将其导入到自己的Eclipse中。
 - Ctrl+2，L：快速为本地变量赋值。开发过程中，可以先创建对象，如Calendar.getInstance()，然后通过Ctrl+2快捷键将方法的计算结果赋值于一个本地变量之上。 这样节省了输入类名，变量名以及导入声明的时间。Ctrl+F的效果类似，不过效果是把方法的计算结果赋值于类中的域。
-
-
-
+- Ctrl+Shift+M：在Java、Jsp和JavaScript编辑器中插入未导入的类的import语句；
 - Alt+Shift+M：提取本地变量及方法。直接按下Alt+Shift+M会显示出当前类可重写的方法。如果选中可以从当前编辑的代码中提取变量和方法。比如，要从一个字符串创建一个常量，那么就选中这些字符串，并按下Alt+Shift+M即可。如果同 一个字符串在同一类中的别处出现，它会被自动替换。方法提取也是个非常方便的功能。将大方法分解成较小的、充分定义的方法会极大的减少复杂度，并提升代码的可测试性。
 - Alt+Shift+J：为当前光标所在的类成员添加Javadoc注释；
 - Ctrl+1：弹出错误代码修改提示对话框，方便快速修改错误代码。一般结合Ctrl+.使用。
@@ -36,6 +34,7 @@
 - Ctrl+Shift+Delete：删除到行末。
 - Ctrl+Shift+X：把当前选中的文本全部变味大写。
 - Ctrl+Shift+Y：把当前选中的文本全部变为小写。
+- Ctrl+Shift+O：删除无用包；
 - Alt+上/下箭头：将当前行或选中的内容往上或下移动一行。在try-catch部分，这个快捷方式尤其好使。
 - Alt+Shift+Z：快速添加常用代码块。选中一段代码，按下这组快捷键可以在弹出的快捷菜单中快速将所选代码添加到try-catch块、do-while、while、for、if、lock、runnable、synchronized或lock等代码块中。
 - Alt+Shift+S：快速添加一些类成员。定义好一个Java类的成员变量后，按下这组快捷键可以快速添加sets和gets方法、根据已有成员变量添加构造器、使用父类构造器、重写或实现一个方法等。

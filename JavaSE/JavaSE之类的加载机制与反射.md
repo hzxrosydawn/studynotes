@@ -594,27 +594,27 @@ Java8在java.lang.reflect包下新增了一个Executable抽象基类，该类对
 方法摘要：
 
 - AnnotatedType[]	**getAnnotatedExceptionTypes()**：返回一个AnnotatedType对象构成的数组，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定声明异常的类型的使用；
- - AnnotatedType[]**getAnnotatedParameterTypes()**：返回一个AnnotatedType对象构成的数组，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定形参的类型的使用；
- - AnnotatedTypegetAnnotatedReceiverType()：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定接收者的类型的使用；
- - abstract AnnotatedType**getAnnotatedReturnType()**：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定返回值的类型的使用；
+- AnnotatedType[]**getAnnotatedParameterTypes()**：返回一个AnnotatedType对象构成的数组，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定形参的类型的使用；
+- AnnotatedTypegetAnnotatedReceiverType()：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定接收者的类型的使用；
+- abstract AnnotatedType**getAnnotatedReturnType()**：返回一个AnnotatedType对象，AnnotatedType对象代表了该Executable对象所代表的方法或构造器的指定返回值的类型的使用；
 - &lt;T extends Annotation> T **getAnnotation(Class&lt;T> - annotationClass)**：如果该元素存在特定类型的注解，则返回这样一个注解，否则返回null；
 - &lt;T extends Annotation> T[] **getAnnotationsByType(Class&lt;T> - annotationClass)**：返回该元素相关的注解组成的数组；
 - Annotation[] **getDeclaredAnnotations()**：返回该元素上直接呈现的注解组成的数组；
 - abstract Class&lt;?> **getDeclaringClass()**：返回代表声明该对象代表的执行体的类或接口所对应的Class对象；
- - abstract Class&lt;?>[]**getExceptionTypes()**：返回一个Class对象组成的数组。Class对象代表了该对象代表的执行体在下面声明抛出的异常类型；
- - Type[]**getGenericExceptionTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体代表的执行体所抛出的声明异常类型；
- - Type[]**getGenericParameterTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体所声明的形参类型，数组元素的顺序按照声明的顺序；
+- abstract Class&lt;?>[]**getExceptionTypes()**：返回一个Class对象组成的数组。Class对象代表了该对象代表的执行体在下面声明抛出的异常类型；
+- Type[]**getGenericExceptionTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体代表的执行体所抛出的声明异常类型；
+- Type[]**getGenericParameterTypes()**：返回一个Type对象组成的数组，Type对象代表该Executable对象代表的执行体所声明的形参类型，数组元素的顺序按照声明的顺序；
 - abstract int **getModifiers()**：返回修饰该Executable对象的修饰符；
- - abstract String**getName()**：返回该Executable对象所代表执行体的名字；
- - abstract Annotation[][]**getParameterAnnotations()**：返回一个Annotation对象组成的数组，Annotation对象用于修饰形参，数组元素的顺序按照声明的顺序；
- - int**getParameterCount()**：返回该对象所代表执行体的形参（无论是显式声明还是隐式声明）的数目；
- - Parameter[]**getParameters()**：返回一个由Parameter对象构成的数组，这些Parameter对象代表了该Executable对象所代表的执行体中所有的参数；
- - abstract Class&lt;?>[]**getParameterTypes()**：返回一个由Class对象组成的数组，这些Class对象代表了该Executable对象所代表的执行体的形参类型。数组元素按照声明的顺序；
+- abstract String**getName()**：返回该Executable对象所代表执行体的名字；
+- abstract Annotation[][]**getParameterAnnotations()**：返回一个Annotation对象组成的数组，Annotation对象用于修饰形参，数组元素的顺序按照声明的顺序；
+- int**getParameterCount()**：返回该对象所代表执行体的形参（无论是显式声明还是隐式声明）的数目；
+- Parameter[]**getParameters()**：返回一个由Parameter对象构成的数组，这些Parameter对象代表了该Executable对象所代表的执行体中所有的参数；
+- abstract Class&lt;?>[]**getParameterTypes()**：返回一个由Class对象组成的数组，这些Class对象代表了该Executable对象所代表的执行体的形参类型。数组元素按照声明的顺序；
 - abstract TypeVariable&lt;?>[] getTypeParameters()：返回一个由TypeVariable对象构成的数组，这些TypeVariable对象代表该GenericDeclaration对象按声明顺序声明的一般变量类型；
- - boolean**isSynthetic()**：如果该Executable对象是一个合成构造器，则返回true，否则返回false；
+- boolean**isSynthetic()**：如果该Executable对象是一个合成构造器，则返回true，否则返回false；
 - boolean   **isNamePresent()**：判断该类的class文件中是否包含了方法的形参信息；
- - boolean**isVarArgs()**：如果该Executable对象声明为是参数可变的，则返回true，否则返回false；
- - abstract String**toGenericString()**：返回一个描述该Executable对象的字符串，包括任何类型参数；- 
+- boolean**isVarArgs()**：如果该Executable对象声明为是参数可变的，则返回true，否则返回false；
+- abstract String**toGenericString()**：返回一个描述该Executable对象的字符串，包括任何类型参数；- 
 
 示例：
 ```java
@@ -959,27 +959,26 @@ public class ArrayTest2
 ###**使用Proxy和InvocationHandler创建动态代理**
 java.lang.reflect包下提供了一个Proxy类和InvocationHandler接口，通过使用这个类和接口可以生成JDK动态代理类或动态代理对象。
 
-Proxy是所有动态代理类的父类。如果在程序中为一个或多个接口动态地生成实现类，就可以使用Proxy来创建动态代理类；如果需要为一个或多个接口动态地创建实例，也可以使用Proxy来创建动态代理实例。
+**Proxy是所有动态代理类的父类。如果在程序中为一个或多个接口动态地生成实现类，就可以使用Proxy来创建动态代理类；如果需要为一个或多个接口动态地创建实例，也可以使用Proxy来创建动态代理实例**。
 Proxy提供了以下两个静态方法来创建动态代理类和动态代理实例：
 
 - **static Class&lt;?> getProxyClass(ClassLoader loader, Class&lt;?>... interfaces)**：创建一个动态代理类所对应的Class对象，该代理类将实现interfaces所指定的多个接口。第一个ClassLoader参数指定生成动态代理类的类加载器；
-- **static Object newProxyInstance(ClassLoader loader, Class&lt;?>[] interfaces, InvocationHandler h)**：直接创建一个动态代理对象，该代理对象的实现类实现了interfaces指定的系列接口，执行代理对象的每个方法时都会被替换执行InvocationHandler对象的invoke方法。
+- **static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)**：直接创建一个动态代理对象，该代理对象的实现类实现了interfaces指定的系列接口。执行代理对象的每个方法时都会被替换执行InvocationHandler对象的invoke方法。
 
 即使使用第一个方法生成动态代理类之后，如果程序需要通过代理类来创建对象，依然需要传入一个InvocationHandler对象。总之，系统生成的每个代理对象都有一个与之关联的InvocationHandler对象。当执行动态代理对象里的方法时，实际上会替换成调用InvocationHandler对象的invoke方法，该方法的三个参数如下
 
-- proxy：代表动态代理对象；
-- method：代表正在执行的方法；
-- args：代表调用目标方法时传入的实参。
+- Object proxy：代表动态代理对象；
+- Method method：代表正在执行的方法；
+- Object[] args：代表调用目标方法时传入的实参。
 
 示例：
 ```java
-interface Person
-{
+interface Person {
 	void walk();
 	void sayHello(String name);
 }
-class MyInvokationHandler implements InvocationHandler
-{
+
+class MyInvokationHandler implements InvocationHandler {
 	/*
 	执行动态代理对象的所有方法时，都会被替换成执行如下的invoke方法
 	其中：
@@ -987,29 +986,24 @@ class MyInvokationHandler implements InvocationHandler
 	method：代表正在执行的方法
 	args：代表调用目标方法时传入的实参。
 	*/
-	public Object invoke(Object proxy, Method method, Object[] args)
-	{
+	public Object invoke(Object proxy, Method method, Object[] args) {
 		System.out.println("----正在执行的方法:" + method);
-		if (args != null)
-		{
+		if (args != null) {
 			System.out.println("下面是执行该方法时传入的实参为：");
-			for (Object val : args)
-			{
+			for (Object val : args)	{
 				System.out.println(val);
 			}
 		}
-		else
-		{
+		else {
 			System.out.println("调用该方法没有实参！");
 		}
 		return null;
 	}
 }
-public class ProxyTest
-{
+
+public class ProxyTest {
 	public static void main(String[] args)
-		throws Exception
-	{
+		throws Exception {
 		// 创建一个InvocationHandler对象
 		InvocationHandler handler = new MyInvokationHandler();
 		// 使用指定的InvocationHandler来生成一个动态代理对象
@@ -1021,12 +1015,11 @@ public class ProxyTest
 	}
 }
 ```
-实际上，在普通编程中无须使用动态代理，但是在编写框架或底层基础代码时，动态代理的作用就很大。如果在软件开发中存在相同代码重复出现的情况，有经验的开发者会把这段重复的代码定义为一个方法，让其他需要该重复代码的执行体来调用该方法即可。通过动态代理就可以实现即可执行重复的代码，又无须在程序中以硬编码的方式直接调用重复代码的方法。采用动态代理可以非常灵活地实现解耦，通常都是为指定的目标对象生成动态代理。这种动态代理在AOP（Aspect Orient Programming，面向切面编程）中称为AOP代理，AOP代理可代替目标对象，AOP代理包含了目标对象的全部方法，但AOP代理中的方法与目标对象中的方法存在差异：AOP代理里的方法可以在执行目标方法之前、之后插入一些通用处理。
+实际上，在普通编程中无须使用动态代理，但是在编写框架或底层基础代码时，动态代理的作用就很大。如果在软件开发中存在相同代码重复出现的情况，有经验的开发者会把这段重复的代码定义为一个方法，让其他需要该重复代码的执行体来调用该方法即可。通过动态代理就可以实现既可以执行重复的代码，又无须在程序中以硬编码的方式直接调用重复代码的方法。采用动态代理可以非常灵活地实现解耦，通常都是为指定的目标对象生成动态代理。这种动态代理在AOP（Aspect Orient Programming，面向切面编程）中称为AOP代理，**AOP代理可代替目标对象，AOP代理包含了目标对象的全部方法，但AOP代理中的方法与目标对象中的方法存在差异：AOP代理里的方法可以在执行目标方法之前、之后插入一些通用处理（称为Advice，详情参考Spring框架中有关AOP编程的介绍）**。
 
 示例：
 ```java
-public interface Dog
-{
+public interface Dog {
 	// info方法声明
 	void info();
 	// run方法声明
@@ -1034,83 +1027,67 @@ public interface Dog
 }
 ```
 ```java
-public class GunDog implements Dog
-{
+public class GunDog implements Dog {
 	// 实现info()方法，仅仅打印一个字符串
-	public void info()
-	{
+	public void info() {
 		System.out.println("我是一只猎狗");
 	}
 	// 实现run()方法，仅仅打印一个字符串
-	public void run()
-	{
+	public void run() {
 		System.out.println("我奔跑迅速");
 	}
 }
 ```
 ```java
-public class DogUtil
-{
+public class DogUtil {
 	// 第一个拦截器方法
-	public void method1()
-	{
+	public void method1() {
 		System.out.println("=====模拟第一个通用方法=====");
 	}
 	// 第二个拦截器方法
-	public void method2()
-	{
-		System.out.println("=====模拟通用方法二=====");
+	public void method2() {
+		System.out.println("=====模拟第二个通用方法=====");
 	}
 }
 ```
 ```java
-public class MyInvokationHandler implements InvocationHandler
-{
+public class MyInvokationHandler implements InvocationHandler {
 	// 需要被代理的对象
 	private Object target;
-	public void setTarget(Object target)
-	{
+	public void setTarget(Object target) {
 		this.target = target;
 	}
 	// 执行动态代理对象的所有方法时，都会被替换成执行如下的invoke方法
-	public Object invoke(Object proxy, Method method, Object[] args)
-		throws Exception
-	{
+	public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 		DogUtil du = new DogUtil();
-		// 执行DogUtil对象中的method1。
+		// 执行DogUtil对象中的method1
 		du.method1();
 		// 以target作为主调来执行method方法
-		Object result = method.invoke(target , args);
-		// 执行DogUtil对象中的method2。
+		Object result = method.invoke(target, args);
+		// 执行DogUtil对象中的method2
 		du.method2();
 		return result;
 	}
 }
 ```
 ```java
-public class MyProxyFactory
-{
+public class MyProxyFactory {
 	// 为指定target生成动态代理对象
-	public static Object getProxy(Object target)
-		throws Exception
-		{
+	public static Object getProxy(Object target) throws Exception {
 		// 创建一个MyInvokationHandler对象
-		MyInvokationHandler handler =
-		new MyInvokationHandler();
+		MyInvokationHandler handler = new MyInvokationHandler();
 		// 为MyInvokationHandler设置target对象
 		handler.setTarget(target);
 		// 创建、并返回一个动态代理
-		return Proxy.newProxyInstance(target.getClass().getClassLoader()
-			, target.getClass().getInterfaces() , handler);
+		return Proxy.newProxyInstance(target.getClass().getClassLoader(),
+        		target.getClass().getInterfaces(), handler);
 	}
 }
 ```
 ```java
-public class Test
-{
+public class Test {
 	public static void main(String[] args)
-		throws Exception
-	{
+		throws Exception {
 		// 创建一个原始的GunDog对象，作为target
 		Dog target = new GunDog();
 		// 以指定的target来创建动态代理
@@ -1122,7 +1099,7 @@ public class Test
 ```
 
 ###**反射和泛型**
-从JDK5开始，Java的Class类增加了泛型支持，允许使用泛型来限制Class类，例如，String.class的类型实际上是Class&lt;String>。如果Class对应的类暂时未知，则使用Class&lt;?>。通过在反射中使用泛型，可以避免反射生成的对象需要强制类型转换。
+从JDK 5开始，Java的Class类增加了泛型支持，允许使用泛型来限制Class类，例如，String.class的类型实际上是Class<String>。如果Class对应的类暂时未知，则使用Class<?>。通过在反射中使用泛型，可以避免反射生成的对象需要强制类型转换。
 
 示例：
 ```java

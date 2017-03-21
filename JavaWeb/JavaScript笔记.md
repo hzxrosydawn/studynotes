@@ -1,3 +1,8 @@
+---
+typora-root-url: ./
+typora-copy-images-to: appendix
+---
+
 # JavaScript笔记
 
 JavaScript 是互联网上最流行的脚本语言，可用于 HTML 和 Web，更可广泛用于服务器、PC、笔记本电脑、平板电脑和智能手机等设备。
@@ -1083,7 +1088,237 @@ JavaScript也允许将一个已有的函数添加为对象的方法。如：
 
 #### 使用JSON语法创建对象
 
-JSON（JavaScript Object Nation）语法提供了一种更简单的方式来创建对象，可以避免书写函数，
+JSON（JavaScript Object Nation）语法提供了一种更简单的方式来创建对象，可以避免书写函数，也可以避免使用new关键字，可以直接创建一个新的JavaScript对象。为了创建JavaScript对象，可以使用花括号，然后将每个属性写成“key-value”对的形式。
+
+从JavaScript 1.2开始，创建对象的JSON语法示意图如下：
+
+![object](/appendix/object.png)
+
+使用JSON语法创建JavaScript对象时，属性值不仅可以是普通字符串，也可以是任何基本数据类型，还可以是函数、数组，甚至可以是另外一个JSON语法创建的对象。如下所示。
+
+```javascript
+Person {
+ 	name : 'diaosi', 
+ 	gender :  'male',
+    // 使用JSON对象为其指定一个属性
+    son : {
+      name : 'none',
+      grade : 1,
+    },
+    // 使用JSON语法为person直接分配一个方法
+    info ：function () {
+      docunment.writeln("姓名：" + this.name + "性别：" + this.gender);
+    }
+}
+```
+
+JSON语法还可以创建数组，语法示意图如下：
+
+![array](/appendix/array.png)
+
+实例如下：
+
+```html
+<script type="text/javascript">
+	// 定义一个对象
+	var person = {
+		// 定义第一个简单属性
+		name : 'wawa',
+		// 定义第二个简单属性
+		age : 29 ,
+		// 定义第三个属性：数组
+		schools : ['小学' , '中学' , "大学"],
+		// 定义第四个属性，对象数组
+		parents :[
+			{
+				name : 'father',
+				age : 60,
+				address : '广州'
+			} 
+			,
+			{
+				name : 'mother',
+				age : 58,
+				address : '深圳'
+			}
+		]
+	};
+	alert(person.parents);
+</script>
+```
+
+JSON已经发展成一种轻量级、跨语言的数据交换格式，各种主流编程语言都支持使用JSON格式的数据。传输相同的信息时，**JSON比XML的传输数据量要小**。更多有关JSON的介绍请参考[JSON官网](http://www.json.org/)。
+
+## DOM编程
+
+DOM（Document Object Model，即文档对象模型）可以将结构化的文档转换为DOM树，可用来动态地增删改查DOM树种的节点。DOM是一种访问和操作结构化文档（通常是XML文档和HTML文档）的思想，基于这种思想。基于这种思想，每种语言都有自己的DOM解析器，DOM解析器主要用来完成结构化文档和内存中DOM树之间的转换。
+
+DOM为HTML提供了一种简单继承体系，如下图所示.
+
+![node1](/appendix/node1.png)
+
+### 访问HTML元素
+
+#### 根据id访问HTML元素
+
+语法如下：
+
+```javascript
+document.getElementById(idVal);
+```
+
+只要被访问的HTML元素具有唯一id，那么JavaScript就可以方便地访问到该元素（所以建议为每个HTML元素指定唯一的id属性值）。
+
+**DOM模型为几乎所有HTML元素增加了innerHTML属性。某个HTML元素的DOM对象可以通过它的innerHTML属性可获取其开始结束标签之间（不包含子元素时）的字符串内容。但表单元素（如<textarea../>）例外，表单元素的开始结束标签之间是它的值（value），因此只能通过其value属性来访问其可视化文本**。
+
+#### 利用节点关系访问HTML元素
+
+利用节点关系访问HTML元素的属性和方法如下：
+
+- Node parentNode：返回当前节点的父节点。只读属性；
+- Node previousSibling：返回当前节点的前一个兄弟节点。只读属性；
+- Node nextSibling：返回当前节点的后一个兄弟节点。只读属性；
+- Node[] getElementsByTagName(TagName)：返回当前节点的具有指定标签名的所有子节点；
+- Node FirstChild：返回当前节点的第一个子节点。只读属性；
+- Node LastChild：返回当前节点的最后一个子节点。只读属性。
+
+实例如下。
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="author" content="Yeeku.H.Lee(CrazyIt.org)" />
+	<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+	<title> 根据节点关系访问HTML元素 </title>
+	<style type="text/css">
+		/* 定义改变背景色的CSS，表示被选中的项 */
+		.selected {
+			background-color:#66f
+		}
+	</style>
+	</head>
+	<body>
+	<ol id="books">
+		<li id="java">Head First Java</li>
+		<li id="ssh">Head First C++</li>
+		<li id="ajax" class="selected">Head First PHP</li>
+		<li id="xml">Head First Android</li>
+		<li id="ejb">Head First Design Pattern</li>
+		<li id="workflow">Head First Servlet and JSP</li>
+	</ol>
+	<input type="button" value="父节点"
+		onclick="change(curTarget.parentNode);"/>
+	<input type="button" value="第一个"
+		onclick="change(curTarget.parentNode.firstChild.nextSibling);"/>
+	<input type="button" value="上一个"
+		onclick="change(curTarget.previousSibling.previousSibling);"/>
+	<input type="button" value="下一个"
+		onclick="change(curTarget.nextSibling.nextSibling);"/>
+	<input type="button" value="最后一个"
+		onclick="change(curTarget.parentNode.lastChild.previousSibling);"/>
+	<script type="text/javascript">
+		var curTarget = document.getElementById("ajax");
+		var change = function(target){
+			console.log(target.innerHTML);
+		}
+	</script>
+</body>
+</html>
+```
+
+在Chrome浏览器里按下F12可以在控制台（Console）中看到输出结果如下图所示。
+
+![node2](/appendix/node2.png)
+
+> 注意：为什么访问上一个元素时连续调用两次previousSibling属性呢？因为**html文档中每两个元素之间会留有空白（空格或换行），而空白会被当成子元素来处理，这是浏览器解析html文档的规范。主流浏览器都遵守该规范，只有IE不支持**。
+
+#### 访问表单控件
+
+表单在HTML中以HTMLFormElement对象表示。该元素除了可以使用前面介绍的通用属性和方法外，还支持以下属性和方法：
+
+- action：返回该表单的action属性
+
+
+
+
+
+### 修改HTML元素
+
+HTML元素的所有读写属性都可以被修改，一旦修改了DOM树种的HTML元素的属性值，那么HTML页面上的对应的内容也会随之改变。修改HTML属性通过以下几个常用的属性来实现。
+
+- innerHTML：大部分HTML页面元素如<div../>、<td../>的**呈现内容**由该属性控制；
+- value：表单控件如<input../>、<textarea../>的呈现内容由该属性控制；
+- className：修改HTML元素的CSS样式，该属性值就是一个合法的class选择器名；
+- style：修改HTML元素的内联CSS样式；
+- options[index]：直接对<select.../>元素的指定列表项赋值，可改变列表项、下拉菜单的指定列表项。
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="author" content="Yeeku.H.Lee(CrazyIt.org)" />
+	<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+	<title> 编辑表格值 </title>
+</head>
+<body>
+	改变第<input id="row" type="text" size="2" />行，
+	第<input id="cel" type="text" size="2" />列的值为:
+	<input id="celVal" type="text" size="30" /><br />
+	<input id="chg" type="button" value="改变" onclick="change();" />
+	<table id="d" border="1">
+		<tr>
+			<td>Head First Java</td>
+			<td>Head First C++</td>
+		</tr>
+		<tr>
+			<td>Head First PHP</td>
+			<td>Head First Android</td>
+		</tr>
+		<tr>
+			<td>Head First Design Pattern</td>
+			<td>Head First Servlet and JSP</td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		var change = function()	{
+			var tb = document.getElementById("d");
+			var row = document.getElementById("row").value ;
+			row = parseInt(row);
+			// 如果需要修改的行不是整数，弹出警告
+			if(isNaN(row))	{
+				alert("您要修改的行必须是整数");
+				return false;
+			}
+			var cel = document.getElementById("cel").value ;
+			cel = parseInt(cel);
+			// 如果需要修改的列不是整数，弹出警告 
+			if(isNaN(cel))	{
+				alert("您要修改的列必须是整数");
+				return false;
+			}
+			// 如果需要修改的行或者列超出了表格的行或列，弹出警告
+			if (row > tb.rows.length || 
+				cel > tb.rows.item(0).cells.length)	{
+				alert("要修改的单元格不在该表格内");
+				return false;
+			}
+			//	修改单元格的值
+			tb.rows.item(row - 1).cells.item(cel - 1).innerHTML
+				= document.getElementById("celVal").value;
+		}
+	</script>
+</body>
+</html>
+
+```
+
+### 增加HTML元素
+
+增加元素有两种方法：
+
+- 创建或复制节点；
+- 添加节点。
 
 
 
@@ -1091,22 +1326,3 @@ JSON（JavaScript Object Nation）语法提供了一种更简单的方式来创�
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-只能在 HTML 输出流中使用 **document.write**。 如果您在文档已加载后使用它（比如在函数中），会覆盖整个文档。

@@ -211,7 +211,7 @@ NOT BETWEEN 'Adams' AND 'Carter';
 
 > **注意：不同的数据库对 BETWEEN AND 操作符的处理方式是有差异的**。某些数据库会列出介于 "Adams" 和 "Carter" 之间的人，但不包括 "Adams" 和 "Carter" ；某些数据库会列出介于 "Adams" 和 "Carter" 之间并包括 "Adams" 和 "Carter" 的人；而另一些数据库会列出介于 "Adams" 和 "Carter" 之间的人，包括 "Adams" ，但不包括 "Carter" 。所以，**请检查你的数据库是如何处理 BETWEEN....AND 操作符的手册！**
 
-####ORDER BY 关键字
+####ORDER BY 子句
 
 ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。
 ORDER BY 关键字默认按照升序（可省略表示升序的ASC关键字）对记录进行排序。如果需要按照降序对记录进行排序，您可以使用 DESC关键字。
@@ -229,7 +229,7 @@ ORDER BY column_name1 [ASC|DESC] [, column_name2 [ASC|DESC]]...;
 
 > ascend：升序；descend：降序。
 
-####GROUP BY 关键字
+####GROUP BY 子句
 GROUP BY关键字用于按照某些列的分组信息（该列中相同的记录为一组）查找数据。
 **GROUP BY 关键字语法**：
 
@@ -241,7 +241,35 @@ FROM table_name
 GROUP BY column_name1;
 ```
 
-上面的语句查找出按照column\_name1相同记录组成的组合排列的column\_name1列和SUM("column_name2")新列组成的行内视图。其中SUM函数可以换为其他聚合函数。
+上面的语句按照column\_name1列中值相同的记录为分组依据，来排列的column\_name1列和SUM("column_name2")新列组成的行内视图。其中**SUM函数可以换为其他聚合函数**。
+
+实例：
+
+friends_of_pickles
+
+| id   | name     | gender | species | height_cm |
+| ---- | -------- | ------ | ------- | --------- |
+| 1    | Dave     | male   | human   | 180       |
+| 2    | Mary     | female | human   | 160       |
+| 3    | Fry      | male   | cat     | 30        |
+| 4    | Leela    | female | cat     | 25        |
+| 5    | Odie     | male   | dog     | 40        |
+| 6    | Jumpy    | male   | dog     | 35        |
+| 7    | Sneakers | male   | dog     | 55        |
+
+在上面名为friends_of_pickles的表中，查找出相同物种记录中的最高身高的记录：
+
+```sql
+SELECT MAX(height_cm), species FROM friends_of_pickles GROUP BY species;
+```
+
+结果如下：
+
+| MAX(height_cm) | species |
+| -------------- | ------- |
+| 30             | cat     |
+| 55             | dog     |
+| 180            | human   |
 
 2. 多列分组模式
 
@@ -255,8 +283,7 @@ GROUP BY column_name1, column_name2, ... column_nameN;
 
 3. 结合HAVING 子句实现条件分组
 
-在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与聚合函数一起使用。
-HAVING 子句可以让我们筛选分组后的各组数据。
+**在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与聚合函数一起使用。HAVING 子句可以让我们筛选分组后的各组数据**。
 
 ####HAVING 子句
 
@@ -606,8 +633,8 @@ DELETE FROM table_name
   | 数据类型        | 描述                                       |
   | ----------- | ---------------------------------------- |
   | DATE()      | 日期。格式：YYYY-MM-DD<br>注释：支持的范围是从 '1000-01-01' 到 '9999-12-31' |
-  | DATETIME()  | *日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
-  | TIMESTAMP() | *时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
+  | DATETIME()  | 日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
+  | TIMESTAMP() | 时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
   | TIME()      | 时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59' |
   | YEAR()      | 2 位或 4 位格式的年。<br>注释：4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。 |
 * 即便 DATETIME 和 TIMESTAMP 返回相同的格式，它们的工作方式很不同。在 INSERT 或 UPDATE 查询中，TIMESTAMP 自动把自身设置为当前的日期和时间。TIMESTAMP 也接受不同的格式，比如 YYYYMMDDHHMMSS、YYMMDDHHMMSS、YYYYMMDD 或 YYMMDD。
@@ -920,85 +947,112 @@ SQL Server / Oracle / MS Access:
 ALTER TABLE Persons
 ALTER COLUMN City DROP DEFAULT
 
-###**PRIMARY KEY 约束**
-PRIMARY KEY 约束唯一标识数据库表中的每条记录。
-主键必须包含唯一的值，不能包含 NULL 值。
-每个表都应该有一个主键，并且每个表只能有一个主键。
-主键可以是原本资料内的一列，或是一个人造栏位 (与原本资料没有关系的栏位)。主键可以包含一或多个栏位。当主键包含多个栏位时，称为组合键 (Composite Key)。  
+###PRIMARY KEY 约束
+PRIMARY KEY 约束**唯一标识数据库表中的每条记录。主键必须包含唯一的值，不能包含 NULL 值。每个表都应该有且仅有一个主键。**
+**主键可以是原本资料内的一列，或是一个人造栏位 (与原本资料没有关系的栏位)。主键可以包含一或多个栏位。当主键包含多个栏位时，称为组合键 (Composite Key)**。 
 主键可以在建置新表格时设定 (运用 CREATE TABLE 语句)，或是以改变现有的表格架构方式设定 (运用 ALTER TABLE)。
 SQL **PRIMARY KEY Constraint on CREATE TABLE**
 下面的 SQL 在 "Persons" 表创建时在 "Id_P" 列创建 PRIMARY KEY 约束：
-MySQL:
-CREATE TABLE Persons
-(
+MySQL：
+
+```sql
+CREATE TABLE Persons (
 Id_P int NOT NULL,
 LastName varchar(255) NOT NULL,
 FirstName varchar(255),
 Address varchar(255),
 City varchar(255),
 PRIMARY KEY (Id_P)
-)
-SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
+);
+```
+
+SQL Server / Oracle / MS Access：
+
+```sql
+CREATE TABLE Persons (
 Id_P int NOT NULL PRIMARY KEY,
 LastName varchar(255) NOT NULL,
 FirstName varchar(255),
 Address varchar(255),
 City varchar(255)
-)
+);
+```
+
 如果需要**命名 PRIMARY KEY 约束，以及为多个列定义 PRIMARY KEY 约束**，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
+MySQL / SQL Server / Oracle / MS Access：
+
+```sql
+CREATE TABLE Persons (
 Id_P int NOT NULL,
 LastName varchar(255) NOT NULL,
 FirstName varchar(255),
 Address varchar(255),
 City varchar(255),
-CONSTRAINT pk_PersonID PRIMARY KEY (Id_P,LastName)
-)
+CONSTRAINT pk_PersonID PRIMARY KEY (Id_P, LastName)
+);
+```
+
 SQL **PRIMARY KEY Constraint on ALTER TABLE**
 如果在表已存在的情况下为 "Id_P" 列创建 PRIMARY KEY 约束，请使用下面的 SQL：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ADD PRIMARY KEY (Id_P);
-如果需要命名 PRIMARY KEY 约束，以及为多个列定义 PRIMARY KEY 约束，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ADD CONSTRAINT pk_PersonID PRIMARY KEY (Id_P,LastName)
-注释：如果您使用 ALTER TABLE 语句添加主键，必须把主键列声明为不包含 NULL 值（在表首次创建时）。
-如需**撤销 PRIMARY KEY 约束**，请使用下面的 SQL：
-MySQL:
-ALTER TABLE Persons
-DROP PRIMARY KEY
-SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-DROP CONSTRAINT pk_PersonID
+MySQL / SQL Server / Oracle / MS Access：
 
-###**AUTO_INCREMENT 字段**
-我们通常希望在每次插入新记录时，自动地创建主键字段的值。
-我们可以在表中创建一个 AUTO _INCREMENT 字段。
+```sql
+ALTER TABLE Persons ADD PRIMARY KEY (Id_P);
+```
+
+如果需要**命名 PRIMARY KEY 约束，以及为多个列定义 PRIMARY KEY 约束**，请使用下面的 SQL 语法：
+MySQL / SQL Server / Oracle / MS Access：
+
+```sql
+ALTER TABLE Persons ADD CONSTRAINT pk_PersonID PRIMARY KEY (Id_P,LastName);
+```
+
+注释：如果**使用 ALTER TABLE 语句添加主键，必须把主键列声明为不包含 NULL 值（在表首次创建时）**。
+如需**撤销 PRIMARY KEY 约束**，请使用下面的 SQL：
+MySQL：
+
+```sql
+ALTER TABLE Persons DROP PRIMARY KEY;
+```
+
+SQL Server / Oracle / MS Access：
+
+```sql
+ALTER TABLE Persons DROP CONSTRAINT pk_PersonID;
+```
+
+###AUTO_INCREMENT 字段
+我们通常**希望在每次插入新记录时，自动地创建主键字段的值**。可以通过在表中创建一个 AUTO _INCREMENT 字段来实现。
 **用于 MySQL 的语法**:
-MySQL 使用 AUTO_INCREMENT 关键字来执行 AUTO _INCREMENT 任务。
-默认地，AUTO_INCREMENT 的开始值是 1，每条新记录递增 1。
+**MySQL 使用 AUTO_INCREMENT 关键字来执行 AUTO _INCREMENT 任务**。
+**默认地，AUTO_INCREMENT 的开始值是 1，每条新记录递增 1**。
 下列 SQL 语句把 "Persons" 表中的 "P_Id" 列定义为 AUTO _INCREMENT 主键：
+
+```sql
 CREATE TABLE Persons (
-P\_Id int NOT NULL AUTO_INCREMENT,
+P_Id int NOT NULL AUTO_INCREMENT,
 LastName varchar(255) NOT NULL,
 FirstName varchar(255),
 Address varchar(255),
 City varchar(255),
 PRIMARY KEY (P_Id));
-要让 AUTO_INCREMENT 序列以其他的值起始，请使用下列 SQL 语法：
-ALTER TABLE Persons AUTO_INCREMENT=100
-要在 "Persons" 表中插入新记录，我们不必为 "P_Id" 列规定值（会自动添加一个唯一的值）：
-INSERT INTO Persons (FirstName,LastName)
-VALUES ('Bill','Gates')
-上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 会被赋予一个唯一的值。"FirstName" 会被设置为 "Bill"，"LastName" 列会被设置为 "Gates"。
-MS SQL 使用 **IDENTITY 关键字**来执行 AUTO_INCREMENT 任务。
-默认地，IDENTITY 的开始值是 1，每条新记录递增 1。
-要规定 "P_Id" 列以 20 起始且递增 10，请把 IDENTITY 改为 IDENTITY(20,10)
+```
+
+要**让 AUTO_INCREMENT 序列以其他的值起始**，请使用下列 SQL 语法：
+
+```sql
+ALTER TABLE Persons AUTO_INCREMENT = 100;
+```
+
+要在 "Persons" 表中插入新记录，我们**不必为 "P_Id" 列规定值（会自动添加一个唯一的值）**：
+
+```sql
+INSERT INTO Persons (FirstName, LastName) VALUES ('Bill', 'Gates');
+```
+
+上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 会被赋予一个唯一的值。"FirstName" 会被设置为"Bill"，"LastName" 列会被设置为 "Gates"。
+
+**MS SQL 使用 IDENTITY 关键字来执行 AUTO_INCREMENT 任务。默认地，IDENTITY 的开始值是 1，每条新记录递增 1**。要规定 "P_Id" 列以 20 起始且递增 10，请把 IDENTITY 改为 IDENTITY(20,10)
 要在 "Persons" 表中插入新记录，我们不必为 "P_Id" 列规定值（会自动添加一个唯一的值）：
 INSERT INTO Persons (FirstName,LastName)
 VALUES ('Bill','Gates')
@@ -1035,7 +1089,7 @@ INSERT INTO Persons (P_Id,FirstName,LastName)
 VALUES (seq_person.nextval,'Lars','Monsen')
 上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 的赋值是来自 seq_person 序列的下一个数字。"FirstName" 会被设置为 "Bill"，"LastName" 列会被设置为 "Gates"。
 
-###**FOREIGN KEY 约束**
+###FOREIGN KEY 约束
 一个表中的FOREIGN KEY约束指向另一个表中的 PRIMARY KEY。让我们通过一个例子来解释外键。请看下面两个表：
 "Persons" 表：
 Id_P	LastName	FirstName	Address	City
