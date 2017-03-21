@@ -211,7 +211,7 @@ NOT BETWEEN 'Adams' AND 'Carter';
 
 > **注意：不同的数据库对 BETWEEN AND 操作符的处理方式是有差异的**。某些数据库会列出介于 "Adams" 和 "Carter" 之间的人，但不包括 "Adams" 和 "Carter" ；某些数据库会列出介于 "Adams" 和 "Carter" 之间并包括 "Adams" 和 "Carter" 的人；而另一些数据库会列出介于 "Adams" 和 "Carter" 之间的人，包括 "Adams" ，但不包括 "Carter" 。所以，**请检查你的数据库是如何处理 BETWEEN....AND 操作符的手册！**
 
-####ORDER BY 关键字
+####ORDER BY 子句
 
 ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。
 ORDER BY 关键字默认按照升序（可省略表示升序的ASC关键字）对记录进行排序。如果需要按照降序对记录进行排序，您可以使用 DESC关键字。
@@ -229,7 +229,7 @@ ORDER BY column_name1 [ASC|DESC] [, column_name2 [ASC|DESC]]...;
 
 > ascend：升序；descend：降序。
 
-####GROUP BY 关键字
+####GROUP BY 子句
 GROUP BY关键字用于按照某些列的分组信息（该列中相同的记录为一组）查找数据。
 **GROUP BY 关键字语法**：
 
@@ -606,8 +606,8 @@ DELETE FROM table_name
   | 数据类型        | 描述                                       |
   | ----------- | ---------------------------------------- |
   | DATE()      | 日期。格式：YYYY-MM-DD<br>注释：支持的范围是从 '1000-01-01' 到 '9999-12-31' |
-  | DATETIME()  | *日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
-  | TIMESTAMP() | *时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
+  | DATETIME()  | 日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
+  | TIMESTAMP() | 时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
   | TIME()      | 时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59' |
   | YEAR()      | 2 位或 4 位格式的年。<br>注释：4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。 |
 * 即便 DATETIME 和 TIMESTAMP 返回相同的格式，它们的工作方式很不同。在 INSERT 或 UPDATE 查询中，TIMESTAMP 自动把自身设置为当前的日期和时间。TIMESTAMP 也接受不同的格式，比如 YYYYMMDDHHMMSS、YYMMDDHHMMSS、YYYYMMDD 或 YYMMDD。

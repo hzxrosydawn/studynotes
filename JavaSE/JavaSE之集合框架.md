@@ -992,7 +992,7 @@ Map接口常用方法如下：
 - Collection\<V> values()：返回该Map集合中所有value组成的Collection；
 - Set\<Map.Entry\<K, V>> entrySet()：返回该Map结合中所有Map.Entry对像组成的Set集合；
 - Set\<K> keySet()：返回该Map结合中所有key组成的Set集合；
-- V get(Object key)：返回该Map集合中指定key对应的value。如果该Map集合中没有对应的key，则返回null。
+- V **get(Object key)**：返回该Map集合中指定key对应的value。如果该Map集合中没有对应的key，则返回null。
 
 Map接口常见方法测试实例。
 
@@ -1127,14 +1127,14 @@ LinkedHashMap需要维护元素的顺序，因此性能略低于HashMap，但它
 
 **TreeMap就是一个红黑树数据结构，每个key-value对即作为红黑树的一个节点。TreeMap存储key-value对时，需要根据key对节点进行排序。TreeMap可以保证所有的key-value对处于有序状态**。TreeMap也有两种排序方式：
 
-1. 自然排序：TreeMap的所有key必须实现Comparable接口，而且所有的key应该是同一个类的对象，否则将会抛出ClassCastException异常。
+1. 自然排序：**TreeMap的所有key必须实现Comparable接口，而且所有的key应该是同一个类的对象，否则将会抛出ClassCastException异常**。
 2. 定制排序：创建TreeMap时，传入一个Comparator对象，该对象负责对TreeMap中的所有key进行排序。采用定制排序不需要Map的key实现Comparable接口。
 
 类似于TreeSet中判断两个元素相等的标准，TreeMap中判断两个key相等的标准是：两个key通过compareTo()方法返回0。与TreeSet类似的是，TreeMap中也提供了一系列根据key顺序访问key-value对的方法：
 
 - Map.Entry\<K,V> firstEntry()：返回一个与此映射中的最小键关联的键-值映射关系；如果映射为空，则返回 null；
 - Map.Entry\<K,V> lastEntry()返回与此映射中的最大键关联的键-值映射关系；如果映射为空，则返回 null；
-- Map.Entry\<K,V> higherEntry(K key)：返回一个键-值映射关系，它与严格大于给定键的最小键关联；如果不存在这样的键，则返回 null；
+  - Map.Entry\<K,V> higherEntry(K key)：返回一个键-值映射关系，它与严格大于给定键的最小键关联；如果不存在这样的键，则返回 null；
 - Map.Entry\<K,V> lowerEntry(K key)返回一个键-值映射关系，它与严格小于给定键的最大键关联；如果不存在这样的键，则返回 null；
 - K firstKey()：返回此映射中当前第一个（最低）键，如果映射为空，则返回 null；
 - K lastKey()：返回此映射中当前最后一个（最高）键，如果映射为空，则返回 null；
