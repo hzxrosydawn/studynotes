@@ -1,22 +1,128 @@
-## **Annotation简介**
-从JDK1.5开始，Java增加了对元数据（Metadata）的支持，也就是Annotation（注释），这种Annotation与其他的注释有一定的区别，也有一定的联系。Annotation其实就是代码里的特殊标记，这些标记可以在编译、类加载、运行时被读取，并执行相应的处理。
+## 注解简介
 
-通过使用Annotation注释，程序员可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充的信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或进行部署。
+### Annotation接口
 
-Annotation提供了一种为程序元素设置元数据的方法，从某些方面来看，Annotation就像修饰符一样，可用于修饰包、类、构造器、方法、成员变量、参数、局部变量的声明，这些信息被存储在Annotation的“name=value”对中。
+**从JDK1.5开始**，Java增加了对元数据（Metadata）的支持，也就是Annotation（注释，或注解）。Annotation指定了一种新的接口类型的注释，通过在interface关键前面添加一个@符号来区别于一般注释，所以一般称其为注解。
 
-Annotation不影响程序运行，无论是否使用Annotation代码都可以正常运行。如果希望让程序中的Annotation在运行时起一定的作用，只能通过某种配套的工具对Annotation中的信息进行访问和处理，访问和处理Annotation的工具统称为APT（Annotation Processing Tool）。
+> @符号和interface关键字是两个不同的标记，虽然可以在两者之间添加空白，但是强烈反对这种编码风格。
 
-Annotation是一个接口（java.lang.annotation.Annotation），程序可以通过反射来获取指定程序元素的Annotation对象，然后通过Annotation对象来取得注释里的元数据。java.lang.annotation.Annotation接口的定义：
+注解其实就是代码里的特殊标记，这些标记可以在编译、类加载、运行时被读取，并执行相应的处理。通过使用注解注解，程序员可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充的信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或进行部署。
+
+注解提供了一种为程序元素设置元数据的方法，从某些方面来看，注解就像修饰符一样，可用于修饰包、类、构造器、方法、成员变量、参数、局部变量的声明，这些信息被存储在注解的“name=value”对中。
+
+注解不影响程序运行，无论是否使用Annotation代码都可以正常运行。如果希望让程序中的Annotation在运行时起一定的作用，只能通过某种配套的工具对Annotation中的信息进行访问和处理，访问和处理Annotation的工具统称为APT（Annotation Processing Tool）。
+
+注解通过Annotation接口（java.lang.annotation.Annotation）实现，程序可以**通过反射来获取指定程序元素的Annotation对象**，然后**通过Annotation对象来取得注释里的元数据**。java.lang.annotation.Annotation接口的定义：
 ```java
-public interface Annotation{  
+public interface Annotation {  
 	public Class<? extends Annotation> annotationType();  //返回此annotation的注释类型  
 	public boolean equals(Object obj); 
 	public int hashCode();  
-	   String toString(); 
+	String toString(); 
 }
 ```
+注解类型声明语法如下：
+
+```
+{InterfaceModifier} @interface Identifier AnnotationTypeBody
+```
+
+上面声明语法中的{}里的部分都是可选的。根据注解声明语法：
+
+- 注解类型声明不能是泛型；
+- 不允许使用extends关键字（所有注解类型隐式扩展java.lang.annotation.Annotation接口）；
+- 方法不能有任何参数和任何形参；
+- 方法不能有throws子句。
+
+除非被明确修改，否则，**适用于普通接口声明的所有规则也适用于注解类型声明**。
+
+一个注解类型不能显式声明父类或父接口类型，因为注解类型自身的子类或子接口不是一个注解类型。类似的，java.lang.annotation.Annotation也不是一个注解类型。
+
+注解类型声明中的Identifier指定了注解类型的名称。如果注解类型具有与其任何封闭类或接口相同的名称，则会发生编译时错误。
+
+注解类型中的声明方法的返回类型必须是基本类型、String、Class或Class的调用、枚举、注解、数组（其元素是前面类型中的一种，且**不能是多重数组**）之一，否则编译出错。如不允许下面几种的情形：
+
+```java
+@interface Verboten { 
+ String[][] value(); 
+}
+```
+
+```java
+@interface Foo {
+  Bar value();
+} 
+```
+
+### 注解类型元素
+
+注解类型主体声明：
+
+```java
+{ {AnnotationTypeMemberDeclaration} }
+```
+
+注解类型成员声明：
+
+```
+ConstantDeclaration
+ClassDeclaration
+InterfaceDeclaration
+;
+```
+
+注解类型元素声明：
+
+```
+{AnnotationTypeElementModifier} UnannType Identifier ( ) [Dims]
+ [DefaultValue];
+```
+
+注解类型元素修饰符：
+
+```
+(one of)
+Annotation public abstract
+```
+
+注解类型的每个方法声明定义了注解类型的一个元素，且注解类型的元素仅由其方法声明来定义。注解类型可以有零个或多个元素。**不含元素的注解类型（主体为空）称为标记注解类型（marker annotation type），单元素注解类型（仅有一个方法声明）中唯一的元素名称是value**。
+
+注解类型从java.lang.annotation.Annotation继承了一些方法，包括从Object类隐式继承来的实例方法。然而这些方法并没有定义注解类型的元素，所以不能在注解中使用这些方法。如果注解类型中声明的方法重写了这些继承来的public或protected方法，就会编译出错。
+
+声明注解时允许除方法声明之外的其他元素声明。例如，可以声明一个嵌套枚举，用于连接一个注解类型：
+
+```java
+@interface Quality { 
+ enum Level { BAD, INDIFFERENT, GOOD } 
+ Level value(); 
+}
+```
+
+### 注解类型元素的默认值
+
+注解类型可通过在其（空）参数列表后面的添加default关键字和指定的默认值来为其元素添加指定的默认值。默认值是阅读注解时动态应用的，不会被编译进注解中。因此，执行更改前，更改默认值将会影响注解，甚至在类中也是如此（假定这些注解没有为默认元素提供一个显式值）。
+
+默认值声明语法：
+
+```java
+default ElementValue
+```
+
+如果元素类型与默认值得类型不同会在编译时报错。
+
+如：
+
+```java
+@interface RequestForEnhancementDefault { 
+	int id(); // No default - must be specified in each annotation
+  	String synopsis(); // No default - must be specified in each annotation 
+ 	String engineer() default "[unassigned]"; 
+ 	String date() default "[unimplemented]"; 
+}
+```
+
 ## **系统内建的Annotation**
+
 Annotation必须使用工具来处理，工具负责提取Annotation里包含的元数据，工具还会根据这些元数据增加额外的功能。我们先看一下Java提供的5个基本Annotation的用法 --- 使用Annotation时要在其前面增加@符号，并把该Annotation当成一个修饰符使用，用于修饰它支持的程序元素。
 
 - @Override: 覆写的Annotation；
@@ -288,7 +394,7 @@ pulic interface FunInterface {
 在上面的代码中可能看不出@FunctionInterface发挥的作用，它只是告诉编译器检查它修饰的接口必须是一个函数式接口。如果在增加一个抽象方法，就会在编译时出现所修饰的接口不是函数式接口的出错提示。
 
 ## **JDK的元Annotation**
-JDK除了在java.lang下提供5个基本的Annotation之外，还在java.lang.annotation包下提供了6个Meta Annotation（元Annotation），其中有5个元Annotation用于修饰其他的Annotation定义。
+JDK除了在java.lang下提供5个基本的Annotation之外，还在java.lang.annotation包下提供了6个预定义的（Predefined）元Annotation（Meta Annotation），其中有5个元Annotation用于修饰其他的Annotation定义。
 ### **@Retention**
 @Retention只能用于修饰一个Annotation定义，用于指定被修饰的Annotation可以保留多长时间（保存范围）。@Retention包含一个RetentionPolicy类型的value成员变量，所以使用@Retention时必须为该value成员变量指定值。
 ```java
@@ -330,18 +436,46 @@ public @interface MyDefaultRetentionAnnotation{
 上面定义的Annotation在程序运行时起作用，这是一种比较常见的使用方式，而如果此时将其设置成其他范围，则以后在Annotation的应用中肯定是无法访问到的。
 要想让一个Annotation起作用，必须结合Java中的反射机制。 
 ### **@Target**
-@Target元Annotation也只能修饰一个Annotation定义，它也包含一个名为value的成员变量，用于被修饰的Annotation能用于修饰哪些程序单元。该成员变量的值只能是以下几个：
+@Target元Annotation（java.lang.annotation.Target）也只能修饰一个Annotation定义，它也只包含一个名为value的元素，表示被其修饰的Annotation能用于修饰哪些声明类型。其定义如下：
 
-- ElementType.ANNOTATION_TYPE：指定该策略的Annotation只能修饰Annotation；
-- ElementType.CONSTRUCTOR：指定该策略的Annotation只能修饰构造器；
-- ElementType.FIELD：指定该策略的Annotation只能修饰成员变量；
-- ElementType.LOCAL_VARIABLE：指定该策略的Annotation只能修饰只能修饰成员变量；
-- ElementType.METHOD：指定该策略的Annotation只能修饰方法定义；
-- ElementType.PACKAGE：指定该策略的Annotation只能修饰包定义；
-- ElementType.PARAMETER：指定该策略的Annotation可以修饰参数；
-- ElementType.TYPE：指定该策略的Annotation能修饰类、接口（包括注解）或枚举定义。
+```java
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface Target {
+    /**
+     * Returns an array of the kinds of elements an annotation type can be applied to
+     */
+    ElementType[] value();
+}
+```
+
+没有@Target元注解修饰的注解类型可以用来修饰**除类型参数声明外**的任何声明。如果一个注解类型T使用了@Target元注解修饰，则注解类型T能修饰的声明类型只能是定义在java.lang.annotation.ElementType枚举类里的枚举常量：
+
+- ElementType.ANNOTATION_TYPE：指定该策略的Annotation只能修饰Annotation声明；
+- ElementType.CONSTRUCTOR：指定该策略的Annotation只能修饰构造器声明；
+- ElementType.FIELD：指定该策略的Annotation只能修饰成员变量声明；
+- ElementType.LOCAL_VARIABLE：指定该策略的Annotation只能修饰只能修饰局部变量声明；
+- ElementType.METHOD：指定该策略的Annotation只能修饰方法声明；
+- ElementType.PACKAGE：指定该策略的Annotation只能修饰包声明；
+- ElementType.PARAMETER：指定该策略的Annotation可以修饰参数声明；
+- ElementType.TYPE：指定该策略的Annotation能修饰类、接口（包括注解）或枚举声明；
+- ElementType.TYPE_USE：指定该策略的Annotation能修饰Type类型的声明。Type用于大多数类型声明和一些表达式声明中。有16种类型环境（ type contexts）可应用Type：
+  - 声明中：
+    - 类声明中的extends或implements子句中的类型；
+    - 接口声明中的extends子句中的类型；
+    - 方法的返回值类型（包括注解类型元素的类型）；
+    - 方法或构造器的throws子句中类型；
+    - 泛型的类、接口、方法或构造器的类型参数声明的extends子句中类型；
+    - ​
+- ElementType.TYPE_PARAMETER：指定该策略的Annotation可以修饰类、接口（包括注解）或枚举声明类型的参数。
+
+上面这些同一个枚举常量如果在@Target中出现多次就会编译出错。
 
 与@Retention类似的是，@Target也可以在括号里直接指定value值，无须使用name=value形式。
+
+
+
 ### **@Documented**
 @Documented用于指定被该元Annotation修饰的Annotation类将被javadoc工具提取成文档，所有使用该Annotation修饰的程序元素API文档将会包含该Annotation说明。
 ```java
@@ -688,7 +822,7 @@ public class ActionListenerInstaller
 ### **Java8新增的重复注解**
 在Java8以前，对同一个元素使用多个相同类型的注解需要使用Annotation“容器”：
 ```java
-@Results({@Retention(name="failure", location=""failed.jsp), 
+@Results({@Retention(name="failure", location="failed.jsp"), 
 @Result(name="success", location="succ.jsp")})
 public Action FooAction{ ... }
 ```
@@ -699,8 +833,7 @@ public Action FooAction{ ... }
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Repeatable(FkTags.class)
-public @interface FkTag
-{
+public @interface FkTag {
 	// 为该注解定义2个成员变量
 	String name() default "疯狂软件";
 	int age();
