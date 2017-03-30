@@ -1,5 +1,8 @@
 数据库事务有哪些
 
+It is a compile-time error if an annotation type has the same simple name as any
+of its enclosing classes or interfaces.
+
 数据三大范式
 
 jQuery：
