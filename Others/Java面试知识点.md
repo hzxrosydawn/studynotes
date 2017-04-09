@@ -1,12 +1,9 @@
 数据库事务有哪些
 
-<<<<<<< HEAD
-It is a compile-time error if an annotation type has the same simple name as any
-of its enclosing classes or interfaces.
 
-=======
->>>>>>> 05e2e3d039216cceb6545d71b2c419071f488750
-数据三大范式
+It is a compile-time error if an annotation type has the same simple name as any of its enclosing classes or interfaces.
+
+ 数据三大范式
 
 jQuery：
 
@@ -34,5 +31,5 @@ bean：
 会话的保持除了使用默认的cookie，如何使用encodeURL和encodeRedirectURL实现URL重写来实现会话的保持
 
 ETL操作数据库
-=======
+
 >>>>>>> 05e2e3d039216cceb6545d71b2c419071f488750

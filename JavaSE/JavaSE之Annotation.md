@@ -8,9 +8,9 @@
 
 注解其实就是代码里的特殊标记，这些标记可以在编译、类加载、运行时被读取，并执行相应的处理。通过使用注解注解，程序员可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充的信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或部署。
 
-注解提供了一种为程序元素设置元数据的方法，从某些方面来看，注解就像修饰符一样，可用于修饰包、类、构造器、方法、成员变量、参数、局部变量的声明，这些信息被存储在注解的“name=value”对中。
-
 注解不影响程序运行，无论是否使用Annotation代码都可以正常运行。如果希望让程序中的Annotation在运行时起一定的作用，只能通过某种配套的工具对Annotation中的信息进行访问和处理，访问和处理Annotation的工具统称为APT（Annotation Processing Tool）。
+
+注解提供了一种为程序元素设置元数据的方法，从某些方面来看，注解就像修饰符一样，可用于修饰包、类、构造器、方法、成员变量、参数、局部变量的声明，这些信息被存储在注解的“name=value”对中。
 
 注解通过Annotation接口（java.lang.annotation.Annotation）实现，程序可以**通过反射来获取指定程序元素的Annotation对象**，然后**通过Annotation对象来取得注解里的元数据**。
 
@@ -39,6 +39,7 @@ public interface Annotation {
 注解类型成员声明：
 
 ```
+AnnotationTypeElementDeclaration
 ConstantDeclaration
 ClassDeclaration
 InterfaceDeclaration
@@ -92,15 +93,15 @@ Annotation public abstract
 
 ### 注解类型元素
 
-注解类型的每个方法声明定义了注解类型的一个元素，且注解类型的元素仅由其方法声明来定义。注解类型可以有零个或多个元素。**不含元素的注解类型（主体为空）称为标记注解类型（marker annotation type），单元素注解类型（仅有一个方法声明）中唯一的元素名称是value**。
+**注解类型的每个方法都不能有形参、类型参数和throws子句，也不能使用default和static关键字修饰。注解类型中的每个无参方法声明都定义了注解类型的一个元素，且注解类型的元素仅由这个无参方法的显式声明来定义，这个无参方法的方法名和返回值定义了该元素的名字和类型。注解类型可以有零个或多个元素。不含元素的注解类型（主体为空）称为标记注解类型（marker annotation type），通过其自身的存在来提供信息；单元素注解类型（仅有一个方法声明）中唯一的元素名称是value**。
 
 注解类型从java.lang.annotation.Annotation继承了一些方法，包括从Object类隐式继承来的实例方法。然而这些方法并没有定义注解类型的元素，所以不能在注解中使用这些方法。如果注解类型中声明的方法重写了这些继承来的public或protected方法，就会编译出错。
 
-声明注解时允许除方法声明之外的其他元素声明。例如，可以声明一个嵌套枚举，用于连接一个注解类型：
+**声明注解时允许除方法声明之外的其他元素声明。例如，可以声明一个嵌套枚举，用于连接一个注解类型**：
 
 ```java
 @interface Quality { 
- enum Level { BAD, INDIFFERENT, GOOD } 
+ enum Level {BAD, INDIFFERENT, GOOD} 
  Level value(); 
 }
 ```
@@ -127,6 +128,8 @@ default ElementValue
  	String date() default "[unimplemented]"; 
 }
 ```
+
+
 
 ## 系统内建的Annotation
 
@@ -673,41 +676,41 @@ public class ProfessionTest {
 
 ## 使用自定义Annotation
 
-### **自定义Annotation**
+### 自定义Annotation
  使用@interface关键字来定义新的Annotation，如： 
 ```java
  public @interface Test {
  }
 ```
-定义了该Annotation之后可以在程序的任何地方使用该Annotation，默认情况下，可用于修饰任何程序元素，包括类、接口和方法等。通常把Annotation放在所有修饰符之前，并且单独一行。如：
+定义了该Annotation之后可以在程序的任何地方使用该Annotation，默认情况下，该Annotation可用于修饰任何程序元素，包括类、接口和方法等。通常把Annotation放在所有修饰符之前，并且单独一行。如：
 ```java
 @Test
 public class MyClass {
 	...
 }
 ```
-Annotation还可以带成员变量，其成员变量在Annotation定义中以无形参的方法形式来声明，其方法名和返回值定义了该成员变量的名字和类型。如：
+Annotation还可以带零到多个元素。元素在Annotation定义中以无形参方法的形式来声明，其方法名和返回值定义了该元素的名字和类型。如：
 ```java
 public @interface MyTag {
-	//定义带两个成员变量的Annotation
-	//Annotation的成员变量以方法的形式来定义
+	//定义带两个元素的Annotation
+	//Annotation的元素以方法的形式来定义
 	String name();
 	int age();
 }
 ```
-一旦定义了成员变量之后就应该在使用该Annotation时给其成员变量指定值。如：
+一旦定义了元素之后就应该在使用该Annotation时给其元素指定值（或者不显式指定值而使用默认值）。如：
 ```java
 public class Test {
-	//使用带有成员变量的Annotation时应该为其成员变量赋值
+	//使用带有元素的Annotation时应该为其元素赋值
 	@MyTag(name="xx", age=6)
 	public void info() {
 	}
 }
 ```
-也可以在定义Annotation时为其成员变量通过default关键字指定默认值。如：
+也可以在定义Annotation时为其元素通过default关键字指定默认值。如：
 ```java
 public @interface MyTag {
-	//定义带有成员变量的Annotation时应该为其成员变量指定默认初始值
+	//定义带有成员变量的Annotation时应该为其元素指定默认初始值
 	String name() default "xx";
 	int age()  default 6;
 }
@@ -715,17 +718,12 @@ public @interface MyTag {
 这样就可以在使用该Annotation时不显式指定值，而使用默认值。如：
 ```java
 public class Test {
-	//使用带有默认成员变量值的Annotation时不显式指定值，而使用默认值
+	//使用有默认值的元素的Annotation时不显式指定值，而使用默认值
 	@MyTag
 	public void info() {
 	}
 }
 ```
-根据Annotation是否包含成员变量可以将Annotation分为两类：
-
-- 标记Annotation：不包含成员变量的Annotation称为标记。通过其自身的存在来提供信息；
-- 元数据Annotation：包含成员变量的Annotation因为可以接收更多的元数据，所以称为元数据Annotation。
-
 ### **提取Annotation信息**
 
 Annotation接口是所有注解类的父接口。JDK5在java.lang.reflect包下新增了AnnotatedElement接口，该接口代表程序中可以接受注解的程序元素，该接口有以下子类：

@@ -1316,10 +1316,10 @@ SQL Aggregate 函数（聚合函数）计算从列中取得的值，返回一个
 AVG() 函数返回数值列的平均值。
 **AVG()函数语法**：
 SELECT AVG(column\_name) FROM table_name;
-####**COUNT() 函数**
+####COUNT() 函数
 返回匹配指定条件的行数。
 **COUNT()函数语法**：
-**COUNT(column_name)函数** 用于下面返回返回指定列的值的数目（NULL 不计入）：
+**COUNT(column_name)函数**用于下面返回返回指定列的值的数目（NULL 不计入）：
 SELECT COUNT(column\_name) FROM table_name;
 **COUNT(*) 函数**返回表中的记录数：
 SELECT COUNT(*) FROM table_name;

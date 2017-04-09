@@ -1351,7 +1351,7 @@ $ git branch testing
 
 ![branch4](appendix/branch4.png)
 
-Git提供了一个指向当前所在的本地分支的HEADER指针，通过该指针Git可以判断当前在哪一个分支上（可将HEAD想象为当前分支的别名）。在上面的例子中，仍然在`master`分支上，因为`git branch`命令仅仅 创建 一个新分支，并不会自动切换到新分支中去。
+Git提供了一个指向当前所在的本地分支的HEADER指针，通过该指针Git可以判断当前在哪一个分支上（可将HEAD想象为当前分支的别名）。在上面的例子中，仍然在`master`分支上，因为`git branch`命令仅仅创建一个新分支，并不会自动切换到新分支中去。
 
 ![branch5](appendix/branch5.png)
 

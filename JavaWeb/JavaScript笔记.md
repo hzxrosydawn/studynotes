@@ -1151,25 +1151,53 @@ JSON已经发展成一种轻量级、跨语言的数据交换格式，各种主�
 
 ## DOM编程
 
-DOM（Document Object Model，即文档对象模型）可以将结构化的文档转换为DOM树，可用来动态地增删改查DOM树种的节点。DOM是一种访问和操作结构化文档（通常是XML文档和HTML文档）的思想，基于这种思想。基于这种思想，每种语言都有自己的DOM解析器，DOM解析器主要用来完成结构化文档和内存中DOM树之间的转换。
+DOM（Document Object Model，即文档对象模型）可以将结构化的文档转换为DOM树，可用来动态地增删改查DOM树中的节点。DOM是一种访问和操作结构化文档（通常是XML文档和HTML文档）的思想，每种语言都有其基于这种思想的DOM解析器。DOM解析器主要用来完成结构化文档和内存中DOM树之间的转换。
 
-DOM为HTML提供了一种简单继承体系，如下图所示.
+DOM为HTML提供了一种简单继承体系，如下图所示。
 
 ![node1](/appendix/node1.png)
 
+上图中父类型节点中的属性和方法可以用到其具体的子类对象中。HTMLElement的很多子类型代表HTML元素的具体类型。每个具体类型都定了多个JavaScript属性，这些属性对应于具体元素或元素组的HTML属性。有些具体的元素类也定义了额外的属性和方法，他们并不是简单地映射HTML语法。
+
 ### 访问HTML元素
 
-#### 根据id访问HTML元素
+#### 根据id属性访问HTML元素
 
 语法如下：
 
 ```javascript
-document.getElementById(idVal);
+var section = document.getElementById("section");
 ```
 
-只要被访问的HTML元素具有唯一id，那么JavaScript就可以方便地访问到该元素（所以建议为每个HTML元素指定唯一的id属性值）。
+只要被访问的HTML元素具有唯一id，那么JavaScript就可以通过向全局变量document的getElement()方法传入具体的id属性值，就可以方便地访问到该元素（所以建议为每个HTML元素指定唯一的id属性值）。
 
 **DOM模型为几乎所有HTML元素增加了innerHTML属性。某个HTML元素的DOM对象可以通过它的innerHTML属性可获取其开始结束标签之间（不包含子元素时）的字符串内容。但表单元素（如<textarea../>）例外，表单元素的开始结束标签之间是它的值（value），因此只能通过其value属性来访问其可视化文本**。
+
+#### 根据name属性访问HTML元素
+
+与使用id访问HTML元素类似，使用name属性访问HTML元素语法如下：
+
+```javascript
+var radioButtons = document.getElementsByName("favorite_color");
+```
+
+> 注意：
+>
+> 1. getElementsByName()方法是定义在HTMLDocument类中的，而不是在Document类中，所有该方法不能用于XML元素。如果给定的name属性只有一个元素，则返回值即为该元素对象，如果返回多个元素，则该方法返回一个NodeList对象，该对象类似一个包含若干个Element对象的只读数组；
+> 2. name属性值不必是唯一的，多个元素可能具有相同的name属性值。如在表单中，单选和复选按钮就是这种情况；
+> 3. name属性只在少数HTML元素中有效，包括表单、表单元素、<iframe>和<img>。
+
+#### 根据元素(标签)名访问HTML元素
+
+Document对象的getElementsByTagName()方法可以用来选取指定标签名的所有HTML或XML元素。如选取文档中所有<span>元素组成NodeList对象：
+
+```javas
+var spans = document.getElementsByTagName("span");
+```
+
+
+
+
 
 #### 利用节点关系访问HTML元素
 
