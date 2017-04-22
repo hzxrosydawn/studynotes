@@ -9,49 +9,50 @@
 
 **访问文件名的相关方法：**
 
-- String	getName()：返回该File对象代表的文件名或者目录名（如果是路径，则返回最后一级的子路径名）；
-- String	getPath()：返回该File对象代表的路径名；
-- String	getParent()：返回该File对象的父路径名；
-- String	getAbsolutePath()：返回该File对象的绝对路径名；
-- File	getAbsoluteFile()：返回该File对象的绝对路径对应的File对象；
-- String	getCanonicalPath()：返回该File对象的规范路径名；
-- File	getCanonicalFile()：返回该File对象的规范路径对应的File对象；
-- boolean	renameTo(File dest)：重命名该File对象；
+- String getName()：返回该File对象代表的文件名或者目录名（如果是路径，则返回最后一级的子路径名）；
+- String getPath()：返回该File对象代表的路径名；
+- Strin getParent()：返回该File对象的父路径名；
+- String getAbsolutePath()：返回该File对象的绝对路径名；
+- File getAbsoluteFile()：返回该File对象的绝对路径对应的File对象；
+- String getCanonicalPath()：返回该File对象的规范路径名；
+- File getCanonicalFile()：返回该File对象的规范路径对应的File对象；
+- boolean renameTo(File dest)：重命名该File对象；
 
 **文件检测相关的方法：**
 
 - boolean	exists()：该File对象对应的文件或目录是否存在；
-- boolean	isAbsolute()：是否为绝对路径；
-- boolean	isDirectory()：是否为路径；
-- boolean	isFile()：是否为文件：
-- boolean	isHidden()：是否为隐藏；
-- boolean	canRead()：是否可读；
-- boolean	canWrite()：是否可写；
-- boolean	canExecute()：是否可执行。
+- booleanisAbsolute()：是否为绝对路径；
+- booleanisDirectory()：是否为路径；
+- booleanisFile()：是否为文件：
+- booleanisHidden()：是否为隐藏；
+- booleancanRead()：是否可读；
+- booleancanWrite()：是否可写；
+- booleancanExecute()：是否可执行。
 
 **获取常规文件信息：**
 
-- long	lastModified()：获取最后修改时间；
-- long	length()：获取文件长度。
+- long	lastModified()：获取最后修改时间
+- longlength()：获取文件长度。
 
 **文件操作相关的方法：**
 
 - boolean	createNewFile()：如果该File对象对应的文件不存在，则创建该文件；
-- static File	createTempFile(String prefix, String suffix)：静态方法，用前后缀和系统生成的随机数作为文件名创建一个空文件，后缀为空则默认为.tmp；
-- static File	createTempFile(String prefix, String suffix, File directory)：比上面的方法多指定了文件目录；
-- boolean	delete()：删除该File对象对应的文件或目录；
-- void	deleteOnExit()：注册一个钩子，JVM退出时删除File对象对应的文件或者目录。
+- static FilecreateTempFile(String prefix, String suffix)：静态方法，用前后缀和系统生成的随机数作为文件名创建一个空文件，后缀为空则默认为.tmp；
+- static FilecreateTempFile(String prefix, String suffix, File directory)：比上面的方法多指定了文件目录；
+- booleandelete()：删除该File对象对应的文件或目录；
+- voiddeleteOnExit()：注册一个钩子，JVM退出时删除File对象对应的文件或者目录。
 
 **目录操作相关的方法：**
 
-- boolean	mkdir()：创建一个**目录**，如果已存在则无法创建返回false；
-- boolean	mkdirs()：创建一个**目录**，如果已存在则覆盖；
-- String[]	list()：列出该File对象的所有子文件和子目录；
-- File[]	listFiles()：同上，只是返回值不同；
-- String[]	list(FilenameFilter filter)：选择性列出该File对象对应的子文件和子目录；
-- File[]	listFiles(FilenameFilter filter)：同上，只是返回值不同；
-- File[]	listFiles(FileFilter filter)：同上，只是筛选条件不同；
-- static File[]	listRoots()：静态方法，列出系统的所有根目录。
+- boolean mkdir()：创建一个**目录**，如果已存在则无法创建返回false；
+- boolean mkdirs()：创建一个**目录**，如果已存在则覆盖；
+- String[] list()：列出该File对象的所有子文件和子目录；
+- File[] listFiles()：同上，只是返回值不同；
+- String[] list(FilenameFilter filter)：选择性列出该File对象对应的子文件和子目录；
+- File[] listFiles(FilenameFilter filter)：同上，只是返回值不同；
+- File[] listFiles(FileFilter filter)：同上，只是筛选条件不同；
+- static File[]listRoots()：静态方法，列出系统的所有根目录。
+
 注意：FilenameFilter和FileFilter都是函数式接口，只是筛选条件有所不同。
 
 **File类常用方法实例：**
@@ -83,13 +84,13 @@ newFile.mkdir();
 // 使用list()方法来列出当前路径下的所有文件和路径
 String[] fileList = file.list();
 System.out.println("====当前路径下所有文件和路径如下====");
-for (String fileName : fileList) {
+for (String fileName ： fileList) {
      System.out.println(fileName);
 }
 // listRoots()静态方法列出所有的磁盘根路径。
 File[] roots = File.listRoots();
 System.out.println("====系统所有根路径如下====");
-for (File root : roots) {
+for (File root ： roots) {
 	System.out.println(root);
 }
 ```
@@ -100,43 +101,46 @@ File file = new File(".");
 // 如果文件名以.java结尾，或者文件对应一个路径，返回true
 String[] nameList = file.list((dir, name) -> name.endsWith(".java")
 	  || new File(name).isDirectory());
-for(String name : nameList) {
+for(String name ： nameList) {
 	  System.out.println(name);
 }
 ```
 ##**Java的IO流** 
-Java把这些不同来源和目标（键盘、文件和网络）的数据都统一抽象为数据流（Stream）。Java语言的输入输出功能是十分强大而灵活的，美中不足的是看上去输入输出的代码并不是很简洁，因为你往往需要包装许多不同的对象。在Java类库中，IO部分的内容是很庞大的，因为它涉及的领域很广泛:标准输入输出，文件的操作，网络上的数据流，字符串流，对象流，zip文件流。
-Java流的分类
-按流向分:
+Java把这些不同来源和目标（键盘、文件和网络）的数据都统一抽象为数据流（Stream）。Java语言的输入输出功能是十分强大而灵活的，美中不足的是看上去输入输出的代码并不是很简洁，因为你往往需要包装许多不同的对象。在Java类库中，IO部分的内容是很庞大的，因为它涉及的领域很广泛：标准输入输出，文件的操作，网络上的数据流，字符串流，对象流，zip文件流。
 
-- 输入流: 程序可以从中读取数据的流。
-- 输出流: 程序能向其中写入数据的流。
+### Java流的分类
 
-按数据传输单位分:
+按流向分：
 
-- 字节流: 以字节（8位）为单位传输数据的流
-- 字符流: 以字符（16位）为单位传输数据的流
+- 输入流： 程序可以从中读取数据的流。
+- 输出流： 程序能向其中写入数据的流。
 
-按功能分:
+按数据传输单位分：
 
-- 节点流: 用于直接从目标设备（磁盘、网络等）读/写的流，又称为低级流。
-- 处理流: 是对一个已存在的流的链接和封装，通过对数据的封装来实现数据的读/写。使用相同的处理流可以消除不同节点流的差异，从而使用相同的代码编写出完成输入/输出。
+- 字节流： 以字节（8位）为单位传输数据的流
+- 字符流： 以字符（16位）为单位传输数据的流
+
+按功能分：
+
+- 节点流：用于直接从目标设备（磁盘、网络等）读/写的流，又称为低级流；
+- 处理流：是对一个已存在的流的链接和封装，通过对数据的封装来实现数据的读/写。使用相同的处理流可以消除不同节点流的差异，从而使用相同的代码编写出完成输入/输出；
 - 这种包装使用"分层对象(layered objects)"模式，被称为Decorator Pattern（装饰器模式）。Decorator模式要求所有包覆在原始对象之外的对象，都必须具有与之完全相同的接口。这使得decorator的用法变得非常的透明。无论对象是否被decorate过，传给它的消息总是相同的。这也是Java I/O类库要有"filter(过滤器)"类的原因：抽象的"filter"类是所有decorator的基类。Decorator模式常用于如下的情形：如果用继承来解决各种需求的话，类的数量会多到不切实际的地步。Java的I/O类库需要提供很多功能的组合，于是decorator模式就有了用武之地。为InputStream和OutputStream定义decorator类接口的类，分别是FilterInputStream和FilterOutputStream。
 
-##**java.io基类**
+###java.io基类
 
 流是一个很形象的概念，当程序需要读取数据的时候，就会开启一个通向数据源的流，这个数据源可以是文件，内存，或是网络连接。类似的，当程序需要写入数据的时候，就会开启一个通向目的地的流。这时候数据好像在这其中“流”动一样。
-Java中的流分为两种，一种是字节流，另一种是字符流，分别由四个抽象类来表示（每种流包括输入和输出两种所以一共四个）:InputStream，OutputStream，Reader，Writer。Java中其他多种多样变化的流均是由它们派生出来的。JDK所提供的所有流类位于java.io包中，都分别继承自以下四种抽象流类：
+Java中的流分为两种，一种是字节流，另一种是字符流，分别由四个抽象类来表示（每种流包括输入和输出两种所以一共四个）：InputStream，OutputStream，Reader，Writer。Java中其他多种多样变化的流均是由它们派生出来的。JDK所提供的所有流类位于java.io包中，都分别继承自以下四种抽象流类：
 
-- InputStream：继承自InputStream的流都是用于向程序中输入数据的，且数据单位都是字节（8位）。
-- OutputSteam：继承自OutputStream的流都是程序用于向外输出数据的，且数据单位都是字节（8位）。
-- Reader：继承自Reader的流都是用于向程序中输入数据的，且数据单位都是字符（16位）。
+- InputStream：继承自InputStream的流都是用于向程序中输入数据的，且数据单位都是字节（8位）；
+- OutputSteam：继承自OutputStream的流都是程序用于向外输出数据的，且数据单位都是字节（8位）；
+- Reader：继承自Reader的流都是用于向程序中输入数据的，且数据单位都是字符（16位）；
 - Writer：继承自Writer的流都是程序用于向外输出数据的，且数据单位都是字符（16位）。
 
 区别：Reader和Writer要解决的，最主要的问题就是国际化。原先的I/O类库只支持8位的字节流，因此不可能很好地处理16位的Unicode字符流。Unicode是国际化的字符集(更何况Java内置的char就是16位的Unicode字符)，这样加了Reader和Writer之后，所有的I/O就都支持Unicode了。此外新类库的性能也比旧的好。
+
 但是，Read和Write并不是取代InputStream和OutputStream，有时，你还必须同时使用"基于byte的类"和"基于字符的类"。为此，它还提供了两个"适配器(adapter)"类。InputStreamReader负责将InputStream转化成Reader，而OutputStreamWriter则将OutputStream转化成Writer。
 
-###**InputStream类**
+###InputStream类
 public abstract class InputStream extends Object implements Closeable
 InputStream是输入**字节**数据用的类。Inputstream类中的常用方法：
 
@@ -146,50 +150,53 @@ InputStream是输入**字节**数据用的类。Inputstream类中的常用方法
 - public int available( )：返回输入流中可以读取的字节数。注意：若输入阻塞，当前线程将被挂起，如果InputStream对象调用这个方法的话，它只会返回0，这个方法必须由继承InputStream类的子类对象调用才有用，
 - public int close( ) ：关闭该流对象并释放相关系统资源，在使用完后必须关闭打开的流。
 
-###**Reader类**
+###Reader类
 public abstract class Reader extends Object implements Readable, Closeable
 Reader类是读取字符流的抽象基类，其子类必须实现的Reader类的方法有read(char[], int, int)和close()。Reader类方法如下：
 
-- public boolean	ready()：判断当前字符流是否已准备好被读取。
-- public int	read()：读取一个字符。
-- public int	read(char[] cbuf)：将当前字符流读取到字符串cbuf。
-- public abstract int	read(char[] cbuf, int off, int len)：从输入流中最多读取len个字符的数据，存放到偏移量为off的b数组中。
-- int	read(CharBuffer target)：尝试读取字符流到特殊的字符流中。
-- public abstract void	close()：关闭该流对象并释放相关系统资源。
+- public boolean	ready()：判断当前字符流是否已准备好被读取；
+- public intread()：读取一个字符；
+- public intread(char[] cbuf)：将当前字符流读取到字符串cbuf；
+- public abstract intread(char[] cbuf, int off, int len)：从输入流中最多读取len个字符的数据，存放到偏移量为off的b数组中；
+- intread(CharBuffer target)：尝试读取字符流到特殊的字符流中；
+- public abstract voidclose()：关闭该流对象并释放相关系统资源。
 
 InputStream类和Reader类都还含有以下方法：
-  
-- public void mark(int readAheadLimit)：设置流对象的当前标记位置。
-- public boolean	markSupported()： 测试此输入流是否支持 mark 和 reset 方法。
-- void	reset()： 将此流重新定位到最后一次对此输入流调用 mark 方法时的位置。
-- long	skip(long n)：忽略输入流中的n个字节，返回值是实际忽略的字节数, 跳过一些字节来读取。
+
+- public void mark(int readAheadLimit)：设置流对象的当前标记位置；
+- public booleanmarkSupported()： 测试此输入流是否支持 mark 和 reset 方法；
+- voidreset()： 将此流重新定位到最后一次对此输入流调用 mark 方法时的位置；
+- longskip(long n)：忽略输入流中的n个字节，返回值是实际忽略的字节数, 跳过一些字节来读取。
 
 ###**OutputStream类**
+OutputStream类的声明信息为：
+
+```java
 public abstract class OutputStream extends Object implements Closeable, Flushable
-Closeable表示可以关闭的操作，因为程序运行到最后肯定要关闭。
-Flushable接口表示刷新，清空内存中的数据。
-OutputStream提供了3个write方法来做数据的输出，这个是和InputStream是相对应的：
+```
+
+其中，Closeable表示可以关闭的操作，因为程序运行到最后肯定要关闭。Flushable接口表示刷新，清空内存中的数据。OutputStream提供了3个write方法来做数据的输出，这个是和InputStream是相对应的：
 
 - public abstract void write(int b)：先将int转换为byte类型，把低字节写入到输出流中。
 - public void write(byte b[ ])：将参数b中的字节写到输出流。
 - public void write(byte b[ ], int off, int len)：将参数b的从偏移量off开始的len个字节写到输出流。
-- public void flush( ) : 将数据缓冲区中数据全部输出，并清空缓冲区。
-- public void close( ) : 关闭输出流并释放与流相关的系统资源。
+- public void flush( ) ： 将数据缓冲区中数据全部输出，并清空缓冲区。
+- public void close( ) ： 关闭输出流并释放与流相关的系统资源。
 
-###**Writer类**
+###Writer类
 public abstract class Writer extends Object implements Appendable, Closeable, Flushable
 Writer类与OutputStream类似，是各种字符输出流的抽象父类。其子类必须实现write(char[], int, int), flush(),和close()方法。其主要方法如下：
- 
-- public void write(char[] cbuf)：将一个字符数组写入该字符输出流。
-- public abstract void	write(char[] cbuf, int off, int len)：将一个字符数组的部分内容写入该字符输出流。
-- public void write(int c)：将一个字符写入该字符输出流。
-- public void write(String str)：将一个字符串写入该字符输出流。
-- public void write(String str, int off, int len)：将一个字符串的部分内容写入该字符输出流。
-- public Writer append(char c)：在该字符输出流后面追加特定的字符。
-- public Writer append(CharSequence csq)：在该字符输出流后面追加特定的字符串。
-- public Writer append(CharSequence csq, int start, int end)：在该字符输出流的特定位置范围添加加特定的字符串。
-- public abstract void	close()：关闭当前字符输出流，首先flush它。
-- public abstract void	flush()：将数据缓冲区中数据全部输出，并清空缓冲区。
+
+- public void write(char[] cbuf)：将一个字符数组写入该字符输出流；
+- public abstract voidwrite(char[] cbuf, int off, int len)：将一个字符数组的部分内容写入该字符输出流；
+- public void write(int c)：将一个字符写入该字符输出流；
+- public void write(String str)：将一个字符串写入该字符输出流；
+- public void write(String str, int off, int len)：将一个字符串的部分内容写入该字符输出流；
+- public Writer append(char c)：在该字符输出流后面追加特定的字符；
+- public Writer append(CharSequence csq)：在该字符输出流后面追加特定的字符串；
+- public Writer append(CharSequence csq, int start, int end)：在该字符输出流的特定位置范围添加加特定的字符串；
+- public abstract voidclose()：关闭当前字符输出流，首先flush它；
+- public abstract voidflush()：将数据缓冲区中数据全部输出，并清空缓冲区。
 
 注意：
 
@@ -200,17 +207,17 @@ Writer类与OutputStream类似，是各种字符输出流的抽象父类。其�
 - 使用IO操作进行数据输出后，不要忘记关闭输出流。关闭输出流可以保证物理资源被回收，可能还会将缓冲区的数据flush到物理节点。
 - 处理流的构造器参数为一个已经存在的节点流，节点流的构造器参数为一个物理节点。一般使用处理流操作简单，执行效率高。如关闭流时，只需要关闭上层的处理流即可，其包装的下层节点流会自动关闭。
 ##**Java的输入/输出流体系**
-![这里写图片描述](http://img.blog.csdn.net/20161204101157399)
+![这里写图片描述](http：//img.blog.csdn.net/20161204101157399)
 ###**字节流体系** 
 ####**FileInputStream类**
 FileInputStream类是InputStream类的子类，用于从文件系统中的某个文件中获得输入字节，哪些文件可用取决于主机环境。也可用于读取诸如图像数据之类的原始字节流。要读取字符流，请考虑使用 FileReader。其构造器可以是一个表示文件名的字符串，也可以是File或FileDescriptor对象：
- 
+
 - FileInputStream(File file)：通过打开一个到实际文件的连接来创建一个 FileInputStream，该文件通过文件系统中的 File 对象 file 指定。 
 - FileInputStream(FileDescriptor fdObj)：通过使用文件描述符 fdObj 创建一个 FileInputStream，该文件描述符表示到文件系统中某个实际文件的现有连接。 
 - FileInputStream(String name)：通过打开一个到实际文件的连接来创建一个 FileInputStream，该文件通过文件系统中的路径名 name 指定。 
 
  其区别于基类的方法如下：
- 
+
 - FileChannel getChannel() ：返回与此文件输入流有关的唯一 FileChannel 对象。 
 - FileDescriptor getFD() ：返回表示文件系统中连接到实际文件的 FileDescriptor 对象，该文件系统正被此FileInputStream 使用。 
 
@@ -298,7 +305,7 @@ public class FileInputStreamReview {
 - protected  void finalize()：清理到文件的连接，并确保在不再引用此文件输出流时调用此流的 close 方法。 
 - FileChannel getChannel()：返回与此文件输出流有关的唯一 FileChannel 对象。 
 - FileDescriptor getFD()：返回与此流有关的文件描述符。 
- 
+
 示例：
 ```java
  /**
@@ -322,12 +329,12 @@ private static void test() throws IOException {
 序列化的含义：若要将Java对象持久地保存在磁盘上或在网络上传输，以便以后恢复该对象。那么该对象必须转化为平台无关的字节序列，转换的过程称为序列化（Serializable ），恢复序列化对象的过程称为反序列化（Dserializable）。
 
 可序列化对象的类必须实现 java.io.Serializable 或 java.io.Externalizable 接口之一。其中实现Serializable接口时无须实现任何方法，该接口只是负责标记实现其的类对象可序列化。
- 
+
 #####**ObjectInputStream类**
 ObjectInputStream 对以前使用 ObjectOutputStream 写入的基本数据和对象**进行反序列化**，其他用途包括使用套接字流在主机之间传递对象，或者用于编组和解组远程通信系统中的实参和形参。 
 构造器摘要：
 ObjectInputStream(InputStream in)：创建从指定 InputStream 读取的 ObjectInputStream。 
-  
+
 除了从基类继承的方法，它主要功能是对基本类型与引用类型的读取。主要方法摘要：
 
 - int readInt()：读取一个 32 位的 int 值。 
@@ -342,7 +349,7 @@ ObjectInputStream(InputStream in)：创建从指定 InputStream 读取的 Object
 - 反序列读取的仅是Java对象，而不是Java类，因此恢复对象时必须提供该对象的类对应的.class文件，否则抛出ClassNotFoundException异常。
 - 由于读取的是对象实例，故不必调用构造器来创建实例，反序列化的结果就是对象实例。读取对象时为对象分配内存并将其初始化为零 (NULL)。
 - 应该使用 Java 的安全强制转换来获取所需的类型。在 Java 中，字符串和数组都是对象，所以在序列化期间将其视为对象。读取时，需要将其强制转换为期望的类型。可以使用 DataInput （接口）上的适当方法从流读取基本数据类型。
- 
+
 示例：
 ```java
 private static void read() throws FileNotFoundException, IOException,
@@ -522,7 +529,7 @@ public class TransientTest
  2. private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException：实现反序列化规则，与writeObject相反，默认情况下，该方法会调用in.defaultReadObject来恢复java对象的非瞬态实例变量。
  3. private void readObjectNoData() throws ObjectStreamException：在接收方反序列化过程和发送发的序列化过程不兼容时，该方法用于正确地初始化反序列化对象。
 
- 
+
  示例：
 ```java
 public class Person
@@ -700,7 +707,7 @@ Java允许为待序列化类提供一个private static final long serialVersionU
 
 - PipedOutputStream() ：创建尚未连接到管道输入流的管道输出流。 
 - PipedOutputStream(PipedInputStream snk) ：创建连接到指定管道输入流的管道输出流。 
-          
+  ​        
 方法摘要：
 
 - void connect(PipedInputStream snk) ：将此管道输出流连接到接收者。 
@@ -788,7 +795,7 @@ class Output implements Runnable {
 
 方法摘要：
 
-- int available() :返回不受阻塞地从当前底层输入流读取（或跳过）的字节数的估计值，方法是通过下一次调用当前底层输入流的方法。 
+- int available() ：返回不受阻塞地从当前底层输入流读取（或跳过）的字节数的估计值，方法是通过下一次调用当前底层输入流的方法。 
 - void close() ：关闭此输入流并释放与此流关联的所有系统资源。 
 - int read() ：从此输入流中读取下一个数据字节。 
 - int read(byte[] b, int off, int len) ：将最多 len 个数据字节从此输入流读入 byte 数组。
@@ -848,7 +855,7 @@ public class SequenceInputStreamDemo {
         sis.close();
     }
 }
-``` 
+```
 ####**ByteArrayInputStream**
 ByteArrayInputStream 包含一个内部缓冲区，该缓冲区包含从流中读取的字节。内部计数器跟踪 read 方法要提供的下一个字节。关闭 ByteArrayInputStream 无效。此类中的方法在关闭此流后仍可被调用，而不会产生任何 IOException。
 
@@ -862,9 +869,9 @@ ByteArrayInputStream 包含一个内部缓冲区，该缓冲区包含从流中�
 - protected byte[] buf：由该流的创建者提供的 byte 数组。元素 buf[0] 到 buf[count-1] 是只能从流中读取的字节；元素 buf[pos] 是要读取的下一个字节。 
 - protected int pos：要从输入流缓冲区中读取的下一个字符的索引。此值应该始终是非负数，并且不应大于 count 值。从输入流缓冲区中读取的下一个字节是 buf[pos]。 
 - protected int mark：流中当前的标记位置。构造时默认将 ByteArrayInputStream 对象标记在位置零处。通过 mark() 方法可将其标记在缓冲区内的另一个位置处。通过 reset() 方法将当前缓冲区位置设置为此点。 
-如果尚未设置标记，则标记值是传递给构造方法的偏移量（如果未提供偏移量，则标记值为 0）。 
+  如果尚未设置标记，则标记值是传递给构造方法的偏移量（如果未提供偏移量，则标记值为 0）。 
 - protected int count：比输入流缓冲区中最后一个有效字符的索引大一的索引。此值应该始终是非负数，并且不应大于 buf 的长度。它比 buf 中最后一个可从输入流缓冲区中读取的字节位置大一。 
- 
+
 此类的方法与父类相同，侧重于读。不贴出了。
 示例：
 ```java
@@ -925,7 +932,7 @@ System.out.println((char)read);
 为另一个输入流添加一些功能，即缓冲输入以及支持 mark 和 reset 方法的能力。在创建 BufferedInputStream 时，会创建一个内部缓冲区数组。缓冲区用以减少频繁的IO操作，提高程序的性能。
 在读取或跳过流中的字节时，可根据需要从包含的输入流再次填充该内部缓冲区，一次填充多个字节。mark 操作记录输入流中的某个点，reset 操作使得在从包含的输入流中获取新字节之前，再次读取自最后一次 mark 操作后读取的所有字节。
 
-构造器摘要:
+构造器摘要：
 - BufferedInputStream(InputStream in) ：创建一个 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。 
 - BufferedInputStream(InputStream in, int size) ：创建具有指定缓冲区大小的 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用
 
@@ -1032,10 +1039,10 @@ public class EfficiencyTest {
 构造方法摘要
 
 - BufferedInputStream(InputStream in) 
-          创建一个 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。 
+         创建一个 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。 
 - BufferedInputStream(InputStream in, int size) 
-          创建具有指定缓冲区大小的 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。 
-示例：
+         创建具有指定缓冲区大小的 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。 
+     示例：
 ```java
 private static void test1() throws IOException {
         BufferedOutputStream bos=new BufferedOutputStream(new FileOutputStream("bos.txt"));
@@ -1071,9 +1078,9 @@ PrintStream 打印的所有字符都使用平台的默认字符编码转换为�
 -  void print(Xxx s) ：打印Xxx（Xxx可为Object、String、基本类型等） 。
 -  void println() ：通过写入行分隔符字符串终止当前行。 
 -  void println(Xxx x) ：打印Xxx（Xxx可为Object、String、基本类型等），然后插入换行符终止该行。  
-- protected  void setError() ：将该流的错误状态设置为 true。 
-- boolean checkError() ：刷新流并检查其错误状态。 
-- protected  void clearError() ： 清除此流的内部错误状态，在另一个写入操作失败并调用 setError() 之前，此方法将导致 checkError() 的后续调用返回 false。 
+-  protected  void setError() ：将该流的错误状态设置为 true。 
+-  boolean checkError() ：刷新流并检查其错误状态。 
+-  protected  void clearError() ： 清除此流的内部错误状态，在另一个写入操作失败并调用 setError() 之前，此方法将导致 checkError() 的后续调用返回 false。 
 -  PrintStream format(Locale l, String format, Object... args) ：使用指定格式字符串和参数将格式化字符串写入此输出流中。 
 -  PrintStream format(String format, Object... args) ：使用指定格式字符串和参数将格式化字符串写入此输出流中。 
 
@@ -1082,16 +1089,16 @@ PrintStream 打印的所有字符都使用平台的默认字符编码转换为�
 
 ###**字符流体系**
 对于字符的操作，我们当然首选字符流。同时，转换流也为我们建立了字节流到字符流的桥梁，使我们对数据的处理更加灵活。但是也要注意一些细节，对于从转换流获得的字符流，它读取的字符必须在编码表中可以查找的到，否则会造成乱码。可以这样形象的理解字符流：字符流 = 字节流+编码表。
-编码表|描述
----|---
-ASCII 		| 美国标准信息交换码。 一种使用7个或8个二进制位进行编码的方案
-ISO8859-1	|拉丁码表。欧洲码表 用一个字节的8位表示。
-GB2312		|中国的中文编码表。
-GBK			|中国的中文编码表升级，融合了更多的中文文字符号。
-GB18030		|GBK的取代版本
-BIG-5码 		|通行于台湾、香港地区的一个繁体字编码方案，俗称“大五码”。
-Unicode		|国际标准码，融合了多种文字。所有文字都用两个字节来表示,Java语言使用的就是unicode
-UTF-8		|最多用三个字节来表示一个字符。它定义了一种“区间规则”，这种规则可以和ASCII编码保持最大程度的兼容：<br>它将Unicode编码为00000000-0000007F的字符，用单个字节来表示<br>它将Unicode编码为00000080-000007FF的字符用两个字节表示<br>它将Unicode编码为00000800-0000FFFF的字符用3字节表示
+| 编码表       | 描述                                       |
+| --------- | ---------------------------------------- |
+| ASCII     | 美国标准信息交换码。 一种使用7个或8个二进制位进行编码的方案          |
+| ISO8859-1 | 拉丁码表。欧洲码表 用一个字节的8位表示。                    |
+| GB2312    | 中国的中文编码表。                                |
+| GBK       | 中国的中文编码表升级，融合了更多的中文文字符号。                 |
+| GB18030   | GBK的取代版本                                 |
+| BIG-5码    | 通行于台湾、香港地区的一个繁体字编码方案，俗称“大五码”。            |
+| Unicode   | 国际标准码，融合了多种文字。所有文字都用两个字节来表示,Java语言使用的就是unicode |
+| UTF-8     | 最多用三个字节来表示一个字符。它定义了一种“区间规则”，这种规则可以和ASCII编码保持最大程度的兼容：<br>它将Unicode编码为00000000-0000007F的字符，用单个字节来表示<br>它将Unicode编码为00000080-000007FF的字符用两个字节表示<br>它将Unicode编码为00000800-0000FFFF的字符用3字节表示 |
 ####**FileReader**
 用来读取字符文件的便捷类。此类的构造方法假定默认字符编码和默认字节缓冲区大小都是适当的。要自己指定这些值，可以先在 FileInputStream 上构造一个 InputStreamReader。
 FileReader 用于读取字符流。要读取原始字节流，请考虑使用 FileInputStream。
@@ -1252,13 +1259,13 @@ public class InputStreamReaderReview {
     }
 
     private static void review2() throws Exception {
-        FileOutputStream fos=new FileOutputStream(new File("D:\\changeio.txt"));
+        FileOutputStream fos=new FileOutputStream(new File("D：\\changeio.txt"));
         // 指定以gbk将字符编码成字节写入流中
         OutputStreamWriter osw=new OutputStreamWriter(fos,"GBK"); 
         osw.write("设为GBK写入");
         osw.close();
 
-        FileInputStream fis = new FileInputStream(new File("D:\\changeio.txt"));
+        FileInputStream fis = new FileInputStream(new File("D：\\changeio.txt"));
         // 指定按gbk将字节解码为字符读取到输入流中
         InputStreamReader isr = new InputStreamReader(fis,"GBK"); 
         char[] cbuf = new char[1024];
@@ -1325,10 +1332,10 @@ public class OutputStreamWriterReview {
 - BufferedReader(Reader in) ：创建一个使用默认大小输入缓冲区的缓冲字符输入流。 
 - BufferedReader(Reader in, int sz) ： 创建一个使用指定大小输入缓冲区的缓冲字符输入流。 
 
-特殊方法:
+特殊方法：
 String readLine()  读取一个文本行。 
 
-示例:
+示例：
 ```java
 public class BufferedReaderReview {
     public static void main(String[] args) {
@@ -1343,7 +1350,7 @@ public class BufferedReaderReview {
             br = new CustomBufferedReader(fr);
             String line=null;
             while((line=br.readLine())!=null){//不包含 line-termination characters
-                System.out.println(br.getLineNumber()+":"+line);
+                System.out.println(br.getLineNumber()+"："+line);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -1478,7 +1485,7 @@ public class PrintWriterDemo {
 PushbackInputStream 为另一个输入流添加性能，即“推回 (push back)”或“取消读取 (unread)”一个字节的能力。在代码片段可以很方便地读取由特定字节值分隔的不定数量的数据字节时，这很有用；在读取终止字节后，代码片段可以“取消读取”该字节，这样，输入流上的下一个读取操作将会重新读取被推回的字节。
 
 构造器摘要：
- 
+
 - PushbackInputStream(InputStream in) ：创建 PushbackInputStream 并保存其参数（即输入流 in），以供将来使用。 
 - PushbackInputStream(InputStream in, int size) ：使用指定 size 的推回缓冲区创建 PushbackInputStream，并保存其参数（即输入流 in），以供将来使用。 
 
@@ -1661,18 +1668,18 @@ class ReadStandard {
 RandomAccessFile类(继承自Object，是独立的)可以通过操作文件记录指针来访问文件的任意位置，方便地实现流的插入、追加等操作。但是只能读写文件，不能访问IO节点。(RandomAccessFile的绝大多数功能，但不是全部，已经被JDK 1.4的nio的"内存映射文件(memory-mapped files)"给取代了,可以考虑使用内存映射代替RandomAccessFile)
 
 构造器摘要：
- 
+
 - RandomAccessFile(File file, String mode) ：创建从中读取和向其中写入（可选）的随机访问文件流，该文件由 File 参数指定。 
 - RandomAccessFile(String name, String mode) ：创建从中读取和向其中写入（可选）的随机访问文件流，该文件具有指定名称。 
 
 其中，mode 参数指定用以打开文件的访问模式。允许的值及其含意为： 
 
-值    |   含意
----|---
-"r"    	| 以只读方式打开。调用结果对象的任何 write 方法都将导致抛出 IOException。  
-"rw"    |打开以便读取和写入。如果该文件尚不存在，则尝试创建该文件。  
-"rws"   |打开以便读取和写入，对于 "rw"，还要求对文件的内容或元数据的每个更新都同步写入到底层存储设备。<br>使用 "rws" 要求更新要写入的文件内容及其元数据，这通常要求至少一个以上的低级别 I/O 操作。 
-"rwd"   |打开以便读取和写入，对于 "rw"，还要求对文件内容的每个更新都同步写入到底层存储设备。<br>"rwd" 模式可用于减少执行的 I/O 操作数量，因为使用 "rwd" 仅要求更新要写入存储的文件的内容。
+| 值     | 含意                                       |
+| ----- | ---------------------------------------- |
+| "r"   | 以只读方式打开。调用结果对象的任何 write 方法都将导致抛出 IOException。 |
+| "rw"  | 打开以便读取和写入。如果该文件尚不存在，则尝试创建该文件。            |
+| "rws" | 打开以便读取和写入，对于 "rw"，还要求对文件的内容或元数据的每个更新都同步写入到底层存储设备。<br>使用 "rws" 要求更新要写入的文件内容及其元数据，这通常要求至少一个以上的低级别 I/O 操作。 |
+| "rwd" | 打开以便读取和写入，对于 "rw"，还要求对文件内容的每个更新都同步写入到底层存储设备。<br>"rwd" 模式可用于减少执行的 I/O 操作数量，因为使用 "rwd" 仅要求更新要写入存储的文件的内容。 |
 
 主要方法摘要：
 
@@ -1684,7 +1691,7 @@ RandomAccessFile类(继承自Object，是独立的)可以通过操作文件记�
 - FileChannel getChannel() ：返回与此文件关联的唯一 FileChannel 对象。 
 - FileDescriptor getFD() ：返回与此流关联的不透明文件描述符对象。 
 - 该类还有功能类似与InputStream和OutStream的三个read方法和三个write方法，此外，还有许多readXxx()和writeXxx()方法来读写。
- 
+
 示例1：
 简单测试
 ```java

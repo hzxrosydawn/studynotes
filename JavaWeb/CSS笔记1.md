@@ -589,6 +589,33 @@ LI:before { content: counters(item, ".") " "; counter-increment: item }
 
 #### 计数器样式
 
+使用`counter(name)`函数获得的计数器的标记格式默认为十进制数字，可以通过向`counter(name, style)`函数的`style`参数传入`list-style-type`属性的某个值来使用其他样式的格式。如果`list-style-image` 属性的值为`none` （表示没有标记，否则有字形、数字和字母三种形式），或者该属性指定的URI不能显示出来，那么`list-style-type` 属性就可以指定列表项标记的外观，其可用的值如下：
+
+```
+disc | circle | square | decimal | decimal-leading-zero | lower-roman | upper-roman | lower-greek | lower-latin | upper-latin | armenian | georgian | lower-alpha | upper-alpha | none | inherit
+```
+
+字形可用的类型如下：
+
+- disc：圆；
+- circle：圆圈；
+- square：方块。
+
+字形的具体的效果取决于浏览器的渲染。如果需要在不同浏览器上保持一致的外观，建议使用背景图片来替换指定字形。
+
+数字可用的类型如下：
+
+- decimal：十进制数字，从1开始。这是默认值；
+- decimal-leading-zero：初始补零的十进制数字（如01，02，03，...，98，99）；
+- lower-roman：小写的罗马数字（如i，ii，iii，iv，v等）；
+- upper-roman：大写的罗马数字（如I，II，III，IV，V等）；
+- georgian：传统的乔治亚文数字（如an，ban，gan，...，he，tan，in，in-an，...）；
+- armenian：传统的大写亚美尼亚数字；
+
+
+
+- lower-greek：
+
 
 
 

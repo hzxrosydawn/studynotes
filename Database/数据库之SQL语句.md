@@ -84,57 +84,57 @@ SELECT column_name FROM table_name WHERE condition;
 
 其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。WHERE 子句中的运算符如下表所示：
 
-| 运算符                           | 描述                                       |
-| ----------------------------- | ---------------------------------------- |
-| =                             | 等于                                       |
-| <>                            | 不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=          |
-| >                             | 大于                                       |
-| <                             | 小于                                       |
-| \>=                           | 大于等于                                     |
-| <=                            | 小于等于                                     |
-| +、-、*、/                       | 四则运算符                                    |
-| :=                            | 赋值                                       |
-| expr1 BETWEEN expr2 AND expr3 | 在某个范围内(相当于同时指定>=和<=)                     |
-| expr1 IN (expr2, expr3, ...)  | 为括号中所有值中的一个值                             |
-| expr1 WHERE EXISTS (expr2)    | 如果expr2有返回记录，则执行expr1。其中expr1、expr2不仅可以是常量、也可以是变量名和列名 |
-| IS NULL                       | 是否为null                                  |
-| IS NOT NULL                   | 是否不为null                                 |
-| ANY                           | 与比较运算符结合表示满足任一比较条件                       |
-| ALL                           | 与运算符结合使用表示满足所有的比较条件                      |
-| LIKE pattern                  | 模糊搜索。搜索模式由pattern语句指定                    |
-| NOT LIKE pattern              | 与LIKE相反                                  |
-| expr1 AND expr2               | 同时满足两个条件                                 |
-| expr1 OR expr2                | 满足两个条件之一                                 |
-| NOT expr                      | 不满足某个条件                                  |
-| \>ANY (expr)                  | 只要大于expr中的最小值即可                          |
-| <ANY (expr)                   | 只要小于expr中的最大值即可                          |
-| \>ALL (expr)                  | 只要大于expr中的最大值即可                          |
-| <ALL (expr)                   | 只要小于expr中的最小值即可                          |
-| =ANY (expr)                   | 相当于IN (expr)                             |
+| 运算符                            | 描述                                       |
+| ------------------------------ | ---------------------------------------- |
+| =                              | 等于                                       |
+| **<>**                         | 不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=          |
+| >                              | 大于                                       |
+| <                              | 小于                                       |
+| \>=                            | 大于等于                                     |
+| <=                             | 小于等于                                     |
+| +、-、*、/                        | 四则运算符                                    |
+| **:=**                         | 赋值                                       |
+| expr1 BETWEEN expr2 AND expr3  | 在某个范围内(相当于同时指定>=和<=)                     |
+| expr1 IN (expr2, expr3, ...)   | 为括号中所有值中的一个值                             |
+| expr1 WHERE **EXISTS** (expr2) | 如果expr2有返回记录，则执行expr1。其中expr1、expr2不仅可以是常量、也可以是变量名和列名 |
+| IS NULL                        | 是否为null                                  |
+| IS NOT NULL                    | 是否不为null                                 |
+| ANY                            | 与比较运算符结合表示满足任一比较条件                       |
+| ALL                            | 与运算符结合使用表示满足所有的比较条件                      |
+| LIKE pattern                   | 模糊搜索。搜索模式由pattern语句指定                    |
+| NOT LIKE pattern               | 与LIKE相反                                  |
+| expr1 AND expr2                | 同时满足两个条件                                 |
+| expr1 OR expr2                 | 满足两个条件之一                                 |
+| NOT expr                       | 不满足某个条件                                  |
+| \>ANY (expr)                   | 只要大于expr中的最小值即可                          |
+| <ANY (expr)                    | 只要小于expr中的最大值即可                          |
+| \>ALL (expr)                   | 只要大于expr中的最大值即可                          |
+| <ALL (expr)                    | 只要小于expr中的最小值即可                          |
+| =ANY (expr)                    | 相当于IN (expr)                             |
 ##### LIKE 运算符
 
 SQL中LIKE运算符有几个通配符：
 
-- 下划线"\_"：匹配任意一个字符。
+- 下划线"\_"：匹配**任意单个字符**。
    从"Persons" 表中选取名字的第一个字符之后是 "eorge" 的人：
 
    ```sql
    SELECT * FROM Persons WHERE FirstName LIKE '_eorge';
    ```
 
-- 百分号"%"：匹配任意多个字符。如果要查找以 "美"开头的字符串，则可以使用：
+- 百分号"%"：匹配**任意多个字符**。如果要查找以 "美"开头的字符串，则可以使用：
 
    ```sql
    SELECT * FROM Persons WHERE FirstName LIKE '美%';
    ```
 
-- [charlist]：字符列中的任何单一字符。从 "Persons" 表中选取居住的城市以 "A" 或 "L" 或 "N" 开头的人：
+- [charlist]：匹配**字符列中的任意一个字符**。从 "Persons" 表中选取居住的城市以 "A" 或 "L" 或 "N" 开头的人：
 
    ```sql
    SELECT * FROM Persons WHERE City LIKE '[ALN]%';
    ```
 
-- [^charlist]或者[!charlist]：不在字符列中的任何单一字符。从"Persons" 表中选取居住的城市不以 "A" 或 "L" 或 "N" 开头的人：
+- [^charlist]或者[!charlist]：匹配**不在字符列中的所有字符**。从"Persons" 表中选取居住的城市不以 "A" 或 "L" 或 "N" 开头的人：
 
    ```sql
    SELECT * FROM Persons WHERE City LIKE '[!ALN]%';
@@ -307,7 +307,7 @@ SELECT 之后不仅可以使列名或者\*，还可以是算术表达式、变�
 - 对于列值为时间、日期型的列可以使用“+、-”与变量和常量运算；
 - 运算符不仅可以在列、常量和变量之间运算，还可以在多列之间运算。  
 
-也可以为算术表达式、变量、常量或者函数表达式使用 AS 关键字起一个别名，**如果别名中包含特殊字符，或者强制大小写敏感，可以为别名添加双引号或方括号**。
+也可以为**算术表达式、变量、常量或者函数表达式**使用 AS 关键字起一个别名，**如果别名中包含特殊字符，或者强制大小写敏感，可以为别名添加双引号或方括号**。
 
 在下面的情况下，使用别名很有用：
 
@@ -368,7 +368,7 @@ FROM Customers, Orders
 WHERE Customers.CustomerName='Alfreds Futterkiste';
 ```
 
-####**TOP, LIMIT, ROWNUM子句**
+####TOP, LIMIT, ROWNUM子句
 TOP 子句用于规定要返回的记录的数目。对于拥有数千条记录的大型表来说，TOP 子句是非常有用的。
 
 > 注意：并非所有的数据库系统都支持 TOP 子句。
@@ -398,7 +398,7 @@ SELECT TOP 50 PERCENT * FROM Persons;
 
 上面的实例用于从上面的 "Persons" 表中选取 50% 的记录。
 
-注意：MySQL 和 Oracle 中的 SQL SELECT TOP 是等价的。不过，一般MySQL使用LIMIT关键字，Oracle使用ROWNUM关键字。
+注意：MySQL 和 Oracle 中的 SQL SELECT TOP 是等价的。不过，一般MySQL使用LIMIT关键字，而Oracle使用ROWNUM关键字。
 
 **MySQL 语法**：
 
@@ -470,7 +470,8 @@ FROM table1
 CROSS  JOIN table2
 ##DML语句
 DML 语句主要用于操作表格中的数据，常用的功能有 INSERT INTO / UPDATE / DELETE FROM 数据表的数据。
-###INSERT INTO语句：
+###INSERT INTO语句
+
 INSERT INTO 语句用于向数据表中插入一行或者多行数据，可以有两种编写形式。
 
 1. **无需指定要插入数据的列名，只需提供被插入的值即可**：
@@ -530,7 +531,7 @@ WHERE condition;
 其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。详见WHERE子句介绍。
 
 ###DELETE FROM 语句
-DELETE FROM 语句可以删除指定表的一行或多行记录。
+DELETE FROM 语句可以根据指定条件删除指定表的一行或多行记录。
 
 **删除一行或多行记录的语法**：
 
