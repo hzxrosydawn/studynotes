@@ -34,19 +34,19 @@ JavaScript 可以通过不同的方式来输出数据：
 <!DOCTYPE html>
 <html>
 <body>
+	<h1>我的第一个页面</h1>
+	<p>我的第一个段落。</p>
 
-<h1>我的第一个页面</h1>
-<p>我的第一个段落。</p>
-
-<script>
-window.alert(5 + 6);
-</script>
-
+  	<script>
+		window.alert(5 + 6);
+	</script>
 </body>
 </html>
 ```
 
 使用 document.write() 方法将内容写到 HTML 文档中
+
+
 
 使用 **innerHTML** 写入到 HTML 元素
 
@@ -54,15 +54,12 @@ window.alert(5 + 6);
 <!DOCTYPE html>
 <html>
 <body>
+	<h1>我的第一个 Web 页面</h1>
+	<p id="demo">我的第一个段落</p>
 
-<h1>我的第一个 Web 页面</h1>
-
-<p id="demo">我的第一个段落</p>
-
-<script>
-document.getElementById("demo").innerHTML = "段落已修改。";
-</script>
-
+	<script>
+		document.getElementById("demo").innerHTML = "段落已修改。";
+	</script>
 </body>
 </html>
 ```
@@ -135,7 +132,7 @@ JavaScript是弱类型的语言，**使用变量之前无须定义，想使用�
 </html>
 ```
 
-定义变量时使用var和不使用var是有区别的。下面的两个实例只差一个var关键字但结果却大不相同：
+**定义变量时使用var和不使用var是有区别的，因为JavaScript变量的声明检查不是完全按顺序执行的**。下面的两个实例只差一个var关键字但结果却大不相同：
 
 ```html
 <script type="text/javascript">
@@ -172,7 +169,7 @@ JavaScript是弱类型的语言，**使用变量之前无须定义，想使用�
 </script>
 ```
 
-**JavaScript中变量没有块的范围，即代码块中的变量出了代码块依旧可用**。如：
+**JavaScript中变量没有块的范围，即代码块中的变量出了代码块在整个方法内依旧可用**。如：
 
 ```html
 <script type="text/javascript">
@@ -196,7 +193,11 @@ JavaScript是弱类型的语言，**使用变量之前无须定义，想使用�
 </script>
 ```
 
-## 基本数据类型
+## 数据类型
+
+JavaScript数据类型有两种：基本类型（primitive type）和对象类型（object type或reference type）。
+
+### 基本类型
 
 JavaScript基本数据类型如下：
 
@@ -205,7 +206,7 @@ JavaScript基本数据类型如下：
 - 布尔(Boolean)
 - 未定义（Undefined）和空（Null）
 
-JavaScript 拥有**动态类型**。这意味着**相同的变量可用作不同的类型**。如：
+JavaScript 拥有**动态类型，即可以将不同的类型的值赋给同一个的变量**。如：
 
 ```javascript
 var x;               // x 为 undefined
@@ -213,7 +214,7 @@ var x = 5;           // 现在 x 为数字
 var x = "John";      // 现在 x 为字符串
 ```
 
-### 数值类型
+#### 数值类型
 
 JavaScript的数值类型**包括所有整数值和浮点值**。
 
@@ -221,7 +222,7 @@ JavaScript的数值类型**包括所有整数值和浮点值**。
 - 小数可以省略小数点前的0：如0.314可以写成“.314”；
 - JavaScript支持八进制（以0开头，慎用，不是所有浏览器都支持八进制）和十六进制（以0x或0X开头）。
 
-JavaScript的特殊数值有三个：最大数值、最小数值、Infinity、-Infinity和NaN。这些特殊值可通过JavaScript提供的内嵌类Number来访问：
+JavaScript的特殊数值有五个：最大数值、最小数值、Infinity、-Infinity和NaN。这些特殊值可通过JavaScript提供的**内嵌类Number**来访问：
 
 - Number.MAX_VALUE
 - Number.MIN_VALUE
@@ -233,7 +234,7 @@ JavaScript的特殊数值有三个：最大数值、最小数值、Infinity、-I
 
 - Infinity和-Infinity 与其他任何数值进行运算时，整个算术表达式将会变成NaN，Infinity和-Infinity运算的结果也是NaN；
 - Infinity和Infinity总是相等的，-Infinity和-Infinity也总是相等的，不管他们的实际值是多少；
-- NaN和任何数都不相等，包括它自己，JavaScript提供了isNaN()函数来判断一个数是否为NaN。
+- NaN和任何数都不相等，包括它自己，JavaScript提供了**isNaN()函数**来判断一个数是否为NaN。
 
 ```html
 <script type="text/javascript">
@@ -266,23 +267,23 @@ JavaScript的特殊数值有三个：最大数值、最小数值、Infinity、-I
 
 > 注意：JavaScript中的浮点值计算存在丢失精度的问题，其他编程语言也是这样。建议比较计算后的浮点数大小时使用**差值比较法**。
 
-### 字符串类型
+#### 字符串类型
 
-JavaScript**通过内建类String来表示和操作字符串。字符串一般为使用单引号或双引号括起来的文本，包括单个字符**。String类常用的方法如下：
+JavaScript通过**内建类String**来表示和操作字符串。字符串一般为用**单引号或双引号**括起来的文本，**包括单个字符**。String类常用的方法如下：
 
 - String()：构建一个字符串；
 - charAt()：返回指定索引处的值；
-- charCodeAt()：返回指定索引处的Unicode值；
+- charCodeAt()：返回指定索引处字符的**Unicode值**；
 - length：长度属性，为一个整数值；
 - toUpCase()：全部转为大写；
 - toLowerCase()：全部转为小写；
 - fromCharCode()：**静态方法，通过String类调用**。将一系列Unicode值转换为字符串；
-- indexOf(searchString [, startIndex])：返回特定字符串的第一次出现的索引位置；
-- lastIndexOf(searchString [, startIndex])：返回特定字符串最后一次出现的位置；
-- subString（from [, to]）：返回该字符串的某个子字符串（包前不包后）；
+- indexOf(searchString [, startIndex])：静态方法，返回特定字符串的第一次出现的索引位置；
+- lastIndexOf(searchString [, startIndex])：静态方法，返回特定字符串最后一次出现的位置；
+- subString(from [, to])：返回该字符串的某个子字符串（包前不包后）；
 - slice()：同subString()方法，但支持负参数（负数表示从最右边开始，最右边初始索引为-1）；
-- search()：使用正则表达式搜索目标子字符串。返回匹配字符串索引的整数值或-1；
-- match()：使用正则表达式搜索目标子字符串。返回所有匹配的子字符串构成的数组或null，通过在正则表达式末尾加字符“g”表示支持全局匹配；
+- search()：使用正则表达式搜索目标子字符串。**返回匹配字符串的索引值或-1**；
+- match()：使用正则表达式搜索目标子字符串。**返回所有匹配的子字符串构成的数组或null**，通过在正则表达式**末尾加字符“g”表示支持全局匹配**；
 - concat()：将多个字符串拼接成一个字符串；
 - replace()：将字符串中的某个子字符串以特定字符串替换。支持正则表达式。
 
@@ -306,33 +307,32 @@ JavaScript**通过内建类String来表示和操作字符串。字符串一般�
 > - 字符串的比较通过==即可，不用使用equals()方法；
 > - JavaScript中的**正则表达式必须放在两个“/”之间，外面不用加引号**。
 
-### 布尔类型
+#### 布尔类型
 
 布尔类型只能有两个值：true 或 false。布尔常用在条件测试中。
 
-### Undefined 和 Null
+#### undefined 和 Null
 
-**Undefined 这个值表示变量不含有值。而null可以用来赋值给某个变量从而将该变量的值清空**。
-
-## 复合类型
+**undefined这个值表示变量不含有值。而null可以用来赋值给某个变量从而将该变量的值清空**。他们**分别表示各自类型中唯一的值**。
 
 ### 对象
 
-对象是**一系列命名变量和函数的组合**。其中命名变量的类型既可以是基本数据类型，也可以是复合类型，**命名变量称为属性，对象中的函数称为方法，对象通过“.”来访问属性和方法**。
+对象是**一系列属性和函数的无序组合**。其中属性由**命名变量及其值**构成。命名变量的类型既可以是基本类型，也可以是对象类型。**对象中的函数称为方法，对象通过“.”来访问属性和方法**。
 
-JavaScript是**基于对象**的，包含以下内置对象：
+JavaScript是**基于对象**的，包含以下**内置对象**：
 
 - Object：对象类；
 - Array：数组类；
 - Date：日期类；
+- RegExp：正则表达式类；
 - Error：错误类；
 - Function：函数类；
 - Math：数学类。该对象包含许多算术运算的方法；
 - Number：数值类；String：字符串类。
 
-### 数组
+#### 数组
 
-定义有三种形式：
+**数组在JavaScript中是一种特殊的对象类型**，定义有三种形式：
 
 ```javascript
 var a = [3, 5, 23];
@@ -342,7 +342,7 @@ var c = new Array();
 
 JavaScript**数组包含一个length属性**，JavaScript中数组索引从0开始。**JavaScript中数组元素可以为不同类型，数组长度也可以随时变化**。另外，JavaScript中**访问数组元素不会发生越界错误，越界值为undefined**。
 
-### 函数
+#### 函数
 
 **函数是JavaScript中的另一种复合类型，可以独立存在**。后面详细介绍函数。函数**使用function关键字声明**，可以包含一段可执行代码，也可以接收调用者作为参数，**参数列表不需要类型声明、也不需要声明返回值的类型**。如：
 

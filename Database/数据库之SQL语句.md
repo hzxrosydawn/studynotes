@@ -31,7 +31,7 @@ SQL 可以实现：
 
 ##查询语句
 ###SELECT 语句
-SELECT 语句用于从数据库中选取数据。结果被存储在一个结果表中，称为结果集。可以选取表中一列、多列、所有列的数据。
+SELECT 语句用于从数据库中选取数据。结果被存储在一个结果表中，称为**结果集**。可以选取表中一列、多列、所有列的数据。
 **查询语法**：
 
 ```sql
@@ -45,7 +45,7 @@ SELECT * FROM table_name;
 ```
 
 ###SELECT  DISTINCT 语句
-在表中，一个列可能会包含多个重复值，有时您也许希望仅仅列出不同（DISRINCT）的值。DISTINCT 关键词用于返回唯一不同的值。
+在表中，一个列可能会包含多个重复值，有时您也许希望**仅列出不同（DISRINCT）的值**。DISTINCT 关键词用于返回唯一不同的值。
 **唯一查询语句**：
 
 ```sql
@@ -84,63 +84,63 @@ SELECT column_name FROM table_name WHERE condition;
 
 其中，"condition"可以为不含列名的条件语句，该条件语句可以是由算术表达式、变量、常量或者函数表达式组成的限定条件。WHERE 子句中的运算符如下表所示：
 
-| 运算符                            | 描述                                       |
-| ------------------------------ | ---------------------------------------- |
-| =                              | 等于                                       |
-| **<>**                         | 不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=          |
-| >                              | 大于                                       |
-| <                              | 小于                                       |
-| \>=                            | 大于等于                                     |
-| <=                             | 小于等于                                     |
-| +、-、*、/                        | 四则运算符                                    |
-| **:=**                         | 赋值                                       |
-| expr1 BETWEEN expr2 AND expr3  | 在某个范围内(相当于同时指定>=和<=)                     |
-| expr1 IN (expr2, expr3, ...)   | 为括号中所有值中的一个值                             |
-| expr1 WHERE **EXISTS** (expr2) | 如果expr2有返回记录，则执行expr1。其中expr1、expr2不仅可以是常量、也可以是变量名和列名 |
-| IS NULL                        | 是否为null                                  |
-| IS NOT NULL                    | 是否不为null                                 |
-| ANY                            | 与比较运算符结合表示满足任一比较条件                       |
-| ALL                            | 与运算符结合使用表示满足所有的比较条件                      |
-| LIKE pattern                   | 模糊搜索。搜索模式由pattern语句指定                    |
-| NOT LIKE pattern               | 与LIKE相反                                  |
-| expr1 AND expr2                | 同时满足两个条件                                 |
-| expr1 OR expr2                 | 满足两个条件之一                                 |
-| NOT expr                       | 不满足某个条件                                  |
-| \>ANY (expr)                   | 只要大于expr中的最小值即可                          |
-| <ANY (expr)                    | 只要小于expr中的最大值即可                          |
-| \>ALL (expr)                   | 只要大于expr中的最大值即可                          |
-| <ALL (expr)                    | 只要小于expr中的最小值即可                          |
-| =ANY (expr)                    | 相当于IN (expr)                             |
+| 运算符                               | 描述                                       |
+| --------------------------------- | ---------------------------------------- |
+| =                                 | 等于                                       |
+| `<>`                              | 不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=          |
+| >                                 | 大于                                       |
+| <                                 | 小于                                       |
+| \>=                               | 大于等于                                     |
+| <=                                | 小于等于                                     |
+| +、-、*、/                           | 四则运算符                                    |
+| `:=`                              | 赋值                                       |
+| expr1 `BETWEEN` expr2 `AND` expr3 | 在某个范围内(相当于同时指定>=和<=)                     |
+| expr1 `IN` (expr2, expr3, ...)    | 为括号中所有值中的一个值                             |
+| expr1 WHERE `EXISTS` (expr2)      | 如果expr2有返回记录，则执行expr1。其中expr1、expr2不仅可以是常量、也可以是变量名和列名 |
+| `IS NULL`                         | 是否为null                                  |
+| `IS NOT NULL`                     | 是否不为null                                 |
+| `ANY`                             | 与比较运算符结合表示满足任一比较条件                       |
+| `ALL`                             | 与运算符结合使用表示满足所有的比较条件                      |
+| `LIKE` pattern                    | 模糊搜索。搜索模式由pattern语句指定                    |
+| `NOT LIKE` pattern                | 与LIKE相反                                  |
+| expr1 `AND` expr2                 | 同时满足两个条件                                 |
+| expr1 `OR` expr2                  | 满足两个条件之一                                 |
+| `NOT` expr                        | 不满足某个条件                                  |
+| \>ANY (expr)                      | 只要大于expr中的最小值即可                          |
+| <ANY (expr)                       | 只要小于expr中的最大值即可                          |
+| \>ALL (expr)                      | 只要大于expr中的最大值即可                          |
+| <ALL (expr)                       | 只要小于expr中的最小值即可                          |
+| =ANY (expr)                       | 相当于IN (expr)                             |
 ##### LIKE 运算符
 
 SQL中LIKE运算符有几个通配符：
 
-- 下划线"\_"：匹配**任意单个字符**。
+- **下划线"\_"**：匹配**任意单个字符**。
    从"Persons" 表中选取名字的第一个字符之后是 "eorge" 的人：
 
    ```sql
    SELECT * FROM Persons WHERE FirstName LIKE '_eorge';
    ```
 
-- 百分号"%"：匹配**任意多个字符**。如果要查找以 "美"开头的字符串，则可以使用：
+- **百分号"%"**：匹配**任意多个字符**。如果要查找以 "美"开头的字符串，则可以使用：
 
    ```sql
    SELECT * FROM Persons WHERE FirstName LIKE '美%';
    ```
 
-- [charlist]：匹配**字符列中的任意一个字符**。从 "Persons" 表中选取居住的城市以 "A" 或 "L" 或 "N" 开头的人：
+- **[charlist]**：匹配**字符列中的任意一个字符**。从 "Persons" 表中选取居住的城市以 "A" 或 "L" 或 "N" 开头的人：
 
    ```sql
    SELECT * FROM Persons WHERE City LIKE '[ALN]%';
    ```
 
-- [^charlist]或者[!charlist]：匹配**不在字符列中的所有字符**。从"Persons" 表中选取居住的城市不以 "A" 或 "L" 或 "N" 开头的人：
+- **[^charlist]或者[!charlist]**：匹配**不在字符列中的所有字符**。从"Persons" 表中选取居住的城市不以 "A" 或 "L" 或 "N" 开头的人：
 
    ```sql
    SELECT * FROM Persons WHERE City LIKE '[!ALN]%';
    ```
 
-- 如果要匹配**下划线和百分号**本身，则**使用ESCAPE关键字定义转义字符**。
+- 如果要匹配**下划线和百分号**本身，则**使用`ESCAPE`关键字定义转义字符**。
    使用ESCAPE定义 '\'为转义字符，下面匹配以下划线开头的任意字符：
 
    ```sql
@@ -231,9 +231,10 @@ ORDER BY column_name1 [ASC|DESC] [, column_name2 [ASC|DESC]]...;
 
 ####GROUP BY 子句
 GROUP BY关键字用于按照某些列的分组信息（该列中相同的记录为一组）查找数据。
+
 **GROUP BY 关键字语法**：
 
-1. 单列分组模式
+1. **单列**分组模式
 
 ```sql
 SELECT column_name1, SUM(column_name2)
@@ -257,7 +258,7 @@ friends_of_pickles
 | 6    | Jumpy    | male   | dog     | 35        |
 | 7    | Sneakers | male   | dog     | 55        |
 
-在上面名为friends_of_pickles的表中，查找出相同物种记录中的最高身高的记录：
+在上面名为friends_of_pickles的表中，查找出**相同物种记录中的身高最高的记录**：
 
 ```sql
 SELECT MAX(height_cm), species FROM friends_of_pickles GROUP BY species;
@@ -271,7 +272,7 @@ SELECT MAX(height_cm), species FROM friends_of_pickles GROUP BY species;
 | 55             | dog     |
 | 180            | human   |
 
-2. 多列分组模式
+2. **多列**分组模式
 
 ```sql
 SELECT column_name1, column_name2, ... column_nameN, Function(column_nameN+1)
@@ -281,7 +282,7 @@ GROUP BY column_name1, column_name2, ... column_nameN;
 
 上面语句从若干表中选出若干列，一般结合SELECT中的至少一个运算符（包括COUNT, SUM, MAX, MIN,  AVG等函数）一起使用，然后在GROUP BY后添加除了参与运算的列以外的全部列，作为分组的参考。
 
-3. 结合HAVING 子句实现条件分组
+3. 结合HAVING 子句实现**条件分组** 。
 
 **在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与聚合函数一起使用。HAVING 子句可以让我们筛选分组后的各组数据**。
 
@@ -301,7 +302,7 @@ HAVING (arithmetic function condition)
 上面的语句要求只对满足 HAVING 子句中对聚合函数计算结果的筛选条件来进行分组。
 
 ####SELECT 中的表达式及别名 
-SELECT 之后不仅可以使列名或者\*，还可以是算术表达式、变量、常量或者函数表达式，还可以在 SELECT 语句中使用算术运算符（+、-、*、/），从而形成算术表达式，规则如下：
+SELECT 之后不仅可以使`列名`或者`*`，还可以是`算术表达式`、`变量`、`常量`或者`函数表达式`，还可以在 SELECT 语句中使用`算术运算符`（+、-、*、/），从而形成算术表达式，规则如下：
 
 - 对于列值为数值型的列可以使用“+、-、*、/”与变量和常量运算；
 - 对于列值为时间、日期型的列可以使用“+、-”与变量和常量运算；
@@ -416,43 +417,59 @@ FROM table_name
 WHERE ROWNUM <= number;
 ```
 
-##连接查询：
+##连接查询
  连接查询通过JOIN关键字及其衍生类型完成。JOIN 子句用于把来自两个或多个表的行结合起来，得到完整的结果。
 
-- JOIN 类型，以及它们之间的差异；
-- JOIN: 如果表中有至少一个匹配，则返回行；
-- LEFT JOIN: 即使右表中没有匹配，也从左表返回所有的行；
-- RIGHT JOIN: 即使左表中没有匹配，也从右表返回所有的行；
-- FULL JOIN: 只要其中一个表中存在匹配，就返回行。
-###INNER JOIN 关键字
+- INNER JOIN：在表中存在至少一个匹配时返回行；
+- LEFT JOIN：即使右表中没有匹配，也从左表返回所有的行；
+- RIGHT JOIN：即使左表中没有匹配，也从右表返回所有的行；
+- FULL JOIN：只要其中一个表中存在匹配，就返回行。
+###INNER JOIN
 INNER JOIN （内连接，也叫等值连接）关键字在表中存在至少一个匹配时返回行。
 ![image_innerjoin](http://img.blog.csdn.net/20161122200108458)
 **INNER JOIN 语法**：
+
+```sql
 SELECT column_name(s)
 FROM table1
 [INNER] JOIN table2
-ON table1.column\_name = table2.column_name;
+ON table1.column_name = table2.column_name;
+```
+
 上面语句依据ON子句的连接条件连接两个表，并返回两表**共有**（共有的依据是连接条件）的数据记录。
-注释：INNER JOIN 与 JOIN 是相同的。
-###**LEFT JOIN关键字**
+
+> 注释：**INNER JOIN 与 JOIN 是相同的**。
+
+###LEFT JOIN关键字
 LEFT JOIN 关键字从左表（table1）返回所有的行，即使右表（table2）中没有匹配。如果右表中没有匹配，则结果为 NULL。
 ![img_leftjoin](http://img.blog.csdn.net/20161122200219593)
 **LEFT JOIN语法**：
+
+```sql
 SELECT column_name(s)
 FROM table1
 LEFT [OUTER] JOIN table2
-ON table1.column\_name=table2.column_name;
-注释：在某些数据库中，LEFT JOIN 称为 LEFT OUTER JOIN。
-###**RIGHT JOIN关键字**
+ON table1.column_name=table2.column_name;
+```
+
+> 注释：在某些数据库中，LEFT JOIN 称为 **LEFT OUTER JOIN**。
+
+###RIGHT JOIN关键字
 RIGHT JOIN 关键字从右表（table2）返回所有的行，即使左表（table1）中没有匹配。如果左表中没有匹配，则结果为 NULL。
 ![img_rightjoin](http://img.blog.csdn.net/20161122200508834)
 **RIGHT JOIN语法**：
+
+```sql
 SELECT column_name(s)
 FROM table1
 RIGHT [OUTER] JOIN table2
-ON table1.column\_name=table2.column_name;
-注释：在某些数据库中，RIGHT JOIN 称为 RIGHT OUTER JOIN。
-###**FULL JOIN关键字**
+ON table1.column_name=table2.column_name;
+```
+
+> 注释：在某些数据库中，RIGHT JOIN 称为 **RIGHT OUTER JOIN**。
+
+###FULL JOIN关键字
+
 FULL OUTER JOIN 关键字只要左表（table1）和右表（table2）其中一个表中存在匹配，则返回行。
 FULL OUTER JOIN 关键字结合了 LEFT JOIN 和 RIGHT JOIN 的结果。
 ![img_fulljoin](http://img.blog.csdn.net/20161122200732616)
@@ -545,7 +562,7 @@ DELETE FROM table_name
 - **当主表记录被从表记录参照时，主表记录不能被删除，只有先将主表中被参照的记录删除后，才可以删除从表记录**；
 - 如果定义外键约束时定义了主表记录和从表记录之间的级联删除ON DELETE CASCADE，或者使用ON DELETE SET NULL用于指定当主表记录被删除时，从表中的参照记录把外键列的值设为NULL。
 ##数据类型
-###**通用的数据类型**：
+###通用的数据类型
 | 数据类型                             | 描述                                       |
 | -------------------------------- | ---------------------------------------- |
 | CHARACTER(n)                     | 字符/字符串。固定长度 n。                           |
@@ -570,7 +587,7 @@ DELETE FROM table_name
 | ARRAY                            | 元素的固定长度的有序集合                             |
 | MULTISET                         | 元素的可变长度的无序集合                             |
 | XML                              | 存储 XML 数据                                |
-###**数据类型快速参考手册**
+###数据类型快速参考手册
 然而，不同的数据库对数据类型定义提供不同的选择。下面的表格显示了各种不同的数据库平台上一些数据类型的通用名称：
 | 数据类型              | Access                     | SQLServer                                | Oracle              | MySQL          | PostgreSQL          |
 | ----------------- | -------------------------- | ---------------------------------------- | ------------------- | -------------- | ------------------- |
@@ -583,7 +600,7 @@ DELETE FROM table_name
 | binary object     | OLE Object Memo            | Binary (fixed up to 8K)<br>Varbinary (<8K)<br>Image(<2GB) | Long<br>Raw         | Blob<br>Text   | Binary<br>Varbinary |
 注释：在不同的数据库中，同一种数据类型可能有不同的名称。即使名称相同，尺寸和其他细节也可能不同！ 请总是检查文档！
 
-###**Microsoft Access 数据类型**
+###Microsoft Access 数据类型
 
 | 数据类型          | 描述                                       | 存储              |
 | ------------- | ---------------------------------------- | --------------- |
@@ -602,13 +619,13 @@ DELETE FROM table_name
 | Hyperlink     | 包含指向其他文件的链接，包括网页                         |                 |
 | Lookup Wizard | 允许你创建一个可从下列列表中进行选择的选项列表                  | 4 字节            |
 
-###**MySQL 数据类型**
+###MySQL 数据类型
 在 MySQL 中，有三种主要的类型：文本、数字和日期/时间类型。
 **Text 类型：**
 | 数据类型             | 描述                                       |
 | ---------------- | ---------------------------------------- |
 | CHAR(size)       | 保存固定长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的长度。最多 255 个字符。 |
-| VARCHAR(size)    | 保存可变长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的最大长度。最多 255 个字符。<br>注释：如果值的长度大于 255，则被转换为 TEXT 类型。 |
+| VARCHAR(size)    | 保存可变长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的最大长度。最多 65535 个字符。<br>注释：如果值的长度大于 65535，则被转换为 TEXT 类型。 |
 | TINYTEXT         | 存放最大长度为 255 个字符的字符串。                     |
 | TEXT             | 存放最大长度为 65,535 个字符的字符串。                  |
 | BLOB             | 用于 BLOBs (Binary Large OBjects)。存放最多 65,535 字节的数据。 |
@@ -629,19 +646,22 @@ DELETE FROM table_name
 | FLOAT(size,d)   | 带有浮动小数点的小数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。 |
 | DOUBLE(size,d)  | 带有浮动小数点的大数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。 |
 | DECIMAL(size,d) | 作为字符串存储的 DOUBLE 类型，允许固定的小数点。             |
-* 这些整数类型拥有额外的选项 UNSIGNED。通常，整数可以是负数或正数。如果添加 UNSIGNED 属性，那么范围将从 0 开始，而不是某个负数。
-  **Date 类型：**
-  | 数据类型        | 描述                                       |
-  | ----------- | ---------------------------------------- |
-  | DATE()      | 日期。格式：YYYY-MM-DD<br>注释：支持的范围是从 '1000-01-01' 到 '9999-12-31' |
-  | DATETIME()  | 日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
-  | TIMESTAMP() | 时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS<br>注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
-  | TIME()      | 时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59' |
-  | YEAR()      | 2 位或 4 位格式的年。<br>注释：4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。 |
+这些整数类型拥有额外的选项 UNSIGNED。通常，整数可以是负数或正数。如果添加 UNSIGNED 属性，那么范围将从 0 开始，而不是某个负数。
+
+**Date 类型：**
+
+| 数据类型        | 描述                                       |
+| ----------- | ---------------------------------------- |
+| DATE()      | 日期。格式：YYYY-MM-DD。支持的范围是从 '1000-01-01' 到 '9999-12-31' |
+| DATETIME()  | 日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS。支持的范围是从'1000-01-01 00:00:00' 到 '9999-12-31 23:59:59' |
+| TIMESTAMP() | 时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS。支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC |
+| TIME()      | 时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59' |
+| YEAR()      | 2 位或4位格式的年。4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。 |
+
 * 即便 DATETIME 和 TIMESTAMP 返回相同的格式，它们的工作方式很不同。在 INSERT 或 UPDATE 查询中，TIMESTAMP 自动把自身设置为当前的日期和时间。TIMESTAMP 也接受不同的格式，比如 YYYYMMDDHHMMSS、YYMMDDHHMMSS、YYYYMMDD 或 YYMMDD。
 
 
-###**SQL Server 数据类型**
+###SQL Server 数据类型
 **Character 字符串：**
 | 数据类型         | 描述                             | 存储   |
 | ------------ | ------------------------------ | ---- |
@@ -657,13 +677,15 @@ DELETE FROM table_name
 | nvarchar(max) | 可变长度的 Unicode 数据。最多 536,870,912 个字符。 |      |
 | ntext         | 可变长度的 Unicode 数据。最多 2GB 字符数据。        |      |
 **Binary 类型：**
-数据类型	|描述		|存储
----	|----	|---
-bit	|允许 0、1 或 NULL	 
-binary(n)	|固定长度的二进制数据。最多 8,000 字节。	 
-varbinary(n)	|可变长度的二进制数据。最多 8,000 字节。	 
-varbinary(max)	|可变长度的二进制数据。最多 2GB 字节。	 
-image	|可变长度的二进制数据。最多 2GB。	 
+
+| 数据类型           | 描述            | 存储           |
+| -------------- | ------------- | ------------ |
+| bit            | 允许 0、1 或 NULL |              |
+| binary(n)      | 固定长度的二进制数据。   | 最多 8,000 字节。 |
+| varbinary(n)   | 可变长度的二进制数据。   | 最多 8,000 字节。 |
+| varbinary(max) | 可变长度的二进制数据。   | 最多 2GB 字节。   |
+| image          | 可变长度的二进制数据。   | 最多 2GB。      |
+
 **Number 类型：**
 | 数据类型         | 描述                                       | 存储       |
 | ------------ | ---------------------------------------- | -------- |
@@ -731,110 +753,260 @@ CREATE TABLE table_name AS [SQL Statement];
 - **不同数据库所允许的数据类型不同，务必参考所用数据库的参考手册**。
 
 **创建数据表实例**：
+
 1.
-CREATE TABLE Customer
-(First_Name char(50),
-Last_Name char(50),
-Address char(50),
-City char(50),
-Country char(25) default 'United States',
-Birth_Date datetime);
+
+```sql
+CREATE TABLE Customer(
+  	First_Name char(50),
+	Last_Name char(50),
+	Address char(50),
+	City char(50),
+	Country char(25) default 'United States',
+	Birth_Date datetime);
+```
+
 2.
-CREATE TABLE Table2 AS
-SELECT * FROM Table1;
+
+```sql
+CREATE TABLE Table2 AS SELECT * FROM Table1;
+```
+
 ####**创建视图语法**：
 create用于创建某些数据库对象(table、view、databse等)时可以接受子查询语句：
+
+```sql
 CREATE  [OR REPLACE] VIEW "view_name" AS "SQL Statement"  [with check option/with read only];
-多数数据库使用with check option表示视图无法修改， Oracle采用with read only
+```
+
+多数数据库使用with check option表示视图无法修改， Oracle采用with read only。
+
 **创建视图实例**：
-CREATE VIEW V_Customer
-AS SELECT First_Name, Last_Name, Country
-FROM Customer;
+
+```sql
+CREATE VIEW V_Customer AS SELECT First_Name, Last_Name, Country FROM Customer;
+```
+
 ####**创建索引语法**：
-创建一般索引，允许出现有两行拥有相同的索引值：
-CREATE INDEX "索引名" on "表名" ("列名1" [, "列名2"]...);
-创建**唯一索引**，唯一的索引意味着任意两行不能拥有相同的索引值：
-CREATE UNIQUE INDEX "index_name" ON "table_name" ("column1" [, "column2"]...);
-**创建索引实例**：
-对单列创建索引：
-CREATE UNIQUE INDEX IDX_Person_Firstname ON TABLE Person (Firstname); #不允许出现重复的Firstname的记录
-同时对多列创建索引：
-CREATE INDEX IDX_Person_Name ON TABLE Person (Firstname, Lastname); #可以出现Firstname和Lastname都相同的记录
+
 **索引介绍**：
 
-- 索引 (Index) 就相当于书本的目录，便于快速查找。索引虽然从属于数据表，但它和数据表一样属于数据库对象，独立存放于系统表中。在不读取整个表的情况下，索引使数据库应用程序可以更快地查找数据；
+- 索引 (Index) 就相当于书本的目录，**便于快速查找**。索引虽然从属于数据表，但它和数据表一样属于数据库对象，独立存放于系统表中。在不读取整个表的情况下，索引使数据库应用程序可以更快地查找数据；
 - 更新一个包含索引的表需要比更新一个没有索引的表花费更多的时间，这是由于索引本身也需要更新。为了提高性能，理想的做法是仅仅在常常被搜索的列（以及表）上面必要地创建索引。即使创建索引，索引的类型最好是整型。即使不是整型，可以考虑创建代理整型键，或者直接使用一个类型为整型、与被索引列的记录一一对应的一个列；
-- 索引的命名并没有一个固定的方式。通常会用的方式是在名称前加一个字首，例如 "IDX_" ，来避免与资料库中的其他物件混淆。另外，在索引名之内包括表格名及栏位名也是一个好的方式。；
+- 索引的命名并没有一个固定的方式。通常会用的方式是在名称前加一个字首，例如 "IDX_" ，来避免与资料库中的其他物件混淆。另外，在索引名之内包括表格名及栏位名也是一个好的方式；
 - 当在数据表上定义主键约束、唯一约束和外键约束时，系统会为该数据列自动创建对应的索引；
 - 只能为一张表创建索引，多张表则不行。创建索引的列必须NOT NULL。
-###**DROP命令**
+
+创建一般索引，允许出现有两行拥有相同的索引值：
+
+```sql
+CREATE INDEX index_name ON table_name (column_name1 [, column_name2]...);
+```
+
+创建**唯一索引**，唯一的索引意味着任意两行不能拥有相同的索引值：
+
+```sql
+CREATE UNIQUE INDEX index_name ON table_name (column_name1 [, column_name2]...);
+```
+
+**创建索引实例**：
+
+对**单列**创建索引：
+
+```sql
+CREATE UNIQUE INDEX IDX_Person_Firstname ON TABLE Person (Firstname); #不允许出现重复的Firstname的记录
+```
+
+同时对多列创建索引：
+
+```sql
+CREATE INDEX IDX_Person_Name ON TABLE Person (Firstname, Lastname); #可以出现Firstname和Lastname都相同的记录
+```
+
+###DROP命令
 DROP命令用于删除数据库对象(如DATABASE、TABLE等)
 ####**删除数据库语法**：
-DROP DATABASE  "databse_name";
+```sql
+DROP DATABASE  databse_name;
+```
+
 ####**删除数据表语法**：
-DROP TABLE [IF IF EXISTS] "table_name1" [, table_name2] ...;
-注意：可以一次删除多个表。删除表之后，表的结构、所有数据、相关的索引和约束也删除了
+```sql
+DROP TABLE [IF IF EXISTS] table_name1 [, table_name2] ...;
+```
+
+> 注意：可以一次删除多个表。删除表之后，表的结构、所有数据、相关的索引和约束也删除了
+
 ####**删除索引语法**：
 用于 MS SQL Server 的drop index语法：
-DROP INDEX "table_name.index_name";
+
+```sql
+DROP INDEX table_name.index_name;
+```
+
 用于 DB2/Oracle 的drop index语法：
-DROP INDEX "index_name";
+
+```sql
+DROP INDEX index_name;
+```
+
 用于 MySQL 的drop index语法：
-ALTER TABLE "table_name"  DROP  INDEX  "index_name";
+
+```sql
+ALTER TABLE table_name DROP INDEX index_name;
+```
+
 ####**删除视图语法**：
-DROP VIEW "view_name";
-###**ALTER TABLE语句**
+```sql
+DROP VIEW view_name;
+```
+
+###ALTER TABLE语句
 - ALTER TABLE用于修改数据表，包括增加、删除列定义以及删除重命名列等操作。ALTER TABLE也可以被用来作其他的改变，例如改变主键定义；
+
 - 修改数据表里的已有数据有可能会失败，因为修改的结果有可能与定义原数据的规则不一致；
+
 - 修改数据列的默认值只会对后续插入的数据有效，对已存在的数据没有影响。
   **修改数据表的语法**:  
-  ALTER TABLE数据表名 [修改方式];
-  [修改方式] 的详细写法会依我们想要达到的目标而有所不同。[修改方式] 如下：  
-   **添加一列**: ADD "column1"  "data type of column1"  [default "default value"]  [constraint(s)1];
-   **添加多列**: ADD "column1"  "data type of column1" [default "default value1]  [constraint(s)1], "column2"  "data type of colulmn2" [default "default value2"]  [constraint(s)2];
+
+  ```sql
+  ALTER TABLE table_name [alter_method];
+  ```
+
+  上面语句中的`[alter_method]` 的详细写法会依我们想要达到的目标而有所不同。`[alter_method]`如下： 
+   **添加一列** ：
+
+  ```sql
+  ADD column_name1  "data type of column_name1"  [default "default value"][constraint(s)_name1];
+  ```
+
+   **添加多列** ：
+
+  ```sql
+  ADD 
+  column_name1  "data type of column1" [default "default value1"][constraint(s)_name1], 
+  column_name2  "data type of column2" [default "default value2"][constraint(s)_name2];
+  ```
+
    **添加实例**：
-   ALTER TABLE Hehe ADD hehe_id int; #添加一列，类型为int
-   ALTER TABLE Hehe ADD aaa varchar(255), bbb varchar(255) default‘xxx’); #添加多列，并指定默认值
-   **注意**：在增加列时，如果数据表中已有其他列数据记录，除非给新增的列添加了默认值，否则新增的列不能指定为非空约束，因为已有记录在新增列上肯定是空的。
-   **删除列**：ALTER TABLE  "table_name" DROP COLUMN  "column_name"; #请注意，某些数据库系统不允许这种在数据库表中删除列的方式。
-   **改变列的数据类型**：
-   SQL Server / MS Access： ALTER TABLE  "table_name" ALTER  COLUMN  column_name datatype;
-   My SQL / Oracle：ALTER TABLE “table_name” MODIFY  COLUMN column_name datatype;
-   **完全改变列定义**： CHANGE "old column_name" "new column_name" "data type of new column_name" [DEFAULT  "default value"] [first | after "one_column"]
-   **修改列数据类型**：
+
+   ```sql
+  ALTER TABLE Hehe ADD hehe_id int; #添加一列，类型为int
+   ```
+
+  ```sql
+  ALTER TABLE Hehe ADD aaa varchar(255), bbb varchar(255) default‘xxx’); #添加多列，并指定默认值
+  ```
+
+  > 注意：在增加列时，如果数据表中已有其他列数据记录，除非给新增的列添加了默认值，否则新增的列不能指定为非空约束，因为已有记录在新增列上肯定是空的。
+
+   **删除列**：
+
+  ```sql
+  ALTER TABLE  table_name DROP COLUMN  column_name; #请注意，某些数据库系统不允许这种在数据库表中删除列的方式。
+  ```
+
+  **改变列的数据类型**：
+   SQL Server / MS Access：
+
+  ```sql
+   ALTER TABLE table_name ALTER  COLUMN  column_name data_type;
+  ```
+
+   My SQL / Oracle：
+
+  ```sql
+  ALTER TABLE table_name MODIFY COLUMN column_name datatype;
+  ```
+
+  **完全改变列定义**：
+
+  ```sql
+  CHANGE old column_name new column_name data_type_of_new_column_name1 [DEFAULT  "default value"][FIRST | AFTER one_column_name];
+  ```
+
+  **修改列数据类型**：
    My SQL的MODIFY命令一次只能修改一列，可以连续添加多个MODIFY语句完成修改多列的类型：
-   MODIFY  "column1"  "new data type of column1"  [default ‘defalut value1’];
+
+  ```sql
+   MODIFY column_name1  new_data_type_of_column_name1 [default "defalut value1"];
+  ```
+
    其他数据库可以同时修改多个数据列，MODIFY同时修改多个列类型定义的语法类似于ADD添加多列的语法。
-   **重命名数据表名**：RENAME TO  "new table_name"
-   **为某列添加索引**：ADD INDEX "index_name"("column1")
-   **删除索引**：DROP INDEX "index_name"
-   **添加约束**: ADD CONSTRAINT  "conatraint_name" "type of constraint"("column1")
-   **删除约束**：DROP CONSTRAIN | INDEX "constraint_name"
-   PS：INDEX用在MySQL，CONSTRAINT用在Orcle和SQL Server
-    **注意**： [修改方式]可以为花括号括起来的多个列定义（多个ADD、MODIFY语句）。另外，ADD的列在原表中不存在，ALTER和MODIFY的列必须已存在。
+
+   **重命名数据表名**：
+
+  ```sql
+  RENAME TO  new_table_name;
+  ```
+
+   **为某列添加索引**：
+
+  ```sql
+  ADD INDEX index_name(column_name1);
+  ```
+
+   **删除索引**：
+
+  ```sql
+  DROP INDEX index_name;
+  ```
+
+   **添加约束**: 
+
+  ```sql
+  ADD CONSTRAINT conatraint_name type_of_constraint(column_name1);
+  ```
+
+   **删除约束**：
+
+  ```sql
+  DROP CONSTRAIN | INDEX constraint_name;
+  ```
+
+  > PS：INDEX用在MySQL，CONSTRAINT用在Orcle和SQL Server
+
+  > 注意：` [alter_method]`可以为花括号括起来的多个列定义（多个ADD、MODIFY语句）。另外，ADD的列在原表中不存在，ALTER和MODIFY的列必须已存在。
+
   **ALTER TABLE语法实例**：
+
+  ```sql
   ALTER TABLE Person ADD gender char(6) default 'male';
   ALTER TABLE Person DROp gender;
   ALTER TABLE Person CHANGE Address Addr char(50);
   ALTER TABLE Person MODIFY Addr char(60) after Id;
   ALTER TABLE Person RENAME TO Students;
-###**TRUNCATE TABLE语句**
+  ```
+###TRUNCATE TABLE语句
 TRUNCATE TABLE命令用于清空一个数据表的内容，与DROP TABLE相比，该命令不会删除数据表，数据表依然存在。
 **清除表结构的语法**：
-TRUNCATE TABLE "table_name";
+
+```sql
+TRUNCATE TABLE table_name;
+```
+
 ###**USE关键字**
 USE关键字用在MySQL and SQL Server中，用于使用一个数据库。一般用于操作一个数据库。
+
 **使用数据库的语法**：
-USE "database_name";
+
+```sql
+USE database_name;
+```
+
 在MySQL中可以通过指定 [Database Name].[Table Name]来使用多个数据库的多张表，如果某张表所在的数据正在使用中，可以省略数据库名：
+
+```sql
 USE Scores;
 SELECT ... 
 FROM Course_110, Personnel.Students 
 WHERE ... ;
-上面的实例中使用COurse_110, Personnel.Students数据库中某些表
+```
+
+上面的实例中使用COurse_110, Personnel.Students数据库中某些表。
 
 
-##**约束（CONSTRAINTS）**
+##约束（CONSTRAINTS）
 用于限制加入表的数据的类型。可以在创建表时规定约束（通过 CREATE TABLE 语句），或者在表创建之后也可以（通过 ALTER TABLE 语句）。
 主要有以下几种约束：
 
@@ -847,164 +1019,221 @@ WHERE ... ;
 
 根据约束的范围分为：单行约束和多行约束
 
-###**NOT NULL 约束**
+###NOT NULL 约束
 NOT NULL 约束强制列不接受 NULL 值.如果不向字段添加值，就无法插入新记录或者更新记录。
 下面的 SQL 语句强制 "Id_P" 列和 "LastName" 列不接受 NULL 值：
-CREATE TABLE Persons
-(
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255)
-);
 
-###**UNIQUE 约束**
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255)
+);
+```
+
+###UNIQUE 约束
 UNIQUE 约束唯一标识数据库表中的每条记录。
-SQL **UNIQUE Constraint on CREATE TABLE**
-创建**单列 UNIQUE 约束**语法：
-MySQL:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-UNIQUE (Id_P)
+**创建表时添加唯一约束的介绍**：
+
+1. 创建**单列 UNIQUE 约束**语法：
+
+   MySQL：
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	UNIQUE (Id_P)
 );
-SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL UNIQUE,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255)
+```
+
+ 	SQL Server / Oracle / MS Access：
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL UNIQUE,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255)
 );
-如果需要**命名 UNIQUE 约束，以及为多个列定义 UNIQUE 约束**，请使用下面的表级语法：
-MySQL / SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-CONSTRAINT uc_PersonID UNIQUE (Id_P,LastName)
+```
+
+2. 如果要**为多个列定义 UNIQUE 约束（唯一标识多列的组合）**，请使用下面的表级语法：
+
+  ​MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	CONSTRAINT uc_PersonID UNIQUE (Id_P,LastName)
 )
-SQL **UNIQUE Constraint on ALTER TABLE**
-当表已被创建时，如需在 "Id_P" 列创建 **单列UNIQUE 约束**，请使用下列 SQL：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ADD UNIQUE (Id_P)
-如需**命名 UNIQUE 约束，并定义多个列的 UNIQUE 约束**，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ADD CONSTRAINT uc_PersonID UNIQUE (Id_P,LastName)
-撤销 UNIQUE 约束
+```
+
+**修改表时添加唯一约束的介绍**：
+
+1. 当表已被创建时添加单列约束。如需在 "Id_P" 列创建 **单列UNIQUE 约束**：
+
+   MySQL / SQL Server / Oracle / MS Access：
+
+   ```mysql
+   ALTER TABLE Persons ADD UNIQUE (Id_P)
+   ```
+
+
+2. 当表已被创建时添加多列约束。请使用下面的 SQL 语法：
+   MySQL / SQL Server / Oracle / MS Access:
+
+   ```mysql
+   ALTER TABLE Persons ADD CONSTRAINT uc_PersonID UNIQUE (Id_P,LastName)
+   ```
+
+   > 创建约束时也可以为约束定义名称。
+
+**撤销 UNIQUE 约束**
 如需撤销 UNIQUE 约束，请使用下面的 SQL：
-MySQL:
-ALTER TABLE Persons
-DROP INDEX uc_PersonID
+MySQL：
+
+```mysql
+ALTER TABLE Persons DROP INDEX uc_PersonID
+```
+
 SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-DROP CONSTRAINT uc_PersonID
+
+```mysql
+ALTER TABLE Persons DROP CONSTRAINT uc_PersonID
+```
 
 ###**DEFAULT 约束**
 DEFAULT 约束用于向列中插入默认值。如果没有规定其他的值，那么会将默认值添加到所有的新记录。
-SQL **DEFAULT Constraint on CREATE TABLE**
+**创建表时添加默认约束**
 下面的 SQL 在 "Persons" 表创建时为 "City" 列创建 DEFAULT 约束：
-My SQL / SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255) DEFAULT 'Sandnes'
-)
+My SQL / SQL Server / Oracle / MS Access：
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255) DEFAULT 'Sandnes'
+);
+```
+
 通过使用类似 GETDATE() 这样的函数，DEFAULT 约束也可以用于插入系统值：
-CREATE TABLE Orders
-(
-Id_O int NOT NULL,
-OrderNo int NOT NULL,
-Id_P int,
-OrderDate date DEFAULT GETDATE()
-)
+
+```mysql
+CREATE TABLE Orders (
+	Id_O int NOT NULL,
+	OrderNo int NOT NULL,
+	Id_P int,
+	OrderDate date DEFAULT GETDATE()
+);
+```
+
 SQL **DEFAULT Constraint on ALTER TABLE**
 如果在表已存在的情况下为 "City" 列创建 DEFAULT 约束，请使用下面的 SQL：
-MySQL:
-ALTER TABLE Persons
-ALTER City SET DEFAULT 'SANDNES'
-SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ALTER COLUMN City SET DEFAULT 'SANDNES'
-如需**撤销 DEFAULT 约束**，请使用下面的 SQL：
-MySQL:
-ALTER TABLE Persons
-ALTER City DROP DEFAULT
-SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ALTER COLUMN City DROP DEFAULT
-
-###PRIMARY KEY 约束
-PRIMARY KEY 约束**唯一标识数据库表中的每条记录。主键必须包含唯一的值，不能包含 NULL 值。每个表都应该有且仅有一个主键。**
-**主键可以是原本资料内的一列，或是一个人造栏位 (与原本资料没有关系的栏位)。主键可以包含一或多个栏位。当主键包含多个栏位时，称为组合键 (Composite Key)**。 
-主键可以在建置新表格时设定 (运用 CREATE TABLE 语句)，或是以改变现有的表格架构方式设定 (运用 ALTER TABLE)。
-SQL **PRIMARY KEY Constraint on CREATE TABLE**
-下面的 SQL 在 "Persons" 表创建时在 "Id_P" 列创建 PRIMARY KEY 约束：
 MySQL：
 
-```sql
-CREATE TABLE Persons (
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-PRIMARY KEY (Id_P)
-);
+```mysql
+ALTER TABLE Persons ALTER City SET DEFAULT 'SANDNES';
 ```
 
 SQL Server / Oracle / MS Access：
 
+```mysql
+ALTER TABLE Persons ALTER COLUMN City SET DEFAULT 'SANDNES';
+```
+
+如需**撤销 DEFAULT 约束**，请使用下面的 SQL：
+MySQL:
+
+```mysql
+ALTER TABLE Persons ALTER City DROP DEFAULT;
+```
+
+上面的语句删除了Persons表中的City列的默认约束。
+
+SQL Server / Oracle / MS Access：
+
+```mysql
+ALTER TABLE Persons ALTER COLUMN City DROP DEFAULT;
+```
+
+###PRIMARY KEY 约束
+PRIMARY KEY 约束**唯一标识数据库表中的每条记录。主键必须包含唯一的值，不能包含 NULL 值。每个表都应该有且仅有一个主键。**
+**主键可以是原本资料内的一列，或是一个人造栏位 (与原本资料没有关系的栏位)。主键可以为一列或多列的组合。当主键包含多列时，称为组合键 (Composite Key)**。 
+可以在创建新表时设定主键 (运用 CREATE TABLE 语句)，也可以修改已存在的表来设定主键 (运用 ALTER TABLE 语句)。
+**创建表时修改主键**
+
+1. **创建单列的主键约束**。
+
+   下面的 SQL 在 "Persons" 表创建时在 "Id_P" 列创建 PRIMARY KEY 约束：
+
+   MySQL：
+
 ```sql
 CREATE TABLE Persons (
-Id_P int NOT NULL PRIMARY KEY,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255)
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	PRIMARY KEY (Id_P)
 );
 ```
 
-如果需要**命名 PRIMARY KEY 约束，以及为多个列定义 PRIMARY KEY 约束**，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access：
+​	SQL Server / Oracle / MS Access：
 
 ```sql
 CREATE TABLE Persons (
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-CONSTRAINT pk_PersonID PRIMARY KEY (Id_P, LastName)
+	Id_P int NOT NULL PRIMARY KEY,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255)
 );
 ```
 
-SQL **PRIMARY KEY Constraint on ALTER TABLE**
-如果在表已存在的情况下为 "Id_P" 列创建 PRIMARY KEY 约束，请使用下面的 SQL：
-MySQL / SQL Server / Oracle / MS Access：
+2. 创建多列的主键约束。
+
+   MySQL / SQL Server / Oracle / MS Access：
 
 ```sql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	CONSTRAINT pk_PersonID PRIMARY KEY (Id_P, LastName)
+);
+```
+
+**为已存在的表添加主键约束**。
+
+1. 为已存在的表添加单列的主键约束。如果在表已存在的情况下为 "Id_P" 列创建 PRIMARY KEY 约束，请使用下面的 SQL：
+
+   MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
 ALTER TABLE Persons ADD PRIMARY KEY (Id_P);
 ```
 
-如果需要**命名 PRIMARY KEY 约束，以及为多个列定义 PRIMARY KEY 约束**，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access：
+2. 为已存在的表添加多列的主键约束。请使用下面的 SQL 语法：
 
-```sql
+   MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
 ALTER TABLE Persons ADD CONSTRAINT pk_PersonID PRIMARY KEY (Id_P,LastName);
 ```
 
@@ -1024,19 +1253,20 @@ ALTER TABLE Persons DROP CONSTRAINT pk_PersonID;
 
 ###AUTO_INCREMENT 字段
 我们通常**希望在每次插入新记录时，自动地创建主键字段的值**。可以通过在表中创建一个 AUTO _INCREMENT 字段来实现。
-**用于 MySQL 的语法**:
-**MySQL 使用 AUTO_INCREMENT 关键字来执行 AUTO _INCREMENT 任务**。
-**默认地，AUTO_INCREMENT 的开始值是 1，每条新记录递增 1**。
+
+**MySQL 使用 AUTO_INCREMENT 关键字来执行 AUTO _INCREMENT 任务**。**默认地，AUTO_INCREMENT 的开始值是 1，每条新记录递增 1**。
+
 下列 SQL 语句把 "Persons" 表中的 "P_Id" 列定义为 AUTO _INCREMENT 主键：
 
-```sql
+```mysql
 CREATE TABLE Persons (
-P_Id int NOT NULL AUTO_INCREMENT,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-PRIMARY KEY (P_Id));
+	P_Id int NOT NULL AUTO_INCREMENT,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	PRIMARY KEY (P_Id)
+);
 ```
 
 要**让 AUTO_INCREMENT 序列以其他的值起始**，请使用下列 SQL 语法：
@@ -1053,165 +1283,213 @@ INSERT INTO Persons (FirstName, LastName) VALUES ('Bill', 'Gates');
 
 上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 会被赋予一个唯一的值。"FirstName" 会被设置为"Bill"，"LastName" 列会被设置为 "Gates"。
 
-**MS SQL 使用 IDENTITY 关键字来执行 AUTO_INCREMENT 任务。默认地，IDENTITY 的开始值是 1，每条新记录递增 1**。要规定 "P_Id" 列以 20 起始且递增 10，请把 IDENTITY 改为 IDENTITY(20,10)
-要在 "Persons" 表中插入新记录，我们不必为 "P_Id" 列规定值（会自动添加一个唯一的值）：
-INSERT INTO Persons (FirstName,LastName)
-VALUES ('Bill','Gates')
-上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 会被赋予一个唯一的值。"FirstName" 会被设置为 "Bill"，"LastName" 列会被设置为 "Gates"。
-**用于 Access 的语法**:
+**MS SQL 使用 IDENTITY 关键字来执行 AUTO_INCREMENT 任务。默认地，IDENTITY 的开始值是 1，每条新记录递增 1**。
+
+要规定 "P_Id" 列以 20 起始且递增 10，请把 IDENTITY 改为 IDENTITY(20,10)。
+
+**MS Access 使用 AUTOINCREMENT 关键字来执行 AUTO_INCREMENT 任务。默认地，AUTOINCREMENT 的开始值是 1，每条新记录递增 1**。
 下列 SQL 语句把 "Persons" 表中的 "P\_Id" 列定义为 AUTO_INCREMENT 主键：
-CREATE TABLE Persons
-(
-P_Id int PRIMARY KEY AUTOINCREMENT,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255)
-)
-MS Access 使用 AUTOINCREMENT 关键字来执行 AUTO_INCREMENT 任务。
-默认地，AUTOINCREMENT 的开始值是 1，每条新记录递增 1。
-要规定 "P_Id" 列以 20 起始且递增 10，请把 autoincrement 改为 AUTOINCREMENT(20,10)
-要在 "Persons" 表中插入新记录，我们不必为 "P_Id" 列规定值（会自动添加一个唯一的值）：
-INSERT INTO Persons (FirstName,LastName)
-VALUES ('Bill','Gates')
-上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 会被赋予一个唯一的值。"FirstName" 会被设置为 "Bill"，"LastName" 列会被设置为 "Gates"。
-**用于 Oracle 的语法**:
-在 Oracle 中，代码稍微复杂一点。
-您必须通过 SEQUENCE  对创建AUTO_INCREMENT  字段（该对象生成数字序列）。
+
+```mysql
+CREATE TABLE Persons (
+	P_Id int PRIMARY KEY AUTOINCREMENT,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255)
+);
+```
+
+要规定 "P_Id" 列以 20 起始且递增 10，请把 AUTOINCREMENT 改为 AUTOINCREMENT(20,10)。
+
+**用于 Oracle 的语法**
+在 Oracle 中，代码稍微复杂一点。你必须通过 SEQUENCE  对创建 AUTO_INCREMENT  字段（该对象生成数字序列）。
 请使用下面的 CREATE SEQUENCE 语法：
+
+```mysql
 CREATE SEQUENCE seq_person
 MINVALUE 1
 START WITH 1
 INCREMENT BY 1
-CACHE 10
-上面的代码创建名为 seq_person 的序列对象，它以 1 起始且以 1 递增。该对象缓存 10 个值以提高性能。CACHE 选项规定了为了提高访问速度要存储多少个序列值。
+CACHE 10;
+```
+
+上面的代码创建名为 seq_person 的**序列对象**，它以 1 起始且以 1 递增。该对象缓存 10 个值以提高性能。CACHE 选项规定了为了提高访问速度要存储多少个序列值。
+
 要在 "Persons" 表中插入新记录，我们必须使用 nextval 函数（该函数从 seq_person 序列中取回下一个值）：
-INSERT INTO Persons (P_Id,FirstName,LastName)
-VALUES (seq_person.nextval,'Lars','Monsen')
+
+```mysql
+INSERT INTO Persons (P_Id,FirstName,LastName) VALUES (seq_person.nextval,'Lars','Monsen');
+```
+
 上面的 SQL 语句会在 "Persons" 表中插入一条新记录。"P_Id" 的赋值是来自 seq_person 序列的下一个数字。"FirstName" 会被设置为 "Bill"，"LastName" 列会被设置为 "Gates"。
 
 ###FOREIGN KEY 约束
-一个表中的FOREIGN KEY约束指向另一个表中的 PRIMARY KEY。让我们通过一个例子来解释外键。请看下面两个表：
+一个表中的 FOREIGN KEY 约束指向另一个表中的 PRIMARY KEY。让我们通过一个例子来解释外键。请看下面两个表：
 "Persons" 表：
-Id_P	LastName	FirstName	Address	City
-1	Adams	John	Oxford Street	London
-2	Bush	George	Fifth Avenue	New York
-3	Carter	Thomas	Changan Street	Beijing
+
+| P_Id | LastName  | FirstName | Address      | City      |
+| ---- | --------- | --------- | ------------ | --------- |
+| 1    | Hansen    | Ola       | Timoteivn 10 | Sandnes   |
+| 2    | Svendson  | Tove      | Borgvn 23    | Sandnes   |
+| 3    | Pettersen | Kari      | Storgt 20    | Stavanger |
+
 "Orders" 表：
-Id_O	OrderNo	Id_P
-1	77895	3
-2	44678	3
-3	22456	1
-4	24562	1
-请注意，"Orders" 中的 "Id_P" 列指向 "Persons" 表中的 "Id_P" 列。
-"Persons" 表中的 "Id_P" 列是 "Persons" 表中的 PRIMARY KEY。
-"Orders" 表中的 "Id_P" 列是 "Orders" 表中的 FOREIGN KEY。
-FOREIGN KEY 约束用于预防破坏表之间连接的动作。也能防止非法数据插入外键列，因为它必须是它指向的那个表中的值之一。
-SQL **FOREIGN KEY Constraint on CREATE TABLE**
+
+| O_Id | OrderNo | P_Id |
+| ---- | ------- | ---- |
+| 1    | 77895   | 3    |
+| 2    | 44678   | 3    |
+| 3    | 22456   | 2    |
+| 4    | 24562   | 1    |
+
+请注意，"Orders" 中的 "P_Id" 列指向 "Persons" 表中的 "P_Id" 列。"Persons" 表中的 "P_Id" 列是 "Persons" 表中的 PRIMARY KEY。"Orders" 表中的 "P_Id" 列是 "Orders" 表中的 FOREIGN KEY。
+
+**FOREIGN KEY 约束用于预防破坏表之间连接的操作，也能防止非法数据插入外键列**，因为含有外键的表必须把其外键列指向另一张表中的一列。
+
+**创建表时添加外键约束**。
 下面的 SQL 在 "Orders" 表创建时为 "Id_P" 列**创建 FOREIGN KEY**：
 MySQL:
-CREATE TABLE Orders
-(
-Id_O int NOT NULL,
-OrderNo int NOT NULL,
-Id_P int,
-PRIMARY KEY (Id_O),
-FOREIGN KEY (Id_P) REFERENCES Persons(Id_P)
+
+```mysql
+CREATE TABLE Orders (
+	O_Id int NOT NULL,
+	OrderNo int NOT NULL,
+	P_Id int,
+	PRIMARY KEY (O_Id),
+	FOREIGN KEY (P_Id) REFERENCES Persons(Id_P)
 );
-SQL Server / Oracle / MS Access:
-CREATE TABLE Orders
-(
-Id_O int NOT NULL PRIMARY KEY,
-OrderNo int NOT NULL,
-Id_P int FOREIGN KEY REFERENCES Persons(Id_P)
-)
-如果需要**命名 FOREIGN KEY 约束，以及为多个列定义 FOREIGN KEY 约束**，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access:
-CREATE TABLE Orders
-(
-Id_O int NOT NULL,
-OrderNo int NOT NULL,
-Id_P int,
-PRIMARY KEY (Id_O),
-CONSTRAINT fk_PerOrders FOREIGN KEY (Id_P)
-REFERENCES Persons(Id_P)
-)
-SQL **FOREIGN KEY Constraint on ALTER TABLE**
+```
+
+SQL Server / Oracle / MS Access：
+
+```mysql
+CREATE TABLE Orders (
+	O_Id int NOT NULL PRIMARY KEY,
+	OrderNo int NOT NULL,
+	P_Id int FOREIGN KEY REFERENCES Persons(P_Id)
+);
+```
+
+**创建表时添加多列的外键约束**，请使用下面的 SQL 语法：
+MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
+CREATE TABLE Orders (
+	Id_O int NOT NULL,
+	OrderNo int NOT NULL,
+	Id_P int,
+	PRIMARY KEY (Id_O),
+	CONSTRAINT fk_PerOrders FOREIGN KEY (Id_P)	REFERENCES Persons(Id_P)
+);
+```
+
+**为已存在的表添加单列外键约束**
+
 如果在 "Orders" 表已存在的情况下为 "Id_P" 列创建 FOREIGN KEY 约束，请使用下面的 SQL：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Orders
-ADD FOREIGN KEY (Id_P)
-REFERENCES Persons(Id_P)
-如果需要命名 FOREIGN KEY 约束，以及为多个列定义 FOREIGN KEY 约束，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Orders
-ADD CONSTRAINT fk_PerOrders
-FOREIGN KEY (Id_P)
-REFERENCES Persons(Id_P)
+MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
+ALTER TABLE Orders ADD FOREIGN KEY (Id_P) REFERENCES Persons(Id_P);
+```
+
+**为已存在的表添加单列外键约束**
+MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
+ALTER TABLE Orders ADD CONSTRAINT fk_PerOrders FOREIGN KEY (Id_P) REFERENCES Persons(Id_P);
+```
+
 如需**撤销 FOREIGN KEY 约束**，请使用下面的 SQL：
 MySQL:
-ALTER TABLE Orders
-DROP FOREIGN KEY fk_PerOrders
-SQL Server / Oracle / MS Access:
-ALTER TABLE Orders
-DROP CONSTRAINT fk_PerOrders
 
-###**CHECK 约束**
-CHECK 约束用于限制列中的值的范围。
-如果对单个列定义 CHECK 约束，那么该列只允许特定的值。
-如果对一个表定义 CHECK 约束，那么此约束会在特定的列中对值进行限制。
-SQL **CHECK Constraint on CREATE TABLE**
-下面的 SQL 在 "Persons" 表创建时为 "Id_P" 列**创建 CHECK 约束**。CHECK 约束规定 "Id_P" 列必须只包含大于 0 的整数。
-My SQ不支持CHECK约束，可以使用CHECK约束但是没有任何效果:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-CHECK (Id_P>0)
-)
+```mysql
+ALTER TABLE Orders DROP FOREIGN KEY fk_PerOrders;
+```
+
 SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL CHECK (Id_P>0),
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255)
-)
-如果需要**命名 CHECK 约束，以及为多个列定义 CHECK 约束**，请使用下面的 SQL 语法：
+
+```mysql
+ALTER TABLE Orders DROP CONSTRAINT fk_PerOrders;
+```
+
+###CHECK 约束
+CHECK 约束用于限制列中的值的范围。如果对单个列定义 CHECK 约束，那么该列只允许特定的值。如果对一个表定义 CHECK 约束，那么此约束会在特定的列中对值进行限制。
+
+**创建表时添加 CHECK 约束**
+
+下面的 SQL 在 "Persons" 表创建时为 "Id_P" 列**创建 CHECK 约束**。CHECK 约束规定 "Id_P" 列必须只包含大于 0 的整数。
+**My SQ不支持CHECK约束，可以使用CHECK约束但是没有任何效果**：
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	CHECK (Id_P>0)
+);
+```
+
+SQL Server / Oracle / MS Access:
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL CHECK (Id_P>0),
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255)
+);
+```
+
+**创建表时添加多列的 CHECK 约束**，请使用下面的 SQL 语法：
 MySQL / SQL Server / Oracle / MS Access:
-CREATE TABLE Persons
-(
-Id_P int NOT NULL,
-LastName varchar(255) NOT NULL,
-FirstName varchar(255),
-Address varchar(255),
-City varchar(255),
-CONSTRAINT chk_Person CHECK (Id_P>0 AND City='Sandnes')
-)
-SQL **CHECK Constraint on ALTER TABLE**
+
+```mysql
+CREATE TABLE Persons (
+	Id_P int NOT NULL,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255),
+	CONSTRAINT chk_Person CHECK (Id_P>0 AND City='Sandnes')
+);
+```
+
+**修改表时添加单列 CHECK 约束**
+
 如果在表已存在的情况下为 "Id_P" 列**创建 CHECK 约束**，请使用下面的 SQL：
 MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ADD CHECK (Id_P>0)
-如果需要**命名 CHECK 约束，以及为多个列定义 CHECK 约束**，请使用下面的 SQL 语法：
-MySQL / SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-ADD CONSTRAINT chk_Person CHECK (Id_P>0 AND City='Sandnes')
-撤销 CHECK 约束
-如需**撤销 CHECK 约束**，请使用下面的 SQL：
+
+```mysql
+ALTER TABLE Persons ADD CHECK (Id_P>0);
+```
+
+**修改表时添加单列 CHECK 约束**，请使用下面的 SQL 语法：
+MySQL / SQL Server / Oracle / MS Access：
+
+```mysql
+ALTER TABLE Persons ADD CONSTRAINT chk_Person CHECK (Id_P>0 AND City='Sandnes')；
+```
+
+**撤销 CHECK 约束**，请使用下面的 SQL：
 SQL Server / Oracle / MS Access:
-ALTER TABLE Persons
-DROP CONSTRAINT chk_Person
-MySQL:
-ALTER TABLE Persons
-DROP CHECK chk_Person
+
+```mysql
+ALTER TABLE Persons mDROP CONSTRAINT chk_Person;
+```
+
+MySQL：
+
+```mysql
+ALTER TABLE Persons DROP CHECK chk_Person;
+```
+
 ___
 
-##**集合操作**
+##集合操作
 ###**UNION 操作符**
 UNION 操作符用于合并两个或多个 SELECT 语句的结果集，相当于OR逻辑运算。
 请注意，**UNION 内部的每个 SELECT 语句必须拥有相同数量的列。列也必须拥有相似的数据类型**。同时，**每个 SELECT 语句中的列的顺序必须相同**。
