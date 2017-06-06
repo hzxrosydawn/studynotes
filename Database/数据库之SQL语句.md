@@ -280,7 +280,7 @@ FROM table_name
 GROUP BY column_name1, column_name2, ... column_nameN;
 ```
 
-上面语句从若干表中选出若干列，一般结合SELECT中的至少一个运算符（包括COUNT, SUM, MAX, MIN,  AVG等函数）一起使用，然后在GROUP BY后添加除了参与运算的列以外的全部列，作为分组的参考。
+上面语句从若干表中选出若干列，一般结合SELECT中的至少一个运算符（包括COUNT, SUM, MAX, MIN,  AVG等函数）一起使用，然后在GROUP BY后添加除了参与运算的列以外的全部列，作为分组的参考。即**分组的依据为多列的不同值的组合**。
 
 3. 结合HAVING 子句实现**条件分组** 。
 
@@ -479,7 +479,7 @@ FROM table1
 FULL OUTER JOIN table2
 ON table1.column\_name=table2.column_name;
 注意：My SQL不支持FULL JOIN,不过可以通过 UNION 关键字来合并 LEFT JOIN 与 RIGHT JOIN来模拟FULL JION。
-###**CROSS JOIN关键字**
+###CROSS JOIN关键字
 CROSS JOIN 关键字用于将两个表的数据分别相乘，得到一个N*M的组合，称为广义笛卡尔积。实际很少用到。
 **CROSS JOIN语法**：
 SELECT column_name(s)
