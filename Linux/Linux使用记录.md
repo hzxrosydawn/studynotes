@@ -52,3 +52,7 @@ export CLASSPATH=./JAVA_HOME/lib;$JAVA_HOME/jre/lib
 2)修改/etc/sysconfig/i18n文档LANG="en_US"
 
 3)重起后,所在信息显示为问号.证明没有修改成功.4)切换到X Window将默认语言改为英文.5)重起后,所有信息显示正常,查看/etc/sysconfig/i18n文档,LANG="en_US.UTF-8"
+
+### 阿里云服务器使用记录
+
+jdk、tomcat安装，环境变量、项目部署、防火墙

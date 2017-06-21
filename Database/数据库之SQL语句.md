@@ -1,7 +1,7 @@
 参考：http://www.w3school.com.cn/sql/sql_syntax.asp
 
 ##SQL语句简介
-**SQL（Structured Query Language，结构化查询语句）**是一门ANSI的标准计算机语言，用来访问和操作数据库系统，取回和更新数据库中的数据。SQL 可与数据库程序协同工作，比如MS Access、DB2、Informix、MS SQL Server、Oracle、Sybase以及其他数据库系统。不幸地是，存在着很多不同版本的 SQL 语言，但是为了与 ANSI 标准相兼容，它们必须以相似的方式共同地来支持一些主要的关键词（如SELECT、UPDATE、DELETE、INSERT、WHERE等）。除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展！
+**SQL（Structured Query Language，结构化查询语句）**是一门ANSI的标准计算机语言，用来访问和操作数据库系统，取回和更新数据库中的数据。SQL 可与关系型数据库关系系统（Relational Database Management System，即RDBMS，比如 MS Access, SQL Server, MySQL）协同工作，比如MS Access、DB2、Informix、MS SQL Server、Oracle、Sybase以及其他数据库系统。不幸地是，存在着很多不同版本的 SQL 语言，但是为了与 ANSI 标准相兼容，它们必须以相似的方式共同地来支持一些主要的关键词（如SELECT、UPDATE、DELETE、INSERT、WHERE等）。除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展！
 
 SQL 可以实现：
 
@@ -45,7 +45,7 @@ SELECT * FROM table_name;
 ```
 
 ###SELECT  DISTINCT 语句
-在表中，一个列可能会包含多个重复值，有时您也许希望**仅列出不同（DISRINCT）的值**。DISTINCT 关键词用于返回唯一不同的值。
+在表中，一个列可能会包含多个重复值，有时您也许希望**仅列出不同（DISRINCT）的值**。DISTINCT 关键词用于返回唯一不同的值。如果DISTINCT后跟多个列，则判断重复的依据是多个列的组合。
 **唯一查询语句**：
 
 ```sql
@@ -779,7 +779,7 @@ create用于创建某些数据库对象(table、view、databse等)时可以接�
 CREATE  [OR REPLACE] VIEW "view_name" AS "SQL Statement"  [with check option/with read only];
 ```
 
-多数数据库使用with check option表示视图无法修改， Oracle采用with read only。
+多数数据库使用with check option表示视图无法修改， Oracle采用with read only。**视图是映射的结果，即数据表中数据改变时，视图中的记录同样会改变，适用于多次复杂查询时来减少重复查询次数**。
 
 **创建视图实例**：
 
@@ -862,12 +862,13 @@ DROP VIEW view_name;
 ```
 
 ###ALTER TABLE语句
-- ALTER TABLE用于修改数据表，包括增加、删除列定义以及删除重命名列等操作。ALTER TABLE也可以被用来作其他的改变，例如改变主键定义；
+- **`ALTER TABLE`用于修改数据表，包括增加、删除、重命名列等操作。ALTER TABLE也可以被用来作其他的改变，例如改变主键定义**；
 
-- 修改数据表里的已有数据有可能会失败，因为修改的结果有可能与定义原数据的规则不一致；
+- **修改数据表里的已有数据有可能会失败，因为修改的结果有可能与定义原数据的规则不一致**；
 
-- 修改数据列的默认值只会对后续插入的数据有效，对已存在的数据没有影响。
-  **修改数据表的语法**:  
+- **修改数据列的默认值只会对后续插入的数据有效，对已存在的数据没有影响**。
+
+  **修改数据表的语法** ：
 
   ```sql
   ALTER TABLE table_name [alter_method];
@@ -877,7 +878,7 @@ DROP VIEW view_name;
    **添加一列** ：
 
   ```sql
-  ADD column_name1  "data type of column_name1"  [default "default value"][constraint(s)_name1];
+  ADD column_name  "data type of column_name"  [default "default value"][constraint(s)_name1];
   ```
 
    **添加多列** ：
@@ -898,19 +899,20 @@ DROP VIEW view_name;
   ALTER TABLE Hehe ADD aaa varchar(255), bbb varchar(255) default‘xxx’); #添加多列，并指定默认值
   ```
 
-  > 注意：在增加列时，如果数据表中已有其他列数据记录，除非给新增的列添加了默认值，否则新增的列不能指定为非空约束，因为已有记录在新增列上肯定是空的。
+  > 注意：**在增加列时，如果数据表中已有其他列数据记录，除非给新增的列添加了默认值，否则新增的列不能指定为非空约束，因为已有记录在新增列上肯定是空的**。
 
    **删除列**：
 
   ```sql
-  ALTER TABLE  table_name DROP COLUMN  column_name; #请注意，某些数据库系统不允许这种在数据库表中删除列的方式。
+  ALTER TABLE table_name DROP COLUMN column_name; #请注意，某些数据库系统不允许这种在数据库表中删除列的方式。
   ```
 
   **改变列的数据类型**：
+
    SQL Server / MS Access：
 
   ```sql
-   ALTER TABLE table_name ALTER  COLUMN  column_name data_type;
+  ALTER TABLE table_name ALTER COLUMN column_name data_type;
   ```
 
    My SQL / Oracle：
@@ -937,7 +939,7 @@ DROP VIEW view_name;
    **重命名数据表名**：
 
   ```sql
-  RENAME TO  new_table_name;
+  RENAME TO new_table_name;
   ```
 
    **为某列添加索引**：
@@ -952,7 +954,7 @@ DROP VIEW view_name;
   DROP INDEX index_name;
   ```
 
-   **添加约束**: 
+   **添加约束**：
 
   ```sql
   ADD CONSTRAINT conatraint_name type_of_constraint(column_name1);
@@ -966,7 +968,7 @@ DROP VIEW view_name;
 
   > PS：INDEX用在MySQL，CONSTRAINT用在Orcle和SQL Server
 
-  > 注意：` [alter_method]`可以为花括号括起来的多个列定义（多个ADD、MODIFY语句）。另外，ADD的列在原表中不存在，ALTER和MODIFY的列必须已存在。
+  > 注意：**` [alter_method]`可以为花括号括起来的多个列定义（多个ADD、MODIFY语句）。另外，ADD的列在原表中不存在，ALTER和MODIFY的列必须已存在**。
 
   **ALTER TABLE语法实例**：
 

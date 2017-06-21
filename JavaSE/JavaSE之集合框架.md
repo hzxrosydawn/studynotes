@@ -7,52 +7,52 @@ typora-root-url: ./
 
 ### 集合概述
 
-Java集合大致可以分为Set、List、Queue和Map四种体系，其中Set代表无序、不可重复的集合；List代表有序、可重复的集合；而Map则代表具有映射关系的集合，Java 5 又增加了Queue体系集合，代表一种队列集合实现。
+Java集合框架大致可以分为Set、List、Queue和Map四种体系，其中Set代表无序、不可重复的集合，List代表有序、可重复的集合，而Map则代表具有映射关系的集合，Java 5 又增加了Queue体系集合，代表一种队列集合实现。
 
-Java集合就像一种容器，可以把多个对象（实际上是对象的引用，但习惯上称为对象）“丢进”该容器中。从Java 5 增加了泛型以后，Java集合就可以记住容器中对象的数据类型，使得编码更加简洁、健壮。
+Java集合就像一种容器，可以把多个对象（实际上是对象的引用，但习惯上称为对象）“丢进”该容器中。**从Java 5 增加了泛型以后，Java集合就可以记住容器中对象的数据类型，使得编码更加简洁、健壮**。
 
 #### 集合和数组的区别
 
-1. **数组长度在初始化时指定，意味着只能保存定长的数据。而集合可以保存数量不确定的数据。同时可以保存具有映射关系的数据**（即关联数组，键值对 key-value）；
-2. **数组元素即可以是基本类型的值，也可以是对象（实际上是对象的引用，一般习惯上称为对象）。集合里只能保存对象（实际上也只是对象的引用变量），基本数据类型的变量要转换成对应的包装类才能放入集合类中**。
+1. **数组长度在初始化时指定，意味着只能保存定长的数据。而集合可以保存数量不确定的数据。同时可以保存具有映射关系的数据**；
+2. **数组元素既可以是基本类型的值，也可以是对象（实际上是对象的引用，一般习惯上称为对象）。集合里只能保存对象（实际上也只是对象的引用变量），基本数据类型的变量要转换成对应的包装类才能放入集合类中**。
 
 ### 集合类的继承关系
 
 Java的集合类主要由两个接口派生而出：Collection和Map，Collection和Map是Java集合框架的根接口。
 
-![collections3](/appendix/collections3.png)
+![collection_diagram](/appendix/collection_diagram.png)
 
 #### Iterable接口
 
-迭代器接口，这是Collection类的父接口。实现这个Iterable接口的对象允许使用foreach循环进行遍历，也就是说，所有的Collection集合对象都具有"foreach可遍历性"。该接口方法如下：
+迭代器接口，这是Collection类的父接口。**实现这个Iterable接口的实现类对象都可以使用foreach循环进行遍历**（但遍历ArrayList时会出现问题，后面会详述）。该接口中的方法如下：
 
-- public **abstract Iterator\<T> iterator()**：其实现类通过该方法返回一个代表当前集合对象的泛型\<T>迭代器，用于之后的遍历操作；
-- default void **forEach(Consumer<? super T> action)**：其实现类通过该默认方法根据传入的action对象来对每个元素来执行特定操作；
-- default Spliterator\<T> **spliterator()**：返回一个Spliterator（splitable iterator可分割迭代器），Spliterator接口是Java为了**并行**遍历数据源中的元素而设计的迭代器（是Iterator的升级版），这个可以类比最早Java提供的顺序遍历迭代器Iterator，但一个是顺序遍历，一个是并行遍历。该方法的默认实现功能有限，一般需要重写。
+- `public abstract Iterator<T> iterator()`：其实现类通过该方法返回一个代表当前集合对象的泛型\<T>迭代器，用于之后的遍历操作；
+- `default void forEach(Consumer<? super T> action)`：其实现类通过该默认方法根据传入的action对象来对每个元素来执行特定操作；
+- `default Spliterator<T> spliterator()`：返回一个Spliterator（splitable iterator可分割的迭代器），Spliterator接口是Java为了**并行**遍历数据源中的元素而设计的迭代器（是Iterator的升级版），这个可以类比最早Java提供的顺序遍历迭代器Iterator，但一个是顺序遍历，一个是并行遍历。该方法的默认实现功能有限，一般需要重写。
 
-> 注意：最早Java提供顺序遍历迭代器Iterator时，那个时候还是单核时代，但现在多核时代下，把多个任务分配到不同核上并行执行才能最大发挥多核的能力，所以Spliterator应运而生。参考：https://segmentfault.com/q/1010000007087438
+> 注意：最早Java提供顺序遍历迭代器Iterator时，那个时候还是单核时代，但现在多核时代下，把多个任务分配到不同核上并行执行才能最大发挥多核的能力，所以Spliterator应运而生。参考：https://segmentfault.com/q/1010000007087438。
 
 #### Collection接口
 
 Collection接口是Set，Queue，List的父接口。Collection接口中定义了多种方法可供其子类进行实现，以实现数据操作。常用方法如下：
 
 - boolean **add(E e)**：该方法用于向该集合里添加一个元素。如果该集合对象调用该方法后发生了变化，则返回true。如果该集合已经有了指定的元素且不允许包含重复值则返回false；
-- boolean addAll(Collection<? extends E> c)：把集合c里的所有元素添加到该集合对象里。如果调用该方法后该集合对象发生了变化，则返回true。如果该集合对象已经有了指定的元素且不允许包含重复值，则返回false；
+- `boolean addAll(Collection<? extends E> c)`：把集合c里的所有元素添加到该集合对象里。如果调用该方法后该集合对象发生了变化，则返回true。如果该集合对象已经有了指定的元素且不允许包含重复值，则返回false；
 - boolean **contains(Object o)**：返回该集合里是否包含指定元素；
-- boolean containsAll(Collection<?> c)：返回该集合里是否包含集合c里的所有元素；
+- `boolean containsAll(Collection<?> c)`：返回该集合里是否包含集合c里的所有元素；
 - boolean **remove(Object o)**：删除集合中的指定元素o，当集合中包含了一个或多个元素o时，该方法只删除第一个符合条件的元素，该方法将返回true；
-- boolean removeAll(Collection<?> c)：求差集。即从该集合中删除所有也存在于集合c里元素，**如果删除了一个或一个以上的元素，则返回true**；
-- default boolean **removeIf(Predicate<? super E> filter)**：返回是否成功删除了满足给定Predicate对象的集合元素；
-- boolean **retainAll(Collection<?> c)**：求交集。即仅保留该集合对象中也存在于指定集合c中的元素；
+- `boolean removeAll(Collection<?> c)`：**求差集**。即从该集合中删除所有也存在于集合c里元素，**如果删除了一个或一个以上的元素，则返回true**；
+- `default boolean removeIf(Predicate<? super E> filter)`：返回是否成功删除了满足给定Predicate对象的集合元素。使用Iterator来进行遍历；
+- `boolean retainAll(Collection<?> c)`：**求交集**。即仅保留该集合对象中也存在于指定集合c中的元素；
 - void **clear()**：清除集合里的所有元素，将集合长度变为0；
-- boolean **isEmpty()**：返回集合是否为空，当集合长度为0时返回true，否则返回false；
+- boolean **isEmpty()**：判断该集合中的内容s是否为空。当集合长度为0时返回true，否则返回false；
 - int **size()**：该方法返回集合里元素的个数；
-- Iterator\<E> **iterator()**：返回一个Iterator对象，用于遍历集合里的元素；
+- `Iterator<E> iterator()`：返回一个Iterator对象，用于遍历集合里的元素；
 - Object[] **toArray()**：该方法把集合转换成一个数组，所有的集合元素变成对应的数组元素；
-- \<T> T[] toArray(T[] a)：该方法把集合转换成一个数组，返回的数组类型为指定的参数数据类型；
-- default Spliterator\<E> **spliterator()**：返回一个针对该集合中所有元素的Spliterator对象（并行遍历器）；
-- default Stream\<E> **stream()**：返回一个该集合对象对应的连续的Stream对象。当 spliterator()方法不能返回一个不可变的并发（或后期绑定的）spliterator时应重写该方法；
-- default Stream\<E> **parallelStream()**：返回一个可能并行的Stream，该方法也允许返回一个连续的流。当 spliterator()方法不能返回一个不可变的并发（或后期绑定的）spliterator时应重写该方法。
+- `<T> T[] toArray(T[] a)`：该方法把集合转换成一个数组，返回的数组类型为指定的参数数据类型；
+- `default Spliterator<E> spliterator()`：返回一个针对该集合中所有元素的Spliterator对象（并行遍历器）；
+- `default Stream<E> stream()`：返回一个该集合对象对应的连续的**Stream对象**。当 spliterator()方法不能返回一个不可变的并发（或后期绑定的）spliterator时应重写该方法；
+- `default Stream<E> parallelStream()`：返回一个可能并行的Stream，该方法也允许返回一个连续的流。当 spliterator()方法不能返回一个不可变的并发（或后期绑定的）spliterator时应重写该方法。
 
 
 集合就是一个现实容器的抽象，可以进行增、删、改、查（判断和遍历）等操作。一个Collection实例如下。
@@ -111,7 +111,7 @@ collection集合的元素：[]
 number集合的元素：[]
 ```
 
-> 注意：所有Collection实现类都都重写了toString方法，返回形如[ele1, ele2...]的形式。
+> 注意：**所有Collection实现类都都重写了toString方法，返回形如[ele1, ele2...]格式的字符串**。
 
 ### 集合的一般操作
 
@@ -140,21 +140,21 @@ public class CollectionEach {
 
 #### 使用Java8增强的Iterator遍历集合元素
 
-Iterable接口的iterator()方法返回的Iterator接口对象主要用于遍历集合元素（IIterator对象也被称为迭代器）。它含有以下方法：
+Iterable接口的iterator()方法返回的`Iterator`接口对象主要用于遍历集合元素（Iterator对象也被称为迭代器）。它含有以下方法：
 
 - public abstract boolean **hashNext()**：判断当前的遍历位置后面是否还有下一个元素；
 - public abstract E **next()**：返回下一个元素；
-- default void **remove()**：删除当前遍历到的元素。可以先使用hashNext()判断是否有下一个元素，如果有则next()一次，然后remove()一次。但是**如果在遍历时通过其他方法（不包括本方法）修改了当前集合对象，那么该方法的执行结果是不确定的。所以在遍历集合时不能通过其他方式修改当前集合对象，否则抛出java.util.ConcurrentModificationException异常**；
-- default void **forEachRemaining(Consumer<? super E> action)**：对剩余的元素按照迭代顺序（如果指定了迭代顺序）执行给定的操作，直到全部元素执行完毕或抛出异常。
+- default void **remove()**：删除当前遍历到的元素。可以先使用hashNext()判断是否有下一个元素，如果有则next()一次，然后remove()一次。**官方说该方法是遍历集合时删除集合元素的唯一安全方法。如果在遍历时通过其他方法（不包括本方法）删除了集合元素，那么该方法的执行结果是不确定的。所以在遍历集合时最好不要通过除该方法以外其他方式删除集合元素，否则可能抛出java.util.ConcurrentModificationException异常**；
+- `default void forEachRemaining(Consumer<? super E> action)`：对剩余的元素按照迭代顺序（如果指定了迭代顺序）执行给定的操作，直到全部元素执行完毕或抛出异常。
 
-Iterator仅用于遍历集合，Iterator本身并不提供盛装对象的能力。**如果需要创建Iterator对象，则必须与一个被迭代的集合。当使用Iterator对集合元素进行迭代时，Iterator并不是把集合元素本身传给了迭代变量，而是把集合元素的值传给了迭代变量，所以修改迭代变量的值对集合元素本身没有任何影响**。
+Iterator本身并不提供盛装对象的能力。**如果需要创建Iterator对象，则必须与一个被迭代的集合。当使用Iterator对集合元素进行迭代时，Iterator并不是把集合元素本身传给了迭代变量，而是把集合元素的值传给了迭代变量，所以修改迭代变量的值对集合元素本身没有任何影响**。
 
 ```java
 // 获取teams集合对应的迭代器
 Iterator iterator = teams.iterator();
 while (iterator.hasNext()) {
     // iterator.next()方法返回的数据类型是Object类型，因此需要强制类型转换
-    String team = (String) iterator.next();
+    String team = iterator.next();
     System.out.println(team);
     if (team.equals("Cavaliers")) {
       	// 遍历集合时不能通过其他方式修改当前集合对象,
@@ -169,6 +169,11 @@ while (iterator.hasNext()) {
 System.out.println(teams);
 ```
 
+以下情况中可以使用Iterator来代替for-each循环：
+
+- 删除集合元素时。for-each循环使用隐藏了迭代器，所以不能删除。所以for-each循环不能用于筛选。
+- 并行迭代多个集合对象时。
+
 #### 使用Lambda表达式遍历Iterator
 
 ```java
@@ -181,7 +186,7 @@ iterator.forEachRemaining(obj -> System.out.println("迭代集合元素： " + o
 
 #### 使用foreach循环遍历集合元素
 
-**使用foreach循环来迭代访问Collection集合里的元素更加简洁，迭代变量不是集合元素本身，系统只是依次把集合元素的值赋给迭代变量。这种遍历集合也不能被改变，否则引发ConcurrentModificationException异常**。
+**使用foreach循环来迭代访问Collection集合里的元素更加简洁，迭代变量不是集合元素本身，系统只是依次把集合元素的值赋给迭代变量。这种遍历不能用于修改集合元素，否则抛出ConcurrentModificationException异常**。
 
 ```java
 import java.util.*;
@@ -246,7 +251,7 @@ public class PredicateTest2 {
 
 #### 使用Java8新增的Stream操作集合
 
-Java 8新增了Stream、IntStream、LongStream、DoubleStream等[流式API](https://zhuanlan.zhihu.com/p/20540202)，这API代表多个支持串行和并行聚集操作的元素。
+Java 8新增了Stream、IntStream、LongStream、DoubleStream等[流式API](https://zhuanlan.zhihu.com/p/20540202)，这API代表多个支持串行和并行**聚合操作（Aggregate Operations）**的元素。
 
 Java 8中的Stream与Java IO包中的InputStream和OutputStream完全不是一个概念，这里的Stream是对集合功能的一种增强，主要用于对集合对象进行便利高效的串行或并行的聚合操作和大批量数据的操作。结合Lambda表达式可以极大的提高开发效率和代码可读性。
 
@@ -259,7 +264,7 @@ Java 8还为上面每个流式API提供了对应的Builder内部类，开发者�
 - 调用Builder的build()方法获取对应的Stream；
 - 调用Stream的聚集方法。
 
-Stream提供了大量的聚集方法供用户调用，对于大部分聚集方法而言，每个Stream只能执行一次。
+Stream提供了大量的聚合方法供用户调用，对于大部分聚合方法而言，每个Stream只能执行一次。
 
 ```java
 import java.util.stream.IntStream;
@@ -291,9 +296,13 @@ public class IntStreamTest {
 }
 ```
 
-**使用流的时候应当格外注意，它只能消费一次**。上述聚集方法执行操作每次只能执行一行，否则出现java.lang.IllegalStateException: stream has already been operated upon or closed
+**使用流的时候应当格外注意，它只能消费一次**。上述聚集方法执行操作每次只能执行一行，否则出现
 
-Stream提供了大量的方法进行聚集操作，这些方法既可以是“中间的”(intermediate)，也可以是“末端的”(terminal)
+```shell
+java.lang.IllegalStateException: stream has already been operated upon or closed
+```
+
+Stream提供了大量的方法进行聚合操作，这些方法既可以是“中间的”(intermediate)，也可以是“末端的”(terminal)
 
 - 中间方法：**中间操作允许流保持打开状态，并允许直接调用后续方法。map()方法就是中间方法。中间方法的返回值是另外一个流**；
 - 末端方法：**末端方法是对流的最终操作。当对某个Stream执行末端方法后，该流就会被“消耗”且不再可用。sum()、count()、average()等方法都是末端方法**。
@@ -351,6 +360,8 @@ public class CollectionStream {
 }
 ```
 
+遍历时删除集合元素需要注意一些细节，请参考[详解遍历集合以及遍历集合时删除集合元素](http://www.jianshu.com/p/66f9e13f2e5b)。
+
 ### Set集合
 
 Set集合与其父集合Collection集合基本相同，只是行为略有不同，**Set集合不允许包含重复元素**，因为它是无序的（无序容器无法定位多个相同的元素）。
@@ -371,15 +382,15 @@ hash（也被翻译为哈希、散列）算法的功能：它能保证快速查�
 
 之所以选择HashSet，而不直接使用数组，是因为**数组虽然查找迅速，但数组元素的索引是连续的，而且数组的长度是固定的、无法自由增加数组的长度。而HashSet采用每个元素的hashCode值来计算其存储位置，从而可以自由增加HashSet的长度，并可以根据元素的HashCode值来访问元素**。
 
-从存储的角度来讲Hash存储的效率可能不高，这就需要在设计Hash表时多加注意。而从查找、插入和删除的角度上来讲，Hash表的效率是很高的。试想在查找一个表中的记录而不知道其存储位置时，最坏情况下要将此记录与整个表的所有记录进行比较才能确定其位置。而使用Hash表时，记录的存储位置是与记录相关联的，换句话说就是知道了哪个记录就知道了它的存储位置，那么直接去该位置就能获取该记录的所有信息。虽然增加了计算Hash值的开销，但这与查找所带来的开销相比是非常小的。
+**从存储的角度来讲Hash存储的效率可能不高，这就需要在设计Hash表时多加注意。而从查找、插入和删除的角度上来讲，Hash表的效率是很高的。试想在查找一个表中的记录而不知道其存储位置时，最坏情况下要将此记录与整个表的所有记录进行比较才能确定其位置。而使用Hash表时，记录的存储位置是与记录相关联的，换句话说就是知道了哪个记录就知道了它的存储位置，那么直接去该位置就能获取该记录的所有信息。虽然增加了计算Hash值的开销，但这与查找所带来的开销相比是非常小的**。
 
-HashSet中每个能存储元素的“槽位”(slot)通常称为“桶”(bucket)。如果多个hashCode值相同，但他们通过equals()方法返回false，就会在一个“桶”中放进多个元素（称为冲突，多个元素以链表形式存储在一个“桶”中），这会导致性能下降。这就需要设计好的hashCode()方法来使元素能够尽可能的均匀分布在hash表中。**重写hashCode()方法的基本规则如下**：
+**HashSet中每个能存储元素的“槽位”(slot)通常称为“桶”(bucket)。如果多个hashCode值相同，但他们通过equals()方法返回false，就会在一个“桶”中放进多个元素（称为冲突，多个元素以链表形式存储在一个“桶”中），这会导致性能下降。这就需要设计好的hashCode()方法来使元素能够尽可能的均匀分布在hash表中**。**重写hashCode()方法的基本规则如下**：
 
 - **在程序运行过程中，同一个对象多次调用hashCode()方法应该返回相同的值**；
 - **当两个对象通过equals()方法比较返回true时，这两个对象的hashCode()方法应该返回相等的值**；
 - **对象中用作equals()方法比较标准的实例变量，都应该用于计算hashCode()值**。
 
-Google首席Java架构师Joshua Bloch在他的著作《Effective Java》中提出了一种简单**通用的hashCode()重写算法**：
+[Joshua Bloch](https://en.wikipedia.org/wiki/Joshua_Bloch)在他的著作《Effective Java》中提出了一种简单**通用的hashCode()重写算法**：
 
 1. 把某个非零的int常量，比如17，保存在一个名为result的int类型的变量中。即int result = 17；
 
@@ -395,9 +406,9 @@ Google首席Java架构师Joshua Bloch在他的著作《Effective Java》中提�
 
    ​    (4) 对于float值，则散列码c  = Float.floatToIntBits(f)；
 
-   ​    (6) 对于double值，则先计算Double.doubleToLongBits(f)得到一个long值，再将该long值按照2.a.(3)步骤计算出散列码c的值；
+   ​    (6) 对于double值，则先计算Double.doubleToLongBits(f)得到一个long值，再将该long值按照`2.a.(3)`步骤计算出散列码c的值；
 
-   ​    (7) 对于对象应用，如果该类的equals方法通过递归调用equals的方式来比较这个字段，那么同样为该字段递归地调用hashCode。即散列码c = f.hashCode。如果需要更复杂的比较，则需要为这个字段计算一个“范式（canonical representaction ）”，然后针对这个范式调用hashCode。如果这个字段的值为null，则返回0（或者其他某个常数，但通常是0）；
+   ​    (7) 对于对象引用，如果该类的equals方法通过递归调用equals的方式来比较这个字段，那么同样为该字段递归地调用hashCode。即散列码c = f.hashCode。如果需要更复杂的比较，则需要为这个字段计算一个“范式（canonical representaction ）”，然后针对这个范式调用hashCode。如果这个字段的值为null，则返回0（或者其他某个常数，但通常是0）；
 
    ​    (8) 对于数组，则要把每一个元素当做单独的字段来处理。也就是说，递归地应用上述规则，对每个重要元素计算一个散列码，然后根据步骤2.b中的做法把这些散列值组合起来。如果数组字段中的每个元素都很重要，可以利用JDK 1.5及更高版本中提供的java.util.Arrays.hashCode方法。
 
@@ -415,7 +426,7 @@ Google首席Java架构师Joshua Bloch在他的著作《Effective Java》中提�
 
 #### LinkedHashSet类
 
-LinkedHashSet集合根据元素的hashCode值来决定元素的存储位置，同时使用链表维护元素的次序，这样使得元素看起来是以插入的顺序保存的。当**遍历LinkedHashSet集合里的元素时，LinkedHashSet将会按元素的添加顺序来访问集合里的元素**。
+LinkedHashSet集合**根据元素的hashCode值来决定元素的存储位置**，同时**使用链表维护元素的次序**，这样使得元素**看起来是以插入的顺序保存的**。当**遍历LinkedHashSet集合里的元素时，LinkedHashSet将会按元素的添加顺序来访问集合里的元素**。
 
 **LinkedHashSet需要维护元素的插入顺序，因此性能略低于HashSet的性能，但在迭代访问Set里的全部元素时将有很好的性能，因为它以链表来维护内部顺序**。
 
@@ -423,11 +434,11 @@ LinkedHashSet集合根据元素的hashCode值来决定元素的存储位置，�
 
 #### TreeSet类
 
-TreeSet是SortedSet接口的实现类，通过采用**红黑树**的数据结构来存储集合元素，从而可以确保集合元素处于排序状态。TreeSet的额外方法：
+TreeSet是`SortedSet`接口的实现类，通过采用**红黑树**的数据结构来存储集合元素，从而可以确保集合元素处于排序状态。TreeSet的额外方法如下：
 
 - Comparator **comparator()**：如果TreeSet采用了定制排序，则该方法返回定制排序所使用的Comparator；如果TreeSet采用了自然排序，则返回null；
 - Object **first()**：返回集合中的第一个元素；
-- Object last()：返回集合中的最后一个元素；
+- Object **last()**：返回集合中的最后一个元素；
 - Object **lower(Object e)**：返回集合中位于指定元素之前的元素（即小于指定元素的最大元素，参考元素不需要是TreeSet集合里的元素）；
 - Object **higher(Object e**)：返回集合中位于指定元素之后的元素（即大于指定元素的最小元素，参考元素不需要是TreeSet集合里的元素）；
 - SortedSet **subSet(Object fromElement, Object toElement)**：返回此Set的子集，范围从fromElement（包括）到toElement（不包括）；
@@ -469,7 +480,13 @@ TreeSet支持两种排序方法。在默认情况下，TreeSet采用自然排序
 
 TreeSet会调用集合元素的compareTo(Object obj)方法来比较元素之间的大小关系，然后将集合元素按升序排列，这种方式就是自然排序。
 
-**Java提供了一个Comparable接口，该接口里定义了一个compareTo(Object obj)方法，该方法返回一个整数值，实现该接口的类必须实现该方法，实现了该接口的类的对象就可以比较大小。**当一个对象调用该方法与另一个对象进行比较时，例如obj1.compareTo(obj2)，如果该方法返回0，则表明这两个对象相等；如果该方法返回一个正整数，则表明obj1大于obj2；如果该方法返回一个负整数，则表明obj1小于obj2
+**Java提供了一个Comparable接口，该接口里定义了一个compareTo(Object obj)方法，该方法返回一个整数值，实现该接口的类必须实现该方法，实现了该接口的类的对象就可以比较大小。**当一个对象调用该方法与另一个对象进行比较时，例如obj1.compareTo(obj2)，如果该方法返回0，则表明这两个对象相等；如果该方法返回一个正整数，则表明obj1大于obj2；如果该方法返回一个负整数，则表明obj1小于obj2。
+
+如果集合（或数组）中的元素类实现了Comparable接口，那么这些集合对象（或数组）就可以通过 Collections.sort（或Arrays.sort）方法来进行自动排序。实现此Comparable接口的对象可以用作SortedSet的元素（或SortedMap中的key）而无需指定显式的比较器（Comparator）。
+
+> 建议（虽然不是必需的）最好使自然排序判断相等的规则与 `equals` 方法判断就相等的规则保持一致。这是因为对于没有其他显式比较器（Comparator）的SortedSet（或SortedMap）来说，如果自然排序判断相等的规则与 `equals` 方法判断就相等的规则不一致时，会让人觉得很“怪异”。
+>
+> 注意，`null` 不是任何类的实例，即使 `e.equals(null)` 返回 `false`，`e.compareTo(null)` 也将抛出 `NullPointerException`。
 
 实现了Comparable接口的常用类：
 
@@ -494,7 +511,7 @@ public class TreeSetErrorTest {
 }
 ```
 
-上面的程序中添加第一个Error对象时，TreeSet里没有任何元素，所以不会出现任何问题；当添加第二个Error对象时，TreeSet就会调用该对象的compareTo(Object obj)方法与集合中的其他元素进行比较，如果其对应的类没有实现Comparable接口，则会引发ClassCastException异常。
+上面的程序中**向TreeSet中添加第一个对象时，TreeSet里没有任何元素，所以不会出现任何问题；当添加第二个对象时，TreeSet就会调用该对象的compareTo(Object obj)方法与集合中的其他元素进行比较，如果其对应的类没有实现Comparable接口，则会引发ClassCastException异常**。
 
 **向TreeSet集合中添加元素时，只有第一个元素无须实现Comparable接口，后面添加的所有元素都必须实现Comparable接口。当然这不是好的做法，因为当试图从TreeSet中取出元素时，依然会抛出ClassCastException异常**。
 
@@ -502,13 +519,15 @@ public class TreeSetErrorTest {
 
 **TreeSet集合判断两个对象是否相等的唯一标准是：如果两个对象通过compareTo(Object obj)方法比较是否返回0，如果返回0，则这两个对象相等，新对象将无法添加到TreeSet集合中**。
 
-如果向TreeSet中添加了一个可变对象后修改了该可变对象的实例变量，这将导致他与其他对象的大小顺序发生了改变，但是TreeSet不会再次调整他们的顺序，甚至可能导致TreeSet中保存的这两个对象通过compareTo(Object obj)方法比较返回0。当再次删除该对象时，TreeSet可能删除失败（甚至集合中原有的、实例变量没有修改过、但其实例变量与该元素变化了的实例变量相等的元素也无法删除）。所以，**建议不要修改放入HashSet和TreeSet集合中元素的关键实例变量**。
+**如果向TreeSet中添加了一个可变对象后修改了该可变对象的实例变量，这将导致它与其他对象的大小顺序发生了改变，但是TreeSet不会再次调整他们的顺序，甚至可能导致TreeSet中保存的这两个对象通过compareTo(Object obj)方法比较返回0。当再次删除该对象时，TreeSet可能删除失败（甚至集合中原有的、实例变量没有修改过、但其实例变量与该元素变化了的实例变量相等的元素也无法删除）。所以，建议不要修改放入HashSet和TreeSet集合中元素的关键实例变量**。
 
 ##### 定制排序
 
-TreeSet的自然排序是根据集合元素的大小，TreeSet将它们以升序排列。如果需要实现定制排序，例如以降序排列，则需要在创建TreeSet集合对象时，提供一个Comparator对象与该TreeSet集合关联，有该Comparator对象负责集合元素的排序逻辑。由于Comparator是一个函数式接口，因此可以使用Lambda表达式来代替Comparator对象。
+TreeSet的自然排序是根据集合元素的大小，TreeSet将它们以升序排列。如果需要实现定制排序，例如以降序排列，则需要在创建TreeSet集合对象时，提供一个Comparator对象与该TreeSet集合关联，由该Comparator对象负责集合元素的排序逻辑。
 
-定制排序的实例如下。
+在实际的需求中，我们可能需要根据对象的各种属性进行定制排序，虽然可以利用SQL语句中的`ORDER BY` 子句直接在数据库中处理多数排序，但不是每一个场景都适合在数据库中处理排序（比如，排序规则可能很复杂，还有可能依赖于业务逻辑）。这种情况下，通过Comparator接口就可以很方便的实现定制排序。由于Comparator是一个函数式接口（仅包含一个`int compare(T o1, T o2)`抽象方法），因此可以使用Lambda表达式来代替Comparator对象。许多集合都提供有与Comparator相关的方法。比如，List和Collections都提供了根据Comparator对象进行排序的sort方法，SortedSet和SortedMap也都提供了名为comparator()方法来返回一个代表其排序规则的Comparator对象，TreeSet提供了传入Comparator类型参数的构造器。
+
+一个TreeSet定制排序的实例如下。
 
 ```java
 class M {
@@ -527,8 +546,7 @@ public class TreeSetTest2 {
             M m1 = (M)o1;
             M m2 = (M)o2;
             // 根据M对象的age属性来决定大小，age越大，M对象反而越小
-            return m1.age > m2.age ? -1
-                : m1.age < m2.age ? 1 : 0;
+            return m1.age > m2.age ? -1 : m1.age < m2.age ? 1 : 0;
         });
         ts.add(new M(5));
         ts.add(new M(-3));
@@ -556,7 +574,7 @@ EnumSet是一个专为枚举类设计的集合类，**EnumSet中的所有元素�
 
 - EnumSet **allOf(Class elementType)**：创建一个**包含指定枚举类里所有枚举值**的EnumSet集合；
 - EnumSet **complementOf(EnumSet e)**： **创建一个其元素类型与指定EnumSet里元素类型相同的EnumSet集合，新EnumSet集合包含原EnumSet集合所不包含的、此类枚举类剩下的枚举值**（即新EnumSet集合和原EnumSet集合的集合元素加起来是该枚举类的所有枚举值）；
-- EnumSet **copyOf(Collection c)**：使用一个普通集合来创建EnumSet集合。要求指定的Collection中的所有元素必须是同一个枚举类的枚举值；
+- EnumSet **copyOf(Collection c)**：使用一个普通集合来创建EnumSet集合。**要求指定的Collection中的所有元素必须是同一个枚举类的枚举值**；
 - EnumSet **copyOf(EnumSet e)**：创建一个指定EnumSet具有相同元素类型、相同集合元素的EnumSet集合；
 - EnumSet **noneOf(Class elementType)**：创建一个元素类型为指定枚举类型的空EnumSet；
 - EnumSet **of(E first, E…rest)**：创建一个包含一个或多个枚举值的EnumSet集合，传入的多个枚举值必须属于同一个枚举类；
@@ -595,11 +613,11 @@ public class EnumSetTest {
 
 #### 各Set实现类的性能分析
 
-**HashSet的性能总比TreeSet好，特别是最常用的添加、查询元素等操作。因为TreeSet需要额外的红黑树算法来维护集合元素的次序。只有当需要保持排序的Set时，才应该使用TreeSet，否则都应该使用HashSet**。
+**HashSet的各方面的性能都比TreeSet好，特别是最常用的添加、查询元素等操作。因为TreeSet需要额外的红黑树算法来维护集合元素的次序。只有当需要保持排序的Set时，才应该使用TreeSet，否则都应该使用HashSet**。
 
 **LinkedHashSet是HashSet的一个子类，对于普通的插入、删除操作，LinkedHashSet比HashSet要略微慢一点，这是由维护链表所带来的额外开销所造成的，但由于有了链表，遍历LinkedHashSet会更快**。
 
-**EnumSet是所有Set实现类中性能最好的，但它只能保存同一个枚举的枚举值作为集合元素**。
+**EnumSet是所有Set实现类中性能最好的，但它只能保存同一个枚举类的枚举值作为集合元素**。
 
 **HashSet、TreeSet、EnumSet都是线程不安全的，如果有多个线程同时访问一个Set集合，并且有超过一个线程修改了该Set集合，则必须手动保证该Set集合的同步性。通常可以通过Collections工具类的synchronizedSortedSet方法来“包装”该Set集合。在创建时进行，以防对Set集合的意外非同步访问**：
 
@@ -760,7 +778,7 @@ public class ListIteratorTest {
 
 #### ArrayList和Vector实现类
 
-ArrayList和Vector都是基于数组实现的List类，所以**ArrayList和Vector类封装了一个动态的、允许再分配的Object[]数组。initialCapacity参数用来设置该数组的长度，如果向ArrayList和Vector添加大量元素时，可使用ensureCapacity(int minCapacity)方法一次性增加initialCapacity。减少重分配次数，提高性能**。
+ArrayList和Vector都是基于数组实现的List类，所以**ArrayList和Vector类封装了一个动态的、允许再分配的Object[]数组。initialCapacity参数用来设置该数组的初始长度（默认为10），如果向ArrayList和Vector添加大量元素时，可使用ensureCapacity(int minCapacity)方法一次性增加initialCapacity。减少重分配次数，提高性能**。
 
 创建空的ArrayList和Vector集合时**如果不指定initialCapacity参数，则Object[]数组的长度默认为10**。
 
@@ -779,9 +797,9 @@ Vector还提供了一个Stack子类，用于模拟栈结构，同样不推荐使
 
 #### 固定长度的List
 
-操作数组的工具类：Arrays，该工具类提供了asList(Object.. a)方法，可以把一个数组或者指定个数的对象转换成一个List集合，这个List集合既不是ArrayList实现类的实例，也不是Vector实现类的实例，而是Arrays的内部类ArrayList的实例
+**操作数组的工具类Arrays提供了`asList(Object.. a)`方法，可以把一个数组或者指定个数的对象转换成一个List集合，这个List集合既不是ArrayList实现类的实例，也不是Vector实现类的实例，而是Arrays的内部类ArrayList的实例**。
 
-Arrays.ArrayList是一个固定长度的List集合，程序只能遍历访问该集合里的元素，不可增加、删除该集合里的元素。
+**Arrays.ArrayList是一个固定长度的List集合，程序只能遍历访问该集合里的元素，不可增加、删除该集合里的元素**。
 
 ```java
 import java.util.*;
@@ -802,12 +820,12 @@ public class FixedSizeList {
 
 ### Queue集合
 
-Queue接口用于**模拟队列**这种数据结构，队列通常是指“先进先出”（FIFO）的容器。队列的头部保存在队列中存放时间最长的元素，队列的尾部保存在队列中存放时间最短的元素。**新元素插入（offer）到队列的尾部，访问元素（poll）操作会返回队列头部的元素。通常，队列不允许随机访问队列中的元素**。
+Queue接口用于**模拟队列**这种数据结构，队列通常是指“**先进先出**”（FIFO）的容器。队列的头部保存在队列中存放时间最长的元素，队列的尾部保存在队列中存放时间最短的元素。**新元素插入（offer）到队列的尾部，访问元素（poll）操作会返回队列头部的元素。通常，队列不允许随机访问队列中的元素**。
 
 Queue接口的方法：
 
-- void add(Object e)：将指定元素加入此队列的**尾部**；
-- boolean **offer(Object e)**：将指定的元素插入此队列的尾部（提供）。**当使用容量有限的队列时，此方法通常比add(Object e)有效**；
+- void **add(Object e)**：将指定元素加入此队列的**尾部**；
+- boolean **offer(Object e)**：将指定的元素插入此队列的尾部（**提供**）。**当使用容量有限的队列时，此方法通常比add(Object e)有效**；
 - Object **poll()**：返回队列头部的元素（**剪短**），并删除该元素。如果队列为空，则返回null；
 - Object **remove()**：获取队列头部的元素，并删除该元素；
 - Object **peek()**：返回队列头部的元素（**瞥一眼**），但是不删除该元素。如果队列为空，则返回null；
@@ -815,7 +833,7 @@ Queue接口的方法：
 
 #### PriorityQueue实现类
 
-Queue接口有一个PriorityQueue实现类，PriorityQueue保存队列元素的顺序不是按加入队列的顺序，而是**按队列元素的大小进行重新排序。因此当调用peek()或poll()方法取出队列中头部的元素时，并不是取出最先进入队列的元素，而是取出队列中的最小的元素**。
+Queue接口有一个PriorityQueue实现类，**PriorityQueue保存队列元素的顺序不是按加入队列的顺序，而是按队列元素的大小进行重新排序。因此当调用peek()或poll()方法取出队列中头部的元素时，并不是取出最先进入队列的元素，而是取出队列中的最小的元素**。
 
 ```java
 public class PriorityQueueTest {
@@ -838,7 +856,7 @@ public class PriorityQueueTest {
 
 #### Dueue接口与其实现类
 
-Queue还有一个Deque接口，**Deque代表一个可以同时从两端删除、添加元素双端队列**。**Deque的实现类既可当成队列使用，也可当成栈（先进后出）使用**。
+Queue还有一个Deque子接口，**Deque代表一个可以同时从两端删除、添加元素双端队列**。**Deque的实现类既可当成队列使用，也可当成栈（先进后出）使用**。
 
 Deque接口常用方法如下：
 
@@ -854,11 +872,11 @@ Deque接口常用方法如下：
 - Object pollLast()：获取并删除双端队列的最后一个元素；如果双端队列为空，则返回null；
 - Object removeFirst()：获取并删除该双端队列的第一个元素；
 - Object removeLast()：获取并删除该双端队列的最后一个元素o；
-- Object pop()（栈方法）：pop出该双端队列所表示的栈的栈顶元素。相当于removeFirst()；
-- void push(Object e)(栈方法)：将一个元素push进该双端队列所表示的栈的栈顶。相当于addFirst(e)；
+- Object **pop()（栈方法**）：pop出该双端队列所表示的栈的栈顶元素。相当于removeFirst()；
+- void **push(Object e)(栈方法)**：将一个元素push进该双端队列所表示的栈的栈顶。相当于addFirst(e)；
 - Iteratord **descendingItrator()**：返回该双端队列对应的迭代器，该迭代器以逆向顺序来迭代队列中的元素；
-- Object removeFirstOccurence(Object o)：获取并删除该双端队列的第一次出现的元素o；
-- Object removeLastOccurence(Object o)：获取并删除该双端队列的最后一次出现的元素o。
+- Object **removeFirstOccurence(Object o)**：获取并删除该双端队列的第一次出现的元素o；
+- Object **removeLastOccurence(Object o)**：获取并删除该双端队列的最后一次出现的元素o。
 
 Java为Deque提供了ArrayDeque实现类和LinkedList两个实现类。
 
@@ -959,40 +977,39 @@ public class LinkedListTest {
 
 #### 各种线性表的性能分析
 
-内部以数组为底层实现的集合在随机访问时性能都比较好，而内部以链表作为底层实现的集合在执行插入、删除操作时有较好的性能。
+**内部以数组为底层实现的集合在随机访问时性能都比较好，而内部以链表作为底层实现的集合在执行插入、删除操作时有较好的性能**。
 
-ArrayList与ArrayDeque内部以数组的形式来保存集合中的元素，因此随机访问集合元素时性能较好；LinkedList内部以链表的形式来保存集合中的元素，因此随机访问集合元素时性能较差，但在插入、删除元素时性能比较出色（只需改变指针所指的地址即可）。Vector也是以数组的形式来存储集合元素的，但因为它实现了线程同步功能（而且实现机制也不好），所以各方面性能都比较差。
-
-总体来说，ArrayList的性能比LinkedList的性能要好，因此大部分时候都应该考虑使用ArrayList。
+ArrayList内部以数组的形式来保存集合中的元素，因此随机访问集合元素时性能较好，而插入、删除操作需要移动操作位置后面的所有元素，所以性能较差；LinkedList内部以链表的形式来保存集合中的元素，因此随机访问集合元素时性能较差，但在插入、删除元素时性能比较出色（只需改变所指的地址即可）。Vector也是以数组的形式来存储集合元素的，但因为它实现了线程同步功能（而且实现机制也不好），所以各方面性能都比较差。
 
 使用List集合的建议：
 
-- 如果需要遍历List集合元素，对于ArrayList、Vector集合，应该使用随机访问方法（get）来遍历集合元素，这样性能更好；对于LinkedList集合，则应该采用迭代器来遍历集合；
-- 如果需要经常执行插入、删除操作来改变包含大量数据的List集合的大小，可考虑使用LinkedList集合。使用ArrayList、Vector集合可能需要经常重新分配内部数组的大小，效果可能较差；
-- 如果有多个线程需要访问List集合中的元素，开发者可考虑使用Collections将集合包装成线程安全的集合。
+- **如果需要遍历List集合元素，对于ArrayList、Vector集合，应该使用随机访问方法（get）来遍历集合元素，这样性能更好；对于LinkedList集合，则应该采用迭代器（Iterator）来遍历集合**；
+- **如果需要经常执行插入、删除操作来改变包含大量数据的List集合的大小，可考虑使用LinkedList集合。使用ArrayList、Vector集合可能需要经常重新分配内部数组的大小，效果可能较差**；
+- 如果有多个线程需要访问List集合中的元素，可考虑使用Collections将集合包装成线程安全的集合或者手动加锁。
+- **总体来说，ArrayList的性能比LinkedList的性能要好，因此大部分时候都应该考虑使用ArrayList**。
 
 ### Map集合
 
-**Map集合用于保存具有映射关系的数据。Map集合中的元素用Map.Entry内部接口对象表示，每个Map.Entry对象保存着一组key：value对，key和value都可以是任何引用类型的数据对象**。
+**Map集合用于保存具有映射关系的数据。Map集合中的元素用Map.Entry内部接口对象表示，每个Map.Entry对象保存着一组key-value对，key和value都可以是任何引用类型的数据对象**。
 
-![maps](/appendix/maps.png)
+![map_diagram](/appendix/map_diagram.png)
 
 **Map里的key像Set里的元素一样不可重复，实际上，Java先实现了Map，然后通过包装了一个所有value都为null的Map就实现了Set。Map也包含了一个keySet()方法，用于返回Map里所有的key组成的Set集合**。
 
 Map接口常用方法如下：
 
-- V put(K key, V value)：向该Map集合中添加一个key-value对。如果该Map集合中已经有一个与要添加的key相等的key，则新的key-value对的value会覆盖原来的value，该方法会返回被覆盖的value；
-- void putAll(Map<? extends K, ? extends V> m)：将指定Map中的key-value对全部添加到该Map集合中；
-- V remove(Object key)：删除指定key对应的key-value对，返回被删除key所关联的value值。如果该Map集合中不存在指定的key，则返回null；
-- void clear()：清空该Map集合，使其大小为0；
-- boolean isEmpty()：判断该Map集合是否为空；
-- boolean containsKey(Object key)：判断该Map集合中是否包含指定的key；
-- boolean containsValue(Object value)：判断该Map集合中是否包含指定的一个或多个value；
-- int size()：返回该Map集合中key-value对的数量；
-- Collection\<V> values()：返回该Map集合中所有value组成的Collection；
-- Set\<Map.Entry\<K, V>> entrySet()：返回该Map结合中所有Map.Entry对像组成的Set集合；
-- Set\<K> keySet()：返回该Map结合中所有key组成的Set集合；
-- V **get(Object key)**：返回该Map集合中指定key对应的value。如果该Map集合中没有对应的key，则返回null。
+- `V put(K key, V value)`：向该Map集合中添加一个key-value对。如果该Map集合中已经有一个与要添加的key相等的key，则新的key-value对的value会覆盖原来的value，该方法会返回被覆盖的value；
+- `void putAll(Map<? extends K, ? extends V> m)`：将指定Map中的key-value对全部添加到该Map集合中；
+- `V remove(Object key)`：删除指定key对应的key-value对，返回被删除key所关联的value值。如果该Map集合中不存在指定的key，则返回null；
+- `void clear()`：清空该Map集合，使其大小为0；
+- `boolean isEmpty()`：判断该Map集合是否为空；
+- `boolean containsKey(Object key)`：判断该Map集合中是否包含指定的key；
+- `boolean containsValue(Object value)`：判断该Map集合中是否包含指定的一个或多个value；
+- `int size()`：返回该Map集合中key-value对的数量；
+- `Collection<V> values()`：返回该Map集合中所有value组成的Collection；
+- `Set<Map.Entry<K, V>> entrySet()`：返回该Map结合中所有Map.Entry对像组成的Set集合；
+- `Set<K> keySet()`：返回该Map结合中所有key组成的Set集合；
+- `V get(Object key)`：返回该Map集合中指定key对应的value。如果该Map集合中没有对应的key，则返回null。
 
 Map接口常见方法测试实例。
 
@@ -1029,17 +1046,17 @@ public class MapTest {
 
 Java 8为Map新增了许多默认方法：
 
-- default V putIfAbsent(K key, V value)：当该Map集合中与指定的key对应的value为null时才使用指定的value代替原来的null值。该方法返回原来不为null的value或新的value；
-- default boolean remove(Object key, Object value)：删除与指定的key-value对匹配的key-value对；
-- default V replace(K key, V value)：将该Map集合中指定的key对应的value替换成新的指定的value，并返回之前的value。如果指定的key不存在，则返回null；
-- default boolean replace(K key, V oldValue, V newValue)：将该Map中指定的key-value对中的value替换成新的value。如果找不到指定的key-value对，则返回false，也不会添加新的key-value对；
-- default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function)：使用给定的BiFunction对该Map集合中所有的key-value对执行计算，将计算得到的新的key-value对替换原来的key-value对；
-- default V compute(K key,BiFunction<? super K, ? super V, ? extends V>remappingFunction)：使用给定的BiFunction对该Map集合中所有的key-value对进行计算，只要计算得到的value不为null，就使用新的value覆盖原来的value。如果原来的value不为null，计算得到的新value为null，则删除原来key-value对。如果原value和新value同为null，那么该方法不改变任何key-value对，直接返回null；
-- default V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) ：如果该Map集合中指定的key对应的value为null，则使用给定的BiFunction根据key计算一个新的value来覆盖原来值为null的value。如果该Map集合不包含指定的key，那么该方法将会添加一个新的key-value对；
-- default V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction)：如果该Map中指定的key对应的value不为null，该方法将使用给定的BiFunction根据给定的key计算出一个新的value，如果新的value不为null，则使用新的value覆盖原来的value。如果新的value为null，则删除原来的key-value对；
-- default void forEach(BiConsumer<? super K, ? super V> action)：通过该方法指定的BiConsumer对所有Map.Entry指定指定的操作；
-- default V getOrDefault(Object key, V defaultValue)：返回指定的key对象的value，如果找不到指定的key就返回默认的value；
-- default V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction)：该方法会先获取给定的key对应的value，如果获取的value为null，则直接使用给定的value替换原来值为null的value，如果获取的value不为null，则使用给定的BiFunction计算一个新的value，如果给定的value或计算得到的value为null，则删除这个key-value对，否则添加一组的key-value对。
+- `default V putIfAbsent(K key, V value)`：当该Map集合中**指定的key对应的value为null时**才使用指定的value代替原来的null值。该方法**返回原来不为null的value或新添加的value**；
+- `default boolean remove(Object key, Object value)`：删除与指定的key-value对匹配的key-value对；
+- `default V replace(K key, V value)`：将该Map集合中指定的key对应的value替换成新的指定的value，并返回之前的value。**如果指定的key不存在，则返回null**；
+- `default boolean replace(K key, V oldValue, V newValue)`：将该Map中指定的key-value对中的value替换成新的value。**如果找不到指定的key-value对，则返回false，也不会添加新的key-value对**；
+- `default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function)`：使用给定的BiFunction**对该Map集合中所有的key-value对执行计算，将计算得到的新的key-value对替换原来的key-value对**；
+- `default V compute(K key, BiFunction<? super K, ? super V, ? extends V>remappingFunction)`：使用给定的BiFunction对该Map集合中所有的key-value对进行计算，**只要计算得到的value不为null，就使用新的value覆盖原来的value。如果原来的value不为null，计算得到的新value为null，则删除原来key-value对。如果原value和新value同为null，那么该方法不改变任何key-value对，直接返回null**；
+- `default V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction)` ：如果该Map集合中指定的key对应的value为null，则使用给定的BiFunction**根据给定的key计算一个新的value来覆盖原来值为null的value。如果该Map集合不包含指定的key，那么该方法将会添加一个新的key-value对**；
+- `default V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction)`：如果该Map中指定的key对应的value不为null，该方法将使用给定的BiFunction**根据给定的key计算出一个新的value，如果新的value不为null，则使用新的value覆盖原来的value。如果新的value为null，则删除原来的key-value对**；
+- `default void forEach(BiConsumer<? super K, ? super V> action)`：通过该方法可以简洁地遍历Map中所有的key-value对，同时执行自定义的操作；
+- `default V getOrDefault(Object key, V defaultValue)`：返回指定的key对象的value，如果找不到指定的key就返回默认的value；
+- `default V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction)`：该方法会先获取给定的key对应的value，如果获取的value为null，则直接使用给定的value替换原来值为null的value，如果获取的value不为null，则使用给定的BiFunction计算一个新的value，如果给定的value或计算得到的value为null，则删除这个key-value对，否则添加一组的key-value对。
 
 默认方法测试实例。
 
@@ -1070,11 +1087,11 @@ public class MapTest2 {
 }
 ```
 
-#### HashMap和HashTable实现类
+#### HashMap和Hashtable实现类
 
-**HashMap和HashTable都是Map接口的典型实现类，他们之间的关系完全类似于ArrayList和Vector之间的关系，所以不建议使用HashTable**。
+**HashMap和Hashtable都是Map接口的典型实现类，它们之间的关系完全类似于ArrayList和Vector之间的关系，所以不建议使用Hashtable**。
 
-为了成功地在HashMap中存取、获取对象，应该为用作key的对象重写hashCode()和equals()方法，使两者返回一直的结果：即两个key通过equals()方法比较返回true，那么这两个key的hashCode()方法的返回值也应该相等。
+**为了成功地在HashMap中存取、获取对象，应该为用作key的类重写hashCode()和equals()方法，使两者返回一致的结果：即两个key通过equals()方法比较返回true，那么这两个key的hashCode()方法的返回值也应该相等**。
 
 与HashSet类似的是，如果使用可变对象作为HashMap的key，并且程序修改了作为key的可变对象，则也可能出现与HashSet类似的情形：程序再也无法准确访问到Map中被修改过的key了。建议**尽量不要使用可变对象作为HashMap的key，就算需要使用可变对象作为HashMap的key，也不要修改作为key的可变对象**。
 
@@ -1082,16 +1099,16 @@ public class MapTest2 {
 
 **Properties类是Hashtable类的子类，用于处理属性文件。Properties类可以把Map对象和属性文件关联起来，从而可以把Map对象中的key-value对写入属性文件，也可以把属性文件中的“属性名=属性值”加载到Map对象中。由于属性文件里的属性名、属性值只能是字符串类型，所以Properties里的key、value都是字符串类型**。
 
-修改Properties里的key、value值的方法
+操作Properties里的key、value值的方法：
 
-- String getProperty(String key)：获取Properties中指定属性名对应的属性值，类似于Map的get(Object key)方法
-- String getProperty(String key, String defaultValue)：该方法与前一个方法基本类似。该方法多一个功能，如果Properties中不存在指定key时，该方法返回默认值
-- Object geProperty(String key、String value)：设置属性值，类似Hashtable的put方法
+- String `getProperty(String key)`：获取Properties中指定属性名对应的属性值，类似于Map的get(Object key)方法；
+- String `getProperty(String key, String defaultValue)`：该方法与前一个方法基本类似。该方法多一个功能，如果Properties中不存在指定key时，该方法返回默认值；
+- Object `seProperty(String key、String value)`：设置属性值，类似Hashtable的put方法。
 
 读、写属性文件的方法：
 
-- void load(InputStream inStream)：从属性文件（以输入流表示）中加载属性名=属性值，把加载到的属性名=属性值对追加到Properties里（由于Properties是Hashtable)的子类，它不保证key-value对之间的次序）
-- void Store(OutputStream out, String comment)：将Properties中的key-valu对写入指定属性文件（以输出流表示）
+- void `load(InputStream inStream)`：从属性文件（以输入流表示）中加载属性名=属性值，把加载到的属性名=属性值对追加到Properties里（由于Properties是Hashtable)的子类，它不保证key-value对之间的次序）；
+- void `store(OutputStream out, String comment)`：将Properties中的key-valu对写入指定属性文件（以输出流表示），还可以向属性文件的顶部添加一行以`#`开头的注释（不需要手动加#）。
 
 ```java
 public class PropertiesTest {
@@ -1102,14 +1119,13 @@ public class PropertiesTest {
         props.setProperty("username" , "LeBron");
         props.setProperty("teams" , "Cavaliers");
         // 将Properties中的key-value对保存到a.ini文件中
-        props.store(new FileOutputStream("NBA.ini")
-            , "comment line");
+        props.store(new FileOutputStream("NBA.ini"), "comment line");
         // 新建一个Properties对象
         Properties props2 = new Properties();
         // 向Properties中增加属性
         props2.setProperty("gender" , "male");
         // 将a.ini文件中的key-value对追加到props2中
-        props2.load(new FileInputStream("NBA.ini") ); 
+        props2.load(new FileInputStream("NBA.ini")); 
         System.out.println(props2);
     }
 }
@@ -1117,41 +1133,40 @@ public class PropertiesTest {
 
 #### LinkedHashMap实现类
 
-类似于LinkedHashSet与HashSet的关系，**LinkedHashMap是HashMap的子类**。LinkedHashMap也使用双向链表来维护kye-value对的次序（只需要考虑key的次序即可），迭代顺序与key-value对的添加顺序保持一致。
+类似于LinkedHashSet与HashSet的关系，**LinkedHashMap是HashMap的子类。LinkedHashMap也使用双向链表来维护key-value对的次序（只需要考虑key的次序即可），迭代顺序与key-value对的添加顺序保持一致**。
 
-LinkedHashMap需要维护元素的顺序，因此性能略低于HashMap，但它的链表结构在迭代访问时有很好的性能。
+**LinkedHashMap需要维护元素的顺序，因此性能略低于HashMap，但它的链表结构在迭代访问时有很好的性能**。
 
 #### TreeMap实现类
 
 正如Set接口派生出SortedSet子接口，SortedSet接口有一个TreeSet实现类一样，**Map接口也派生出一个SortedMap子接口，SortedMap接口也有一个TreeMap实现类**。
 
-**TreeMap就是一个红黑树数据结构，每个key-value对即作为红黑树的一个节点。TreeMap存储key-value对时，需要根据key对节点进行排序。TreeMap可以保证所有的key-value对处于有序状态**。TreeMap也有两种排序方式：
+**TreeMap是一个红黑树数据结构，每个key-value对即作为红黑树的一个节点。TreeMap存储key-value对时，需要根据key对节点进行排序。TreeMap可以保证所有的key-value对处于有序状态**。TreeMap也有两种排序方式：
 
-1. 自然排序：**TreeMap的所有key必须实现Comparable接口，而且所有的key应该是同一个类的对象，否则将会抛出ClassCastException异常**。
-2. 定制排序：创建TreeMap时，传入一个Comparator对象，该对象负责对TreeMap中的所有key进行排序。采用定制排序不需要Map的key实现Comparable接口。
+1. 自然排序：**TreeMap的所有key必须实现Comparable接口，而且所有的key应该是同一个类的对象，否则将会抛出ClassCastException异常**；
+2. 定制排序：**创建TreeMap时，传入一个Comparator对象，该对象负责对TreeMap中的所有key进行排序。采用定制排序不需要Map的key实现Comparable接口**。
 
-类似于TreeSet中判断两个元素相等的标准，TreeMap中判断两个key相等的标准是：两个key通过compareTo()方法返回0。与TreeSet类似的是，TreeMap中也提供了一系列根据key顺序访问key-value对的方法：
+类似于TreeSet中判断两个元素相等的标准，**TreeMap中判断两个key相等的标准是：两个key通过compareTo()方法返回0**。与TreeSet类似的是，TreeMap中也提供了一系列根据key顺序访问key-value对的方法：
 
-- Map.Entry\<K,V> firstEntry()：返回一个与此映射中的最小键关联的键-值映射关系；如果映射为空，则返回 null；
-- Map.Entry\<K,V> lastEntry()返回与此映射中的最大键关联的键-值映射关系；如果映射为空，则返回 null；
-  - Map.Entry\<K,V> higherEntry(K key)：返回一个键-值映射关系，它与严格大于给定键的最小键关联；如果不存在这样的键，则返回 null；
-- Map.Entry\<K,V> lowerEntry(K key)返回一个键-值映射关系，它与严格小于给定键的最大键关联；如果不存在这样的键，则返回 null；
-- K firstKey()：返回此映射中当前第一个（最低）键，如果映射为空，则返回 null；
-- K lastKey()：返回此映射中当前最后一个（最高）键，如果映射为空，则返回 null；
-- K higherKey(K key)：返回严格大于给定键的最小键；如果不存在这样的键，则返回 null；
-- K lowerKey(K key)：返回严格小于给定键的最大键；如果不存在这样的键，则返回 null；
-- NavigableMap\<K,V> subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)：返回该Map的子Map，其key范围是从fromKey(是否包括取决于第二个参数)到toKey(是否包括取决于第四个参数)；
-- SortedMap\<K,V> subMap(K fromKey, K toKey)：返回此Map的子Map，其key范围是从fromKey(包括)到toKey(不包括)；
-- SortedMap\<K,V> tailMap(K fromKey)：返回该Map的子Map，其key的范围是大于fromKey(包括)的所有key；
-- NavigableMap\<K,V> tailMap(K fromKey, boolean inclusive)：返回该Map的子Map，其key的范围是大于fromKey(是否包括取决于第二个参数)的所有key；
-- SortedMap\<K,V> headMap(K toKey)：返回该Map的子Map，其key的范围是小于toKey（不包括）的所有key；
-- NavigableMap\<K,V> headMap(K toKey, boolean inclusive)：返回该Map的子Map，其key的范围是小于toKey（是否包括取决于第二个参数）的所有key。
+- `Map.Entry<K,V> firstEntry()`：返回一个与该Map中的最小的key对应的key-value对。如果该Map为空，则返回 null；
+- `Map.Entry<K,V> lastEntry()`：返回与此映射中的最大key关联的key-value映射关系。如果映射为空，则返回 null；
+- `Map.Entry<K,V> higherEntry(K key)`：返回一个key-value对，它与严格大于给定key的最小key关联。如果不存在这样的key，则返回 null；
+- `Map.Entry<K,V> lowerEntry(K key)`：返回一个key-value对，它与严格小于给定key的最大key关联。如果不存在这样的key，则返回 null；
+- `K firstKey()`：返回该Map中当前第一个（最低）key，如果该Map为空，则返回 null；
+- `K lastKey()`：返回该Map中当前最后一个（最高）key，如果该Map为空，则返回 null；
+- `K higherKey(K key)`：返回严格大于给定key的最小key。如果不存在这样的key，则返回 null；
+- `K lowerKey(K key)`：返回严格小于给定key的最大key，如果不存在这样的key，则返回 null；
+- `NavigableMap<K,V> subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)`：返回该Map的子Map，其key范围是从fromKey(是否包括取决于第二个参数)到toKey(是否包括取决于第四个参数)；
+- `SortedMap<K,V> subMap(K fromKey, K toKey)`：返回该Map的子Map，其key范围是从fromKey(包括)到toKey(不包括)；
+- `SortedMap<K,V> tailMap(K fromKey)`：返回该Map的子Map，其key的范围是大于fromKey(包括)的所有key；
+- `NavigableMap<K,V> tailMap(K fromKey, boolean inclusive)`：返回该Map的子Map，其key的范围是大于fromKey(是否包括取决于第二个参数)的所有key；
+- `SortedMap<K,V> headMap(K toKey)`：返回该Map的子Map，其key的范围是小于toKey（不包括）的所有key；
+- `NavigableMap<K,V> headMap(K toKey, boolean inclusive)`：返回该Map的子Map，其key的范围是小于toKey（是否包括取决于第二个参数）的所有key。
 
 TreeMap常用方法测试实例。
 
 ```java
 class R implements Comparable{
-
     int count;
 
     public R(int count) {
@@ -1215,9 +1230,9 @@ R [count=-5]
 
 #### WeakHashMap实现类
 
-WeakHashMap与HashMap的用法基本相同，区别在于：后者的key保留对象的强引用，即只要HashMap对象不被销毁，其对象所有key所引用的对象不会被垃圾回收，HashMap也不会自动删除这些key所对应的键值对对象。但**WeakHashMap的key只保留了对象的弱引用，如果WeakHashMap对象的key所引用的对象没有被其他强引用变量所引用，则这些key所引用的对象可能被回收，一旦回收了，WeakHashMap会自动删除这些key所对应的key-value对**。
+**WeakHashMap与HashMap的用法基本相同**，区别在于：后者的key保留对象的强引用，即只要HashMap对象不被销毁，其对象所有key所引用的对象不会被垃圾回收，HashMap也不会自动删除这些key所对应的键值对对象。**只是WeakHashMap的key只保留了对象的弱引用，如果WeakHashMap对象的key所引用的对象没有被其他强引用变量所引用，则这些key所引用的对象可能被回收，一旦回收了，WeakHashMap会自动删除这些key所对应的key-value对**。
 
-如果需要使用WeakHashMap的key来保留对象的弱引用，则不要让该key所引用的对象具有任何强引用，否则就失去了使用WeakHashMap的意义。
+**如果需要使用WeakHashMap的key来保留对象的弱引用，则不要让该key所引用的对象具有任何强引用，否则就失去了使用WeakHashMap的意义**。
 
 #### IdentityHashMap类
 
@@ -1232,11 +1247,11 @@ IdentityHashMap与HashMap基本相似，**只是当两个key严格相等时，�
 
 #### 各Map实现类的性能分析
 
-由于TreeMap底层采用红黑树来管理key-value对的顺序，所以TreeMap通常比HashMap要慢（尤其在插入、删除key-value对时更慢）。
+**由于TreeMap底层采用红黑树来管理key-value对的顺序，所以TreeMap通常比HashMap要慢，尤其在插入、删除时更慢**。
 
-TreeMap可以保证key-value对的顺序，无须进行专门的排序操作。可以依次通过keySet()方法返回key的Set集合，在使用toArray()方法来返回key的数组，然后再使用Arrays.binarySearch()方法在已排序好的数组快速查找对象。
+**TreeMap可以保证key-value对的顺序，无须进行专门的排序操作。可以依次通过keySet()方法返回key的Set集合，在使用toArray()方法来返回key的数组，然后再使用Arrays.binarySearch()方法在已排序好的数组快速查找对象**。
 
-**一般情况下，应多考虑使用HashMap，因为HashMap就是为快速查询设计的**（HashMap底层也是数组形式）。但**如果程序需要一个排序好的Map时，可以考虑使用TreeMap**。
+**一般情况下，应多考虑使用HashMap，因为HashMap就是为快速查询设计的（HashMap底层也是数组形式）。但如果程序需要一个排序好的Map时，可以考虑使用TreeMap**。
 
 **LinkedHashMap的随机查找性能比HashMap慢一点，因为它需要维护链表来保持key-value对的顺序。但是LinkedHashMap的插入、删除操作很快**。
 
@@ -1246,12 +1261,12 @@ Java提供了一个操作Set、List和Map等集合的Collections工具类。**Co
 
 #### 排序操作
 
-- void reverse(List list)：反转指定List集合中元素的顺序；
-- void shuffle(List list)：对List集合元素进行随机排序（shuffle方法模拟了“洗牌”动作）；
-- void sort(List list)：根据元素的自然顺序对指定List集合的元素按升序进行排序；
-- void sort(List list, Comparator c)：根据指定Comparator比较器产生的顺序对List集合元素进行排序；
-- void swap(List list, int i, int j)：在指定List集合中的i处元素和j处元素进行交换；
-- void rotate(List list, int distance)：当distance为正数时，将List集合的后distance个元素“整体”移到前面；当distance为负数时，将list集合的前distance个元素“整体”移到后边。该方法不会改变集合的长度。
+- void **reverse(List list)**：反转指定List集合中元素的顺序；
+- void **shuffle(List list)**：对List集合元素进行随机排序（shuffle方法模拟了“洗牌”动作）；
+- void **sort(List list)**：根据元素的自然顺序对指定List集合的元素按升序进行排序；
+- void **sort(List list, Comparator c)**：根据指定Comparator比较器产生的顺序对List集合元素进行排序；
+- void **swap(List list, int i, int j)**：在指定List集合中的i处元素和j处元素进行交换；
+- void **rotate(List list, int distance)**：当distance为正数时，将List集合的后distance个元素“整体”移到前面；当distance为负数时，将list集合的前distance个元素“整体”移到后边。该方法不会改变集合的长度。
 
 ```java
 public class SortTest {
@@ -1270,21 +1285,20 @@ public class SortTest {
         System.out.println(nums); // 每次输出的次序不固定
     }
 }
-
 ```
 
 #### 查找、替换操作
 
-- int binarySearch(List list, Object key)：使用二分搜索法搜索指定列表，以获得指定对象在List集合中的索引。 此前必须保证List集合中的元素已经处于有序状态；
-- Object max(Collection coll)：根据元素的自然顺序，返回给定collection中的最大元素；
-- Object max(Collection coll, Comparator comp)：根据指定Comparator比较器产生的顺序，返回给定collection中的最大元素；
-- Object min(Collection coll)：根据元素的自然顺序，返回给定collection中的最小元素；
-- Object min(Collection coll, Comparator comp)：根据指定Comparator比较器产生的顺序，返回给定 collection中的最小元素；
-- void fill(List list, Object obj)：使用指定元素obj替换指定List集合中的所有元素；
-- int frequency(Collection c, Object o)：返回指定collection中指定元素的出现次数；
-- int indexOfSubList(List source, List target)：返回子List对象在父List对象中第一次出现的位置索引；如果没有出现这样的列表，则返回-1；
-- int lastIndexOfSubList(List source, List target)：返回子List对象在父List对象中最后一次出现的位置索引；如果没有出现这样的列表，则返回-1；
-- boolean replaceAll(List list, Object oldVal, Object newVal)：使用一个新值newVal替换List对象的所有旧值oldVal。
+- int **binarySearch(List list, Object key)**：使用二分搜索法搜索指定列表，以获得指定对象在List集合中的索引。 此前必须保证List集合中的元素已经处于有序状态；
+- Object **max(Collection coll)**：根据元素的自然顺序，返回给定collection中的最大元素；
+- Object **max(Collection coll, Comparator comp)**：根据指定Comparator比较器产生的顺序，返回给定collection中的最大元素；
+- Object **min(Collection coll)**：根据元素的自然顺序，返回给定collection中的最小元素；
+- Object **min(Collection coll, Comparator comp)**：根据指定Comparator比较器产生的顺序，返回给定 collection中的最小元素；
+- void **fill(List list, Object obj)**：使用指定元素obj替换指定List集合中的所有元素；
+- int **frequency(Collection c, Object o)**：返回指定collection中指定元素的出现次数；
+- int **indexOfSubList(List source, List target)**：返回子List对象在父List对象中第一次出现的位置索引；如果没有出现这样的列表，则返回-1；
+- int **lastIndexOfSubList(List source, List target)**：返回子List对象在父List对象中最后一次出现的位置索引；如果没有出现这样的列表，则返回-1；
+- boolean **replaceAll(List list, Object oldVal, Object newVal)**：使用一个新值newVal替换List对象的所有旧值oldVal。
 
 ```java
 public class SearchTest {
@@ -1314,12 +1328,12 @@ public class SearchTest {
 
 **Collectons提供了多个synchronizedXxx()静态方法，该方法可以将指定集合包装成线程同步的集合**，从而解决多线程并发访问集合时的线程安全问题
 
-Java常用的集合框架中的实现类HashSet、TreeSet、ArrayList、LinkedList、HashMap、TreeMap都是线程不安全的。Collections提供了多个静态方法可以把他们包装成线程同步的集合。
+**Java常用的集合框架中的实现类HashSet、TreeSet、ArrayList、LinkedList、HashMap、TreeMap都是线程不安全的。Collections提供了多个静态方法可以把他们包装成线程同步的集合**。
 
-- Collection synchronizedCollection(Collection c)：返回指定collection支持的同步（线程安全的）collection
-- List synchronizedList(List list)：返回指定List支持的同步（线程安全的）List
-- Map synchronizedMap(Map m)：返回由指定Map支持的同步（线程安全的）Map
-- Set synchronizedSet(Set s)：返回指定Set支持的同步（线程安全的）Set
+- Collection **synchronizedCollection(Collection c)**：返回指定collection支持的同步（线程安全的）collection；
+- List **synchronizedList(List list)**：返回指定List支持的同步（线程安全的）List；
+- Map **synchronizedMap(Map m)**：返回由指定Map支持的同步（线程安全的）Map；
+- Set **synchronizedSet(Set s)**：返回指定Set支持的同步（线程安全的）Set。
 
 ```java
 public class SynchronizedTest {
@@ -1339,11 +1353,11 @@ public class SynchronizedTest {
 
 Collections提供了如下三个方法来返回一个不可变集合：
 
-- emptyXxx()：返回一个空的、不可变的集合对象，此处的集合既可以是List、SortedSet、Set、SortedMap、Map；
-- singletonXxx()：返回一个只包含指定对象（只有一个或一个元素）的、不可变的集合对象，此处的集合可以是List和Map；
-- unmodifiableXxx()：返回指定集合对象的不可变视图，此处的集合可以是：List、SortedSet、Set、SortedMap、Map。
+- **emptyXxx()：返回一个空的、不可变的集合对象**。此处的集合既可以是List、SortedSet、Set、SortedMap、Map；
+- **singletonXxx()：返回一个只包含指定单个元素的不可变的集合对象**。此处的集合可以是List和Map；
+- **unmodifiableXxx()：返回指定集合对象的不可变视图**。此处的集合可以是List、SortedSet、Set、SortedMap、Map。
 
-通过上面Collections提供的三类方法，可以生成“只读”的Collection或Map
+上面三个方法的参数都是原有集合对象，生成的是原有集合对象的“只读”版本。
 
 ```java
 public class UnmodifiableTest {

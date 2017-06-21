@@ -4,23 +4,23 @@ typora-root-url: ..\Others
 ---
 
 ###**进程和线程**
-**进程（Process）**：**表示每个独立运行的计算机程序**，包含了需要执行的指令；**进程有自己的独立地址空间，有各自的资源和状态信息，不同进程的地址空间是互相隔离的，进程间的切换开销大。在没有本进程允许的情况下，一个用户进程不能访问其他进程的地址空间；多个进程可以在单个处理器上并发轮换（不是并行地同时运行）执行而互不影响**。由于CPU速度极快，用户感觉不到程序是轮换执行的，但如果处理器性能不足时，则会出现卡顿。
+**进程（Process）**：**表示每个独立运行的计算机程序**，包含了需要执行的指令；**进程有自己的独立地址空间，有各自的资源和状态信息，不同进程的地址空间是互相隔离的，在没有本进程允许的情况下，一个用户进程不能访问其他进程的地址空间，进程间的切换开销大。多个进程可以在单个处理器上并发轮换（不是并行地同时运行）执行而互不影响**。由于CPU速度极快，用户感觉不到程序是轮换执行的，但如果处理器性能不足时，则会出现卡顿。
 
-**线程（Thread）**：表示**程序的执行流程，是CPU调度执行的基本单位**；**线程是进程的组成部分，一个进程至少有一个线程（即主线程），但线程只有一个父进程；线程有自己的程序计数器、局部变量和堆栈，但不拥有系统资源，而是和父进程中的其他线程共享父进程所拥有的全部资源，包括父进程锁拥有的内存**。
+**线程（Thread）**：表示**程序的执行流程，是CPU调度执行的基本单位**；**线程是进程的组成部分，一个进程至少有一个线程（即主线程），但线程只有一个父进程；线程有自己的程序计数器、局部变量和堆栈，但不拥有系统资源，而且和父进程中的其他线程共享父进程所拥有的全部资源，包括父进程锁拥有的内存**。
 
 **操作系统可以同时运行多个程序，每个程序至少并发执行一个进程，每个进程至少并发执行一个线程**。
 
 > 并发性(concurrency)与并行性(parallel)
 >
-> - 并发：在同一时刻，只能有一条指令得到执行，但多个进程指令块快速轮换执行，使得在宏观上具有多个进程同时执行的效果。
+> - 并发：在同一时刻，只能有一条指令得到执行，但多个进程指令快速轮换执行，使得在宏观上具有多个进程同时执行的效果。
 > - 并行：在同一时刻，有多条指令在多个处理器上同时执行。
 
 ###**实现多线程的三种方式**
 ####**继承Thread类实现多线程**
 Java使用Thread类代表线程。继承Thread类实现多线程的步骤如下：
 
-    1. **继承Thread类，重写其run()方法来定义该线程的将要执行的任务**；
-    2. **创建自定义线程类的实例，然后调用线程对象的start()方法启动该线程**。
+1. **继承Thread类，重写其run()方法来定义该线程的将要执行的任务**；
+2. **创建自定义线程类的实例，然后调用线程对象的start()方法启动该线程**。
 
 **start()方法是一个native方法，它将启动一个新线程，并执行run()方法。但Thread类本质上也是实现了Runnable接口的一个实例，它代表一个线程的实例，并且，启动线程的唯一方法就是通过Thread类的start()实例方法**。Thread类的声明如下：
 
@@ -112,9 +112,9 @@ public class FirstThread extends Thread {
 
 实现Runnable接口方式实现多线程的步骤：
 
-    1. 定义Runnable接口的实现类，并实现其中的run()方法。
-    2. 创建Runnable实现类的实例，将**该实例作为Thread类构造器的target参数来创建Thread对象，该Thread对象才是真正的线程对象**。
-    3. 调用Thread对象的start()方法启动线程。
+1. 定义Runnable接口的实现类，并实现其中的run()方法。
+2. 创建Runnable实现类的实例，将**该实例作为Thread类构造器的target参数来创建Thread对象，该Thread对象才是真正的线程对象**。
+3. 调用Thread对象的start()方法启动线程。
 
 示例： 
 ```java
@@ -145,7 +145,7 @@ public class SecondThread implements Runnable {
 > 由于Runnable对象只是Thread类的target，多个线程共享一个target，所以多个线程可以共享一个线程类的实例变量。
 
 ####**使用ExecutorService、Callable、Future实现有返回结果的多线程** 
-Java5提供了一个Callable接口（函数式接口），实现该接口的call()方法作为线程执行体，该方法不仅有返回值，而且可以声明抛出异常。同时，Java5提供了一个Future接口来代表Callable接口call()方法的返回值，Future接口有一个实现类FutureTask类，该类同时实现了Runnable接口。所以可以将FutureTask类对象作为call()方法的返回值传入Thread类的target参数来创建线程对象。Future接口里定义一下几个公共方法来控制它关联的Callable任务：
+**Java 5提供了一个Callable接口（函数式接口），实现该接口的call()方法作为线程执行体，该方法不仅有返回值，而且可以声明抛出异常。同时，Java5提供了一个Future接口来代表Callable接口call()方法的返回值，Future接口有一个实现类FutureTask类，该类同时实现了Runnable接口。所以可以将FutureTask类对象作为call()方法的返回值传入Thread类的target参数来创建线程对象**。Future接口里定义一下几个公共方法来控制它关联的Callable任务：
 
 -  boolean cancel(boolean mayInterruptIfRunning) ：试图取消该Future关联的Callable任务的执行； 
 -  V get() ：返回Callable任务里call()方法的返回值。此方法会阻塞，必须等待子线程结束后才能获得返回值。 
@@ -154,26 +154,25 @@ Java5提供了一个Callable接口（函数式接口），实现该接口的call
 -  boolean isDone() ：如果Callable任务已完成，则返回 true。一旦返回为ture，则不能返回使用cancel方法了。
 
 **FutureTask类**
-public class FutureTask&lt;V>extends Objectimplements RunnableFuture&lt;V>
-此类提供了对 Future 的基本实现。仅在计算完成时才能获取结果；如果计算尚未完成，则阻塞 get 方法。一旦计算完成，就不能再重新开始或取消计算。可使用 FutureTask 包装 Callable 或 Runnable 对象。因为 FutureTask 实现了 Runnable接口，所以可将 FutureTask 提交给 Executor 执行。 
+`public class FutureTask<V>extends Object implements Runnable Future<V>`：此类提供了对 Future 的基本实现。**仅在计算完成时才能获取结果；如果计算尚未完成，则阻塞 get 方法。一旦计算完成，就不能再重新开始或取消计算。可使用 FutureTask 包装 Callable 或 Runnable 对象。因为 FutureTask 实现了 Runnable接口，所以可将 FutureTask 提交给 Executor 执行**。 
 
 构造方法摘要 ：
 
-- FutureTask(Callable&lt;V> callable) ：创建一个 FutureTask，一旦运行就执行给定的 Callable。 
-- FutureTask(Runnable runnable, V result) ：创建一个 FutureTask，一旦运行就执行给定的 Runnable，并安排成功完成时 get 返回给定的结果 。 
+- `FutureTask(Callable<V> callable)` ：创建一个 FutureTask，一旦运行就执行给定的 Callable。 
+- `FutureTask(Runnable runnable, V result)` ：创建一个 FutureTask，一旦运行就执行给定的 Runnable，并安排成功完成时 get 返回给定的结果 。 
 
 除了作为一个独立的类外，此类还提供了 protected 功能，这在创建自定义任务类时可能很有用：
 
-- boolean runAndReset() ： 执行计算而不设置其结果，然后将此 Future 重置为初始状态，如果计算遇到异常或已取消，则该操作失败。 
-- protected  void set(V v) ：除非已经设置了此 Future 或已将其取消，否则将其结果设置为给定的值。 
-- protected  void setException(Throwable t) ： 除非已经设置了此 Future 或已将其取消，否则它将报告一个 ExecutionException，并将给定的 throwable 作为其原因。 
+- `boolean runAndReset()` ： 执行计算而不设置其结果，然后将此 Future 重置为初始状态，如果计算遇到异常或已取消，则该操作失败。 
+- `protected  void set(V v)` ：除非已经设置了此 Future 或已将其取消，否则将其结果设置为给定的值。 
+- `protected  void setException(Throwable t)` ： 除非已经设置了此 Future 或已将其取消，否则它将报告一个 ExecutionException，并将给定的 throwable 作为其原因。 
 
 使用这种方法实现多线程的步骤：
 
-    1. 创建Callable接口实现类，实现call()方法；
-    2. 使用FutureTask类包装Callable对象，该FutureTask对象封装了Callable对象的call()方法的返回值；
-    3. 将该FutureTask对象作为Thread对象的target创建并启动新线程；
-    4. 调用FutureTask对象的get方法获取子线程执行结束后的返回值。
+1. 创建Callable接口实现类，实现call()方法；
+2. 使用FutureTask类包装Callable对象，该FutureTask对象封装了Callable对象的call()方法的返回值；
+3. 将该FutureTask对象作为Thread对象的target创建并启动新线程；
+4. 调用FutureTask对象的get方法获取子线程执行结束后的返回值。
 
 示例：
 ```java
@@ -183,22 +182,23 @@ public class ThirdThread {
 		ThirdThread rt = new ThirdThread();
 		// 先使用Lambda表达式创建Callable&lt;Integer>对象
 		// 使用FutureTask来包装Callable对象
-		FutureTask&lt;Integer> task = new FutureTask<Integer>((Callable<Integer>)() -> {
+		FutureTask<Integer> task = new FutureTask<Integer>((Callable<Integer>)() -> {
 			int i = 0;
-			for ( ; i &lt; 100 ; i++ ) {
-				System.out.println(Thread.currentThread().getName()
-					+ " 的循环变量i的值：" + i);
+			for ( ; i < 100; i++) {
+				System.out.println(Thread.currentThread().getName() + " 的循环变量i的值：" + i);
 			}
 			// call()方法可以有返回值
 			return i;
 		});
-		for (int i = 0 ; i &lt; 100 ; i++) {
+   
+		for (int i = 0; i < 100; i++) {
 			System.out.println(Thread.currentThread().getName() + " 的循环变量i的值：" + i);
 			if (i == 20) {
 				// 实质还是以Callable对象来创建、并启动线程
 				new Thread(task , "有返回值的线程").start();
 			}
 		}
+      
 		try {
 			// 获取线程返回值
 			System.out.println("子线程的返回值：" + task.get());
@@ -221,11 +221,11 @@ public class ThirdThread {
 
 ### 线程的生命周期
 
-当线程被创建并启动以后，在其整个生命周期中，它要经过新建(New)、就绪（Runnable）、运行（Running）、阻塞(Blocked)和死亡(Dead)5种状态。
+当线程被创建并启动以后，在其整个生命周期中，它要经过新建(New)、就绪（Runnable）、运行（Running）、阻塞(Blocked)和死亡(Terminated)5种状态。
 
 #### 新建和就绪状态
 
-当程序**使用new关键字创建了一个线程之后，该线程就处于新建状态，此时它和其他的Java对象一样，仅仅由Java虚拟机为其分配内存，并初始化其成员变量的值****。此时的线程对象没有表现出任何线程的动态特征，程序也不会执行线程的线程执行体。
+当程序**使用new关键字创建了一个线程之后，该线程就处于新建状态，此时它和其他的Java对象一样，仅仅由Java虚拟机为其分配内存，并初始化其成员变量的值**。此时的线程对象没有表现出任何线程的动态特征，程序也不会执行线程的线程执行体。
 
 当线程对象**调用了start()方法之后，该线程处于就绪状态。Java虚拟机会为其创建方法调用栈和程序计数器，处于这个状态中的线程并没有开始运行，只是表示该线程可以运行了。至于该线程何时开始运行，取决于JVM里线程调度器的调度**。
 
@@ -290,27 +290,27 @@ main 9
 
 #### 运行和阻塞状态
 
-当发生如下情况时，线程将会进入阻塞状态：
+当发生如下情况时，一个线程将会进入阻塞状态：
 
-- 线程调用sleep()方法主动放弃所占用的处理器资源。
-- 线程调用了一个阻塞式IO方法，在该方法结束之前，该线程被阻塞。
-- 线程试图获得一个同步监视器，但该同步监视器正被其他线程所持有。
-- 线程在等待某个通知（notify）。
-- 程序调用了线程的suspend()方法将该线程挂起。但这个方法容易导致死锁，所以应该尽量避免使用该方法。
+- 该线程**调用sleep()方法主动放弃所占用的处理器资源**；
+- 该线程**调用了一个阻塞式IO方法，在该方法结束之前，该线程被阻塞**；
+- 该线程**试图获得一个同步监视器，但该同步监视器正被其他线程所持有**；
+- 该线程**在等待某个通知（notify）**；
+- 程序**调用了线程的suspend()方法将该线程挂起。但这个方法容易导致死锁，所以应该尽量避免使用该方法**。
 
 **当前正在执行的线程被阻塞之后，其他线程就可以获得执行的机会。被阻塞的线程会在合适的时候重新进入就绪状态，注意是就绪状态而不是运行状态。也就是说，被阻塞线程的阻塞解除后，必须重新等待线程调度器再次调度它**。
 
 当发生如下特定情况时可以解除上述阻塞，该让线程重新进入就绪状态：
 
-- 调用sleep()方法的线程经过了该方法指定的时间。
-- 线程调用的阻塞式IO方法已经返回。
-- 线程成功地获得了试图取得的同步监视器。
-- 线程正在等待某个通知时，其他线程发出了这个通知。
-- 处于挂起状态的线程被调用了resume()恢复方法。
+- 调用sleep()方法的线程经过了该方法指定的时间；
+- 线程调用的阻塞式IO方法已经返回；
+- 线程成功地获得了试图取得的同步监视器；
+- 线程正在等待某个通知时，其他线程发出了这个通知；
+- **处于挂起状态的线程被调用了resume()恢复方法**。
 
 线程状态转换图：
 
-![thread_lifecycle](../../graphs/photos/thread_lifecycle.png)
+![threadstates](../../graphs/photos/threadstates.jpg)
 
 **线程从阻塞状态只能进入就绪状态，无法直接进入运行状态。而就绪和运行状态之间的转换通常不受程序控制，而是由系统线程调度所决定。当处于就绪状态的线程获得处理器资源时，该线程进入运行状态；当处于运行状态的线程失去处理器资源时，该线程进入就绪状态。但有一个方法例外，调用yield()方法可以让运行状态的线程转入就绪状态**。
 
@@ -401,7 +401,7 @@ join方法有如下三种重载形式：
 - void join(long millis) ：等待该线程终止的时间最长为 millis 毫秒。 
 - void join(long millis, int nanos) ：等待该线程终止的时间最长为 millis 毫秒 + nanos 纳秒。 
 
-一般很少使用第三种方法，因为计算机硬件和操作系统达不到纳秒的精度。
+**一般很少使用第三种方法，因为计算机硬件和操作系统达不到纳秒的精度**。
 
 
  示例：
@@ -457,8 +457,6 @@ main  7
 main  8
 main  9
 ```
-
-
 
 ####守护线程
 
@@ -730,7 +728,7 @@ public class Account {
 	// 封装账户编号、账户余额的两个成员变量
 	private String accountNo;
 	private double balance;
-	public Account(){}
+	public Account() {}
 	// 构造器
 	public Account(String accountNo , double balance) {
 		this.accountNo = accountNo;
@@ -971,20 +969,20 @@ ReentrantLock类实现了Lock接口，**代表具有重入性的锁，也就是�
 
 独有方法摘要： 
 
-- int getHoldCount() ： 查询当前线程保持此锁的次数.
-- protected  Thread getOwner() ：返回目前拥有此锁的线程，如果此锁不被任何线程拥有，则返回 null.
-- protected  Collection&lt;Thread> getQueuedThreads() ：返回一个 collection，它包含可能正等待获取此锁的线程.
-- int getQueueLength() ：返回正等待获取此锁的线程估计.
-- protected  Collection&lt;Thread> getWaitingThreads(Condition condition) ：返回一个 collection，它包含可能正在等待与此锁相关给定条件的那些线程.
-- int getWaitQueueLength(Condition condition) ：返回等待与此锁相关的给定条件的线程估计数.
-- boolean hasQueuedThread(Thread thread) ：查询给定线程是否正在等待获取此锁.
-- boolean hasQueuedThreads() ：查询是否有些线程正在等待获取此锁.
-- boolean hasWaiters(Condition condition) ：查询是否有些线程正在等待与此锁有关的给定条件.
-- boolean isFair() ：如果此锁的公平设置为 true，则返回 true.
-- boolean isHeldByCurrentThread() ：查询当前线程是否保持此锁.
+- int getHoldCount() ： 查询当前线程保持此锁的次数。
+- protected  Thread getOwner() ：返回目前拥有此锁的线程，如果此锁不被任何线程拥有，则返回 null。
+- protected  Collection&lt;Thread> getQueuedThreads() ：返回一个 collection，它包含可能正等待获取此锁的线程。
+- int getQueueLength() ：返回正等待获取此锁的线程估计。
+- protected  Collection&lt;Thread> getWaitingThreads(Condition condition) ：返回一个 collection，它包含可能正在等待与此锁相关给定条件的那些线程。
+- int getWaitQueueLength(Condition condition) ：返回等待与此锁相关的给定条件的线程估计数。
+- boolean hasQueuedThread(Thread thread) ：查询给定线程是否正在等待获取此锁。
+- boolean hasQueuedThreads() ：查询是否有些线程正在等待获取此锁。
+- boolean hasWaiters(Condition condition) ：查询是否有些线程正在等待与此锁有关的给定条件。
+- boolean isFair() ：如果此锁的公平设置为 true，则返回 true。
+- boolean isHeldByCurrentThread() ：查询当前线程是否保持此锁。
 - boolean isLocked() ：查询此锁是否由任意线程保持。 
 
-ReentrantLock 实现了标准的互斥操作，也就是一次只能有一个线程持有锁，也即所谓独占锁的概念。在这种情况下任何“读/读”，“写/读”，“写/写”操作都不能同时发生，这与synchronized提供的内部锁的工作机制相同。这个特点在一定程度上降低了吞吐量，实际上独占锁是一种保守的锁策略。锁是有一定的开销的，当并发比较大的时候，锁的开销就比较客观了。所以如果可能的话就尽量少用锁，非要用锁的话就尝试看能否改造为读写锁。
+**ReentrantLock 实现了标准的互斥操作，也就是一次只能有一个线程持有锁，也即所谓独占锁的概念。在这种情况下任何“读/读”，“写/读”，“写/写”操作都不能同时发生，这与synchronized提供的内部锁的工作机制相同。这个特点在一定程度上降低了吞吐量，实际上独占锁是一种保守的锁策略。锁是有一定的开销的，当并发比较大的时候，锁的开销就比较客观了。所以如果可能的话就尽量少用锁，非要用锁的话就尝试看能否改造为读写锁**。
 
 在大多数情况下，应该使用以下语句： 
 ```java
@@ -1026,25 +1024,21 @@ public class X {
 ```
 > **锁定和取消锁定出现在不同作用范围中时，必须谨慎地确保保持锁定时所执行的所有代码用 try-finally 或 try-catch 加以保护，以确保在必要时释放锁**。  
 
-
-
 **ReadWriteLock接口**
 **ReadWriteLock接口表示两个锁，读取的共享锁和写入的排他锁。在多数线程读取，少数线程写入的情况下，可以提高多线程的性能，提高使用该数据结构的吞吐量。如果是相反的情况，较多的线程写入，该接口会降低性能**。
 
-读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，写锁与写锁互斥，这是由jvm自己控制的，你只要上好相应的锁即可。如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁；如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁！
+**读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，写锁与写锁互斥，这是由jvm自己控制的，你只要上好相应的锁即可。如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁；如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁**！
 
 方法摘要：
 
 - Lock readLock() ： 返回用于读取操作的锁；
 - Lock writeLock() ： 返回用于写入操作的锁。 
 
-在ReadWriteLock中每次读取共享数据就需要读取锁，当需要修改共享数据时就需要写入锁。看起来好像是两个锁，但其实不尽然。
-
-
+**在ReadWriteLock中每次读取共享数据就需要读取锁，当需要修改共享数据时就需要写入锁。看起来好像是两个锁，但其实不尽然**。
 
 **ReentrantReadWriteLock**
 
-此类是ReadWriteLock接口的实现类，提供了与ReentrantLock类相似的语法定义。该类不会强制优先获取reader锁或优先获取writer锁，但它确实支持可选的公平策略：
+此类是`ReadWriteLock`接口的实现类，提供了与ReentrantLock类相似的语法定义。该类不会强制优先获取reader锁或优先获取writer锁，但它确实支持可选的公平策略：
 
 - 非公平模式（默认）：当通过非公平模式创建该类的对象时，未指定进入读写锁的顺序，受到 reentrancy 约束的限制。连续竞争的非公平锁可能无限期地推迟一个或多个 reader 或 writer 线程，但吞吐量通常要高于公平锁；
 - 当公平地构造线程时。当释放当前保持的锁时，可以为等待时间最长的单个 writer 线程分配写入锁，如果有一组等待时间大于所有正在等待的 writer 线程 的 reader 线程，将为该组分配写入锁。 如果保持写入锁，或者有一个等待的 writer 线程，则试图获得公平读取锁（非重入地）的线程将会阻塞。直到当前最旧的等待 writer 线程已获得并释放了写入锁之后，该线程才会获得读取锁。当然，如果等待 writer 放弃其等待，而保留一个或更多 reader 线程为队列中带有写入锁自由的时间最长的 waiter，则将为那些 reader 分配读取锁。 试图获得公平写入锁的（非重入地）的线程将会阻塞，除非读取锁和写入锁都自由（这意味着没有等待线程）。
@@ -2164,11 +2158,12 @@ ThreadLocal的另一个使用场景是复杂逻辑下的对象传递，比如监
 ```java
 HashMap m = Collections.synchronizedMap(new HashMap());
 ```
-从Java5开始，在java.util.concurrent包下提供了大量支持高效并发操作的集合接口和实现类：
+**从Java5开始，在java.util.concurrent包下提供了大量支持高效并发操作的集合接口和实现类**：
 ![这里写图片描述](http://img.blog.csdn.net/20161224232603365?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcm9zeV9kYXdu/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 ![这里写图片描述](http://img.blog.csdn.net/20161224232616053?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcm9zeV9kYXdu/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
-以Concurrent开头的集合类代表了支持并发访问的集合，它们支持多个线程并发写入访问，这些写入操作都是线程安全的，但读取不必锁定。这些集合采用复杂的算法保证不会锁住整个集合，因此在并发写入时有高效的性能。多个线程并发访问一个集合时，ConcurrentLinkedQueue是一个恰当的选择，它不允许使用null元素。默认情况下ConcurrentHashMap支持16个线程并发写入，超过16的线程可能需要等待，可以通过设置concurrencyLevel构造器参数（默认为16）来支持更多的线程并发访问。Java8为ConcurrentHashMap增加了30多个新方法，主要如下：
+
+**以Concurrent开头的集合类代表了支持并发访问的集合，它们支持多个线程并发写入访问，这些写入操作都是线程安全的，但读取不必锁定。这些集合采用复杂的算法保证不会锁住整个集合，因此在并发写入时有高效的性能。多个线程并发访问一个集合时，ConcurrentLinkedQueue是一个恰当的选择，它不允许使用null元素。默认情况下ConcurrentHashMap支持16个线程并发写入，超过16的线程可能需要等待，可以通过设置concurrencyLevel构造器参数（默认为16）来支持更多的线程并发访问**。Java8为ConcurrentHashMap增加了30多个新方法，主要如下：
 
 - forEach系列（forEach、forEachKey、forEachValue、forEachEntry）；
 - search系列（search、searchKeys、searchValues、searchEntries）；
@@ -2176,6 +2171,6 @@ HashMap m = Collections.synchronizedMap(new HashMap());
 - 还有mappingCount()、newKeySet()等，增强后的ConcurrentHashMap更适合做缓存实现类使用。
 
 CopyOnWriteArraySet底层封装了CopyOnWriteArrayList，因此两者实现机制类似。
-CopyOnWriteArrayList则是以复制底层数组的方法来使实现操作。当对CopyOnWriteArrayList读取时，无须加锁或阻塞，当执行写入操作时。该集合会在底层复制一份新的数组，接下来对新的数组执行写入操作，由于操作的是副本，故是线程安全的。但是写入操作需要频繁复制数组，性能较差，所以CopyOnWriteArrayList适合读取操作远大于写入操作的场景。
+**CopyOnWriteArrayList则是以复制底层数组的方法来使实现操作。当对CopyOnWriteArrayList读取时，无须加锁或阻塞，当执行写入操作时。该集合会在底层复制一份新的数组，接下来对新的数组执行写入操作，由于操作的是副本，故是线程安全的。但是写入操作需要频繁复制数组，性能较差，所以CopyOnWriteArrayList适合读取操作远大于写入操作的场景**。
 
 
