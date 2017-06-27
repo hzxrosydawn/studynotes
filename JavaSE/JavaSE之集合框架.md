@@ -910,7 +910,6 @@ public class ArrayDequeStack {
         System.out.println(stack);
     }
 }
-
 ```
 
 ArrayDeque作为队列使用的实例。
@@ -984,7 +983,7 @@ ArrayList内部以数组的形式来保存集合中的元素，因此随机访�
 使用List集合的建议：
 
 - **如果需要遍历List集合元素，对于ArrayList、Vector集合，应该使用随机访问方法（get）来遍历集合元素，这样性能更好；对于LinkedList集合，则应该采用迭代器（Iterator）来遍历集合**；
-- **如果需要经常执行插入、删除操作来改变包含大量数据的List集合的大小，可考虑使用LinkedList集合。使用ArrayList、Vector集合可能需要经常重新分配内部数组的大小，效果可能较差**；
+- **如果需要在List中经常执行插入、删除操作来改变的大量数据，可考虑使用LinkedList集合。使用ArrayList、Vector集合可能需要经常重新分配内部数组的大小，效果可能较差**；
 - 如果有多个线程需要访问List集合中的元素，可考虑使用Collections将集合包装成线程安全的集合或者手动加锁。
 - **总体来说，ArrayList的性能比LinkedList的性能要好，因此大部分时候都应该考虑使用ArrayList**。
 

@@ -1019,7 +1019,7 @@ WHERE ... ;
 - Foreign Key，外键约束：指定该行记录从属于主表的一条记录，保证参照的完整性；
 - CHECK, 检查：用于保证每列的所有值都满足一个布尔表达式。
 
-根据约束的范围分为：单行约束和多行约束
+根据约束的范围分为：单行约束和多行约束。
 
 ###NOT NULL 约束
 NOT NULL 约束强制列不接受 NULL 值.如果不向字段添加值，就无法插入新记录或者更新记录。
@@ -1109,7 +1109,7 @@ MySQL：
 ALTER TABLE Persons DROP INDEX uc_PersonID
 ```
 
-SQL Server / Oracle / MS Access:
+SQL Server / Oracle / MS Access：
 
 ```mysql
 ALTER TABLE Persons DROP CONSTRAINT uc_PersonID
@@ -1173,8 +1173,10 @@ ALTER TABLE Persons ALTER COLUMN City DROP DEFAULT;
 
 ###PRIMARY KEY 约束
 PRIMARY KEY 约束**唯一标识数据库表中的每条记录。主键必须包含唯一的值，不能包含 NULL 值。每个表都应该有且仅有一个主键。**
-**主键可以是原本资料内的一列，或是一个人造栏位 (与原本资料没有关系的栏位)。主键可以为一列或多列的组合。当主键包含多列时，称为组合键 (Composite Key)**。 
+**主键可以是原本资料内的一列，或是一个人造栏位 (与原本资料没有关系的栏位，一般建议这样选择主键)。主键可以为一列或多列的组合。当主键包含多列时，称为组合键 (Composite Key)**。 
+
 可以在创建新表时设定主键 (运用 CREATE TABLE 语句)，也可以修改已存在的表来设定主键 (运用 ALTER TABLE 语句)。
+
 **创建表时修改主键**
 
 1. **创建单列的主键约束**。
@@ -1308,8 +1310,8 @@ CREATE TABLE Persons (
 在 Oracle 中，代码稍微复杂一点。你必须通过 SEQUENCE  对创建 AUTO_INCREMENT  字段（该对象生成数字序列）。
 请使用下面的 CREATE SEQUENCE 语法：
 
-```mysql
-CREATE SEQUENCE seq_person
+```sql
+CREATE SEQUENCE seq_person 
 MINVALUE 1
 START WITH 1
 INCREMENT BY 1
@@ -1351,7 +1353,7 @@ INSERT INTO Persons (P_Id,FirstName,LastName) VALUES (seq_person.nextval,'Lars',
 
 **创建表时添加外键约束**。
 下面的 SQL 在 "Orders" 表创建时为 "Id_P" 列**创建 FOREIGN KEY**：
-MySQL:
+MySQL：
 
 ```mysql
 CREATE TABLE Orders (

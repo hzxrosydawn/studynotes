@@ -403,6 +403,8 @@ join方法有如下三种重载形式：
 
 **一般很少使用第三种方法，因为计算机硬件和操作系统达不到纳秒的精度**。
 
+> **join方法通常由使用线程的程序调用，以将大问题划分成许多小问题，每个小问题分配一个线程。当所有的小问题都得到处理后，在调用主线程来进一步操作**。
+
 
  示例：
 ```java
@@ -499,9 +501,10 @@ public class DeamonThreadTest extends Thread {
 ####线程睡眠
 
 **Thread类的sleep静态方法用于让当前正在执行的线程暂停一段时间，并进入阻塞状态，即使系统中没有其他线程在执行，这个被暂停的线程在这段时间内也不会被执行**。
+
 sleep方法有两种重载形式：
 
-- static void sleep(long millis) ： 在指定的毫秒数内让当前正在执行的线程休眠（暂停执行），**此操作受到系统计时器和调度程序精度和准确性的影响**。 
+- static void sleep(long millis) ：在指定的毫秒数内让当前正在执行的线程休眠（暂停执行），**此操作受到系统计时器和调度程序精度和准确性的影响**。 
 - static void sleep(long millis, int nanos) ：在指定的毫秒数加指定的纳秒数内让当前正在执行的线程休眠（暂停执行），此操作受到系统计时器和调度程序精度和准确性的影响。一般因为纳秒精度达不到而很少使用。
 
 示例：
@@ -816,7 +819,7 @@ public class DrawTest {
 }
 ```
 ####**同步方法**
-Java还提供了同步方法的支持。使用synchronized关键字修饰的方法即为同步方法。**对于同步的实例方法，同步监视器即是this，也就是调用该方法的对象，无须显式指定。不可变类因为不可变，所以是线程安全的，而可变类就需要手动处理可能出现并发问题的操作。使用同步方法完成可能出现并发问题的操作可以保证该方法的持有类是一个线程安全类**。
+Java还提供了同步方法的支持。使用synchronized关键字修饰的方法即为同步方法。**对于同步的实例方法，同步监视器即是this，也就是调用该方法的对象，无须显式指定。不可变类因为不可变，所以是线程安全的，而可变类就需要手动处理可能出现的并发问题。使用同步方法完成可能出现并发问题的操作可以保证该方法的持有类是一个线程安全类**。
 
 下面将Account类修改成线程安全类：
 
@@ -934,12 +937,12 @@ public class DrawTest {
  - 当前线程的同步代码块执行时，**其他线程调用了该线程的suspen()方法（易导致死锁）将该线程挂起**，该线程不会释放同步监视器。当然，**应该尽量避免使用suspend()和resume()方法来控制线程**。
 
 ####同步锁
-synchronized 方法和代码块提供的内部锁机制使得使用监视器锁编程方便了很多，而且还帮助避免了很多涉及到锁的常见编程错误。**这种内部锁机制提供了对每个对象相关的隐式监视器锁的访问，但却强制所有锁的获取和释放均要出现在同一个块结构中：当获取了多个锁时，它们必须以相反的顺序释放（First Lock Last Unlock），且必须在与所有锁被获取时相同的范围内释放所有锁。而且synchronized提供的内部锁机制不能中断那些正在等待获取锁的线程，并且在请求锁失败的情况下必须无限等待**。有时需要更灵活地使用锁。例如，某些遍历并发访问的数据结果的算法要求使用 "hand-over-hand" 或 "chain locking"：获取节点 A 的锁，然后再获取节点 B 的锁，然后释放 A 并获取 C，然后释放 B 并获取 D，依此类推。Lock 接口的实现允许锁在不同的作用范围内获取和释放，并允许以任何顺序获取和释放多个锁。
+synchronized 方法和代码块提供的内部锁机制使得使用监视器锁编程方便了很多，而且还避免了很多涉及到锁的常见编程错误。**这种内部锁机制提供了对每个对象相关的隐式监视器锁的访问，但却强制所有锁的获取和释放均要出现在同一个块结构中：当获取了多个锁时，它们必须以相反的顺序释放（First Lock Last Unlock），且必须在与所有锁被获取时相同的范围内释放所有锁。而且synchronized提供的内部锁机制不能中断那些正在等待获取锁的线程，并且在请求锁失败的情况下必须无限等待**。有时需要更灵活地使用锁。例如，某些遍历并发访问的数据结果的算法要求使用 "hand-over-hand" 或 "chain locking"：获取节点 A 的锁，然后再获取节点 B 的锁，然后释放 A 并获取 C，然后释放 B 并获取 D，依此类推。Lock 接口的实现允许锁在不同的作用范围内获取和释放，并允许以任何顺序获取和释放多个锁。
 
 **从Java5开始提供了一种更加灵活的同步机制——同步锁，锁由java.util.concurrent.locks包下的Lock接口对象充当。通常，锁提供了对共享资源的独占访问。一次只能有一个线程获得锁，对共享资源的所有访问都需要首先获得Lock接口对象**。 
 
 Java5提供的同步锁支持如下图所示：
-![](http://img.blog.csdn.net/20161222161546456?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcm9zeV9kYXdu/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![diagram_lock](../../graphs/photos/diagram_lock.png)
 
 某些锁可能允许对共享资源并发访问，如ReadWriteLock(读写锁)。Lock、ReadWriteLock是Java5提供的两个根接口，并为Lock提供了ReentrantLock（可重入锁）实现类，为ReadWriteLock提供了ReentrantReadWriteLock实现类。
 
@@ -1041,7 +1044,7 @@ public class X {
 此类是`ReadWriteLock`接口的实现类，提供了与ReentrantLock类相似的语法定义。该类不会强制优先获取reader锁或优先获取writer锁，但它确实支持可选的公平策略：
 
 - 非公平模式（默认）：当通过非公平模式创建该类的对象时，未指定进入读写锁的顺序，受到 reentrancy 约束的限制。连续竞争的非公平锁可能无限期地推迟一个或多个 reader 或 writer 线程，但吞吐量通常要高于公平锁；
-- 当公平地构造线程时。当释放当前保持的锁时，可以为等待时间最长的单个 writer 线程分配写入锁，如果有一组等待时间大于所有正在等待的 writer 线程 的 reader 线程，将为该组分配写入锁。 如果保持写入锁，或者有一个等待的 writer 线程，则试图获得公平读取锁（非重入地）的线程将会阻塞。直到当前最旧的等待 writer 线程已获得并释放了写入锁之后，该线程才会获得读取锁。当然，如果等待 writer 放弃其等待，而保留一个或更多 reader 线程为队列中带有写入锁自由的时间最长的 waiter，则将为那些 reader 分配读取锁。 试图获得公平写入锁的（非重入地）的线程将会阻塞，除非读取锁和写入锁都自由（这意味着没有等待线程）。
+- 当公平地构造线程时。当释放当前保持的锁时，可以为等待时间最长的单个 writer 线程分配写入锁，如果有一组等待时间大于所有正在等待的 writer 线程的 reader 线程，将为该组分配写入锁。 如果保持写入锁，或者有一个等待的 writer 线程，则试图获得公平读取锁（非重入地）的线程将会阻塞。直到当前最久的等待 writer 线程已获得并释放了写入锁之后，该线程才会获得读取锁。当然，如果等待 writer 放弃其等待，而保留一个或更多 reader 线程为队列中带有写入锁自由的时间最长的 waiter，则将为那些 reader 分配读取锁。 试图获得公平写入锁的（非重入地）的线程将会阻塞，除非读取锁和写入锁都自由（这意味着没有等待线程）。
 
 此锁允许 reader 和 writer 按照 ReentrantLock 的样式重新获取读取锁或写入锁。在写入线程保持的所有写入锁都已经释放后，才允许重入 reader 使用它们。比如，在预期 collection 很大，读取者线程访问它的次数多于写入者线程，可以使用 ReentrantReadWriteLock 来提高并发性：
 ```java
@@ -1073,7 +1076,7 @@ class RWDictionary {
     }
  }
 ```
-重入还允许从写入锁降级为读取锁，其实现方式是：先获取写入锁，然后获取读取锁，最后释放写入锁。但是，从读取锁升级到写入锁是不可能的。重入性减少了锁在各个线程之间的等待，例如便利一个HashMap，每次next()之前加锁，之后释放，可以保证一个线程一口气完成便利，而不会每次next()之后释放锁，然后和其他线程竞争，降低了加锁的代价， 提供了程序整体的吞吐量。（即，让一个线程一口气完成任务，再把锁传递给其他线程）。
+**重入还允许从写入锁降级为读取锁，其实现方式是：先获取写入锁，然后获取读取锁，最后释放写入锁。但是，从读取锁升级到写入锁是不可能的。重入性减少了锁在各个线程之间的等待**。**例如遍历一个HashMap，每次next()之前加锁，之后释放，可以保证一个线程一口气完成遍历，而不会每次next()之后释放锁，然后和其他线程竞争，降低了加锁的代价， 提供了程序整体的吞吐量。（即，让一个线程一口气完成任务，再把锁传递给其他线程）**。
 利用重入来执行升级缓存后的锁降级（为简单起见，省略了异常处理）： 
 ```java
 class CachedData {
@@ -1103,8 +1106,9 @@ class CachedData {
    }
  }
 ```
-读取锁和写入锁都支持锁获取期间的中断。 
-写入锁提供了一个 Condition 实现，对于写入锁来说，该实现的行为与 ReentrantLock.newCondition() 提供的 Condition 实现对 ReentrantLock 所做的行为相同。当然，此 Condition 只能用于写入锁。 读取锁不支持 Condition，readLock().newCondition() 会抛出 UnsupportedOperationException。 
+**读取锁和写入锁都支持锁获取期间的中断**。 
+
+**写入锁提供了一个 Condition 实现，对于写入锁来说，该实现的行为与 ReentrantLock.newCondition() 提供的 Condition 实现对 ReentrantLock 所做的行为相同。当然，此 Condition 只能用于写入锁。 读取锁不支持 Condition，readLock().newCondition() 会抛出 UnsupportedOperationException**。 
 
 嵌套类摘要：
 
@@ -1130,12 +1134,11 @@ class CachedData {
 - boolean isWriteLocked() ：查询是否某个线程保持了写入锁；
 - boolean isWriteLockedByCurrentThread() ：查询当前线程是否保持了写入锁。 
 
-ReentrantLock类和ReentrantReadWriteLock类具有重入性：即允许一个线程多次获取同一个锁（他们会记住上次获取锁并且未释放的线程对象，和加锁的次数，getHoldCount()）。同一个线程每次获取锁，加锁数+1，每次释放锁，加锁数-1，到0，则该锁被释放，可以被其他线程获取。
+**ReentrantLock类和ReentrantReadWriteLock类具有重入性：即允许一个线程多次获取同一个锁（它们会记住上次获取锁并且未释放的线程对象，和加锁的次数，getHoldCount()）。同一个线程每次获取锁，加锁数+1，每次释放锁，加锁数-1，到0，则该锁被释放，可以被其他线程获取**。
 
 以同步锁的形式实现上面的示例：
 ```java
-public class Account
-{
+public class Account {
 	// 定义锁对象
 	private final ReentrantLock lock = new ReentrantLock();
 	// 封装账户编号、账户余额的两个成员变量
@@ -1143,77 +1146,62 @@ public class Account
 	private double balance;
 	public Account(){}
 	// 构造器
-	public Account(String accountNo , double balance)
-	{
+	public Account(String accountNo , double balance) {
 		this.accountNo = accountNo;
 		this.balance = balance;
 	}
 
 	// accountNo的setter和getter方法
-	public void setAccountNo(String accountNo)
-	{
+	public void setAccountNo(String accountNo) {
 		this.accountNo = accountNo;
 	}
-	public String getAccountNo()
-	{
+	public String getAccountNo() {
 		return this.accountNo;
 	}
 	// 因此账户余额不允许随便修改，所以只为balance提供getter方法，
-	public double getBalance()
-	{
+	public double getBalance() {
 		return this.balance;
 	}
 
 	// 提供一个线程安全draw()方法来完成取钱操作
-	public void draw(double drawAmount)
-	{
+	public void draw(double drawAmount) {
 		// 加锁
 		lock.lock();
-		try
-		{
+		try {
 			// 账户余额大于取钱数目
-			if (balance >= drawAmount)
-			{
+			if (balance >= drawAmount) {
 				// 吐出钞票
 				System.out.println(Thread.currentThread().getName()
 					+ "取钱成功！吐出钞票:" + drawAmount);
-				try
-				{
+				try {
 					Thread.sleep(1);
 				}
-				catch (InterruptedException ex)
-				{
+				catch (InterruptedException ex) {
 					ex.printStackTrace();
 				}
 				// 修改余额
 				balance -= drawAmount;
 				System.out.println("\t余额为: " + balance);
 			}
-			else
-			{
+			else {
 				System.out.println(Thread.currentThread().getName()
 					+ "取钱失败！余额不足！");
 			}
 		}
-		finally
-		{
+		finally {
 			// 修改完成，释放锁
 			lock.unlock();
 		}
 	}
 
 	// 下面两个方法根据accountNo来重写hashCode()和equals()方法
-	public int hashCode()
-	{
+	public int hashCode() {
 		return accountNo.hashCode();
 	}
-	public boolean equals(Object obj)
-	{
+	public boolean equals(Object obj) {
 		if(this == obj)
 			return true;
-		if (obj !=null
-			&& obj.getClass() == Account.class)
-		{
+		if (obj !=null && obj.getClass() == Account.class) {
 			Account target = (Account)obj;
 			return target.getAccountNo().equals(accountNo);
 		}
@@ -1222,75 +1210,60 @@ public class Account
 }
 ```
 ####**死锁**
-两个线程相互等待对方释放同步监视器就会发生死锁。必须手动措施防止死锁的发生，因为一旦出现死锁，虚拟机不会抛出异常，也不会给出提示，而是一直阻塞。Thread类中的suspend()方法容易导致死锁，不推荐使用。
+**两个线程相互等待对方释放同步监视器就会发生死锁。必须手动措施防止死锁的发生，因为一旦出现死锁，虚拟机不会抛出异常，也不会给出提示，而是一直阻塞。Thread类中的suspend()方法容易导致死锁，不推荐使用**。
+
 死锁示例：
+
 ```java
-class A
-{
-	public synchronized void foo( B b )
-	{
-		System.out.println("当前线程名: " + Thread.currentThread().getName()
-			+ " 进入了A实例的foo()方法" );  
-		try
-		{
+class A {
+	public synchronized void foo( B b ) {
+		System.out.println("当前线程名: " + Thread.currentThread().getName() + " 进入了A实例的foo()方法" );  
+		try {
 			Thread.sleep(200);
 		}
-		catch (InterruptedException ex)
-		{
+		catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
 		System.out.println("当前线程名: " + Thread.currentThread().getName()
 			+ " 企图调用B实例的last()方法");  
 		b.last();
 	}
-	public synchronized void last()
-	{
+	public synchronized void last() {
 		System.out.println("进入了A类的last()方法内部");
 	}
 }
-class B
-{
-	public synchronized void bar( A a )
-	{
-		System.out.println("当前线程名: " + Thread.currentThread().getName()
-			+ " 进入了B实例的bar()方法" );  
-		try
-		{
+class B {
+	public synchronized void bar( A a ) {
+		System.out.println("当前线程名: " + Thread.currentThread().getName() + " 进入了B实例的bar()方法" );  
+		try {
 			Thread.sleep(200);
 		}
-		catch (InterruptedException ex)
-		{
+		catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
-		System.out.println("当前线程名: " + Thread.currentThread().getName()
-			+ " 企图调用A实例的last()方法");  
+		System.out.println("当前线程名: " + Thread.currentThread().getName() + " 企图调用A实例的last()方法");  
 		a.last();
 	}
-	public synchronized void last()
-	{
+	public synchronized void last() {
 		System.out.println("进入了B类的last()方法内部");
 	}
 }
-public class DeadLock implements Runnable
-{
+public class DeadLock implements Runnable {
 	A a = new A();
 	B b = new B();
-	public void init()
-	{
+	public void init() {
 		Thread.currentThread().setName("主线程");
 		// 调用a对象的foo方法
 		a.foo(b);
 		System.out.println("进入了主线程之后");
 	}
-	public void run()
-	{
+	public void run() {
 		Thread.currentThread().setName("副线程");
 		// 调用b对象的bar方法
 		b.bar(a);
 		System.out.println("进入了副线程之后");
 	}
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		DeadLock dl = new DeadLock();
 		// 以dl为target启动新线程
 		new Thread(dl).start();
@@ -1303,7 +1276,7 @@ public class DeadLock implements Runnable
 ####**传统的线程通信**
 如果要求存款者存钱之后必须取钱，取钱之后必须存钱，两者都不能连续两次存钱或取钱。对于这种要求线程之间通信的场景。Object类提供了wait()、notify()和notifyAll()三个方法来控制这种传统线程间的通信：
 
-- wait：导致当前线程等待，直到其他线程调用notify()或notifyAll()方法来换线该线程，该方法三种重载形式（无时间参数、以毫秒为参数、以毫秒加纳秒为参数 ）。调用wait方法的线程会释放同步监视器的锁定；
+- wait：导致当前线程等待，直到其他线程调用notify()或notifyAll()方法来唤醒该线程，该方法三种重载形式（无时间参数、以毫秒为参数、以毫秒加纳秒为参数 ）。调用wait方法的线程会释放同步监视器的锁定；
 - notify()：唤醒在此同步监视器上等待的单个线程。如果有多个线程在同步监视器上等待，则会任意唤醒其中一个线程。只有当前线程使用wait方法放弃对该同步监视器的锁定，才可以执行被唤醒的线程；
 - notifyAll：同上，只是唤醒此同步监视器上等待的所有线程。
 
@@ -1417,34 +1390,27 @@ public class DepositThread extends Thread {
 }
 ```
 ```java
-public class DrawThread extends Thread
-{
+public class DrawThread extends Thread {
 	// 模拟用户账户
 	private Account account;
 	// 当前取钱线程所希望取的钱数
 	private double drawAmount;
-	public DrawThread(String name , Account account
-		, double drawAmount)
-	{
+	public DrawThread(String name , Account account, double drawAmount) {
 		super(name);
 		this.account = account;
 		this.drawAmount = drawAmount;
 	}
 	// 重复100次执行取钱操作
-	public void run()
-	{
-		for (int i = 0 ; i &lt; 100 ; i++ )
-		{
+	public void run() {
+		for (int i = 0 ; i &lt; 100 ; i++ ) {
 			account.draw(drawAmount);
 		}
 	}
 } 
 ```
 ```java
-public class DrawTest
-{
-	public static void main(String[] args)
-	{
+public class DrawTest {
+	public static void main(String[] args) {
 		// 创建一个账户
 		Account acct = new Account("1234567" , 0);
 		new DrawThread("取钱者" , acct , 800).start();
@@ -1469,8 +1435,7 @@ Condition实例被绑定在一个Lock对象上，调用Lock对象的newCondition
 
 使用Condition结合Lock实现线程通信的示例：
 ```java
-public class Account
-{
+public class Account {
 	// 显式定义Lock对象
 	private final Lock lock = new ReentrantLock();
 	// 获得指定Lock对象对应的Condition
@@ -1483,40 +1448,32 @@ public class Account
 
 	public Account(){}
 	// 构造器
-	public Account(String accountNo , double balance)
-	{
+	public Account(String accountNo , double balance) {
 		this.accountNo = accountNo;
 		this.balance = balance;
 	}
 
 	// accountNo的setter和getter方法
-	public void setAccountNo(String accountNo)
-	{
+	public void setAccountNo(String accountNo) {
 		this.accountNo = accountNo;
 	}
-	public String getAccountNo()
-	{
+	public String getAccountNo() {
 		return this.accountNo;
 	}
 	// 因此账户余额不允许随便修改，所以只为balance提供getter方法，
-	public double getBalance()
-	{
+	public double getBalance() {
 		return this.balance;
 	}
 
-	public void draw(double drawAmount)
-	{
+	public void draw(double drawAmount) {
 		// 加锁
 		lock.lock();
-		try
-		{
+		try {
 			// 如果flag为假，表明账户中还没有人存钱进去，取钱方法阻塞
-			if (!flag)
-			{
+			if (!flag) {
 				cond.await();
 			}
-			else
-			{
+			else {
 				// 执行取钱
 				System.out.println(Thread.currentThread().getName()
 					+ " 取钱:" +  drawAmount);
@@ -1528,28 +1485,22 @@ public class Account
 				cond.signalAll();
 			}
 		}
-		catch (InterruptedException ex)
-		{
+		catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
 		// 使用finally块来释放锁
-		finally
-		{
+		finally {
 			lock.unlock();
 		}
 	}
-	public void deposit(double depositAmount)
-	{
+	public void deposit(double depositAmount) {
 		lock.lock();
-		try
-		{
+		try {
 			// 如果flag为真，表明账户中已有人存钱进去，则存钱方法阻塞
-			if (flag) 
-			{
+			if (flag) {
 				cond.await();
 			}
-			else
-			{
+			else {
 				// 执行存款
 				System.out.println(Thread.currentThread().getName()
 					+ " 存款:" +  depositAmount);
@@ -1561,29 +1512,23 @@ public class Account
 				cond.signalAll();
 			}
 		}
-		catch (InterruptedException ex)
-		{
+		catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
 		// 使用finally块来释放锁
-		finally
-		{
+		finally {
 			lock.unlock();
 		}
 	}
 
 	// 下面两个方法根据accountNo来重写hashCode()和equals()方法
-	public int hashCode()
-	{
+	public int hashCode() {
 		return accountNo.hashCode();
 	}
-	public boolean equals(Object obj)
-	{
+	public boolean equals(Object obj) {
 		if(this == obj)
 			return true;
-		if (obj !=null
-			&& obj.getClass() == Account.class)
-		{
+		if (obj !=null && obj.getClass() == Account.class) {
 			Account target = (Account)obj;
 			return target.getAccountNo().equals(accountNo);
 		}
@@ -1592,24 +1537,19 @@ public class Account
 }
 ```
 ```java
-public class DepositThread extends Thread
-{
+public class DepositThread extends Thread {
 	// 模拟用户账户
 	private Account account;
 	// 当前取钱线程所希望存款的钱数
 	private double depositAmount;
-	public DepositThread(String name , Account account
-		, double depositAmount)
-	{
+	public DepositThread(String name , Account account, double depositAmount) {
 		super(name);
 		this.account = account;
 		this.depositAmount = depositAmount;
 	}
 	// 重复100次执行存款操作
-	public void run()
-	{
-		for (int i = 0 ; i &lt; 100 ; i++ )
-		{
+	public void run() {
+		for (int i = 0 ; i &lt; 100 ; i++ ) {
 			account.deposit(depositAmount);
 		}
 	}
