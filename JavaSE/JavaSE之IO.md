@@ -106,67 +106,73 @@ for(String name ： nameList) {
 }
 ```
 ##Java的IO流 
-Java把这些不同来源和目标（键盘、文件和网络）的数据都统一抽象为数据流（Stream）。Java语言的输入输出功能是十分强大而灵活的，美中不足的是看上去输入输出的代码并不是很简洁，因为你往往需要包装许多不同的对象。在Java类库中，IO部分的内容是很庞大的，因为它涉及的领域很广泛：标准输入输出，文件的操作，网络上的数据流，字符串流，对象流，zip文件流。
+Java把这些不同来源和目标（键盘、文件和网络）的数据都统一抽象为数据流（Stream）。Java语言的输入输出功能是十分强大而灵活的，美中不足的是看上去输入输出的代码并不是很简洁，因为你往往需要包装许多不同的对象。在Java类库中，**IO部分的内容庞大而广泛，包括标准输入输出，文件的操作，网络上的数据流，字符串流，对象流，zip文件流**。
 
 ### Java流的分类
 
 按流向分：
 
-- 输入流： 程序可以从中读取数据的流。
-- 输出流： 程序能向其中写入数据的流。
+- 输入流： 程序可以**从中读取**数据的流。
+- 输出流： 程序可以**向其写入**数据的流。
 
 按数据传输单位分：
 
-- 字节流： 以字节（8位）为单位传输数据的流
-- 字符流： 以字符（16位）为单位传输数据的流
+- 字节流： 以**字节（8位）为单位**传输数据的流。
+- 字符流： 以**字符（16位）为单位**传输数据的流。
 
 按功能分：
 
-- 节点流：用于直接从目标设备（磁盘、网络等）读/写的流，又称为低级流；
-- 处理流：是对一个已存在的流的链接和封装，通过对数据的封装来实现数据的读/写。使用相同的处理流可以消除不同节点流的差异，从而使用相同的代码编写出完成输入/输出；
-- 这种包装使用"分层对象(layered objects)"模式，被称为Decorator Pattern（装饰器模式）。Decorator模式要求所有包覆在原始对象之外的对象，都必须具有与之完全相同的接口。这使得decorator的用法变得非常的透明。无论对象是否被decorate过，传给它的消息总是相同的。这也是Java I/O类库要有"filter(过滤器)"类的原因：抽象的"filter"类是所有decorator的基类。Decorator模式常用于如下的情形：如果用继承来解决各种需求的话，类的数量会多到不切实际的地步。Java的I/O类库需要提供很多功能的组合，于是decorator模式就有了用武之地。为InputStream和OutputStream定义decorator类接口的类，分别是FilterInputStream和FilterOutputStream。
+- **节点流**用于**直接从目标设备（磁盘、网络等）读/写的流，又称为低级流**。
+- **处理流**是对一个已存在的流进行连接和封装，通过对封装后的流来实现数据的读/写。使用相同的处理流可以消除不同节点流的差异，从而使用相同的代码来访问不同的数据源。处理流相比节点流在**性能上更加高效（增加了缓冲以提高效率），操作上更加便捷（提高了许多一次性输入输出大量内容的方法）**。
+- **处理流对节点流的包装使用到了装饰器模式（Decorator Pattern）**。装饰器模式要求**所有包覆在原始对象之外的对象，都必须具有与之完全相同的接口**。这使得装饰器的用法变得非常的透明。无论对象是否被装饰过，传给它的消息总是相同的。这也是Java I/O类库要有"filter"类的原因：抽象的"filter"类是所有装饰器的基类。装饰器模式常用于如下的情形：如果用继承来解决各种需求的话，类的数量会多到不切实际的地步。Java的I/O类库需要提供很多功能的组合，于是装饰器模式就有了用武之地。为InputStream和OutputStream定义装饰器的类，分别是FilterInputStream和FilterOutputStream。
 
 ###java.io基类
 
 流是一个很形象的概念，当程序需要读取数据的时候，就会开启一个通向数据源的流，这个数据源可以是文件，内存，或是网络连接。类似的，当程序需要写入数据的时候，就会开启一个通向目的地的流。这时候数据好像在这其中“流”动一样。
-Java中的流分为两种，一种是字节流，另一种是字符流，分别由四个抽象类来表示（每种流包括输入和输出两种所以一共四个）：InputStream，OutputStream，Reader，Writer。Java中其他多种多样变化的流均是由它们派生出来的。JDK所提供的所有流类位于java.io包中，都分别继承自以下四种抽象流类：
+**Java中的流分为四种，分别由四个抽象类来表示**（分为字节流和字符流两类，每种流都有输入流和输出流，所以一共四个）：InputStream，OutputStream，Reader，Writer。Java中其他多种多样变化的流均是由它们派生出来的。JDK所提供的所有流类位于java.io包中，都分别继承自以下四种抽象流类：
 
-- InputStream：继承自InputStream的流都是用于向程序中输入数据的，且数据单位都是字节（8位）；
-- OutputSteam：继承自OutputStream的流都是程序用于向外输出数据的，且数据单位都是字节（8位）；
-- Reader：继承自Reader的流都是用于向程序中输入数据的，且数据单位都是字符（16位）；
-- Writer：继承自Writer的流都是程序用于向外输出数据的，且数据单位都是字符（16位）。
+- InputStream：所有继承自InputStream的流都是**用于从中读取数据**的，且**数据单位都是字节**（8位）。
+- OutputSteam：所有继承自OutputStream的流都是程序**用于向外输出数据**的，且数据单位都是字节（8位）。
+- Reader：所有继承自Reader的流都是**用于从中读取数据**的，且**数据单位都是字符**（16位）。
+- Writer：所有继承自Writer的流都是程序**用于向外输出数据**的，且数据单位都是字符（16位）。
 
-区别：Reader和Writer要解决的，最主要的问题就是国际化。原先的I/O类库只支持8位的字节流，因此不可能很好地处理16位的Unicode字符流。Unicode是国际化的字符集(更何况Java内置的char就是16位的Unicode字符)，这样加了Reader和Writer之后，所有的I/O就都支持Unicode了。此外新类库的性能也比旧的好。
+区别：Reader和Writer要解决的主要是国际化问题。原先的I/O类库只支持8位的字节流，因此不能很好地处理16位的Unicode字符流。Unicode是国际化的字符集(更何况Java内置的char就是16位的Unicode字符)，加入了Reader和Writer之后，所有的I/O就都支持Unicode了。此外新类库的性能也比旧的好。
 
-但是，Read和Write并不是取代InputStream和OutputStream，有时，你还必须同时使用"基于byte的类"和"基于字符的类"。为此，它还提供了两个"适配器(adapter)"类。InputStreamReader负责将InputStream转化成Reader，而OutputStreamWriter则将OutputStream转化成Writer。
+但是，**Read和Write并不是取代InputStream和OutputStream，有时，你还必须同时使用"基于byte的类"和"基于字符的类"。为此，它还提供了两个"适配器(adapter)"类。InputStreamReader负责将InputStream转化成Reader，而OutputStreamWriter则将OutputStream转化成Writer**。
 
 ###InputStream类
+```java
 public abstract class InputStream extends Object implements Closeable
-InputStream是输入**字节**数据用的类。Inputstream类中的常用方法：
+```
 
-- public abstract int read( )：读取一个byte的数据，返回读取的字节数，是高位补0的int类型值。
-- public int read(byte b[ ])：读取b.length个字节的数据放到b数组中。返回值是读取的字节数。该方法实际上是调用下一个方法实现的。
-- public int read(byte b[ ], int off, int len)：从输入流中最多读取len个字节的数据，存放到偏移量为off的b数组中。
-- public int available( )：返回输入流中可以读取的字节数。注意：若输入阻塞，当前线程将被挂起，如果InputStream对象调用这个方法的话，它只会返回0，这个方法必须由继承InputStream类的子类对象调用才有用，
-- public int close( ) ：关闭该流对象并释放相关系统资源，在使用完后必须关闭打开的流。
+InputStream是读取**字节**数据用的类。Inputstream类中的常用方法：
+
+- public abstract int read( )：读取下一个byte的数据，返回读取的byte值（0~255，是一个高位补0的int类型值）。如果已经到了输入流的末尾，则返回-1。
+- public int read(byte b[ ])：读取b.length个的byte数据放到b数组中。返回值是读取的字节数。该方法实际上是调用下一个方法实现的。
+- public int read(byte b[ ], int off, int len)：从输入流中最多读取len个字节的数据，存放到偏移量为off的b数组中。如果已经到了输入流的末尾，则返回-1。该方法实际上是通过第一个方法实现的。
+- public int available( )：在不阻塞该输入流下次方法调用的情况下，返回该输入流中可以读取（或可跳过）的字节数的**估计值**。如果InputStream对象调用这个方法的话，它只会返回0，**这个方法由继承InputStream类的子类来重写后使用才有用**。注意：若输入阻塞，当前线程将被挂起。
+- public int close( ) ：关闭该流对象并释放相关系统资源，**在使用完后必须关闭打开的流**。
 
 ###Reader类
+```java
 public abstract class Reader extends Object implements Readable, Closeable
+```
+
 Reader类是读取字符流的抽象基类，其子类必须实现的Reader类的方法有read(char[], int, int)和close()。Reader类方法如下：
 
-- public boolean	ready()：判断当前字符流是否已准备好被读取；
-- public intread()：读取一个字符；
-- public intread(char[] cbuf)：将当前字符流读取到字符串cbuf；
-- public abstract intread(char[] cbuf, int off, int len)：从输入流中最多读取len个字符的数据，存放到偏移量为off的b数组中；
-- intread(CharBuffer target)：尝试读取字符流到特殊的字符流中；
-- public abstract voidclose()：关闭该流对象并释放相关系统资源。
+- public boolean	ready()：判断当前字符流是否已准备好被读取。如果下一次用于输入的read()确定不会阻塞，则返回true，否则返回false。但返回false不一定会阻塞下次的read()操作；
+- public int read()：读取一个字符的整数值。范围为0~65535；
+- public int read(char[] cbuf)：从当前字符流中读取cbuf.length个字符到字符数组cbuf中。该方法实际上是调用下一个方法实现的；
+- public abstract int read(char[] cbuf, int off, int len)：从当前字符流中最多读取len个字符的数据，存放到偏移量为off的字符数组cbuf中；
+- int read(java.nio.CharBuffer target)：尝试读取字符流到特定的字符缓冲区中；
+- public abstract void close()：关闭该流对象并释放相关系统资源。
 
 InputStream类和Reader类都还含有以下方法：
 
-- public void mark(int readAheadLimit)：设置流对象的当前标记位置；
-- public booleanmarkSupported()： 测试此输入流是否支持 mark 和 reset 方法；
-- voidreset()： 将此流重新定位到最后一次对此输入流调用 mark 方法时的位置；
-- longskip(long n)：忽略输入流中的n个字节，返回值是实际忽略的字节数, 跳过一些字节来读取。
+- void mark(int readAheadLimit)：设置流对象的当前标记位置；
+- boolean markSupported()： 测试此输入流是否支持 mark 和 reset 方法，并不是所有的输入流都支持这两个方法。默认总是返回false；
+- void reset()： 将当前流重新定位到最后一次对此输入流调用 mark 方法时的位置；
+- long skip(long n)：忽略输入流中的n个字节（或字符），返回值是实际忽略的字节（或字符）数, 跳过一些字节（字符）来读取。
 
 ###OutputStream类
 OutputStream类的声明信息为：
@@ -175,69 +181,72 @@ OutputStream类的声明信息为：
 public abstract class OutputStream extends Object implements Closeable, Flushable
 ```
 
-其中，Closeable表示可以关闭的操作，因为程序运行到最后肯定要关闭。Flushable接口表示刷新，清空内存中的数据。OutputStream提供了3个write方法来做数据的输出，这个是和InputStream是相对应的：
+其中，Closeable接口（仅含一个void close()方法）表示可以关闭的操作，因为程序运行到最后肯定要关闭。Flushable接口（仅含一个void flush()方法）表示将缓冲区中数据全部输出，并清空缓冲区。OutputStream提供了3个write方法来执行数据的输出，这个和InputStream是相对应的：
 
-- public abstract void write(int b)：先将int转换为byte类型，把低字节写入到输出流中。
-- public void write(byte b[ ])：将参数b中的字节写到输出流。
-- public void write(byte b[ ], int off, int len)：将参数b的从偏移量off开始的len个字节写到输出流。
-- public void flush( ) ： 将数据缓冲区中数据全部输出，并清空缓冲区。
-- public void close( ) ： 关闭输出流并释放与流相关的系统资源。
+- public abstract void write(int b)：先将int型的b参数的低8位构成的字节数值转换为byte类型，再把该byte值写入到该输出流中。
+- public void write(byte b[ ])：将byte数组b中的b.length个字节数据写入到该输出流中。该方法是通过调用下面的方法实现的。
+- public void write(byte b[ ], int off, int len)：将byte数组b的从偏移量off开始的len个字节数据写到该输出流中。
+- public void flush() ：将数据缓冲区中数据全部输出到目标中，并清空缓冲区。该方法仅保证该输出流中的数据交给了操作系统来输出，并不保证数据会被写入到物理设备（如磁盘）中。
+- public void close() ：关闭该输出流并释放与其相关的系统资源。输出流一旦关闭就不能进行输出操作，也不能被再次打开。
 
 ###Writer类
+```java
 public abstract class Writer extends Object implements Appendable, Closeable, Flushable
-Writer类与OutputStream类似，是各种字符输出流的抽象父类。其子类必须实现write(char[], int, int), flush(),和close()方法。其主要方法如下：
+```
 
-- public void write(char[] cbuf)：将一个字符数组写入该字符输出流；
-- public abstract voidwrite(char[] cbuf, int off, int len)：将一个字符数组的部分内容写入该字符输出流；
-- public void write(int c)：将一个字符写入该字符输出流；
-- public void write(String str)：将一个字符串写入该字符输出流；
-- public void write(String str, int off, int len)：将一个字符串的部分内容写入该字符输出流；
-- public Writer append(char c)：在该字符输出流后面追加特定的字符；
-- public Writer append(CharSequence csq)：在该字符输出流后面追加特定的字符串；
-- public Writer append(CharSequence csq, int start, int end)：在该字符输出流的特定位置范围添加加特定的字符串；
-- public abstract voidclose()：关闭当前字符输出流，首先flush它；
-- public abstract voidflush()：将数据缓冲区中数据全部输出，并清空缓冲区。
+Writer类与OutputStream类似，是各种字符输出流的抽象父类。其子类必须实现write(char[], int, int)、flush()、和close()方法。其主要方法如下：
+
+- public void write(int c)：将一个字符写入该字符输出流中。
+- public void write(char[] cbuf)：将一个字符数组写入该字符输出流中。
+- public abstract void write(char[] cbuf, int off, int len)：将一个字符数组的部分内容写入该字符输出流中。
+- public void write(String str)：将一个字符串写入该字符输出流中。
+- public void write(String str, int off, int len)：将一个字符串的部分内容写入该字符输出流中。
+- public Writer append(char c)：在该字符输出流后面追加指定的字符。
+- public Writer append(CharSequence csq)：在该字符输出流后面追加指定的字符串。
+- public Writer append(CharSequence csq, int start, int end)：在该字符输出流的后天追加指定字符串的指定子字符串（通过start和end参数来指定子字符串）。
+- public abstract void close()：关闭该字符输出流，首先flush它。对已关闭的字符输出流执行write和flush操作会抛出IOException异常。
+- public abstract void flush()：将数据缓冲区中数据全部输出到目标中，并清空缓冲区。如果目标是一个Writer或OutputStream，则会递归flush所有缓冲区。
 
 注意：
 
-- 上述各方法都有可能引起异常。
-- 以上四个基类都是抽象类，不能创建对象。
-- 在操作的时候，如果文件本身不存在，则会为用户自动创建新文件。IO操作中默认的情况是将其进行覆盖的，那么现在要想执行追加的功能，则必须设置追加的操作。
-- 字节流在操作的时候本身是不会用到缓冲区(内存)的，是与文件本身直接操作的，而字符流在操作的时候是使用到缓冲区的。
-- 使用IO操作进行数据输出后，不要忘记关闭输出流。关闭输出流可以保证物理资源被回收，可能还会将缓冲区的数据flush到物理节点。
-- 处理流的构造器参数为一个已经存在的节点流，节点流的构造器参数为一个物理节点。一般使用处理流操作简单，执行效率高。如关闭流时，只需要关闭上层的处理流即可，其包装的下层节点流会自动关闭。
+- **上述各方法都有可能引起异常**。
+- **以上四个基类都是抽象类，不能创建对象。其所含的基本方法被子类重写后才有意义**。
+- **在操作的时候，如果目标文件本身不存在，则会为用户自动创建新文件。IO操作中默认是将其进行覆盖的，如果要想执行追加的功能，则必须设置追加的操作**。
+- **字节流在操作的时候本身是不会用到缓冲区(内存)的，而是直接操作文件本身，而字符流在操作的时候是使用到缓冲区的**。
+- **使用IO操作进行数据输出后，必须关闭输出流。关闭输出流可以保证物理资源被回收，可能还会将缓冲区的数据flush到物理节点（对于字符流来说）**。
+- **处理流的构造器参数为一个已经存在的节点流，节点流的构造器参数为一个物理节点。一般使用处理流操作简单，执行效率高。比如关闭流时，只需要关闭上层的处理流即可，其包装的下层节点流会自动关闭**。
 ##Java的输入/输出流体系
 
 ![img](http://img.blog.csdn.net/20161204101157399)
 
-###**字节流体系** 
+###字节流体系 
 ####FileInputStream类
-FileInputStream类是InputStream类的子类，用于从文件系统中的某个文件中获得输入字节，哪些文件可用取决于主机环境。也可用于读取诸如图像数据之类的原始字节流。要读取字符流，请考虑使用 FileReader。其构造器可以是一个表示文件名的字符串，也可以是File或FileDescriptor对象：
+FileInputStream类是InputStream类的子类，用于**从文件系统中的某个文件中获得输入字节**。哪些文件可用取决于主机环境。**也可用于读取诸如图像数据之类的原始字节流。其构造器可以是一个表示文件名的字符串，也可以是File或FileDescriptor对象**：
 
 - FileInputStream(File file)：通过打开一个到实际文件的连接来创建一个 FileInputStream，该文件通过文件系统中的 File 对象 file 指定。 
-- FileInputStream(FileDescriptor fdObj)：通过使用文件描述符 fdObj 创建一个 FileInputStream，该文件描述符表示到文件系统中某个实际文件的现有连接。 
+- FileInputStream(FileDescriptor fdObj)：通过使用文件描述符 fdObj 创建一个 FileInputStream，该文件描述对象表示**到文件系统中某个实际文件的连接（connection）**，该文件正在被该FileInputStream使用。 
 - FileInputStream(String name)：通过打开一个到实际文件的连接来创建一个 FileInputStream，该文件通过文件系统中的路径名 name 指定。 
 
- 其区别于基类的方法如下：
+ 扩展方法方法如下：
 
-- FileChannel getChannel() ：返回与此文件输入流有关的唯一 FileChannel 对象。 
-- FileDescriptor getFD() ：返回表示文件系统中连接到实际文件的 FileDescriptor 对象，该文件系统正被此FileInputStream 使用。 
+- FileChannel getChannel() ：返回唯一与该文件输入流相关连的FileChannel对象。 
+- FileDescriptor getFD() ：返回一个表示**到文件系统中某个实际文件的连接**的FileDescriptor对象，该文件正在被该FileInputStream使用。 
 
 使用步骤：
-1. 关联一个文件以得到一个输入流
-2. 进行读取操作
-3. 关闭流
+1. 关联一个文件以得到一个输入流。
+2. 进行读取操作。
+3. 关闭该输入流。
 
 注意：
 
-- 用字节流读取中文显示到控制台会出现乱码的情况，是因为汉字占两个字节，而此流每次只能读一个字节，就把它转为了字符，而写入文本文件不会出现此情况。
-- 如果希望看到 正常的文本显示，那么应该再打开文本文件时使用和保存该文本文件时相同的字符集（Windows下简体中文默认使用GBK字符集，Linux下简体中文默认使用UTF-8字符集）。
-- 如果输入输出的内容是文本内容，则应该考虑使用字符流。如果输入输出的内容是二进制内容，则应该考虑使用字节流。
-- 在使用字节流操作中，即使没有关闭，最终也是可以输出的。而在使用字符流的操作中，所有的内容现在都是保存在缓冲区中，如果执行关闭操作的时候会强制刷新缓冲区，所以可以把内容输出。如果没有关闭的话，也可以手工强制性调用刷新方法flush()来输出。 
+- 用字节流读取中文显示到控制台会出现乱码，因为汉字占两个字节，而FileInputStream每次只能读一个字节，然后就把它转为了字符，而写入文本文件不会出现此情况。
+- **如果希望看到正常的文本显示，那么应该在打开文本文件时使用和保存该文本文件时相同的字符集**（Windows下简体中文默认使用GBK字符集，Linux下简体中文默认使用UTF-8字符集）。
+- **如果输入输出的内容是文本内容，则应该考虑使用字符流。如果输入输出的内容是二进制内容，则应该考虑使用字节流**。
+- **在使用字节流操作中，即使没有关闭，最终也是可以输出的。而在使用字符流的操作中，所有的内容现在都是保存在缓冲区中，在执行关闭操作的时候会强制刷新缓冲区，所以可以把内容输出。如果没有关闭的话，也可以手工调用刷新方法flush()来输出**。 
 ```java
 public class FileInputStreamReview {
     public static void main(String[] args) {
-        //test1();
+        // test1();
         test2();
     }
   
@@ -245,18 +254,18 @@ public class FileInputStreamReview {
      * 文件输入流的创建方式以及字节缓冲流
 	 */
 	private static void test2() throws IOException {
-		//以代表文件的File对象或String对象为构造器参数创建FileInputStream对象
-		//FileInputStream fis = new FileInputStream(new File("jar.txt"));
+		// 以代表文件的File对象或String对象为构造器参数创建FileInputStream对象
+		// FileInputStream fis = new FileInputStream(new File("jar.txt"));
 		FileInputStream fis = new FileInputStream("jar.txt");
-		BufferedInputStream bis=new BufferedInputStream(fis);
-		//读取到一个字节数组 
-		//byte[] buff = new byte[2*1024];
-		//int len = -1;
-		//while ((len=bis.read(buff)) != -1) {
-		//System.out.println(new String(buff,0 , len));
-	//}
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		// 读取到一个字节数组 
+		// byte[] buff = new byte[2*1024];
+		// int len = -1;
+		// while ((len=bis.read(buff)) != -1) {
+		// System.out.println(new String(buff, 0, len));
+	// }
       
-		//读取到一个字节, 汉字为2个字节，读取汉字时出现乱码
+		// 读取到一个字节, 汉字为2个字节，读取汉字时出现乱码
 		int b = -1;
 		StringBuilder sb = new StringBuilder();
 		while ((b = bis.read()) != -1) {
@@ -271,29 +280,30 @@ public class FileInputStreamReview {
 	 */
 	private static void test() throws IOException {
 		FileInputStream fis = new FileInputStream("jar.txt");
-		//每次读取一个字符数组，效率高，而且读取中文时不会出现乱码
-		//byte[] buff = new byte[1024];
-		//int len = 0;
-		//while((len = fis.read(buff)) != -1){
-		//System.out.print(new String(buff,0,len));
-	//}
+		// 每次读取一个字符数组，效率高，而且读取中文时不会出现乱码
+		// byte[] buff = new byte[1024];
+		// int len = 0;
+		// while((len = fis.read(buff)) != -1){
+		// System.out.print(new String(buff, 0, len));
+	// }
 
-	//每次读取一个字符，效率低
+	// 每次读取一个字符，效率低
 	int ch;
 	while((ch = fis.read()) != -1){
 		System.out.print((char)ch);
 	}
 
-	//创建的byte数组与流等大小。慎用，如果流过大，则创建字节数组失败
-	//byte[] buf = new byte[fis.available()]; //创建一个和流等大小的字节数组
-	//fis.read(buf);
-	//System.out.println(new String(buf));
-		 fis.close();
+	// 创建的byte数组与流等大小。慎用，如果流过大，则创建字节数组失败
+	// byte[] buf = new byte[fis.available()]; //创建一个和流等大小的字节数组
+	// fis.read(buf);
+	// System.out.println(new String(buf));
+	fis.close();
 	}
 }
 ```
 ####FileOutputStream类
-此抽象类是表示输出字节流的所有类的基类。输出流用于将数据写入 File 或 FileDescriptor 的输出流。文件是否可用或能否可以被创建取决于基础平台。特别是某些平台一次只允许一个 FileOutputStream（或其他文件写入对象）打开文件进行写入。在这种情况下，如果所涉及的文件已经打开，则此类中的构造方法将失败。 FileOutputStream 用于写入诸如图像数据之类的原始字节的流。要写入字符流，请考虑使用 FileWriter。
+FileOutputStream类是OutputStream抽象类的子类，用于将数据写入File或FileDescriptor 表示的文件中。文件是否可用或是否可以被创建取决于基础平台。特别是某些平台一次只允许一个FileOutputStream（或其他文件写入对象）打开文件进行写入。在这种情况下，如果所涉及的文件已经打开，则此类中的构造方法将失败。FileOutputStream用于写入诸如图像数据之类的原始字节的流。要写入字符流，请考虑使用FileWriter。
+
 构造器摘要：
 
 - FileOutputStream(File file) ：创建一个向指定 File 对象表示的文件中写入数据的文件输出流。 
@@ -311,15 +321,15 @@ public class FileInputStreamReview {
 示例：
 ```java
  /**
-* 从一个文件中读取，并将内容写入另一个文件
- * @throws IOException 
- */
+  * 从一个文件中读取，并将内容写入另一个文件
+  * @throws IOException 
+  */
 private static void test() throws IOException {
 	  FileInputStream fis = fis = new FileInputStream("jar.txt");
-      FileOutputStream fos = fos=new FileOutputStream("fos.txt",true); //true表示可附加内容    
+      FileOutputStream fos = fos=new FileOutputStream("fos.txt",true); // true表示可附加内容    
       byte[] buf = new byte[1024];
       int len = -1;
-      while((len=fis.read(buf))!=-1){
+      while((len = fis.read(buf)) != -1){
 	      fos.write(buf, 0, len);
       }
       fis.close();
@@ -328,72 +338,77 @@ private static void test() throws IOException {
 ```
 
 ####ObjectInputStream类和ObjectOutputStream类与序列化机制
-序列化的含义：若要将Java对象**持久地保存在磁盘上或在网络上传输**，以便以后恢复该对象。那么该对象必须转化为平台无关的字节序列，转换的过程称为序列化（Serializable ），恢复序列化对象的过程称为反序列化（Dserializable）。
+序列化的含义：若要**将Java对象持久地保存在磁盘上或在网络上传输，以便以后恢复该对象**，那么**该对象必须转化为平台无关的字节序列，转换的过程称为序列化（Serializable ），恢复序列化对象的过程称为反序列化（Dserializable）**。
 
-可序列化对象的类**必须实现 java.io.Serializable 或 java.io.Externalizable 接口之一**。**其中实现Serializable接口时无须实现任何方法，该接口只是负责标记实现其的类对象可序列化**。
+可序列化对象的类**必须实现java.io.Serializable或java.io.Externalizable接口之一**。**其中实现Serializable接口时无须实现任何方法，该接口只是负责标记其实现类的对象是可序列化的**。
 
 #####ObjectInputStream类
-ObjectInputStream 对以前使用 ObjectOutputStream 写入的基本数据和对象**进行反序列化**，其他用途包括使用套接字流在主机之间传递对象，或者用于编组和解组远程通信系统中的实参和形参。 
-构造器摘要：
-ObjectInputStream(InputStream in)：创建从指定 InputStream 读取的 ObjectInputStream。 
 
-除了从基类继承的方法，它主要功能是对基本类型与引用类型的读取。主要方法摘要：
+**ObjectInputStream用于对之前使用ObjectOutputStream写入的基本数据和对象进行反序列化**，其他用途包括**使用套接字流在主机之间传递对象**，或者用于marshal和unmarshal远程通信系统中的实参和形参。 
+
+构造器摘要：
+
+ObjectInputStream(InputStream in)：从指定InputStream创建ObjectInputStream对象。 
+
+除了从基类继承的方法，**它主要功能是对基本类型与引用类型的读取**。主要方法摘要：
 
 - int readInt()：读取一个 32 位的 int 值。 
-- Object readObject() ：从 ObjectInputStream 读取对象。 
-- String readUTF()：读取 UTF-8 修改版格式的 String。 
-- int read()：读取数据字节。 
-- int read(byte[] buf, int off, int len) ：读入 byte 数组。 
+- Object readObject() ：从ObjectInputStream中读取一个对象（包括字符串和数组）。 该方法的返回值一般还需要强制类型转换成期望的类型。
+- String readUTF()：读取UTF-8修改版格式的String。 
+- int read()：读取数据字节。
+- int read(byte[] buf, int off, int len) ：将数据读入到byte类型的buf数组中。 
 
 反序列化注意：
 
-- 当有多个Java对象写入流中时，必须使用与写入对象时相同的类型和顺序从相应 ObjectInputstream 中读回对象。
-- 反序列读取的仅是Java对象，而不是Java类，因此恢复对象时必须提供该对象的类对应的.class文件，否则抛出ClassNotFoundException异常。
-- 由于读取的是对象实例，故不必调用构造器来创建实例，反序列化的结果就是对象实例。读取对象时为对象分配内存并将其初始化为零 (NULL)。
-- 应该使用 Java 的安全强制转换来获取所需的类型。在 Java 中，字符串和数组都是对象，所以在序列化期间将其视为对象。读取时，需要将其强制转换为期望的类型。可以使用 DataInput （接口）上的适当方法从流读取基本数据类型。
+- **当有多个Java对象写入流中时，必须使用与写入对象时相同的类型和顺序从相应ObjectInputstream中读回对象**。
+- **反序列化读取的仅是Java对象，而不是Java类，因此恢复对象时必须提供该对象的类对应的`.class`文件，否则抛出ClassNotFoundException异常**。
+- **由于读取的是对象实例，故不必调用构造器来创建实例，反序列化的结果就是对象实例。读取对象时为对象分配内存并将其初始化为零 (NULL)**。
+- **应该使用Java的安全强制转换来获取所需的类型。在Java中，字符串和数组都是对象，所以在序列化期间将其视为对象。读取时，需要将其强制转换为期望的类型。可以使DataInput接口上的适当方法从ObjectInputStream中读取基本数据类型**。
+- 反序列化一个对象时会恢复其写入时的每个field的类型和值，其中，声明为transient或static的field会被忽略。
 
 示例：
 ```java
-private static void read() throws FileNotFoundException, IOException,
-            ClassNotFoundException {
-	FileInputStream fis=new FileInputStream("t.tmp");
-	//包装FileInputStream对象来创建ObjectInputStream对象
-	ObjectInputStream ois=new ObjectInputStream(fis);
+private static void read() throws FileNotFoundException, IOException, ClassNotFoundException {
+	FileInputStream fis = new FileInputStream("t.tmp");
+	// 包装FileInputStream对象来创建ObjectInputStream对象
+	ObjectInputStream ois = new ObjectInputStream(fis);
 	// 按与写入对象时相同的类型和顺序依次读取
 	int readInt = ois.readInt();
-	//知道读取对象实际类型时则将其强制转换为期望的类型
+	// 如果知道读取对象实际类型时则将其强制转换为期望的类型
 	String string = (String) ois.readObject();
-	Date date=(Date) ois.readObject();
+	Date date = (Date) ois.readObject();
 
 	System.out.println("readInt="+readInt);
 	System.out.println("string="+string);
 	System.out.println("date="+date);
 	ois.close();
-    }
+}
 ```
 #####ObjectOutputStream类
-ObjectOutputStream 类将 Java 对象的基本数据类型和图形写入 OutputStream，实现序列化。可以使用 ObjectInputStream 读取（重构）对象。writeObject 方法用于将对象写入流中。所有对象（包括 String 和数组）都可以通过 writeObject 写入。
+ObjectOutputStream类用于将基本数据类型和Java对象的图形（graph）写入一个OutputStream以实现序列化。可以使用ObjectInputStream来读取（重构）已序列化的对象。
 
 构造器摘要：
-ObjectOutputStream(OutputStream out)：创建写入指定 OutputStream 的 ObjectOutputStream。 
+
+ObjectOutputStream(OutputStream out)：创建写入指定OutputStream的ObjectOutputStream。 
 
 除了从基类继承的方法，它主要功能是对基本类型与引用类型进行序列化。主要方法摘要：
 
-- void writeBytes(String str)：以字节序列形式写入一个 String。 
-- void writeObject(Object obj)：将指定的对象写入 ObjectOutputStream。  
-- void writeUTF(String str)：以 UTF-8 修改版格式写入此 String 的基本数据。 
+- void writeBytes(String str)：以字节序列形式写入一个String。 
+- void writeObject(Object obj)：将指定的对象写入到该ObjectOutputStream中。所有对象（包括String和数组）都是通过该方法进行序列化写入的。该方法可以写入多个对象或基本类型数据。 
+- void writeUTF(String str)：以 UTF-8 修改版格式写入此String的基本数据。 
 
 序列化注意事项：
 
-- ObjectOutputStream 类和 ObjectInputStream 类是处理流类，一般分别包装 FileOutputStream 类和 FileInputStream 类的对象使用。
-- 对象的默认序列化机制写入的内容是：对象的类，类签名和该对象的所有实例变量。如果每个类的成员变量不是基本类型或String类型（都一实现了序列化接口），而是其他引用类型，那么这些引用类型的对象必须也是可序列化的，否则，即使其所在的类实现了序列化接口之一，其所在类也是不可序列化的。这是序列化机制的递归序列化过程。
-- 一个可序列化类的所有父类中，要么有无参数构造器，要么也是可序列化的，否则，反序列化时会抛出InvalidClassException。如果父类不可序列化，只是带有无参数构造器，则该父类中定义的成员变量不会被序列化到二进制流中。
-- 所有保存到磁盘中的对象都有一个序列化编号，如果在序列化时一个对象在本次虚拟机中从未被序列化过，那么就会被序列化，如果被序列化过，那么直接输出一个序列化编号，而不是重新序列化。但是在序列化可变对象时，只有第一次调用writeObject方法时才会序列化该对象，如果后续修改了该对象并再次序列化则会无效，因为该对象已经序列化过了。
+- **ObjectOutputStream类和ObjectInputStream类是处理流类，一般分别包装FileOutputStream类和FileInputStream类的对象使用**。
+- 对象的默认序列化机制写入的内容是：类名、类签名、该对象的所有非transient实例变量（包括基本类型、数组以及对其他对象的引用），而方法、类变量、transient实例变量（也称为瞬态实例变量）都不会被序列化。**如果某个类的成员变量不是基本类型或String类型（都已实现了序列化接口），而是其他引用类型，那么这些引用对象也会被序列化，这就是序列化机制的递归序列化过程。所以这些引用对象也必须是可序列化的，否则，即使其所在的类实现了序列化接口也是不可序列化的**。
+- **一个可序列化类的所有父类（直接父类和间接父类）中，要么有无参数构造器，要么也是可序列化的，否则，反序列化时会抛出InvalidClassException。如果可序列化类的父类不可序列化，则必须带有无参数构造器来初始化其field，该父类中定义的成员变量不会被序列化到二进制流中，这种情况下应该交由当前可序列化类来负责存储和恢复其不可序列化父类的状态信息。**
+- **所有保存到磁盘中的对象都有一个序列化编号。如果在序列化时一个对象在本次虚拟机中从未被序列化过，那么就会被序列化，如果被序列化过，那么直接输出一个序列化编号，而不是重新序列化。也就是说，如果多次序列化中包含了同一个引用对象，那么该对象只会被序列化依次，而不是重复序列化同一个对象。在序列化可变对象时，由于只有第一次调用writeObject方法时才会序列化该对象，如果后续修改了该对象并再次序列化则会无效，因为该对象已经序列化过了**。
+- 基本数据类型可以使用DataOutput的相关方法来写到序列化流中。字符串也可以通过writeUTF方法来写到序列化流中。
 
 实例：
 ```java
 public class Person implements java.io.Serializable {
-	//成员变量为String类型和基本类型
+	// 成员变量为String类型和基本类型
 	private String name;
 	private int age;
 	// 注意此处没有提供无参数的构造器!
@@ -406,13 +421,11 @@ public class Person implements java.io.Serializable {
 }
 ```
 ```java
-public class Teacher
-	implements java.io.Serializable{
+public class Teacher implements java.io.Serializable {
 	private String name;
 	//其成员变量为引用类型
 	private Person student;
-	public Teacher(String name , Person student)
-	{
+	public Teacher(String name , Person student) {
 		this.name = name;
 		this.student = student;
 	}
@@ -431,22 +444,18 @@ public class ObjectStreamDemo {
 	private static void read() {
 		try(
 			// 创建一个ObjectInputStream输出流
-			ObjectInputStream ois = new ObjectInputStream(
-				new FileInputStream("teacher.txt"))) {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("teacher.txt"))) {
 			// 依次按写入顺序读取ObjectInputStream输入流中的四个对象
 			Teacher t1 = (Teacher)ois.readObject();
 			Teacher t2 = (Teacher)ois.readObject();
 			Person p = (Person)ois.readObject();
 			Teacher t3 = (Teacher)ois.readObject();
 			// 输出true
-			System.out.println("t1的student引用和p是否相同："
-				+ (t1.getStudent() == p));
+			System.out.println("t1的student引用和p是否相同：" + (t1.getStudent() == p));
 			// 输出true
-			System.out.println("t2的student引用和p是否相同："
-				+ (t2.getStudent() == p));
+			System.out.println("t2的student引用和p是否相同：" + (t2.getStudent() == p));
 			// 输出true
-			System.out.println("t2和t3是否是同一个对象："
-				+ (t2 == t3));
+			System.out.println("t2和t3是否是同一个对象：" + (t2 == t3));
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -456,15 +465,14 @@ public class ObjectStreamDemo {
 	private static void write() {
 		try(
 			// 创建一个ObjectOutputStream输出流
-			ObjectOutputStream oos = new ObjectOutputStream(
-				new FileOutputStream("teacher.txt"))){
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("teacher.txt"))) {
 			Person per = new Person("孙悟空", 500);
-			Teacher t1 = new Teacher("唐僧" , per);
-			Teacher t2 = new Teacher("菩提祖师" , per);
+			Teacher t1 = new Teacher("唐僧", per);
+			Teacher t2 = new Teacher("菩提祖师", per);
 			// 依次将四个对象写入输出流
 			oos.writeObject(t1);
 			oos.writeObject(t2);
-			//因为t1和t2都包含了相同的per对象，所以下面的两次序列化写入的是跟之前相同的已序列化对象
+			// 因为t1和t2都包含了相同的per对象，所以下面的两次序列化写入的是跟之前相同的已序列化对象
 			oos.writeObject(per);
 			oos.writeObject(t2);
 		}
@@ -476,7 +484,9 @@ public class ObjectStreamDemo {
 ```
 
 #####自定义序列化
-可用transient关键字声明不需要序列化的实例变量，从而保护一些敏感信息（如帐号密码等），或者跳过一些不可序列化的成员，以免发生java.io.NotSerializableException异常。注意：transient关键字只能用于修饰成员变量。
+**可用transient关键字声明那些不需要序列化的实例变量，从而保护一些敏感信息（如帐号密码等），或者跳过一些不可序列化的成员，以免发生java.io.NotSerializableException异常**。
+
+> 注意：**transient关键字只能用于修饰成员变量**。
 
 示例：
 ```java
@@ -485,7 +495,7 @@ public class ObjectStreamDemo {
 	// 使用transient修饰的成员变量不会被序列化
 	private transient int age;
 	// 注意此处没有提供无参数的构造器!
-	public Person(String name , int age) {
+	public Person(String name, int age) {
 		System.out.println("有参数的构造器");
 		this.name = name;
 		this.age = age;
@@ -498,11 +508,9 @@ public class TransientTest {
 	public static void main(String[] args) {
 		try(
 			// 创建一个ObjectOutputStream输出流
-			ObjectOutputStream oos = new ObjectOutputStream(
-				new FileOutputStream("transient.txt"));
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("transient.txt"));
 			// 创建一个ObjectInputStream输入流
-			ObjectInputStream ois = new ObjectInputStream(
-				new FileInputStream("transient.txt"))) {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("transient.txt"))) {
 			Person per = new Person("孙悟空", 500);
 			// 系统会将per对象转换为字节序列并输出，但是没有输出transient修饰的age变量信息
 			oos.writeObject(per);
@@ -515,13 +523,13 @@ public class TransientTest {
 	}
 }
 ```
-使用transient关键字定义序列化机制虽然简单方便，但是其修饰的成员因为没有被序列化而无法恢复。Java提供了一种自定义序列化机制，通过这种自定义序列化机制可以控制如何序列化各实例变量，包括不序列化某些变量(与transient功能相同)。
+**使用transient关键字定义序列化机制虽然简单方便，但是其修饰的成员因为没有被序列化而无法恢复**。Java提供了一种自定义序列化机制，通过这种**自定义序列化机制可以控制如何序列化各实例变量，包括不序列化某些变量(与transient功能相同)**。
 
 序列化和反序列化中需要特殊处理的类需要提供以下方法签名：
 
-- private void writeObject(ObjectOutputStream os) throws IOException：负责序列化某个对象的具体规则，默认情况下，该方法会调用out.defaultWriteObject来保存java对象的各实例变量。
-- private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException：实现反序列化规则，与writeObject相反，默认情况下，该方法会调用in.defaultReadObject来恢复java对象的非瞬态实例变量。
-- private void readObjectNoData() throws ObjectStreamException：在接收方反序列化过程和发送发的序列化过程不兼容时，该方法用于正确地初始化反序列化对象。
+- private void writeObject(ObjectOutputStream os) throws IOException：该方法负责写入对象的状态信息，以便相应的readObject方法可以恢复它。通过重写该方法，程序员可以自主决定哪些实例变量需要序列化以及如何序列化。该方法不用去关心当前对象的父类或子类的状态。默认情况下，该方法会调用out.defaultWriteObject方法来保存java对象的各实例变量来完成序列化。
+- private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException：与writeObject相反，该方法负责实现反序列化规则。通过重写该方法，程序员可以自主决定哪些实例变量需要反序列化以及如何反序列化，默认情况下，该方法会调用in.defaultReadObject来恢复java对象的非瞬态实例变量。
+- private void readObjectNoData() throws ObjectStreamException：在接收方反序列化过程和发送发的序列化的版本不兼容时，或者接收方版本扩展的类不是发送方版本扩展的类，或者序列化流被扩展时，系统都会调用该方法用于正确地初始化反序列化对象。
 
 
  示例：
@@ -536,24 +544,24 @@ public class Person implements java.io.Serializable {
         this.age = age;
     }
     // 省略name与age的setter和getter方法
-	private void writeObject(java.io.ObjectOutputStream out)
-        throws IOException {
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         // 将name实例变量的值反转后写入二进制流
         out.writeObject(new StringBuffer(name).reverse());
         out.writeInt(age);
     }
-    private void readObject(java.io.ObjectInputStream in)
-        throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         // 将读取的字符串反转后赋给name实例变量
-        this.name = ((StringBuffer)in.readObject()).reverse()
-            .toString();
+        this.name = ((StringBuffer)in.readObject()).reverse().toString();
         this.age = in.readInt();
     }
 }
 ```
-有种序列化可以替换原对象的序列化机制，实现替换功能应该为待序列化类提供如下特殊方法：
+> 注意：writeObject()方法存储实例变量的顺序和readObject()方法恢复实例变量的顺序应该一致，否则不能正确地恢复该对象。
+
+有种序列化机制**可以在序列化时替换原对象**，这种序列化机制需要为待序列化对象的类提供如下特殊方法：
+
 ```java
-//只要该方法存在就会被序列化机制调用
+// 只要该方法存在就会被序列化机制调用
 private | protected | default | public  Object writeReplace() throws ObjectStreamException;
 ```
 ```java
@@ -567,8 +575,8 @@ public class Person implements java.io.Serializable {
         this.age = age;
     }
     // 省略name与age的setter和getter方法
-    //    重写writeReplace方法，程序在序列化该对象之前，先调用该方法
-    private Object writeReplace()throws ObjectStreamException {
+    // 重写writeReplace方法，程序在序列化该对象之前，先调用该方法
+    private Object writeReplace() throws ObjectStreamException {
         ArrayList<Object> list = new ArrayList<>();
         list.add(name);
         list.add(age);
@@ -581,11 +589,9 @@ public class ReplaceTest {
     public static void main(String[] args) {
         try(
             // 创建一个ObjectOutputStream输出流
-            ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream("replace.txt"));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("replace.txt"));
             // 创建一个ObjectInputStream输入流
-            ObjectInputStream ois = new ObjectInputStream(
-                new FileInputStream("replace.txt"))) {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("replace.txt"))) {
             Person per = new Person("孙悟空", 500);
             // 系统将per对象转换字节序列并输出
             oos.writeObject(per);
@@ -599,20 +605,24 @@ public class ReplaceTest {
     }
 }
 ```
-还有一种序列化机制可以实现保护性赋值整个对象的序列化机制：
+还有一种反序列化机制**可以实现保护性复制整个对象**，这种机制需要待序列化对象的类提供如下方法：
 
 ```java
-private | protected | default | public Object readResolve()throws ObjectStreamException
+private | protected | default | public Object readResolve() throws ObjectStreamException
 ```
 
-1. 该方法会紧跟着readObject()之后被隐式调用，该方法的返回值将会替代原来反序列化的对象，原来readObject返回的反序列化对象会被立即丢弃。
-2. 所有的单例类、枚举类(Java5之后的枚举类)在序列化时提供readResolve方法才可以保证在反序列化后的对象正常。
-3. 对于final类重写readResolve方法没有问题。为了不使继承父类的readResolve方法出现问题（子类如果不重写该方法会恢复为父类类型，这是对子类来说是一种负担。甚至子类可能根本无法重写该方法），最好在重写改方法时使用private修饰，这样就不会影响到子类的反序列化了。
+1. 该方法并不是用来恢复writeReplace()的。使用writeReplace()后默认已经被彻底替换了，一旦实现了writeReplace()在写入时进行替换就不再需要为待序列化对象的类提供writeObject()和readObject()的实现了，直接通过调用ObjectInputStream的readObject()方法就可以反序列化被替换的结果了。该方法会紧跟着readObject()之后自动调用，该方法的返回值将会作为ObjectInputStream的readObject的返回结果。该方法起到的作用：
+   - 调用该方法之前会先调用readObject反序列化得到对象；
+   - 接着，如果该方法存在则会自动调用该方法；
+   - 在该方法中可以正常通过this访问到刚才反序列化得到的对象的内容；
+   - 然后可以根据这些内容进行一定处理返回一个对象；
+   - 该对象将作为ObjectInputStream的readObject的返回值（即该对象将作为对象输入流的最终输入）。
+2. readResolve方法最重要的应用就是保护性恢复单例、枚举类型的对象。如果使用Java的enum关键字来定义枚举类型则不需要了。Java 5之后的版本都实现了enum类型的自动保护性恢复，但是java 5之前的老版本还是不行。
+3. 对于final类重写readResolve()方法没有问题。为了不使继承父类的readResolve()方法出现问题（子类如果不重写该方法就会被反序列化为父类类型，这是对子类来说是一种负担。甚至子类可能根本无法重写该方法），最好在重写该方法时使用private修饰，这样就不会影响到子类的反序列化了。
 
-示例： 
+**Java 5之前的枚举类序列化**示例： 
 ```java
-public class Orientation
-    implements java.io.Serializable {
+public class Orientation implements java.io.Serializable {
     public static final Orientation HORIZONTAL = new Orientation(1);
     public static final Orientation VERTICAL = new Orientation(2);
     private int value;
@@ -620,7 +630,7 @@ public class Orientation
         this.value = value;
     }
     // 为枚举类增加readResolve()方法
-    private Object readResolve()throws ObjectStreamException {
+    private Object readResolve() throws ObjectStreamException {
         if (value == 1) {
             return HORIZONTAL;
         }
@@ -643,7 +653,7 @@ public class ResolveTest{
                 new FileInputStream("transient.txt"))) {
             oos.writeObject(Orientation.HORIZONTAL);
             Orientation ori = (Orientation)ois.readObject();
-            //返回为true
+            // 返回为true
             System.out.println(ori == Orientation.HORIZONTAL);
         }
         catch (Exception ex) {
@@ -652,34 +662,34 @@ public class ResolveTest{
     }
 }
 ```
-实现 Externalizable接口的序列化方式可以完全由程序员决定存储和恢复的对象数据，是一种强制的序列化机制。
-主要实现下面两个方法：
+实现Externalizable接口可以让程序员完全控制序列化的数据，实现该接口需要待序列化对象的类实现下面两个方法：
 
--  void writeExternal(ObjectOutput out)：该方法通过调用 DataOutput(ObjectOutput的父接口)的方法来保存基本类型的实例变量值。调用ObjectOutput的writeObject方法来保存引用类型的实例变量值。
--  void readExternal(ObjectInput in)：该方法通过调用 DataInput(ObjectInput的父接口)的方法来恢复基本类型的实例变量值。调用ObjectInput的readObject方法来恢复引用类型的实例变量值。
+-  void writeExternal(ObjectOutput out)：负责实现序列化。该方法通过调用DataOutput（ObjectOutput的父接口）的方法来保存基本类型的实例变量值，调用ObjectOutput的writeObject方法来保存引用类型的实例变量值。
+-  void readExternal(ObjectInput in)：负责实现反序列化。该方法通过调用DataInput(ObjectInput的父接口)的方法来恢复基本类型的实例变量值，调用ObjectInput的readObject方法来恢复引用类型的实例变量值。
 
-实现Externallizable接口可以提高自定义序列化的性能，但是更加复杂。一般推荐实现Serialiable接口。
+相比实现Serializable接口，实现Externalizable接口更加高效一点，但实现Serializable接口更加灵活，其最重要的特色就是可以自动序列化，这也是其应用更广泛的原因。实现Externallizable接口可以提高自定义序列化的性能，但是更加复杂。一般推荐实现Serialiable接口。
 
-Java允许为待序列化类提供一个**private static final long serialVersionUID的私有变量**，用于表示Java类的序列化版本信息，可以避免项目升级从而class文件升级导致的兼容性问题，推荐自定义该值，因为系统默认自动生成的该值会因类的修改(主要是修改非瞬态的实例变量)而不同，导致反序列化失败。当然，如果保证不同版本间的不兼容可以使用系统生成的默认值。
-可以通过调用bin目录的 serialver.exe工具生成serialVersionUID（根据类名，接口名，方法和属性等来生成的），如执行： 
+**待序列化类可以提供一个名为serialVersionUID的私有静态常量来表示Java类的序列化版本信息，可以避免因项目升级导致的class文件兼容性问题。推荐自定义该常量的值，因为系统默认自动生成的该值会因类的修改(主要是修改非瞬态的实例变量)而不同，导致反序列化失败**。当然，如果保证不同版本间的不兼容可以使用系统生成的默认值。
 
-```powershell
+可以通过调用JDK安装目录的bin子目录中的`serialver.exe`工具生成serialVersionUID（根据类名，接口名，方法和属性等来生成的），如执行： 
+
+```shell
 serialver Person
 ```
 
 则输出：
 
-```powershell
+```shell
 Person：static final long serialVersionUID = 4603642343377807741L;
 ```
 
 或者执行：
 
-```po
+```shell
 serialer -show Person 
 ```
 
-则显示出图形化界面
+则显示出图形化界面。
 
 ####PipedInputStream
 管道输入流应该连接到管道输出流.管道输入流提供要写入管道输出流的所有数据字节。 

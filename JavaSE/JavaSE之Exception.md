@@ -5,7 +5,7 @@ typora-copy-images-to: ..\..\graphs\photos
 
 ## 异常的分类
 
-Java通过API中Throwable类的众多子类描述各种不同的异常。因而，Java异常都是对象，是Throwable（可抛出）子类的实例，描述了出现在一段编码中的错误条件。当错误条件生成时，将引发异常。
+Java通过API中**Throwable类**的众多子类描述各种不同的异常。因而，**Java异常都是对象，是Throwable（可抛出）子类的实例**，描述了出现在一段编码中的错误条件。当错误条件生成时，将引发异常。
 
 ![Exceptions](/Exceptions.png)
 
@@ -498,7 +498,7 @@ public calSal() throws SalException {
 
 ## 使用自定义异常类
 
-使用Java内置的异常类可以描述在编程时出现的大部分异常情况。除此之外，用户还可以自定义异常。 用户自定义异常类，只需继承Exception基类，如果自定义Runtime异常，那么继承RuntimeException基类即可 。自定义异常类需要提供两个构造器，一个无参数构造器，一个是带字符串参数的构造器，这个字符串将作为异常类的getMessage()方法的返回值。
+使用Java内置的异常类可以描述在编程时出现的大部分异常情况。除此之外，用户还可以自定义异常。 **用户自定义异常类，只需继承Exception基类，如果自定义Runtime异常，那么继承RuntimeException基类即可 。自定义异常类需要提供两个构造器，一个无参数构造器，一个是带字符串参数的构造器，这个字符串将作为异常类的getMessage()方法的返回值**。
 
 在程序中使用自定义异常类，大体可分为以下几个步骤。
 
