@@ -2,10 +2,10 @@
 **File类**是java.io包下代表**与平台无关文件或目录**。File类**能操作文件和目录但是不能访问文件内容，访问文件内容需要使用IO（输入流/输出流）**。
 **创建File对象：**
 
-- File(File parent, String child)：以父路径和子路径字符串创建File对象；
+- File(File parent, String child)：以一个抽象父路径（parent pathname）和一个子路径（child pathname）字符串创建File对象；
 - File(String parent, String child)：同上；
 - File(String pathname)：以路径字符串创建File对象；
-- File(URI uri)：以URI为路径创建File对象。
+- File(URI uri)：以URI为路径创建File对象。URI以file:开头，是依赖于系统的（system-dependent）。
 
 **访问文件名的相关方法**：
 
@@ -14,16 +14,16 @@
 - Strin getParent()：返回该File对象的父路径名；
 - String getAbsolutePath()：返回该File对象的绝对路径名；
 - File getAbsoluteFile()：返回该File对象的绝对路径对应的File对象；
-- String getCanonicalPath()：返回该File对象的规范路径名；
+- String getCanonicalPath()：返回该File对象的规范化的路径名。规范化的路径名是绝对的、唯一的，规范形式的严格定义是依赖于系统的；
 - File getCanonicalFile()：返回该File对象的规范路径对应的File对象；
 - boolean renameTo(File dest)：重命名该File对象；
 
 **文件检测相关的方法**：
 
-- boolean exists()：该File对象对应的文件或目录是否存在；
-- boolean isAbsolute()：是否为绝对路径；
-- boolean isDirectory()：是否为路径；
-- boolean isFile()：是否为文件：
+- boolean **exists()**：该File对象对应的文件或目录是否存在；
+- boolean **isAbsolute()**：是否为绝对路径；
+- boolean **isDirectory()**：是否为路径；
+- boolean **isFile()**：是否为文件：
 - boolean isHidden()：是否为隐藏；
 - boolean canRead()：是否可读；
 - boolean canWrite()：是否可写；
@@ -31,8 +31,8 @@
 
 **获取常规文件信息**：
 
-- long	lastModified()：获取最后修改时间
-- long length()：获取文件长度。
+- long	**lastModified()**：获取最后修改时间
+- long **length()**：获取文件长度。
 
 **文件操作相关的方法**：
 
