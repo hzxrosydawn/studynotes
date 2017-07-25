@@ -1,57 +1,76 @@
 ##File类详解
-**File类**是java.io包下代表**与平台无关文件或目录**。File类**能操作文件和目录但是不能访问文件内容，访问文件内容需要使用IO（输入流/输出流）**。
-**创建File对象：**
+**File类**位于java.io包下，用来抽象地表示**文件和目录的路径名**。抽象路径名包括两部分：
 
-- File(File parent, String child)：以一个抽象父路径（parent pathname）和一个子路径（child pathname）字符串创建File对象；
-- File(String parent, String child)：同上；
+- 依赖于操作系统的前缀字符串，比如驱动器盘符加英文冒号（Windows系统中的根目录）、`/`（Unix系统中的根目录）、`\\\\`（表示Windows UNC 路径名）。这种前缀是可选的，比如相对路径就没有这些前缀；
+- 零或多个表示各级目录的字符串。
+
+路径（Path）既可以是文件，关于路径的详细介绍，请参考维基百科中有关[Path(Computing)](https://en.wikipedia.org/wiki/Path_(computing))的介绍。
+
+由于不同操作系统中路径（如根目录、路径分隔符，目录分隔符）的表示都不相同，所以路径名字符串和File类的抽象路径名之间的转换依赖于操作系统。
+
+- 根目录在不同的操作系统上是不同的。Windows系统中的根目录是驱动器盘符后跟英文冒号，Unix系统中的根目录用`/`表示；
+- 路径分隔符在不同的操作系统上是不同的。Windows系统中的多个路径之间使用英文分号`;`来分隔多个路径，Unix系统中使用英文冒号（colon）`:`来分隔符多个路径。典型连续多个路径如Path环境变量；
+- 目录分隔符在不同的操作系统上也是不同的。Windows系统中的多个路径之间使用分隔符`\`，Unix系统中的路径分隔符是`/`。Java中默认的路径分隔符定义在系统属性`file.separator`中，可以通过File类的**separator字符串常量**来访问平台无关的路径分隔符。
+
+路径名既可以是绝对的（absolute，or full），也可以是相对的（relative）。绝对路径以根目录开头，仅依靠自身内容就可以定位文件位置而不需要其他信息；而相对路径则不用提供文件的完整路径，默认以当前的工作路径开始，然后结合自身路径一起来定位文件。在java.io包中的类默认相对路径依赖于当前的用户路径（由`user.dir`系统属性指定）。
+
+在Windows系统中，路径前缀总是驱动器盘符后跟英文冒号，如果是绝对路径，还会跟`\\`。UNC的路径前缀是`\\\\`，然后依次主机名和共享目录名。Windows系统中没有指定盘符的相对路径是没有前缀的；而在Unix系统中，绝对路径的前缀总是`/`，相对路径没有前缀
+
+**创建File对象**：
+
+- File(File parent, String child)：以一个表示抽象父路径（parent pathname）的File对象和一个子路径（child pathname）字符串创建一个新的File对象。如果抽象父路径为null，则相当于调用单参数的构造器；否则，抽象父路径应该表示一个目录。如果该目录不为空，则该父路径名就是新File对象的前缀，如果抽象路径名是一个空目录，则新File对象的前缀就是系统默认的目录；
+- File(String parent, String child)：同上，只是抽象路径为实际的路径字符串；
 - File(String pathname)：以路径字符串创建File对象；
-- File(URI uri)：以URI为路径创建File对象。URI以file:开头，是依赖于系统的（system-dependent）。
+- File(URI uri)：将`file:`开头URI对象转换为抽象路径来创建File对象。`file:`格式的URI对象是依赖于系统的（system-dependent）。
 
-**访问文件名的相关方法**：
+**访问路径的方法**：
 
-- String getName()：返回该File对象代表的文件名或者目录名（如果是路径，则返回最后一级的子路径名）；
-- String getPath()：返回该File对象代表的路径名；
-- Strin getParent()：返回该File对象的父路径名；
-- String getAbsolutePath()：返回该File对象的绝对路径名；
-- File getAbsoluteFile()：返回该File对象的绝对路径对应的File对象；
-- String getCanonicalPath()：返回该File对象的规范化的路径名。规范化的路径名是绝对的、唯一的，规范形式的严格定义是依赖于系统的；
-- File getCanonicalFile()：返回该File对象的规范路径对应的File对象；
-- boolean renameTo(File dest)：重命名该File对象；
+- String getName()：返回该抽象路径代表的文件或目录的名称，即路径序列中的最后一个名称（如果是路径名，则返回最后一级的子路径名）；
+- String getPath()：将该抽象路径名转换成路径名字符串。返回的字符串使用系统无关的separator常量来分隔路径；
+- Strin getParent()：返回该File对象的父路径名字符串。该父路径名为除最后一级路径名以外的路径前缀。如果前缀路径不表示目录，则返回null；
+- File getParentFile()：同上，只是返回结果的形式不同；
+- String getAbsolutePath()：返回该抽象路径的全路径字符串（即绝对路径的字符串）。如果该抽象路径为空，则返回的是`user.dir`系统属性表示的当前用户目录。如果该抽象路径不为空，则返回结果依赖于操作系统：Windows系统中是根据相对路径所在的驱动器盘符来将其生成绝对路径的，如果没有驱动器盘符，就根据当前用户目录来生成绝对路径。而Unix系统中是根据当前用户目录来将相对路径生成对应的绝对路径的；
+- File getAbsoluteFile()：同上，只是返回结果的形式不同；
+- String getCanonicalPath()：返回该抽象路径的规范化路径名字符串。规范化路径是绝对的、唯一的，规范形式的严格地讲是依赖于操作系统的。返回结果中会去除`.`和`..`、解析符号链接（Unix平台上）、将驱动器盘符转换成标准大小写（Windows平台上）。任何存在或不存在的文件或目录的规范化路径名都是唯一的，一个不存在的文件或目录的规范化路径名可能会在其创建后改变，一个存在的文件或目录的规范化路径名可能会在其删除后改变；
+- File getCanonicalFile()：同上，只是返回结果的形式不同；
+- URI toURI()：构造一个表示当前抽象路径的`file:`URI。如果该抽象路径名表示一个目录，则返回结果以斜杠（slash）结尾。对于给定的一个抽象路径名f，只要原始抽象路径名、URI和新抽象路径名是同一个Java虚拟机创建的，就会有`new File( f.toURI()).equals( f.getAbsoluteFile())`。如果该抽象路径代表一个UNC路径名，那么该UNC路径会被编码成一个授权为null的URI。如果想编码成带授权的URI，可以参考[Path类]()的[toUri()]()方法，File类的[toPath()](http://docs.oracle.com/javase/8/docs/api/java/io/File.html#toPath--)方法可以获得一个对应的Path类对象；
+- boolean renameTo(File dest)：重命名该File对象。该操作的许多行为是依赖于平台的：重命名可能不能将文件移动到另一个位置，也可能不是原子性的，如果目标File对象已存在，该操作可能会失败。应该总是检查该方法的返回值来确保操作成功；
 
-**文件检测相关的方法**：
+**操作属性的方法**：
 
 - boolean **exists()**：该File对象对应的文件或目录是否存在；
-- boolean **isAbsolute()**：是否为绝对路径；
-- boolean **isDirectory()**：是否为路径；
-- boolean **isFile()**：是否为文件：
-- boolean isHidden()：是否为隐藏；
-- boolean canRead()：是否可读；
-- boolean canWrite()：是否可写；
-- booleancan Execute()：是否可执行。
-
-**获取常规文件信息**：
-
-- long	**lastModified()**：获取最后修改时间
+- boolean **isDirectory()**：判断该抽象路径是否为一个目录；
+- boolean **isFile()**：判断该抽象路径是否为一个文件：
+- boolean **isAbsolute()**：判断该抽象路径是否为绝对路径；
+- boolean isHidden()：判断该抽象路径是否为隐藏；
+- boolean canRead()：判断该抽象路径是否可读；
+- boolean setReadOnly()：设置为只读的权限，直到删除或标记为可写该File对象才可以改变；
+- boolean canWrite()：判断该抽象路径是否可写；
+- boolean setWritable(boolean writable)：设置可写的权限；
+- booleancan Execute()：判断该抽象路径是否可执行；
+- boolean setWritable(boolean writable, boolean ownerOnly)：
+- long	**lastModified()**：获取最后修改时间；
+- boolean setLastModified(long time)：设置上次修改的时间；
 - long **length()**：获取文件长度。
 
-**文件操作相关的方法**：
+**操作文件的方法**：
 
-- boolean createNewFile()：如果该File对象对应的文件不存在，则创建该文件；
-- static FilecreateTempFile(String prefix, String suffix)：静态方法，用前后缀和系统生成的随机数作为文件名创建一个空文件，后缀为空则默认为.tmp；
-- static FilecreateTempFile(String prefix, String suffix, File directory)：比上面的方法多指定了文件目录；
-- boolean delete()：删除该File对象对应的文件或目录；
-- void deleteOnExit()：注册一个钩子，JVM退出时删除File对象对应的文件或者目录。
+- boolean **createNewFile()**：仅当该抽象路径表示的文件不存在时原子性地创建一个新的空文件，文件不存在且创建成功返回true，文件已存在就返回false。文件是否存在的检查，以及不存在时的创建都是依赖于文件系统的原子性的单一操作。注意，用于文件锁时不应该使用该方法，因为结果是不可靠的，应该使用[FileLock](http://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileLock.html)来替代；
+- static File createTempFile(String prefix, String suffix)：静态方法，用前后缀和系统生成的随机数作为文件名创建一个空文件，后缀为空则默认为.tmp；
+- static File createTempFile(String prefix, String suffix, File directory)：比上面的方法多指定了文件目录；
+- boolean **delete()**：删除该File对象对应的文件或目录。**如果删除的目录，则该目录必须是空的**。[Files](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html)工具类提供的delete方法会在文件不能删除时抛出IOException异常，在删除出错提交报告时很有用；
+- void deleteOnExit()：注册一个钩子，在JVM退出时删除该抽象路径表示的文件或目录，删除顺序与调用该方法来的注册顺序相反。注意，用于文件锁时不应该使用该方法，因为结果是不可靠的，应该使用[FileLock](http://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileLock.html)来替代；
 
-**目录操作相关的方法**：
+**操作目录的方法**：
 
-- boolean mkdir()：创建一个**目录**，如果已存在则无法创建返回false；
-- boolean mkdirs()：创建一个**目录**，如果已存在则覆盖；
-- String[] list()：列出该File对象的所有子文件和子目录；
-- File[] listFiles()：同上，只是返回值不同；
-- String[] list(FilenameFilter filter)：选择性列出该File对象对应的子文件和子目录；
-- File[] listFiles(FilenameFilter filter)：同上，只是返回值不同；
+- boolean mkdir()：创建一个**目录**，仅当目录创建成功返回true；
+- boolean mkdirs()：创建一个**目录**，包括任何必要但不存在的父级目录。仅当目录创建成功时才返回true。如果该方法操作失败，可能已经创建了部分父级目录了；
+- String[] list()：列出该抽象路径下的所有文件名和目录名组成的字符串数组。如果该抽象路径不是一个目录，则返回null。无法保证该方法以特定的顺序来返回结果。[Files工具类](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html)提供了一个[newDirectoryStream](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#newDirectoryStream-java.nio.file.Path-)方法来打开一目录，并遍历该目录下的文件名，通过该方法，当处理大目录时可能会使用更少的资源，处理远程目录时可能具有更好的响应性；
+- String[] list(FilenameFilter filter)：选择性列出该抽象路径下的文件名和目录名构成的字符串数组。除了返回结果中的文件名或目录名需要符合FilenameFilter的筛选条件以外，该方法与listFiles方法并无不同；
+- File[] listFiles()：同上，只是返回结果的形式不同；
+- File[] listFiles(FilenameFilter filter)：同上，只是返回结果的形式不同；
 - File[] listFiles(FileFilter filter)：同上，只是筛选条件不同；
-- static File[]listRoots()：静态方法，列出系统的所有根目录。
+- static File[] listRoots()：静态方法，列出系统的所有根目录。
 
 注意：FilenameFilter和FileFilter都是函数式接口，只是筛选条件有所不同。
 
@@ -105,7 +124,10 @@ for(String name ： nameList) {
 	  System.out.println(name);
 }
 ```
+File类**能操作文件和目录，但不能访问文件内容。访问文件内容需要使用IO（输入流/输出流）**。关于文件操作还可参考Java 7新增的[Files工具类]()和[Path接口](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html)。
+
 ##Java的IO流 
+
 Java把这些不同来源和目标（键盘、文件和网络）的数据都统一抽象为数据流（Stream）。Java语言的输入输出功能是十分强大而灵活的，美中不足的是看上去输入输出的代码并不是很简洁，因为你往往需要包装许多不同的对象。在Java类库中，**IO部分的内容庞大而广泛，包括标准输入输出，文件的操作，网络上的数据流，字符串流，对象流，zip文件流**。
 
 ### Java流的分类
