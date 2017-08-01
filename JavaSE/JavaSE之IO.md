@@ -34,7 +34,14 @@
 - String getCanonicalPath()：返回该抽象路径的规范化路径名字符串。规范化路径是绝对的、唯一的，规范形式的严格地讲是依赖于操作系统的。返回结果中会去除`.`和`..`、解析符号链接（Unix平台上）、将驱动器盘符转换成标准大小写（Windows平台上）。任何存在或不存在的文件或目录的规范化路径名都是唯一的，一个不存在的文件或目录的规范化路径名可能会在其创建后改变，一个存在的文件或目录的规范化路径名可能会在其删除后改变；
 - File getCanonicalFile()：同上，只是返回结果的形式不同；
 - URI toURI()：构造一个表示当前抽象路径的`file:`URI。如果该抽象路径名表示一个目录，则返回结果以斜杠（slash）结尾。对于给定的一个抽象路径名f，只要原始抽象路径名、URI和新抽象路径名是同一个Java虚拟机创建的，就会有`new File( f.toURI()).equals( f.getAbsoluteFile())`。如果该抽象路径代表一个UNC路径名，那么该UNC路径会被编码成一个授权为null的URI。如果想编码成带授权的URI，可以参考[Path类]()的[toUri()]()方法，File类的[toPath()](http://docs.oracle.com/javase/8/docs/api/java/io/File.html#toPath--)方法可以获得一个对应的Path类对象；
-- boolean renameTo(File dest)：重命名该File对象。该操作的许多行为是依赖于平台的：重命名可能不能将文件移动到另一个位置，也可能不是原子性的，如果目标File对象已存在，该操作可能会失败。应该总是检查该方法的返回值来确保操作成功；
+- public Path toPath()：该方法是Java 7新增的，将该抽象路径名转换成一个新的Path对象；
+- boolean **renameTo(File dest)**：重命名该File对象。该操作的许多行为是依赖于平台的：重命名可能不能将文件移动到另一个位置，也可能不是原子性的，如果目标File对象已存在，该操作可能会失败。应该总是检查该方法的返回值来确保操作成功；
+
+访问磁盘：
+
+- public long getTotalSpace()：返回该抽象路径名所表示分区的总大小（以字节为单位）。如果该抽象路径名不是分区，则返回0L；
+- public long getFreeSpace()：返回该抽象路径名所表示分区的可分配大小（以字节为单位，非精确）。如果该抽象路径名不是分区，则返回0L；
+- public long getUsableSpace()：返回该抽象路径名所表示分区的可分配给JVM的大小（以字节为单位，非精确），可能会检查写权限等。该方法比getFreeSpace()方法更实用。如果该抽象路径名不是分区，则返回0L；
 
 **操作属性的方法**：
 
@@ -45,34 +52,41 @@
 - boolean isHidden()：判断该抽象路径是否为隐藏；
 - boolean canRead()：判断该抽象路径是否可读；
 - boolean setReadOnly()：设置为只读的权限，直到删除或标记为可写该File对象才可以改变；
+- public boolean setReadable(boolean readable)：为所有者设置可读权限；
+- public boolean setReadable(boolean readable, boolean ownerOnly)：为所有者（ownerOnly参数为true）或所有用户（ownerOnly参数为false）设置对该抽象路径的可读权限。某些系统中可能需要使用特殊权限来启动JVM。Java 7 提供的java.nio.file.Files工具类中有关于权限操作的更好方法；
 - boolean canWrite()：判断该抽象路径是否可写；
-- boolean setWritable(boolean writable)：设置可写的权限；
-- booleancan Execute()：判断该抽象路径是否可执行；
-- boolean setWritable(boolean writable, boolean ownerOnly)：
-- long	**lastModified()**：获取最后修改时间；
+- boolean setWritable(boolean writable)：为所有者设置可写权限；
+- boolean setWritable(boolean writable, boolean ownerOnly)：为所有者（ownerOnly参数为true）或所有用户（ownerOnly参数为false）设置对该抽象路径的可写权限。某些系统中可能需要使用特殊权限来启动JVM；
+- boolean canExecute()：判断该抽象路径是否可执行；
+- public boolean setExecutable(boolean executable)：为所有者设置可执行权限；
+- public boolean setExecutable(boolean executable, boolean ownerOnly)：为所有者（ownerOnly参数为true）或所有用户（ownerOnly参数为false）设置对该抽象路径的可执行权限。某些系统中可能需要使用特殊权限来启动JVM；
+- long **lastModified()**：获取最后修改时间；
 - boolean setLastModified(long time)：设置上次修改的时间；
 - long **length()**：获取文件长度。
 
 **操作文件的方法**：
 
+- public int compareTo(File pathname)：根据字典编纂顺序比较两个抽象路径名，如果两个抽象路径名相同就返回0，如果该抽象路径名根据字段编纂顺序小于参数代表的抽象路径名就返回一个负数，否则，返回一个整数。注意，Unix系统中严格区分路径的字母大小写，而Windows系统中不区分路径的大小写；
 - boolean **createNewFile()**：仅当该抽象路径表示的文件不存在时原子性地创建一个新的空文件，文件不存在且创建成功返回true，文件已存在就返回false。文件是否存在的检查，以及不存在时的创建都是依赖于文件系统的原子性的单一操作。注意，用于文件锁时不应该使用该方法，因为结果是不可靠的，应该使用[FileLock](http://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileLock.html)来替代；
-- static File createTempFile(String prefix, String suffix)：静态方法，用前后缀和系统生成的随机数作为文件名创建一个空文件，后缀为空则默认为.tmp；
-- static File createTempFile(String prefix, String suffix, File directory)：比上面的方法多指定了文件目录；
+- **static File createTempFile(String prefix, String suffix)**：静态方法，用前后缀和系统生成的随机数作为文件名创建一个空文件，后缀为空则默认为.tmp。java.nio.file.Files的createTempFile(String prefix, String suffix, FileAttribute<?>... attrs) 静态方法会在创建文件时同时创建合适的权限；
+- **static File createTempFile(String prefix, String suffix, File directory)**：比上面的方法多指定了文件目录；
 - boolean **delete()**：删除该File对象对应的文件或目录。**如果删除的目录，则该目录必须是空的**。[Files](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html)工具类提供的delete方法会在文件不能删除时抛出IOException异常，在删除出错提交报告时很有用；
 - void deleteOnExit()：注册一个钩子，在JVM退出时删除该抽象路径表示的文件或目录，删除顺序与调用该方法来的注册顺序相反。注意，用于文件锁时不应该使用该方法，因为结果是不可靠的，应该使用[FileLock](http://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileLock.html)来替代；
+- private **synchronized void readObject(java.io.ObjectInputStream s)**：恢复该文件；
+- private **synchronized void writeObject(java.io.ObjectOutputStream s)**：保存该文件；
 
 **操作目录的方法**：
 
-- boolean mkdir()：创建一个**目录**，仅当目录创建成功返回true；
-- boolean mkdirs()：创建一个**目录**，包括任何必要但不存在的父级目录。仅当目录创建成功时才返回true。如果该方法操作失败，可能已经创建了部分父级目录了；
-- String[] list()：列出该抽象路径下的所有文件名和目录名组成的字符串数组。如果该抽象路径不是一个目录，则返回null。无法保证该方法以特定的顺序来返回结果。[Files工具类](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html)提供了一个[newDirectoryStream](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#newDirectoryStream-java.nio.file.Path-)方法来打开一目录，并遍历该目录下的文件名，通过该方法，当处理大目录时可能会使用更少的资源，处理远程目录时可能具有更好的响应性；
-- String[] list(FilenameFilter filter)：选择性列出该抽象路径下的文件名和目录名构成的字符串数组。除了返回结果中的文件名或目录名需要符合FilenameFilter的筛选条件以外，该方法与listFiles方法并无不同；
-- File[] listFiles()：同上，只是返回结果的形式不同；
+- boolean **mkdir()**：创建一个**目录**，仅当目录创建成功返回true；
+- boolean **mkdirs()**：创建一个**目录**，包括任何必要但不存在的父级目录。仅当目录创建成功时才返回true。如果该方法操作失败，可能已经创建了部分父级目录了；
+- **String[] list()**：列出该抽象路径下的所有文件名和目录名（仅为子文件名和子目录名，不包含父目录名）组成的字符串数组。如果该抽象路径不是一个目录，则返回null。无法保证该方法以特定的顺序来返回结果。[Files工具类](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html)提供了一个[newDirectoryStream()](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#newDirectoryStream-java.nio.file.Path-)方法来打开一目录，并遍历该目录下的文件名，通过该方法，当处理大目录时可能会使用更少的资源，处理远程目录时可能具有更好的响应性；
+- **File[] listFiles()**：同上，只是返回结果的形式不同；
+- **String[] list(FilenameFilter filter)**：选择性列出该抽象路径下的文件名和目录名构成的字符串数组。除了返回结果中的文件名或目录名需要符合FilenameFilter的筛选条件以外，该方法与listFiles方法并无不同；
 - File[] listFiles(FilenameFilter filter)：同上，只是返回结果的形式不同；
-- File[] listFiles(FileFilter filter)：同上，只是筛选条件不同；
-- static File[] listRoots()：静态方法，列出系统的所有根目录。
+- **File[] listFiles(FileFilter filter)**：同上，只是筛选条件不同；
+- **static File[] listRoots()**：静态方法，列出文件系统的所有根目录，不同的文件系统返回结果不同（Unix系统返回一个英文斜线，而Windows系统返回驱动器盘符构成数组）。远程挂载文件的规范化路径名可能不会以该方法返回数组中的元素开头。如果远程挂载的路径名和本地路径名无二，那么挂载路径名会以该方法返回数组中的元素开头，比如挂载的远程根目录会出现在返回结果中，而包含UNC路径名的挂载根目录不会出现在返回结果中。
 
-注意：FilenameFilter和FileFilter都是函数式接口，只是筛选条件有所不同。
+注意：FilenameFilter和FileFilter都是函数式接口（可以使用Java 8 的Lambda表达式），只是筛选条件有所不同。
 
 **File类常用方法实例**：
 ```java
@@ -118,8 +132,7 @@ File类的list方法可以传入FilenameFilter参数实现文件过滤：
 File file = new File(".");
 // 使用Lambda表达式（目标类型为FilenameFilter）实现文件过滤器。
 // 如果文件名以.java结尾，或者文件对应一个路径，返回true
-String[] nameList = file.list((dir, name) -> name.endsWith(".java")
-	  || new File(name).isDirectory());
+String[] nameList = file.list((dir, name) -> name.endsWith(".java") || new File(name).isDirectory());
 for(String name ： nameList) {
 	  System.out.println(name);
 }
@@ -153,9 +166,9 @@ Java把这些不同来源和目标（键盘、文件和网络）的数据都统�
 流是一个很形象的概念，当程序需要读取数据的时候，就会开启一个通向数据源的流，这个数据源可以是文件，内存，或是网络连接。类似的，当程序需要写入数据的时候，就会开启一个通向目的地的流。这时候数据好像在这其中“流”动一样。
 **Java中的流分为四种，分别由四个抽象类来表示**（分为字节流和字符流两类，每种流都有输入流和输出流，所以一共四个）：InputStream，OutputStream，Reader，Writer。Java中其他多种多样变化的流均是由它们派生出来的。JDK所提供的所有流类位于java.io包中，都分别继承自以下四种抽象流类：
 
-- InputStream：所有继承自InputStream的流都是**用于从中读取数据**的，且**数据单位都是字节**（8位）。
-- OutputSteam：所有继承自OutputStream的流都是程序**用于向外输出数据**的，且数据单位都是字节（8位）。
-- Reader：所有继承自Reader的流都是**用于从中读取数据**的，且**数据单位都是字符**（16位）。
+- InputStream：所有继承自InputStream的流都是**用于从中读取数据**的，且**数据单位都是字节**（8位）；
+- OutputSteam：所有继承自OutputStream的流都是程序**用于向外输出数据**的，且数据单位都是字节（8位）；
+- Reader：所有继承自Reader的流都是**用于从中读取数据**的，且**数据单位都是字符**（16位）；
 - Writer：所有继承自Writer的流都是程序**用于向外输出数据**的，且数据单位都是字符（16位）。
 
 区别：Reader和Writer要解决的主要是国际化问题。原先的I/O类库只支持8位的字节流，因此不能很好地处理16位的Unicode字符流。Unicode是国际化的字符集(更何况Java内置的char就是16位的Unicode字符)，加入了Reader和Writer之后，所有的I/O就都支持Unicode了。此外新类库的性能也比旧的好。
@@ -167,13 +180,13 @@ Java把这些不同来源和目标（键盘、文件和网络）的数据都统�
 public abstract class InputStream extends Object implements Closeable
 ```
 
-InputStream是读取**字节**数据用的类。Inputstream类中的常用方法：
+InputStream是读取**字节**数据用的抽象类。Inputstream抽象类中的常用方法：
 
-- public abstract int read( )：读取下一个byte的数据，返回读取的byte值（0~255，是一个高位补0的int类型值）。如果已经到了输入流的末尾，则返回-1。
-- public int read(byte b[ ])：读取b.length个的byte数据放到b数组中。返回值是读取的字节数。该方法实际上是调用下一个方法实现的。
-- public int read(byte b[ ], int off, int len)：从输入流中最多读取len个字节的数据，存放到偏移量为off的b数组中。如果已经到了输入流的末尾，则返回-1。该方法实际上是通过第一个方法实现的。
-- public int available( )：在不阻塞该输入流下次方法调用的情况下，返回该输入流中可以读取（或可跳过）的字节数的**估计值**。如果InputStream对象调用这个方法的话，它只会返回0，**这个方法由继承InputStream类的子类来重写后使用才有用**。注意：若输入阻塞，当前线程将被挂起。
-- public int close( ) ：关闭该流对象并释放相关系统资源，**在使用完后必须关闭打开的流**。
+- public **abstract int read()**：读取下一个byte的数据，返回读取的byte值（0~255，是一个高位补0的int类型值）。如果已经到了输入流的末尾，则返回-1；
+- public int read(byte b[])：读取b.length个的byte数据放到b数组中。返回值是读取的字节数。该方法实际上是调用下一个方法实现的；
+- public int read(byte b[], int off, int len)：从输入流中最多读取len个字节的数据，存放到偏移量为off的b数组中。如果已经到了输入流的末尾，则返回-1。该方法实际上是通过第一个方法实现的；
+- public int available()：在不阻塞该输入流下次方法调用的情况下，返回该输入流中可以读取（或可跳过）的字节数的**估计值**。如果InputStream对象调用这个方法的话，它只会返回0，**这个方法由继承InputStream类的子类来重写后使用才有用**。注意：若输入阻塞，当前线程将被挂起；
+- public int close() ：关闭该流对象并释放相关系统资源，**在使用完后必须关闭打开的流**。
 
 ###Reader类
 ```java
@@ -255,8 +268,8 @@ FileInputStream类是InputStream类的子类，用于**从文件系统中的某�
 - FileDescriptor getFD() ：返回一个表示**到文件系统中某个实际文件的连接**的FileDescriptor对象，该文件正在被该FileInputStream使用。 
 
 使用步骤：
-1. 关联一个文件以得到一个输入流。
-2. 进行读取操作。
+1. 关联一个文件以得到一个输入流；
+2. 进行读取操作；
 3. 关闭该输入流。
 
 注意：
