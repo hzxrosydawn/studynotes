@@ -1,3 +1,9 @@
+
+
+Historically applications using Hibernate would have used its proprietary XML mapping file format for this purpose. With the coming of JPA, most of this information is now defined in a way that is portable across ORM/JPA providers using annotations (and/or standardized XML format)
+
+
+
 javax.persistence包的注解。
 
 - @Entity注解用来表示被其修饰的类是一个实体类。其可选的name元素表示该实体的名称，默认为实体类的非限定名，用来在查询时参考该实体。其值不能是Java Persistence 查询语言中的任何保留字；
