@@ -2,7 +2,26 @@
 
 Historically applications using Hibernate would have used its proprietary XML mapping file format for this purpose. With the coming of JPA, most of this information is now defined in a way that is portable across ORM/JPA providers using annotations (and/or standardized XML format)
 
+从JDK 1.5 开始，Java 增加了Annotation 支持，通过Annotation 可以将此额外的信息写在Java
+源程序中，这些信息可以在编译、类加载、运行时被读取，并执行相应的处理。通过使用Annotation.
+程序开发人员可以在不改变原有逻辑的情况F.在源文件中嵌入一此补充的信息
+提示:..
+-..-. 。 一. 。 一 。 .一..一 . 。 一 ， 一 一 。 一 。 .
+关于Annotation的详细介绍，读者可以参考疯狂Java体系《疯狂Java讲义》的第14章。i
+....-..- ..一 . .一 . .一. .一. . 一 。 。 一 一 一 ， 一 。 。 。 .. ， 
+由于Java Annotation 的盛行，很多原来采用XML A 置文件进行管理的信息，现在都开始改为使
+用Annotation进行管理，比如前面介绍的Struts 2、以及后面要介绍的Spring 等。其实不管是XML 配
+置文件，还是Annotation，它们的本质是样的，只是信息的载体不同而已。
 
+5.8.1
+增加JPA Annotation 支持
+正如前面提到的，Hibermatc这种ORM框架的出现启发了JavaEE 规范的制定者，于是催生了JPA
+规范。从另一方面来看，JPA 规范的出现又为Hibermate 等ORM 彬架制定了标准。
+早期Hibemate 使用XML 映射文件管理持久化类和数据表之间的映射关系，而JPA规范则推荐使
+用更简单、易用的Annotation来管理实体类与数据表之间的映射关系，这样就避免了
+个实体需要同
+时维护两份文件(Java类和XML映射文件)，实体类的Java代码以及映射信息《写在Annotain中)
+都可集中在一份文件中
 
 javax.persistence包的注解。
 

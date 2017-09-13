@@ -1039,7 +1039,7 @@ CREATE TABLE Persons (
 UNIQUE 约束唯一标识数据库表中的每条记录。
 **创建表时添加唯一约束的介绍**：
 
-1. 创建**单列 UNIQUE 约束**语法：
+1. **为单列创建 UNIQUE 约束**语法：
 
    MySQL：
 
