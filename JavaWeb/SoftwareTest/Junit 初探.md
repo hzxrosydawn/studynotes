@@ -278,12 +278,12 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
   ```java
 
   import org.junit.Test;
+
   import java.util.ArrayList;
 
   public class Exception1Test {
-
       @Test(expected = ArithmeticException.class)
-      public void testDivisionWithException() {
+      public void testDivisionWithZero() {
           int i = 1 / 0;
       }
 
@@ -299,19 +299,17 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
   import org.junit.Test;
   import java.util.ArrayList;
   import static junit.framework.TestCase.fail;
-  import static org.hamcrest.CoreMatchers.is;
   import static org.hamcrest.MatcherAssert.assertThat;
+  import static org.hamcrest.CoreMatchers.is;
 
   public class Exception2Test {
-
       @Test
-      public void testDivisionWithException() {
+      public void testDivisionWithZero() {
           try {
               int i = 1 / 0;
-              fail(); //remember this line, else 'may' false positive
+              fail();
           } catch (ArithmeticException e) {
               assertThat(e.getMessage(), is("/ by zero"));
-  			//assert others
           }
       }
 
@@ -333,32 +331,30 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
   import org.junit.Rule;
   import org.junit.Test;
   import org.junit.rules.ExpectedException;
-
-  import static org.hamcrest.CoreMatchers.containsString;
-  import static org.hamcrest.CoreMatchers.is;
-  import static org.hamcrest.Matchers.hasProperty;
+  import java.util.ArrayList;
 
   public class Exception3Test {
       @Rule
       public ExpectedException thrown = ExpectedException.none();
 
       @Test
-      public void testDivisionWithException() {
+      public void testDivisionWithZero() {
+          // test type
           thrown.expect(ArithmeticException.class);
-        	// if contains some string or not 
-          thrown.expectMessage(containsString("/ by zero"));
+          // if contains some string or not
+          thrown.expectMessage("/ by zero");
           int i = 1 / 0;
       }
 
-  	@Test
-  	public void testIndexOutOfBoundsException() throws IndexOutOfBoundsException {
-      	List<> list = new ArrayList<>();
-        	// test type
-      	thrown.expect(IndexOutOfBoundsException.class);
-        	// test given message
-      	thrown.expectMessage("Index: 0, Size: 0");
-      	list.get(0); // execution will never get past this line
-  	}
+      @Test
+      public void testEmptyList() {
+          // test type
+          thrown.expect(IndexOutOfBoundsException.class);
+          // test given message
+          thrown.expectMessage("Index: 0, Size: 0");
+          // execution will never get past this line
+          new ArrayList<>().get(0);
+      }
   }
   ```
 
@@ -401,5 +397,102 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
   }
   ```
 
-  ​
+### 忽略某个测试
 
+  在 JUnit 4 中可以将 @Ignore 注解放在某个测试方法之前或之后来来忽略这个测试：
+
+  ```java
+  import org.junit.Ignore;
+  import org.junit.Test;
+  import static org.hamcrest.MatcherAssert.assertThat;
+  import static org.hamcrest.Matchers.is;
+
+  public class IgnoreTest {
+      @Test
+      public void testMath1() {
+          assertThat(1 + 1, is(2));
+      }
+
+      @Ignore
+      @Test
+      public void testMath2() {
+          assertThat(1 + 2, is(3));
+      }
+
+      @Ignore("some one please create a test for Math3!")
+      @Test
+      public void testMath3() {
+          assertThat(1 + 3, is(3));
+      }
+  }
+  ```
+
+  被 @Ignore 注解修饰的测试在执行时会被忽略而不会被执行。运行上面的测试类，会发现仅有第一个测试会被执行。
+
+
+### @Rule 和 @ClassRule
+
+@Rule 注解用户修饰字段或方法。修饰的字段必须是 public 的、非 static 的，且实现了 org.junit.rules.TestRule 接口（建议）或 org.junit.rules.MethodRule 接口；修饰的方法也必须是 public 的、非 static 的，且返回值类型实现了 org.junit.rules.TestRule 接口（建议，该接口包含一个）或 org.junit.rules.MethodRule 接口。
+
+传递给 org.junit.rules.TestRule 的 org.junit.runners.model.Statement 会在任何 @Before 方法之前运行，接着运行 @Test 方法，然后运行 @After 方法，任一方法失败就抛出相应的异常。如果一个类存在多个 @Rule 修饰的程序单元，那么会先运行 @Rule 修饰的字段语句，然后再运行 @Rule 修饰的方法，多个 @Rule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是为定义的），可以通过使用 org.junit.rules.RuleChain 来控制多个 @Rule 修饰的程序单元的执行顺序。
+
+下面的测试类在每次执行测试之前先创建一个临时文件夹，在每个测试执行结束后在删除该临时文件夹：
+
+```java
+public static class HasTempFolder {
+	@Rule
+	public TemporaryFolder folder= new TemporaryFolder();
+  
+  	@Test
+	public void testUsingTempFolder() throws IOException {
+		File createdFile= folder.newFile(&quot;myfile.txt&quot;);
+ 		File createdFolder= folder.newFolder(&quot;subfolder&quot;);
+		// ...
+	}
+}
+```
+
+也可以用 @Rule 修饰的方法来完成：
+
+```java
+public static class HasTempFolder {
+	private TemporaryFolder folder= new TemporaryFolder();
+  
+	@Rule
+	public TemporaryFolder getFolder() {
+ 		return folder;
+	}
+  
+	@Test
+	public void testUsingTempFolder() throws IOException {
+		File createdFile= folder.newFile(&quot;myfile.txt&quot;);
+		File createdFolder= folder.newFolder(&quot;subfolder&quot;);
+		// ...
+	}
+}
+```
+
+ org.junit.rules.TestRule 接口对象是对一个测试或测试集运行、报告的变更。其签名如下：
+
+```java
+public interface TestRule {
+    Statement apply(Statement base, Description description);
+}
+```
+
+TestRule 对象可以为测试添加额外的检查（否则测试可能会失败），或者为测试执行必要的设置或清理工作，或者在其他地方观察测试的执行以报告该测试。TestRule 可以在 @BeforeClass、@AfterClass、@Before、@After 修饰的方法运行之前做任何事，但是更强大，可以在多个项目或类之前共享。
+
+JUnit 默认的运行器以两种方式识别 TestRule ：@Rule 注解修饰的方法级别的 TestRule 和 @ClassRule 注解修饰的类级别 TestRule。可以为一个测试或测试集的运行添加多个 TestRule，执行测试或测试集的 Statement 会依次传递给 @Rule 修饰的程序单元并返回一个替代的或修改过的（取决 TestRule 的实现） Statement，该 Statement 会传递下一个 @Rule 修饰的程序单元（如果有的话）。
+
+TestRule 有以下实现类：
+
+- ErrorCollector： collect multiple errors in one test method
+- ExpectedException：make flexible assertions about thrown exceptions
+- ExternalResource：start and stop a server, for example
+- TemporaryFolder：create fresh files, and delete after test
+- TestName：remember the test name for use during the method
+- TestWatcher：add logic at events during method execution
+- Timeout：cause test to fail after a set time
+- Verifier：fail test if object state ends up incorrect
+
+JUnit 4 中的 @ClassRule 实现的功能和 @BeforeClass、@AfterClass 类似；@Rule 实现的功能和 @Before、@After 类似。JUnit 4 引入@ClassRule 和@Rule 注解是想让以前在 @BeforeClass、@AfterClass、@Before、@After 中的逻辑能更加方便的实现重用，因为 @BeforeClass、@AfterClass、@Before、@After 是将逻辑封装在一个测试类的方法中的，如果实现重用，需要自己将这些逻辑提取到一个单独的类中，再在这些方法中调用，而@ClassRule、@Rule则是将逻辑封装在一个类中，当需要使用时，直接赋值即可，对不需要重用的逻辑则可用匿名类实现，也因此，JUnit在接下来的版本中更倾向于多用@ClassRule和@Rule，虽然就我自己来说，感觉还是用@BeforeClass、@AfterClass、@Before、@After这些注解更加熟悉一些，也可能是我测试代码写的还不够多的原因吧L。同时由于Statement链构造的特殊性@ClassRule或@Rule也保证了类似父类@BeforeClass或@Before注解的方法要比子类的注解方法执行早，而父类的@AfterClass或@After注解的方法执行要比子类要早的特点。
