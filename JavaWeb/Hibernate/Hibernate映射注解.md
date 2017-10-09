@@ -1,29 +1,18 @@
 
 
-Historically applications using Hibernate would have used its proprietary XML mapping file format for this purpose. With the coming of JPA, most of this information is now defined in a way that is portable across ORM/JPA providers using annotations (and/or standardized XML format)
+Hibernate 这种 ORM 框架的出现启发了Java EE 规范的制定者，于是催生了 JPA 规范。从另一方面来看，JPA 规范的出现又为 Hibernate 等 ORM 框架制定了标准。而 Hibernate  从版本开始实现了 JPA 规范，早期应用中的 Hibernate 使用 XML 文件管理持久化类和数据表之间的映射关系，而 JPA 规范则推荐使用更简单、易用的 Annotation 来管理实体类与数据表之间的映射关系，这样就避免了一个实体需要同时维护两份文件（Java 类和 XML 映射文件），实体类的 Java 代码以及映射信息都可集中在一份文件中。不管是 XML 配置文件，还是 Annotation ，它们的本质是一样的，只是信息的载体不同而已。
 
-从JDK 1.5 开始，Java 增加了Annotation 支持，通过Annotation 可以将此额外的信息写在Java
-源程序中，这些信息可以在编译、类加载、运行时被读取，并执行相应的处理。通过使用Annotation.
-程序开发人员可以在不改变原有逻辑的情况F.在源文件中嵌入一此补充的信息
-提示:..
--..-. 。 一. 。 一 。 .一..一 . 。 一 ， 一 一 。 一 。 .
-关于Annotation的详细介绍，读者可以参考疯狂Java体系《疯狂Java讲义》的第14章。i
-....-..- ..一 . .一 . .一. .一. . 一 。 。 一 一 一 ， 一 。 。 。 .. ， 
-由于Java Annotation 的盛行，很多原来采用XML A 置文件进行管理的信息，现在都开始改为使
-用Annotation进行管理，比如前面介绍的Struts 2、以及后面要介绍的Spring 等。其实不管是XML 配
-置文件，还是Annotation，它们的本质是样的，只是信息的载体不同而已。
+在JPA 操作过程中，最常用的3 种组件如下:
 
-5.8.1
-增加JPA Annotation 支持
-正如前面提到的，Hibermatc这种ORM框架的出现启发了JavaEE 规范的制定者，于是催生了JPA
-规范。从另一方面来看，JPA 规范的出现又为Hibermate 等ORM 彬架制定了标准。
-早期Hibemate 使用XML 映射文件管理持久化类和数据表之间的映射关系，而JPA规范则推荐使
-用更简单、易用的Annotation来管理实体类与数据表之间的映射关系，这样就避免了
-个实体需要同
-时维护两份文件(Java类和XML映射文件)，实体类的Java代码以及映射信息《写在Annotain中)
-都可集中在一份文件中
+- 实体：实体其实就是一个普通的POJO，只是为它增加了 XML 映射文件或映射注解，通过使用这种 XML 映射文件或映射注解，即可建立实体和底层数据表之间的对应关系。JPA 的实体与 Hibernate 中的持久化对象如出一辙，只是 Hibernate 早期采用 XML 映射文件来管理 POJO 和数据表之间的对应关系，而实体则采用 Annotation 来管理 POJO 和数据表之间的对应关系；
+- EntityManager：实体只是和底层数据表具有映射关系的POJO，它本身并没有任何持久化能力，只有使用EntityManager 来对实体进行操作时，JPA 规范才可将这种操作转换为对底层数据库的操作。从这个意义上来看，JPA 规范的 EntityManager 的作用有点类似于 Hibernate 框架的Session。与Hibernate 中Session 类似的是，当程序需要使用 JPA 添加、删除、更新实体时，应用程序都需要使用 EntityManager 这个接口来完成。除此之外，如果应用程序需要检索实体，则通过 EntityManager 根据 JPQL 创建 Query 对象来实现；
+- JPQL查询：类似于 Hibernate 提供的 HQL 查询语言，JPA 提供了JPQL 查询语言，这种查询语言非常简单、易用，可以非常方便地检索已保存的实体。JPA 提供了一个 Query 接口来执行查询，EntityManager 根据已有的 JPQL 来创建 Query 对象，然后由 Query 对象来执行查询。
 
-javax.persistence包的注解。
+在进行实际的数据库访问之前，Hibernate 需要使用 hibernate.properties 或 hibernate.cfg.xml 文件来管理数据库连接、连接池信息，而 JPA 则需要使用 persistence.xml （位于类路径的 META-INF 路径下）来管理数据库连接、连接池信息，JPA将这些信息称为持久化单元，也就是说，persistence.xml 文件用于管理JPA 的持久化单元信息。
+
+实体入门
+
+javax.persistence 包提供了一些 JPA 注解来将 POJO 包装成 JPA 实体：
 
 - @Entity注解用来表示被其修饰的类是一个实体类。其可选的name元素表示该实体的名称，默认为实体类的非限定名，用来在查询时参考该实体。其值不能是Java Persistence 查询语言中的任何保留字；
 - @Table注解用来指定一个实体类（所以常与@Entity一起使用）的主表，额外的其他表可以通过@SecondaryTable注解或@SecondaryTables注解来指定。如果一个实体类没有使用@Table注解修饰，则相当于使用@Table注解各元素的默认值。@Table注解的所有元素都是可选的：
@@ -34,6 +23,10 @@ javax.persistence包的注解。
   - indexes元素用来指定一组用于该表的一组索引（Index[] ），仅`创建表`功能可用时该元素才有效。默认没有任何额外的约束。
 - @Id注解用来指定实体的主键，可用于修饰实体的主键属性或字段、主键属性的getter方法。被该注解修饰的字段或属性（field or property）的类型可以是Java基本类型或其包装类、String、java.util.Date、java.sql.Date、java.math.BigDecimal或java.math.BigInteger。实体主键的映射列假定为主表的主键列。如果没有指定@Column注解，主键列名假定为主键属性或字段的名称；
 - @Column注解用来为持久化属性或字段指定映射列，如果一个持久化属性或字段没有使用该注解修饰，则相当于使用该注解元素的默认值
+
+
+
+
 
 
 
