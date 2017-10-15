@@ -427,14 +427,292 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
   }
   ```
 
-  被 @Ignore 注解修饰的测试在执行时会被忽略而不会被执行。运行上面的测试类，会发现仅有第一个测试会被执行。
+被 @Ignore 注解修饰的测试在执行时会被忽略而不会被执行，该注解的唯一元素可以指定忽略的原因。运行上面的测试类，会发现仅有第一个测试会被执行。
 
+### Test fixtures
+
+测试环境设置过程的自动化，是测试中最具挑战性的部分，在单元测试、集成测试、系统测试中都是如此。测试执行所需要的固定环境称为 Test Fixture（姑且翻译成测试固件吧），也就是测试运行之前所需的稳定的、公共的、可重复的运行环境，这个“环境”不仅可以是数据，也可以指对被测软件的准备，例如准备输入数据、创建 mock 对象、加载数据库等。
+
+JUnit 4 使用注解来创建测试运行所需的 Test Fixture，这些 Test Fixture 可以在每个测试运行之前和之后运行，也可以在所有测试运行之前和之后仅运行一次。
+
+@Before 和 @After 注解用于修饰  public void 类型的无参方法，这两种方法分别在**每个测试执行之前和之后**都会执行一次（即使 @Before 方法和 @Test 方法抛出了异常， @After 方法也会执行）。@Before 通常用于为一个测试类中的所有测试统一初始化相同的数据（比如某些对象的初始化）， @After 通常用于为一个测试类中的所有测试清理之前统一初始化的数据。除非父类的 @Before、@Afte 方法被重写了，否则，父类的 @Before 方法会在当前子类的 @Before 方法之前执行，父类的 @After 方法会在当前子类的 @After 方法执行之后执行。
+
+Managing test fixtures 实例如下：
+
+```java
+import java.io.Closeable;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestFixtures {
+    static class ManagedResource implements Closeable {
+        @Override
+        public void close() throws IOException {
+        }
+    }
+
+    private ManagedResource managedResource;
+
+
+    @Before
+    public void setUp() {
+        System.out.println("@Before setUp");
+        this.managedResource = new ManagedResource();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        System.out.println("@After tearDown");
+        this.managedResource.close();
+        this.managedResource = null;
+    }
+
+    @Test
+    public void test1() {
+        System.out.println("@Test test1()");
+    }
+
+    @Test
+    public void test2() {
+        System.out.println("@Test test2()");
+    }
+}
+```
+
+运行结果如下：
+
+```powershell
+@Before setUp
+@Test test1()
+@After tearDown
+@Before setUp
+@Test test2()
+@After tearDown
+```
+
+@BeforeClass 和 @AfterClass 用于修饰 public static void 类型的无参方法，这两种方法分别在**所有测试执行的之前和之后**执行一次（即使 @BeforeClass 方法抛出了异常， @AfterClass 方法也会执行）。@BeforeClass 通常用于为一个测试类中的所有测试统一分配昂贵资源（如数据库连接、HTTP连接等仅需创建一次即可运行所有测试的资源），@AfterClass 通常用于为一个测试类中的所有测试回收这些昂贵资源。除非父类的 @BeforeClass、@AfterClass 方法被隐藏了，否则，父类的 @BeforeClass 方法会在当前子类的 @BeforeClass 方法之前执行，父类的 @AfterClass 方法会在当前子类的 @AfterClass 方法执行之后执行。
+
+Managing expensive test fixtures 示例：
+
+```java
+import java.io.Closeable;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+public class TestFixturesExample {
+    private ManagedResource myManagedResource;
+    private static ExpensiveManagedResource myExpensiveManagedResource;
+
+    static class ExpensiveManagedResource implements Closeable {
+        @Override
+        public void close() throws IOException {
+        }
+    }
+
+    static class ManagedResource implements Closeable {
+        @Override
+        public void close() throws IOException {
+        }
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        System.out.println("@BeforeClass setUpClass");
+        myExpensiveManagedResource = new ExpensiveManagedResource();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws IOException {
+        System.out.println("@AfterClass tearDownClass");
+        myExpensiveManagedResource.close();
+        myExpensiveManagedResource = null;
+    }
+
+    @Before
+    public void setUp() {
+        System.out.println("@Before setUp");
+        this.myManagedResource = new ManagedResource();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        System.out.println("@After tearDown");
+        this.myManagedResource.close();
+        this.myManagedResource = null;
+    }
+
+    @Test
+    public void test1() {
+        System.out.println("@Test test1()");
+    }
+
+    @Test
+    public void test2() {
+        System.out.println("@Test test2()");
+    }
+}
+```
+
+运行结果如下：
+
+```powershell
+@BeforeClass setUpClass
+@Before setUp
+@Test test1()
+@After tearDown
+@Before setUp
+@Test test2()
+@After tearDown
+@AfterClass tearDownClass
+```
 
 ### @Rule 和 @ClassRule
 
-@Rule 注解用户修饰字段或方法。修饰的字段必须是 public 的、非 static 的，且实现了 org.junit.rules.TestRule 接口（建议）或 org.junit.rules.MethodRule 接口；修饰的方法也必须是 public 的、非 static 的，且返回值类型实现了 org.junit.rules.TestRule 接口（建议，该接口包含一个）或 org.junit.rules.MethodRule 接口。
+@Rule 注解用于修饰字段或方法。修饰的字段必须是 public 的、非 static 的，且实现了 org.junit.rules.TestRule 接口（建议）或 org.junit.rules.MethodRule 接口；修饰的方法也必须是 public 的、非 static 的，且返回值类型实现了 org.junit.rules.TestRule 接口（建议）或 org.junit.rules.MethodRule 接口。
 
-传递给 org.junit.rules.TestRule 的 org.junit.runners.model.Statement 会在任何 @Before 方法之前运行，接着运行 @Test 方法，然后运行 @After 方法，任一方法失败就抛出相应的异常。如果一个类存在多个 @Rule 修饰的程序单元，那么会先运行 @Rule 修饰的字段语句，然后再运行 @Rule 修饰的方法，多个 @Rule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是为定义的），可以通过使用 org.junit.rules.RuleChain 来控制多个 @Rule 修饰的程序单元的执行顺序。
+当使用 @Rule 注解时，传递给 TestRule apply() 方法的 Statement 会在运行所有 @Before 方法，接着运行 @Test 方法，然后运行所有 @After 方法，任一方法失败就抛出相应的异常。如果一个类存在多个 @Rule 修饰的程序单元，那么会先运行 @Rule 修饰的字段语句，然后再运行 @Rule 修饰的方法。多个 @Rule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是未定义的），可以通过使用 org.junit.rules.RuleChain 来控制多个 @Rule 修饰的程序单元的执行顺序。
+
+@ClassRule 注解用于修饰字段或方法。修饰的字段必须是 public 、 static 的，且实现了 org.junit.rules.TestRule 接口；修饰的方法也必须是 public 、static 的，且返回值类型实现了 org.junit.rules.TestRule 接口。
+
+当使用 @ClassRule 注解时，传递给 TestRule apply() 方法的 Statement 会在运行所有 @BeforeClass 方法，接着运行整个类体（如果标准测试类的话会运行其所有方法，如果是测试集的话会运行所有测试类），然后运行所有 @AfterClass 方法。传给 TestRule 的 Statement 不会抛出任何异常，从 TestRule 抛出一个异常会造成不确定的行为，这就意味着 ErrorCollector，ExpectedException 和 Timeout 等 TestRule 实现类在使用 @ClassRule 时会有不确定的行为。如果一个类存在多个 @ClassRule 修饰的程序单元，那么会先运行 @ClassRule 修饰的字段语句，然后再运行 @ClassRule 修饰的方法。多个 @ClassRule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是未定义的）。
+
+> JUnit 4.7 增加的 MethodRule 接口已经不建议使用了，请使用 JUnit 4.9 新增的 TestRule 接口代替，TestRule 接口更加适用于class rule。MethodRule接口定义的唯一方法：
+>
+> `Statement apply(Statement base, FrameworkMethod method, Object target);` 
+>
+> TestRule 的对应物：
+>
+> `Statement apply(Statement base, Description description);`
+
+org.junit.rules.TestRule 接口对象可以为测试添加额外的检查（否则测试可能会失败），或者为测试执行必要的设置或清理工作，或者在其他地方观察测试的执行以报告该测试。 @BeforeClass、@AfterClass、@Before、@After 所修饰方法能做的事，TestRule 也可以完成，而且 TestRule 更强大，它可以轻松地在多个项目或类之间共享。
+
+JUnit 默认的运行器以两种方式识别 TestRule ：@Rule 注解修饰的方法级别的 TestRule 和 @ClassRule 注解修饰的类级别 TestRule。可以为一个测试或测试集的运行添加多个 TestRule，执行测试或测试集的 Statement 会依次传递给 @Rule 修饰的程序单元并返回一个替代的或修改过的（取决 TestRule 的实现） Statement，该 Statement 会传递下一个 @Rule 修饰的程序单元（如果有的话）。
+
+TestRule 有以下实现类：
+
+- ErrorCollector： collect multiple errors in one test method
+- ExpectedException：make flexible assertions about thrown exceptions
+- ExternalResource：start and stop a server, for example
+- TemporaryFolder：create fresh files, and delete after test
+- TestName：remember the test name for use during the method
+- TestWatcher：add logic at events during method execution
+- Timeout：cause test to fail after a set time
+- Verifier：fail test if object state ends up incorrect
+
+@Rule 示例如下：
+
+```java
+import java.io.Closeable;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExternalResource;
+
+public class RulesTest {
+    @Rule
+    public ExternalResource resource = new ExpensiveExternalResource();
+    private ManagedResource myManagedResource;
+    private static ExpensiveManagedResource MyExpensiveManagedResource;
+
+    static class ExpensiveExternalResource extends ExternalResource {
+        ExpensiveExternalResource() {
+            System.out.println("ExpensiveExternalResource constructor");
+        }
+
+        @Override
+        protected void before() throws Throwable {
+            System.out.println("ExpensiveExternalResource before");
+        }
+
+        @Override
+        protected void after() {
+            System.out.println("ExpensiveExternalResource after");
+        }
+    }
+
+    static class ExpensiveManagedResource implements Closeable {
+        @Override
+        public void close() throws IOException {
+        }
+    }
+
+    static class ManagedResource implements Closeable {
+        @Override
+        public void close() throws IOException {
+        }
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        System.out.println("RulesTest @BeforeClass setUpClass");
+        MyExpensiveManagedResource = new ExpensiveManagedResource();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws IOException {
+        System.out.println("RulesTest @AfterClass tearDownClass");
+        MyExpensiveManagedResource.close();
+        MyExpensiveManagedResource = null;
+    }
+
+    @Before
+    public void setUp() {
+        System.out.println("RulesTest @Before setUp");
+        this.myManagedResource = new ManagedResource();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        System.out.println("RulesTest @After tearDown()");
+        this.myManagedResource.close();
+        this.myManagedResource = null;
+    }
+
+    @Test
+    public void test1() {
+        System.out.println("RulesTest @Test test1()");
+    }
+
+    @Test
+    public void test2() {
+        System.out.println("RulesTest @Test test2()");
+    }
+}
+```
+
+运行结果如下：
+
+```powershell
+RulesTest @BeforeClass setUpClass
+ExpensiveExternalResource constructor
+ExpensiveExternalResource before
+RulesTest @Before setUp
+RulesTest @Test test1()
+RulesTest @After tearDown()
+ExpensiveExternalResource after
+ExpensiveExternalResource constructor
+ExpensiveExternalResource before
+RulesTest @Before setUp
+RulesTest @Test test2()
+RulesTest @After tearDown()
+ExpensiveExternalResource after
+RulesTest @AfterClass tearDownClass
+```
+
+从结果可以看出，ExternalResource 的 before 方法在 @Before 方法之前被调用，可见其作用与  @Before 方法类似；ExternalResource 的 after 方法在 @After 方法之后被调用之后调用，可见其作用与  @After 方法类似；ExternalResource 用来抽象出重用资源管理代码是一种不错方的法。可以使用子类管理资源的使用，从而达到代码的高度重用。
 
 下面的测试类在每次执行测试之前先创建一个临时文件夹，在每个测试执行结束后在删除该临时文件夹：
 
@@ -445,8 +723,8 @@ public static class HasTempFolder {
   
   	@Test
 	public void testUsingTempFolder() throws IOException {
-		File createdFile= folder.newFile(&quot;myfile.txt&quot;);
- 		File createdFolder= folder.newFolder(&quot;subfolder&quot;);
+		File createdFile= folder.newFile("myfile.txt");
+		File createdFolder= folder.newFolder("subfolder");
 		// ...
 	}
 }
@@ -465,34 +743,14 @@ public static class HasTempFolder {
   
 	@Test
 	public void testUsingTempFolder() throws IOException {
-		File createdFile= folder.newFile(&quot;myfile.txt&quot;);
-		File createdFolder= folder.newFolder(&quot;subfolder&quot;);
+		File createdFile= folder.newFile("myfile.txt");
+		File createdFolder= folder.newFolder("subfolder");
 		// ...
 	}
 }
 ```
 
- org.junit.rules.TestRule 接口对象是对一个测试或测试集运行、报告的变更。其签名如下：
+JUnit 4 引入 @ClassRule 和 @Rule 注解是想让以前在 @BeforeClass、@AfterClass、@Before、@After 中的逻辑能更加方便地实现重用，因为 @BeforeClass、@AfterClass、@Before、@After 是将逻辑封装在一个测试类的方法中的，如果实现重用，需要自己将这些逻辑提取到一个单独的类中，再在这些方法中调用，而 @ClassRule、@Rule 则是将逻辑封装在一个类中，当需要使用时，直接赋值即可，对不需要重用的逻辑则可用匿名类实现，也因此，JUnit 在接下来的版本中更倾向于多用 @ClassRule 和 @Rule。同时由于 Statement 链构造的特殊性，@ClassRule 或 @Rule 也保证了类似父类 @BeforeClass 或 @Before 注解的方法要比子类的注解方法执行早，而父类的 @AfterClass 或 @After 注解的方法执行要比子类要早的特点。
 
-```java
-public interface TestRule {
-    Statement apply(Statement base, Description description);
-}
-```
 
-TestRule 对象可以为测试添加额外的检查（否则测试可能会失败），或者为测试执行必要的设置或清理工作，或者在其他地方观察测试的执行以报告该测试。TestRule 可以在 @BeforeClass、@AfterClass、@Before、@After 修饰的方法运行之前做任何事，但是更强大，可以在多个项目或类之前共享。
 
-JUnit 默认的运行器以两种方式识别 TestRule ：@Rule 注解修饰的方法级别的 TestRule 和 @ClassRule 注解修饰的类级别 TestRule。可以为一个测试或测试集的运行添加多个 TestRule，执行测试或测试集的 Statement 会依次传递给 @Rule 修饰的程序单元并返回一个替代的或修改过的（取决 TestRule 的实现） Statement，该 Statement 会传递下一个 @Rule 修饰的程序单元（如果有的话）。
-
-TestRule 有以下实现类：
-
-- ErrorCollector： collect multiple errors in one test method
-- ExpectedException：make flexible assertions about thrown exceptions
-- ExternalResource：start and stop a server, for example
-- TemporaryFolder：create fresh files, and delete after test
-- TestName：remember the test name for use during the method
-- TestWatcher：add logic at events during method execution
-- Timeout：cause test to fail after a set time
-- Verifier：fail test if object state ends up incorrect
-
-JUnit 4 中的 @ClassRule 实现的功能和 @BeforeClass、@AfterClass 类似；@Rule 实现的功能和 @Before、@After 类似。JUnit 4 引入@ClassRule 和@Rule 注解是想让以前在 @BeforeClass、@AfterClass、@Before、@After 中的逻辑能更加方便的实现重用，因为 @BeforeClass、@AfterClass、@Before、@After 是将逻辑封装在一个测试类的方法中的，如果实现重用，需要自己将这些逻辑提取到一个单独的类中，再在这些方法中调用，而@ClassRule、@Rule则是将逻辑封装在一个类中，当需要使用时，直接赋值即可，对不需要重用的逻辑则可用匿名类实现，也因此，JUnit在接下来的版本中更倾向于多用@ClassRule和@Rule，虽然就我自己来说，感觉还是用@BeforeClass、@AfterClass、@Before、@After这些注解更加熟悉一些，也可能是我测试代码写的还不够多的原因吧L。同时由于Statement链构造的特殊性@ClassRule或@Rule也保证了类似父类@BeforeClass或@Before注解的方法要比子类的注解方法执行早，而父类的@AfterClass或@After注解的方法执行要比子类要早的特点。
