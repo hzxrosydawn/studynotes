@@ -1,3 +1,8 @@
+---
+typora-copy-images-to: ..\..\..\graphs\photos
+typora-root-url: ./
+---
+
 ### JUnit 框架简介
 
 [JUnit](http://junit.org/junit4/) 是 Java 社区中知名度最高的单元测试工具。它诞生于 1997 年，由 Erich Gamma 和 Kent Beck 共同开发完成。其中 Erich Gamma 是经典著作《设计模式：可复用面向对象软件的基础》一书的作者之一（ one of the `"Gang of Four"`），并在 Eclipse 中有很大的贡献；Kent Beck 则是一位极限编程（XP）方面的专家和先驱。
@@ -79,7 +84,7 @@ public class CalculatorTest {
 
 我们为 Calculator 类创建一个对应的测试类 CalculatorTest：**定义一个测试类的要求这个类必须是公共的，且拥有一个可用的无参构造器**。我们可以对它任意命名，但**通常的做法是在类名称的末尾添加“Test"后缀** 。也要注意，虽然在 JUnit 3 中需要让测试类扩展 TestCase 类，但是在 JUnit 4 中，已经不需要这样做了。
 
-接下来，我们在测试类中创建了一个测试方法。**测试方法（也简称为测试）需要使用 `@Test` 注解修饰，且是公共的，不带任何参数，并且返回 void 类型**。因为 JUnit 没有方法名称的限制，所以你可以根据自己喜好命名你的方法，只要该方法拥有了`@Test`  注解，JUnit 就会执行它们。**最好的做法是以 `test` 开头加方法名的模式来命名测试方法**。
+接下来，我们在测试类中创建了一个测试方法。**测试方法（也简称为测试）需要使用 `@Test` 注解修饰，且是公共的，不带任何参数，并且返回 void 类型**。因为 JUnit 没有方法名称的限制，所以你可以根据自己喜好命名你的方法，只要该方法拥有了`@Test`  注解，JUnit 就会执行它们。**最好的做法是以 `test` 开头加方法名的模式来命名测试方法**。一个测试方法主要包括三个部分：setup、执行操作和验证结果。
 
 然后，我们通过创建 `Calculator` 类的一个实例（被测试的对象）来开始进行测试，接着，通过调用测试方法并传递两个已知值来执行测试。最后，我们调用了**`assertEquals()` 方法来判断预期结果与测试结果是否相等。这个方法是我们使用静态导入的 `org.junit.Assert` 类的一系列静态断言方法之一，静态导入简化了静态方法的调用**。
 
@@ -101,64 +106,223 @@ public class CalculatorTest {
 
 **要运行一个基础的测试类，你不需要做什么特别的工作，JUnit 会代替你使用一个测试运行器来管理你的测试类的生命周期，包括创建类、调用测试以及搜集结果**。
 
-### 运行参数化测试
+### Assert 断言
 
-**Parameterized（参数化）的测试运行器允许你使用不同的参数多次运行同一个测试**。示例代码如下：
+Assert 是编写测试用例的核心实现方式，即期望值是多少，测试的结果是多少，以此来判断测试是否通过。
+
+核心的静态断言方法：
+
+| 方法                  | 描述                                |
+| ------------------- | :-------------------------------- |
+| assertEquals()      | 查看两个基本数值或对象是否相等。                  |
+| assertArrayEquals() | 查看两个数组是否相等。                       |
+| assertNotEquals()   | 查看两个基本数值或对象是否不相等。                 |
+| assertNull()        | 查看对象是否为空。                         |
+| assertNotNull()     | 查看对象是否不为空。                        |
+| assertSame()        | 查看两个对象的引用是否相等。类似于使用“==”比较两个对象     |
+| assertNotSame()     | 查看两个对象的引用是否不相等。类似于使用“!=”比较两个对象    |
+| assertTrue()        | 查看运行结果是否为true。                    |
+| assertFalse()       | 查看运行结果是否为false。                   |
+| assertThat()        | 查看实际值是否满足指定的条件。应用最为广泛，推荐结合静态导入使用。 |
+
+Hamcrest 是一个测试辅助工具，提供了一套通用的匹配符 Matcher，灵活使用这些匹配符定义的规则，程序员可以更加精确的表达自己的测试思想，指定所想设定的测试条件。JUnit 4 结合 Hamcrest 提供了新的断言语句 assertThat，只需一个 assertThat 语句，结合 Hamcrest 提供的匹配符，就可以表达全部的测试思想。assertThat的基本语法如下：
+
+- assertThat(T actual, Matcher matcher)
+- assertThat(String reason, T actual, Matcher matcher)
+
+其中，actual 是接下来想要验证的值，matcher 是使用 Hamcrest 匹配符来表达的对前面变量所期望的值的声明，如果 actual 值与 matcher 所表达的期望值相符，则断言成功，否则断言失败。reason 是自定义的断言失败时显示的信息。
+
+assertThat 具有以下优点：
+
+- 表达统一。只需一条 assertThat 语句即可替代旧有的其他语句（如 assertEquals，assertNotSame，assertFalse，assertTrue，assertNotNull，assertNull 等），使断言变得简单、代码风格统一，增强测试代码的可读性和可维护性；
+- 语法直观易懂。assertThat 不再像 assertEquals 那样，使用比较难懂的“谓宾主”语法模式，相反，assertThat 使用了类似于“主谓宾”的易读语法模式，使得代码更加直观、易读，符合人类思维习惯；
+- 错误信息更具描述性。旧的断言语法如果断言失败，默认不会有额外的提示信息，如果该断言失败，只会抛出无用的错误信息，如 java.lang.AssertionError，除此之外不会有更多的提示信息。新的断言语法会默认自动提供一些可读的描述信息；
+- 跟 Matcher 匹配符联合使用更灵活强大。Matcher 提供了功能丰富的匹配符，assertThat 结合这些匹配符使用可更灵活更准确的表达测试思想。虽然 JUnit 4 本身包含了一些 Hamcrest 的 Matcher，但是数量有限。因此建议你将Hamcrest 包加入项目。
 
 ```java
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import static org.junit.Assert.*;
+/* 字符相关匹配符 */
+// equalTo匹配符断言被测的testedValue等于expectedValue，
+// equalTo可以断言数值之间，字符串之间和对象之间是否相等，相当于Object的equals方法
+assertThat(testedValue, equalTo(expectedValue));
+
+// equalToIgnoringCase匹配符断言被测的字符串testedString,
+// 在忽略大小写的情况下等于expectedString
+assertThat(testedString, equalToIgnoringCase(expectedString));
+
+
+// equalToIgnoringWhiteSpace匹配符断言被测的字符串testedString,
+// 在忽略头尾的任意个空格的情况下等于expectedString，
+// 注意：字符串中的空格不能被忽略
+assertThat(testedString, equalToIgnoringWhiteSpace(expectedString);
+
+// containsString匹配符断言被测的字符串testedString包含子字符串subString
+assertThat(testedString, containsString(subString));
+
+// endsWith匹配符断言被测的字符串testedString以子字符串suffix结尾
+assertThat(testedString, endsWith(suffix));
+
+//startsWith匹配符断言被测的字符串testedString以子字符串prefix开始
+assertThat(testedString, startsWith(prefix));
+
+           
+/* 一般匹配符 */
+// nullValue()匹配符断言被测object的值为null
+assertThat(object,nullValue());
+
+// notNullValue()匹配符断言被测object的值不为null
+assertThat(object,notNullValue());
+
+// is匹配符断言被测的object等于后面给出匹配表达式
+assertThat(testedString, is(equalTo(expectedValue)));
+
+// is匹配符简写应用之一，is(equalTo(x))的简写，断言testedValue等于expectedValue
+assertThat(testedValue, is(expectedValue));
+
+// is匹配符简写应用之二，is(instanceOf(SomeClass.class))的简写，断言testedObject为Cheddar的实例
+assertThat(testedObject, is(Cheddar.class));
+
+// not匹配符和is匹配符正好相反，断言被测的object不等于后面给出的object
+assertThat(testedString, not(expectedString));
+
+// allOf匹配符断言符合所有条件，相当于“与”（&&）
+assertThat(testedNumber, allOf(greaterThan(8), lessThan(16)));
+
+// anyOf匹配符断言符合条件之一，相当于“或”（||）
+assertThat(testedNumber, anyOf(greaterThan(16), lessThan(8)));
+
+
+/* 数值相关匹配符 */
+// closeTo匹配符断言被测的浮点型数testedDouble在(20.0-0.5)~(20.0+0.5)范围之内
+assertThat(testedDouble, closeTo(20.0, 0.5));
+
+// greaterThan匹配符断言被测的数值testedNumber大于16.0
+assertThat(testedNumber, greaterThan(16.0));
+
+// lessThan匹配符断言被测的数值testedNumber小于16.0
+assertThat(testedNumber, lessThan (16.0));
+
+// greaterThanOrEqualTo匹配符断言被测的数值testedNumber大于等于16.0
+assertThat(testedNumber, greaterThanOrEqualTo(16.0));
+
+// lessThanOrEqualTo匹配符断言被测的testedNumber小于等于16.0
+assertThat(testedNumber, lessThanOrEqualTo(16.0));
+
+
+/* 集合相关匹配符 */
+// hasEntry匹配符断言被测的Map对象mapObject含有一个键值为"key"对应元素值为"value"的Entry项
+assertThat(mapObject, hasEntry("key", "value" ));
+
+// hasItem匹配符表明被测的迭代对象iterableObject含有元素element项则测试通过
+assertThat(iterableObject, hasItem (element));
+
+// hasKey匹配符断言被测的Map对象mapObject含有键值“key”
+assertThat(mapObject, hasKey ("key"));
+
+// hasValue匹配符断言被测的Map对象mapObject含有元素值value
+assertThat(mapObject, hasValue(value));
+```
+
+断言示例：
+
+```java
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.everyItem;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collection;
 
-@RunWith(value = Parameterized.class)
-public class ParameterizedTest {
-    private double expectedValue;
-    private double valueOne;
-    private double valueTwo;
+import org.hamcrest.core.CombinableMatcher;
+import org.junit.Test;
 
-    @Parameters
-    public static Collection<Integer[]> getTestParameters() {
-        return Arrays.asList(new Integer[][]{
-                {2, 1, 1},  //expected, valueOne, valueTwo
-                {3, 2, 1},  //expected, valueOne, valueTwo
-                {4, 3, 1},  //expected, valueOne, valueTwo 
-        });
-    }
+public class AssertTests {
+  @Test
+  public void testAssertArrayEquals() {
+    byte[] expected = "trial".getBytes();
+    byte[] actual = "trial".getBytes();
+    assertArrayEquals("failure - byte arrays not same", expected, actual);
+  }
 
-    public ParameterizedTest(double expectedValue, double valueOne, double valueTwo) {
-        this.expectedValue = expectedValue;
-        this.valueOne = valueOne;
-        this.valueTwo = valueTwo;
-    }
+  @Test
+  public void testAssertEquals() {
+    assertEquals("failure - strings are not equal", "text", "text");
+  }
 
-    @Test
-    public void testAdd() {
-        Calculator calculator = new Calculator();
-        assertEquals(expectedValue, calculator.add(valueOne, valueTwo), 0);
-    }
+  @Test
+  public void testAssertFalse() {
+    assertFalse("failure - should be false", false);
+  }
+
+  @Test
+  public void testAssertNotNull() {
+    assertNotNull("should not be null", new Object());
+  }
+
+  @Test
+  public void testAssertNotSame() {
+    assertNotSame("should not be same Object", new Object(), new Object());
+  }
+
+  @Test
+  public void testAssertNull() {
+    assertNull("should be null", null);
+  }
+
+  @Test
+  public void testAssertSame() {
+    Integer aNumber = Integer.valueOf(768);
+    assertSame("should be same", aNumber, aNumber);
+  }
+
+  // JUnit Matchers assertThat
+  @Test
+  public void testAssertThatBothContainsString() {
+    assertThat("albumen", both(containsString("a")).and(containsString("b")));
+  }
+
+  @Test
+  public void testAssertThatHasItems() {
+    assertThat(Arrays.asList("one", "two", "three"), hasItems("one", "three"));
+  }
+
+  @Test
+  public void testAssertThatEveryItemContainsString() {
+    assertThat(Arrays.asList(new String[] { "fun", "ban", "net" }), everyItem(containsString("n")));
+  }
+
+  // Core Hamcrest Matchers with assertThat
+  @Test
+  public void testAssertThatHamcrestCoreMatchers() {
+    assertThat("good", allOf(equalTo("good"), startsWith("good")));
+    assertThat("good", not(allOf(equalTo("bad"), equalTo("good"))));
+    assertThat("good", anyOf(equalTo("bad"), equalTo("good")));
+    assertThat(7, not(CombinableMatcher.<Integer> either(equalTo(3)).or(equalTo(4))));
+    assertThat(new Object(), not(sameInstance(new Object())));
+  }
+
+  @Test
+  public void testAssertTrue() {
+    assertTrue("failure - should be true", true);
+  }
 }
 ```
 
-要使用 Parametrerized 的测试运行器来运行一个测试类，那就必须要满足以下要求：
-
-- 首先，**使用 `@RunWith(Parameterized.class)` 修饰测试类。 Parameterized 作为该测试类的运行器**；
-- 其次，**必须声明测试中所使用的实例变量，同时提供一个用 `@Parameters` 注解修饰的方法，这个方法的签名必须是 `@Parameters public static java.util.Collection` 开始 ，无任何参数。Collection 集合的元素必须是相同长度的数组，这个数组的元素必须要和该类唯一的公共构造函数的参数相匹配**。
-
-
-我们的这个例子提供的是  `getTestParameters` 方法，每个数组包含了3 个元素，对应于公共构造函数的3个参数。我们想要测试 Calculator 程序的 add 方法，所以我们提供了3个参数： expected 值与两个待求和的值，我们为测试指定了需要的构造器。注意，这次我们的测试用例没有无参构造器，而有一个可以为测试接受参数的构造器。我们在 testAdd 测试方法中实例化了 Calculator 类，并断言调用了我们所提供的参数。
-
-运行这个测试，将会根据 `@Parameters ` 方法的返回集合进行重复的循环测试，传入测试的实参就是返回集合每个数组元素中对应的元素，循环次数与返回集合的元素数量相同。
-
-这里我们要逐步分析 JUnit 的运行过程，以充分理解这项强大的功能。**首先，JUnit 调用了静态方法 getTestParameters ，接下来，JUnit 为 getTestParameters 方法返回集合中的数组元素进行循环，然后，JUnit 使用由数组元素构成的系列参数来调用唯一的公共构造器（如果存在多个公共构造器，Junit 就会抛出一个断言错误）**。在这个示例中，JUnit 使用数组中的第一个数组[2, 1, 1]，**然后 JUnit 会像平时样调用 @Test 方法。JUnit 会为 getTestparameters 方法返回集合中的下一个数组重复以上过程**。
-
-参数化的 Parameterized 类是 JUnit 众多测试运行器中的一个。测试运行器可以让你控制 JUnit 如何运行测试。
-
-### JUnit 测试运行器
+### Runner 测试运行器
 
 JUnit 4 可以向后兼容 3.8.x 版本。因为 JUnit 的 4.x 版本与 3.x 版本完全不同，所以 JUnit 4 很有可能不仅要运行 JUnit 4 的测试，可能还要运行 JUnit 3.x 版本的测试，所以 JUnit 的最新版本中提供不同的运行器，分别用来运行 JUnit 3.x、JUnit 4.x 的测试以及其他不同的测试集。JUnit 4 的测试运行器如下：
 
@@ -186,7 +350,7 @@ JUnit 的 facade 决定使用哪个运行器来运行你的测试。它支持 Ju
 
 Junit 自带的几个测试运行器都继承了 org.junit.runner.Runner 类，我们也可以继承该类来创建自定义的测试运行器。
 
-### 用  Suite 组合测试
+### Suite 测试集
 
 对于单个测试类，可以直接编译运行。在实际项目中，随着项目进度的开展，单元测试类会越来越多，一个一个地单独运行测试类肯定是不可行的。为了解决这个问题，JUnit 使用 Suite （测试集或测试套件）作为一个运行器，把几个测试作为一个集合一起运行。这样，每次需要验证系统功能正确性时，只执行一个或几个测试套件便可以了。测试套件的写法非常简单，只需要遵循以下规则：
 
@@ -293,7 +457,7 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
       }
   }
   ```
-  - 使用 try-catch 块和 fail() 方法。这种方式在 JUnit 3 中使用较多，JUnit 4 已经不推荐使用这种方式了。其中，fail() 方法用于终止将出现异常的代码的后续执行，如果预期出现异常的代码行没有抛出任何异常，而且也没有使用fail() 方法，那么该测试就会假通过。这种方式可以测出异常类型和异常的详细信息。实例代码如下：
+- 使用 try-catch 块和 fail() 方法。这种方式在 JUnit 3 中使用较多，JUnit 4 已经不推荐使用这种方式了。其中，fail() 方法用于终止将出现异常的代码的后续执行，如果预期出现异常的代码行没有抛出任何异常，而且也没有使用fail() 方法，那么该测试就会假通过。这种方式可以测出异常类型和异常的详细信息。实例代码如下：
 
   ```java
   import org.junit.Test;
@@ -435,39 +599,60 @@ Ant 与 Maven 也提供了运行多组测试类和l 测试集的功能， 你可
 
 JUnit 4 使用注解来创建测试运行所需的 Test Fixture，这些 Test Fixture 可以在每个测试运行之前和之后运行，也可以在所有测试运行之前和之后仅运行一次。
 
-@Before 和 @After 注解用于修饰  public void 类型的无参方法，这两种方法分别在**每个测试执行之前和之后**都会执行一次（即使 @Before 方法和 @Test 方法抛出了异常， @After 方法也会执行）。@Before 通常用于为一个测试类中的所有测试统一初始化相同的数据（比如某些对象的初始化）， @After 通常用于为一个测试类中的所有测试清理之前统一初始化的数据。除非父类的 @Before、@Afte 方法被重写了，否则，父类的 @Before 方法会在当前子类的 @Before 方法之前执行，父类的 @After 方法会在当前子类的 @After 方法执行之后执行。
+@Before 和 @After 注解用于修饰  public void 类型的无参方法，这两种方法分别在**每个测试执行之前和之后**都会执行一次（即使 @Before 方法和 @Test 方法抛出了异常， @After 方法也会执行）。@Before 通常用于为一个测试类中的所有测试统一初始化相同的数据（比如某些对象的初始化，为了保证测试之间的独立性，这些对象必须在每个测试执行之前都进行初始化，如文件流）， @After 通常用于为一个测试类中的所有测试清理之前统一初始化的数据。除非父类的 @Before、@Afte 方法被重写了，否则，父类的 @Before 方法会在当前子类的 @Before 方法之前执行，父类的 @After 方法会在当前子类的 @After 方法执行之后执行。
 
 Managing test fixtures 实例如下：
 
 ```java
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+public class ExpensiveTestFixtures {
+    private ManagedResource myManagedResource;
+    private static ExpensiveManagedResource myExpensiveManagedResource;
 
-public class TestFixtures {
+    static class ExpensiveManagedResource implements Closeable {
+        @Override
+        public void close() throws IOException {
+        }
+    }
+
     static class ManagedResource implements Closeable {
         @Override
         public void close() throws IOException {
         }
     }
 
-    private ManagedResource managedResource;
+    @BeforeClass
+    public static void setUpClass() {
+        System.out.println("@BeforeClass setUpExpensiveClass");
+        myExpensiveManagedResource = new ExpensiveManagedResource();
+    }
 
+    @AfterClass
+    public static void tearDownClass() throws IOException {
+        System.out.println("@AfterClass tearDownExpensiveClass");
+        myExpensiveManagedResource.close();
+        myExpensiveManagedResource = null;
+    }
 
     @Before
     public void setUp() {
-        System.out.println("@Before setUp");
-        this.managedResource = new ManagedResource();
+        System.out.println("@Before setUpCommonClass");
+        this.myManagedResource = new ManagedResource();
     }
 
     @After
     public void tearDown() throws IOException {
-        System.out.println("@After tearDown");
-        this.managedResource.close();
-        this.managedResource = null;
+        System.out.println("@After tearDownCommonClass");
+        this.myManagedResource.close();
+        this.myManagedResource = null;
     }
 
     @Test
@@ -564,25 +749,81 @@ public class TestFixturesExample {
 运行结果如下：
 
 ```powershell
-@BeforeClass setUpClass
-@Before setUp
+@BeforeClass setUpExpensiveClass
+@Before setUpCommonClass
 @Test test1()
-@After tearDown
-@Before setUp
+@After tearDownCommonClass
+@Before setUpCommonClass
 @Test test2()
-@After tearDown
-@AfterClass tearDownClass
+@After tearDownCommonClass
+@AfterClass tearDownExpensiveClass
 ```
+
+### 参数化测试
+
+**Parameterized（参数化）的测试运行器允许你使用不同的参数多次运行同一个测试**。示例代码如下：
+
+```java
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import static org.junit.Assert.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+@RunWith(value = Parameterized.class)
+public class ParameterizedTest {
+    private double expectedValue;
+    private double valueOne;
+    private double valueTwo;
+
+    @Parameters
+    public static Collection<Integer[]> getTestParameters() {
+        return Arrays.asList(new Integer[][]{
+                {2, 1, 1},  //expected, valueOne, valueTwo
+                {3, 2, 1},  //expected, valueOne, valueTwo
+                {4, 3, 1},  //expected, valueOne, valueTwo 
+        });
+    }
+
+    public ParameterizedTest(double expectedValue, double valueOne, double valueTwo) {
+        this.expectedValue = expectedValue;
+        this.valueOne = valueOne;
+        this.valueTwo = valueTwo;
+    }
+
+    @Test
+    public void testAdd() {
+        Calculator calculator = new Calculator();
+        assertEquals(expectedValue, calculator.add(valueOne, valueTwo), 0);
+    }
+}
+```
+
+要使用 Parametrerized 的测试运行器来运行一个测试类，那就必须要满足以下要求：
+
+- 首先，**使用 `@RunWith(Parameterized.class)` 修饰测试类。 Parameterized 作为该测试类的运行器**；
+- 其次，**必须声明测试中所使用的实例变量，同时提供一个用 `@Parameters` 注解修饰的方法，这个方法的签名必须是 `@Parameters public static java.util.Collection` 开始 ，无任何参数。Collection 集合的元素必须是相同长度的数组，这个数组的元素必须要和该类唯一的公共构造函数的参数相匹配**。
+
+我们的这个例子提供的是  `getTestParameters` 方法，每个数组包含了3 个元素，对应于公共构造函数的3个参数。我们想要测试 Calculator 程序的 add 方法，所以我们提供了3个参数： expected 值与两个待求和的值，我们为测试指定了需要的构造器。注意，这次我们的测试用例没有无参构造器，而有一个可以为测试接受参数的构造器。我们在 testAdd 测试方法中实例化了 Calculator 类，并断言调用了我们所提供的参数。
+
+运行这个测试，将会根据 `@Parameters ` 方法的返回集合进行重复的循环测试，传入测试的实参就是返回集合每个数组元素中对应的元素，循环次数与返回集合的元素数量相同。
+
+这里我们要逐步分析 JUnit 的运行过程，以充分理解这项强大的功能。**首先，JUnit 调用了静态方法 getTestParameters ，接下来，JUnit 为 getTestParameters 方法返回集合中的数组元素进行循环，然后，JUnit 使用由数组元素构成的系列参数来调用唯一的公共构造器（如果存在多个公共构造器，Junit 就会抛出一个断言错误）**。在这个示例中，JUnit 使用数组中的第一个数组[2, 1, 1]，**然后 JUnit 会像平时样调用 @Test 方法。JUnit 会为 getTestparameters 方法返回集合中的下一个数组重复以上过程**。
+
+参数化的 Parameterized 类是 JUnit 众多测试运行器中的一个。测试运行器可以让你控制 JUnit 如何运行测试。
 
 ### @Rule 和 @ClassRule
 
 @Rule 注解用于修饰字段或方法。修饰的字段必须是 public 的、非 static 的，且实现了 org.junit.rules.TestRule 接口（建议）或 org.junit.rules.MethodRule 接口；修饰的方法也必须是 public 的、非 static 的，且返回值类型实现了 org.junit.rules.TestRule 接口（建议）或 org.junit.rules.MethodRule 接口。
 
-当使用 @Rule 注解时，传递给 TestRule apply() 方法的 Statement 会在运行所有 @Before 方法，接着运行 @Test 方法，然后运行所有 @After 方法，任一方法失败就抛出相应的异常。如果一个类存在多个 @Rule 修饰的程序单元，那么会先运行 @Rule 修饰的字段语句，然后再运行 @Rule 修饰的方法。多个 @Rule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是未定义的），可以通过使用 org.junit.rules.RuleChain 来控制多个 @Rule 修饰的程序单元的执行顺序。
+当使用 @Rule 注解时，传递给其 TestRule apply() 方法的 Statement 会在运行所有 @Before 方法，接着运行 @Test 方法，然后运行所有 @After 方法，任一方法失败就抛出相应的异常。如果一个类存在多个 @Rule 修饰的程序单元，那么会先运行 @Rule 修饰的字段语句，然后再运行 @Rule 修饰的方法。多个 @Rule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是未定义的），可以通过使用 org.junit.rules.RuleChain 来控制多个 @Rule 修饰的程序单元的执行顺序。
 
 @ClassRule 注解用于修饰字段或方法。修饰的字段必须是 public 、 static 的，且实现了 org.junit.rules.TestRule 接口；修饰的方法也必须是 public 、static 的，且返回值类型实现了 org.junit.rules.TestRule 接口。
 
-当使用 @ClassRule 注解时，传递给 TestRule apply() 方法的 Statement 会在运行所有 @BeforeClass 方法，接着运行整个类体（如果标准测试类的话会运行其所有方法，如果是测试集的话会运行所有测试类），然后运行所有 @AfterClass 方法。传给 TestRule 的 Statement 不会抛出任何异常，从 TestRule 抛出一个异常会造成不确定的行为，这就意味着 ErrorCollector，ExpectedException 和 Timeout 等 TestRule 实现类在使用 @ClassRule 时会有不确定的行为。如果一个类存在多个 @ClassRule 修饰的程序单元，那么会先运行 @ClassRule 修饰的字段语句，然后再运行 @ClassRule 修饰的方法。多个 @ClassRule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是未定义的）。
+当使用 @ClassRule 注解时，传递给其 TestRule apply() 方法的 Statement 会在运行所有 @BeforeClass 方法，接着运行整个类体（如果标准测试类的话会运行其所有方法，如果是测试集的话会运行所有测试类），然后运行所有 @AfterClass 方法。**传给 TestRule 的 Statement 不能抛出任何异常，如果从 TestRule 抛出异常，则会造成不确定的行为，这就意味着 ErrorCollector，ExpectedException 和 Timeout 等 TestRule 实现类在使用 @ClassRule 时会有不确定的行为**。如果一个类存在多个 @ClassRule 修饰的程序单元，那么会先运行 @ClassRule 修饰的字段语句，然后再运行 @ClassRule 修饰的方法。多个 @ClassRule 修饰的字段语句或方法的运行顺序取决于所用 JVM 的反射API（这种顺序通常是未定义的）。
 
 > JUnit 4.7 增加的 MethodRule 接口已经不建议使用了，请使用 JUnit 4.9 新增的 TestRule 接口代替，TestRule 接口更加适用于class rule。MethodRule接口定义的唯一方法：
 >
@@ -592,20 +833,415 @@ public class TestFixturesExample {
 >
 > `Statement apply(Statement base, Description description);`
 
+### TestRule 详解
+
 org.junit.rules.TestRule 接口对象可以为测试添加额外的检查（否则测试可能会失败），或者为测试执行必要的设置或清理工作，或者在其他地方观察测试的执行以报告该测试。 @BeforeClass、@AfterClass、@Before、@After 所修饰方法能做的事，TestRule 也可以完成，而且 TestRule 更强大，它可以轻松地在多个项目或类之间共享。
 
 JUnit 默认的运行器以两种方式识别 TestRule ：@Rule 注解修饰的方法级别的 TestRule 和 @ClassRule 注解修饰的类级别 TestRule。可以为一个测试或测试集的运行添加多个 TestRule，执行测试或测试集的 Statement 会依次传递给 @Rule 修饰的程序单元并返回一个替代的或修改过的（取决 TestRule 的实现） Statement，该 Statement 会传递下一个 @Rule 修饰的程序单元（如果有的话）。
 
-TestRule 有以下实现类：
+JUnit 4 引入 @ClassRule 和 @Rule 注解是想让以前在 @BeforeClass、@AfterClass、@Before、@After 中的逻辑能更加方便地实现重用，因为 @BeforeClass、@AfterClass、@Before、@After 是将逻辑封装在一个测试类的方法中的，如果想实现重用，就需要我们将这些逻辑提取到一个单独的类中，然后在这些注解方法中调用这个单独类中的逻辑，而 @ClassRule、@Rule 则是将逻辑封装在一个类中，当需要使用时，直接赋值即可，对不需要重用的逻辑则可用匿名类实现。因此，JUnit 在接下来的版本中更倾向于多用 @ClassRule 和 @Rule。同时由于 Statement 链构造的特殊性，@ClassRule 或 @Rule 也保证了类似父类 @BeforeClass 或 @Before 方法要比子类的这些方法执行早，而父类的 @AfterClass 或 @After 方法执行要比子类的这些方法要早的特点。
 
-- ErrorCollector： collect multiple errors in one test method
+下面介绍 TestRule 的一些实现类。
+
+![TestRule](../../../graphs/photos/TestRule.png)
+
 - ExpectedException：make flexible assertions about thrown exceptions
-- ExternalResource：start and stop a server, for example
-- TemporaryFolder：create fresh files, and delete after test
 - TestName：remember the test name for use during the method
 - TestWatcher：add logic at events during method execution
 - Timeout：cause test to fail after a set time
-- Verifier：fail test if object state ends up incorrect
+
+#### TestWatcher 和 TestName
+
+先来看两个简单的吧，TestWatcher 为子类提供了四个事件方法以监控测试方法在运行过程中的状态，一般它可以作为信息记录使用。如果TestWatcher作为@ClassRule注解字段，则该测试类在运行之前（调用所有的@BeforeClass注解方法之前）会调用starting()方法；当所有@AfterClass注解方法调用结束后，succeeded()方法会被调用；若@AfterClass注解方法中出现异常，则failed()方法会被调用；最后，finished()方法会被调用；所有这些方法的Description是Runner对应的Description。如果TestWatcher作为@Rule注解字段，则在每个测试方法运行前（所有的@Before注解方法运行前）会调用starting()方法；当所有@After注解方法调用结束后，succeeded()方法会被调用；若@After注解方法中跑出异常，则failed()方法会被调用；最后，finished()方法会被调用；所有Description的实例是测试方法的Description实例。其原型如下：
+
+```java
+public abstract class TestWatcher implements TestRule {
+    public Statement apply(final Statement base, final Description description) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                List<Throwable> errors = new ArrayList<Throwable>();
+
+                startingQuietly(description, errors);
+                try {
+                    base.evaluate();
+                    succeededQuietly(description, errors);
+                } catch (@SuppressWarnings("deprecation") org.junit.internal.AssumptionViolatedException  e) {
+                    errors.add(e);
+                    skippedQuietly(e, description, errors);
+                } catch (Throwable e) {
+                    errors.add(e);
+                    failedQuietly(e, description, errors);
+                } finally {
+                    finishedQuietly(description, errors);
+                }
+
+                MultipleFailureException.assertEmpty(errors);
+            }
+        };
+    }
+
+    private void succeededQuietly(Description description,
+            List<Throwable> errors) {
+        try {
+            succeeded(description);
+        } catch (Throwable e) {
+            errors.add(e);
+        }
+    }
+
+    private void failedQuietly(Throwable e, Description description,
+            List<Throwable> errors) {
+        try {
+            failed(e, description);
+        } catch (Throwable e1) {
+            errors.add(e1);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void skippedQuietly(
+            org.junit.internal.AssumptionViolatedException e, Description description,
+            List<Throwable> errors) {
+        try {
+            if (e instanceof AssumptionViolatedException) {
+                skipped((AssumptionViolatedException) e, description);
+            } else {
+                skipped(e, description);
+            }
+        } catch (Throwable e1) {
+            errors.add(e1);
+        }
+    }
+
+    private void startingQuietly(Description description,
+            List<Throwable> errors) {
+        try {
+            starting(description);
+        } catch (Throwable e) {
+            errors.add(e);
+        }
+    }
+
+    private void finishedQuietly(Description description,
+            List<Throwable> errors) {
+        try {
+            finished(description);
+        } catch (Throwable e) {
+            errors.add(e);
+        }
+    }
+
+    /**
+     * Invoked when a test succeeds
+     */
+    protected void succeeded(Description description) {
+    }
+
+    /**
+     * Invoked when a test fails
+     */
+    protected void failed(Throwable e, Description description) {
+    }
+
+    /**
+     * Invoked when a test is skipped due to a failed assumption.
+     */
+    @SuppressWarnings("deprecation")
+    protected void skipped(AssumptionViolatedException e, Description description) {
+        // For backwards compatibility with JUnit 4.11 and earlier, call the legacy version
+        org.junit.internal.AssumptionViolatedException asInternalException = e;
+        skipped(asInternalException, description);
+    }
+
+    /**
+     * Invoked when a test is skipped due to a failed assumption.
+     *
+     * @deprecated use {@link #skipped(AssumptionViolatedException, Description)}
+     */
+    @Deprecated
+    protected void skipped(
+            org.junit.internal.AssumptionViolatedException e, Description description) {
+    }
+
+    /**
+     * Invoked when a test is about to start
+     */
+    protected void starting(Description description) {
+    }
+
+    /**
+     * Invoked when a test method finishes (whether passing or failing)
+     */
+    protected void finished(Description description) {
+    }
+}
+```
+
+
+
+TestName是对TestWatcher的一个简单实现，它会在starting()方法中记录每次运行的名字。如果TestName作为@Rule注解字段，则starting()中传入的Description是对每个测试方法的Description，因而getMethodName()方法返回的是测试方法的名字。一般TestName不作为@ClassRule注解字段，如果真有人这样用了，则starting()中Description的参数是Runner的Description实例，一般getMethodName()返回值为null。
+
+#### Verifier 和 ErrorCollector
+
+Verifier （抽象类）是在所有测试已经结束的时候，再加入一些额外的逻辑（重写其 verify() 方法），如果额外的逻辑通过，才表示测试成功，否则，测试依旧失败，即使在之前的运行中都是成功的。其原型如下：
+
+```java
+public abstract class Verifier implements TestRule {
+    public Statement apply(final Statement base, Description description) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                base.evaluate();
+                verify();
+            }
+        };
+    }
+
+    /**
+     * Override this to add verification logic. Overrides should throw an
+     * exception to indicate that verification failed.
+     */
+    protected void verify() throws Throwable {
+    }
+}
+```
+
+Verifier 可以为多个测试加入一些公共的验证逻辑。当 @Rule 应用于 Verifier 时，它会在所有 @After 方法运行结束后调用其 verify() 方法，如果 verifier() 方法验证失败就抛出某个异常，则该测试方法的 testFailure 事件将会被触发，导致该测试方法失败；当 Verifier 应用在 @ClassRule 时，它会在所有的 @AfterClass 方法执行完后执行其 verify() 方法，如果 verify() 失败就抛出某个异常，这将会触发关于该测试类的 testFailure，此时测试类中的所有测试方法都已经运行成功了，却在最后收到一个关于测试类的 testFailure 事件，这确实是一个比较诡异的事情，因而 @ClassRule 中提到ErrorCollector（继承了 Verifier）不可以应用 @ClassRule 注解，否则其行是不确定的；前面也提到过，@ClassRule 注解修饰的字段或方法的返回值在运行时不能抛异常，否则其行为是不确定的。
+
+ErrorCollector 是对 Verifier 的一个实现，它可以在运行某个测试方法的过程中收集多个异常（即使前面出错了，后面依然会继续执行，但最后会失败），而这些错误信息会在最后调用ErrorCollector 的 verify() 方法时统一报告出来。其原型如下：
+
+```java
+public class ErrorCollector extends Verifier {
+    private List<Throwable> errors = new ArrayList<Throwable>();
+
+    @Override
+    protected void verify() throws Throwable {
+        MultipleFailureException.assertEmpty(errors);
+    }
+
+    /**
+     * 将 Throwable 添加到 errors 列表中，代码依然继续执行，但最后会失败
+     */
+    public void addError(Throwable error) {
+        errors.add(error);
+    }
+
+    /**
+     * 如果 value 与 matcher 不匹配就收集该异常，代码依然继续执行，但最后会失败
+     */
+    public <T> void checkThat(final T value, final Matcher<T> matcher) {
+        checkThat("", value, matcher);
+    }
+
+    /**
+     * 同上，只是增加了失败的原因描述 
+     */
+    public <T> void checkThat(final String reason, final T value, final Matcher<T> matcher) {
+        checkSucceeds(new Callable<Object>() {
+            public Object call() throws Exception {
+                assertThat(reason, value, matcher);
+                return value;
+            }
+        });
+    }
+
+    /**
+     * 如果 callable 抛出异常，就收集该异常，代码依然继续执行，但最后会失败
+     */
+    public <T> T checkSucceeds(Callable<T> callable) {
+        try {
+            return callable.call();
+        } catch (Throwable e) {
+            addError(e);
+            return null;
+        }
+    }
+}
+```
+
+#### ExternalResource 和 TemporaryFolder
+
+ExternalResource 在测试开始之前设置所依赖的外部资源以及在测试结束后清理这些资源。相关操作可以通过重写其 before() 和 after() 方法来实现.这里资源诸如 Socket 、服务器连接和数据库连接的开启与断开、临时文件的创建与删除等。如果 ExternalResource 用在 @ClassRule 注解字段中，其 before() 方法会在所有 @BeforeClass 方法之前调用，其 after() 方法会在所有 @AfterClass 方法之后调用（即使在执行 @AfterClass方法时抛出了异常）；如果 ExternalResource用在 @Rule 注解字段中，其 before() 方法会在所有 @Before 方法之前调用，其 after() 方法会在所有 @After 方法之后调用。其原型如下：
+
+```java
+public abstract class ExternalResource implements TestRule {
+    public Statement apply(Statement base, Description description) {
+        return statement(base);
+    }
+
+    private Statement statement(final Statement base) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                before();
+                try {
+                    base.evaluate();
+                } finally {
+                    after();
+                }
+            }
+        };
+    }
+
+    /**
+     * 重写该方法来开启你自己的外部资源
+     *
+     * @throws 开启资源失败抛出异常，这样 after() 方法就不会执行
+     */
+    protected void before() throws Throwable {
+        // do nothing
+    }
+
+    /**
+     * 重写该方法来清理自己的外部资源
+     */
+    protected void after() {
+        // do nothing
+    }
+}
+```
+
+TemporaryFolder 是对 ExternalResource 的一个实现，其 before() 方法中在临时文件夹中创建一个以 junit 开头的随机文件夹，其 after() 方法将创建的临时文件夹清空并删除该临时文件夹。另外 TemporaryFolder 还提供了几个方法以在新创建的临时文件夹中创建新的文件、文件夹。其原型如下：
+
+```java
+public class TemporaryFolder extends ExternalResource {
+    private final File parentFolder;
+    private File folder;
+
+    public TemporaryFolder() {
+        this(null);
+    }
+
+    public TemporaryFolder(File parentFolder) {
+        this.parentFolder = parentFolder;
+    }
+
+    @Override
+    protected void before() throws Throwable {
+        create();
+    }
+
+    @Override
+    protected void after() {
+        delete();
+    }
+
+    // testing purposes only
+
+    /**
+     * for testing purposes only. Do not use.
+     */
+    public void create() throws IOException {
+        folder = createTemporaryFolderIn(parentFolder);
+    }
+
+    /**
+     * 在临时文件夹下创建一个新的指定名称的文件
+     */
+    public File newFile(String fileName) throws IOException {
+        File file = new File(getRoot(), fileName);
+        if (!file.createNewFile()) {
+            throw new IOException(
+                    "a file with the name \'" + fileName + "\' already exists in the test folder");
+        }
+        return file;
+    }
+
+    /**
+     * 在临时文件夹下创建一个新的以"junit"开头的随机名称的文件
+     */
+    public File newFile() throws IOException {
+        return File.createTempFile("junit", null, getRoot());
+    }
+
+    /**
+     * 在临时文件夹下创建一个新的指定名称的文件夹
+     */
+    public File newFolder(String folder) throws IOException {
+        return newFolder(new String[]{folder});
+    }
+
+    /**
+     * 在临时文件夹下创建若干个新的指定名称的文件
+     */
+    public File newFolder(String... folderNames) throws IOException {
+        File file = getRoot();
+        for (int i = 0; i < folderNames.length; i++) {
+            String folderName = folderNames[i];
+            validateFolderName(folderName);
+            file = new File(file, folderName);
+            if (!file.mkdir() && isLastElementInArray(i, folderNames)) {
+                throw new IOException(
+                        "a folder with the name \'" + folderName + "\' already exists");
+            }
+        }
+        return file;
+    }
+    
+    /**
+     * 验证包含路径分隔符的指定名称的文件夹是否能创建成功
+     */
+    private void validateFolderName(String folderName) throws IOException {
+        File tempFile = new File(folderName);
+        if (tempFile.getParent() != null) {
+            String errorMsg = "Folder name cannot consist of multiple path components separated by a file separator." + " Please use newFolder('MyParentFolder','MyFolder') to create hierarchies of folders";
+            throw new IOException(errorMsg);
+        }
+    }
+
+    private boolean isLastElementInArray(int index, String[] array) {
+        return index == array.length - 1;
+    }
+
+    /**
+     * 在临时文件夹下创建一个新的随机名称的文件夹
+     */
+    public File newFolder() throws IOException {
+        return createTemporaryFolderIn(getRoot());
+    }
+
+    private File createTemporaryFolderIn(File parentFolder) throws IOException {
+        File createdFolder = File.createTempFile("junit", "", parentFolder);
+        createdFolder.delete();
+        createdFolder.mkdir();
+        return createdFolder;
+    }
+
+    /**
+     * @return 临时文件夹的位置
+     */
+    public File getRoot() {
+        if (folder == null) {
+            throw new IllegalStateException(
+                    "the temporary folder has not yet been created");
+        }
+        return folder;
+    }
+
+    /**
+     * 删除临时文件夹下的所有文件和文件夹，
+     * 一般不直接调用，因为 @Rule 注解提供的机制会在 after() 方法中调用它
+     */
+    public void delete() {
+        if (folder != null) {
+            recursiveDelete(folder);
+        }
+    }
+
+    private void recursiveDelete(File file) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File each : files) {
+                recursiveDelete(each);
+            }
+        }
+        file.delete();
+    }
+}
+```
+
+
 
 @Rule 示例如下：
 
@@ -750,7 +1386,7 @@ public static class HasTempFolder {
 }
 ```
 
-JUnit 4 引入 @ClassRule 和 @Rule 注解是想让以前在 @BeforeClass、@AfterClass、@Before、@After 中的逻辑能更加方便地实现重用，因为 @BeforeClass、@AfterClass、@Before、@After 是将逻辑封装在一个测试类的方法中的，如果实现重用，需要自己将这些逻辑提取到一个单独的类中，再在这些方法中调用，而 @ClassRule、@Rule 则是将逻辑封装在一个类中，当需要使用时，直接赋值即可，对不需要重用的逻辑则可用匿名类实现，也因此，JUnit 在接下来的版本中更倾向于多用 @ClassRule 和 @Rule。同时由于 Statement 链构造的特殊性，@ClassRule 或 @Rule 也保证了类似父类 @BeforeClass 或 @Before 注解的方法要比子类的注解方法执行早，而父类的 @AfterClass 或 @After 注解的方法执行要比子类要早的特点。
+
 
 
 
