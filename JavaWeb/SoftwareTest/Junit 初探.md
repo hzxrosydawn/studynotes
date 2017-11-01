@@ -852,7 +852,7 @@ JUnit 4 引入 @ClassRule 和 @Rule 注解是想让以前在 @BeforeClass、@Aft
 
 #### TestWatcher 和 TestName
 
-先来看两个简单的吧，TestWatcher 为子类提供了四个事件方法以监控测试方法在运行过程中的状态，一般它可以作为信息记录使用。如果TestWatcher作为@ClassRule注解字段，则该测试类在运行之前（调用所有的@BeforeClass注解方法之前）会调用starting()方法；当所有@AfterClass注解方法调用结束后，succeeded()方法会被调用；若@AfterClass注解方法中出现异常，则failed()方法会被调用；最后，finished()方法会被调用；所有这些方法的Description是Runner对应的Description。如果TestWatcher作为@Rule注解字段，则在每个测试方法运行前（所有的@Before注解方法运行前）会调用starting()方法；当所有@After注解方法调用结束后，succeeded()方法会被调用；若@After注解方法中跑出异常，则failed()方法会被调用；最后，finished()方法会被调用；所有Description的实例是测试方法的Description实例。其原型如下：
+先来看两个简单的吧，TestWatcher 为子类提供了四个事件方法以监控测试方法在运行过程中的状态，一般它可以作为信息记录使用。如果 TestWatcher 应用了 @ClassRule 注解，则该测试类在运行之前（调用所有的 @BeforeClass 方法之前）会调用其 starting() 方法；当所有 @AfterClass 方法调用结束后，其 succeeded() 方法会被调用；若 @AfterClass 方法中出现异常，则其 failed() 方法会被调用；最后，其finished() 方法会被调用；所有这些方法的 Description 是 Runner 对应的 Description。如果 TestWatcher 应用了 @Rule 注解，则在每个测试方法运行前（所有的 @Before 方法运行前）会调用其 starting() 方法；当所有 @After 方法调用结束后，其 succeeded() 方法会被调用；若 @After 方法中出现异常，则其 failed() 方法会被调用；最后，其 finished() 方法会被调用；所有 Description 的实例是测试方法的 Description 实例。其原型如下：
 
 ```java
 public abstract class TestWatcher implements TestRule {
@@ -933,19 +933,19 @@ public abstract class TestWatcher implements TestRule {
     }
 
     /**
-     * Invoked when a test succeeds
+     * 当一个测试成功时调用
      */
     protected void succeeded(Description description) {
     }
 
     /**
-     * Invoked when a test fails
+     * 当一个测试失败时调用
      */
     protected void failed(Throwable e, Description description) {
     }
 
     /**
-     * Invoked when a test is skipped due to a failed assumption.
+     * 当一个测试由于失败的假定而被跳过时调用
      */
     @SuppressWarnings("deprecation")
     protected void skipped(AssumptionViolatedException e, Description description) {
@@ -955,7 +955,7 @@ public abstract class TestWatcher implements TestRule {
     }
 
     /**
-     * Invoked when a test is skipped due to a failed assumption.
+     * 当一个测试由于失败的假定而被跳过时调用
      *
      * @deprecated use {@link #skipped(AssumptionViolatedException, Description)}
      */
@@ -965,22 +965,38 @@ public abstract class TestWatcher implements TestRule {
     }
 
     /**
-     * Invoked when a test is about to start
+     * 当一个测试要启动时调用
      */
     protected void starting(Description description) {
     }
 
     /**
-     * Invoked when a test method finishes (whether passing or failing)
+     * 当一个测试结束（无论通过还是失败）时调用
      */
     protected void finished(Description description) {
     }
 }
 ```
 
+TestName 是对 TestWatcher 的一个简单实现，它会在 starting() 方法中记录每次运行的名字。如果 TestName 应用@Rule 注解，则 starting() 中传入的 Description 是对每个测试方法的 Description，因而 getMethodName() 方法返回的是测试方法的名字。一般 TestName 不应用 @ClassRule 注解，如果真有人这样用了，则 starting() 中 Description 的参数是 Runner 的 Description 实例，一般 getMethodName() 返回值为 null。其原型如下：
 
+```java
+public class TestName extends TestWatcher {
+    private String name;
 
-TestName是对TestWatcher的一个简单实现，它会在starting()方法中记录每次运行的名字。如果TestName作为@Rule注解字段，则starting()中传入的Description是对每个测试方法的Description，因而getMethodName()方法返回的是测试方法的名字。一般TestName不作为@ClassRule注解字段，如果真有人这样用了，则starting()中Description的参数是Runner的Description实例，一般getMethodName()返回值为null。
+    @Override
+    protected void starting(Description d) {
+        name = d.getMethodName();
+    }
+
+    /**
+     * @return the name of the currently-running test method
+     */
+    public String getMethodName() {
+        return name;
+    }
+}
+```
 
 #### Verifier 和 ErrorCollector
 
@@ -1241,9 +1257,486 @@ public class TemporaryFolder extends ExternalResource {
 }
 ```
 
+#### Timeout 与 ExpectedException
+
+Timeout 与 ExpectedException 都是对 @Test 注解中 timeout 和 expected 字段的部分替代实现。只是 @Test 注解只适用于单个测试方法，而这两个实现适用于全局测试类。对 Timeout 来说，如果不是在测试类中所有的测试方法都需要有时间限制，并不推荐适用 Timeout；对 ExpectedException，它使用了Hamcrest 中的 Matcher 来匹配，因而提供了更强大的控制能力，但是一般的使用 @Test 中的 expected 字段就够了，它多次调用 expected 表达是 and 的关系，即如果我有两个 Exception，则抛出的 Exception 必须同时是这两个类型的，感觉没有什么大的意义，因而不推荐使用这个 Rule。这两个 Rule 原本就是基于测试方法设计的，因而如果应用在 @ClassRule 上好像没有什么大的意义，不过 Timeout 感觉是可以应用在 @ClassRule 中的，如果要测试一个测试类整体运行时间的话，当然如果存在这种需求的话。其原型如下：
+
+```java
+public class Timeout implements TestRule {
+    private final long timeout;
+    private final TimeUnit timeUnit;
+    private final boolean lookForStuckThread;
+
+    /**
+     * Returns a new builder for building an instance.
+     *
+     * @since 4.12
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Create a {@code Timeout} instance with the timeout specified
+     * in milliseconds.
+     * <p>
+     * This constructor is deprecated.
+     * <p>
+     * Instead use {@link #Timeout(long, java.util.concurrent.TimeUnit)},
+     * {@link Timeout#millis(long)}, or {@link Timeout#seconds(long)}.
+     *
+     * @param millis the maximum time in milliseconds to allow the
+     * test to run before it should timeout
+     */
+    @Deprecated
+    public Timeout(int millis) {
+        this(millis, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Create a {@code Timeout} instance with the timeout specified
+     * at the timeUnit of granularity of the provided {@code TimeUnit}.
+     *
+     * @param timeout the maximum time to allow the test to run
+     * before it should timeout
+     * @param timeUnit the time unit for the {@code timeout}
+     * @since 4.12
+     */
+    public Timeout(long timeout, TimeUnit timeUnit) {
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+        lookForStuckThread = false;
+    }
+
+    /**
+     * Create a {@code Timeout} instance initialized with values form
+     * a builder.
+     *
+     * @since 4.12
+     */
+    protected Timeout(Builder builder) {
+        timeout = builder.getTimeout();
+        timeUnit = builder.getTimeUnit();
+        lookForStuckThread = builder.getLookingForStuckThread();
+    }
+
+    /**
+     * Creates a {@link Timeout} that will timeout a test after the
+     * given duration, in milliseconds.
+     *
+     * @since 4.12
+     */
+    public static Timeout millis(long millis) {
+        return new Timeout(millis, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Creates a {@link Timeout} that will timeout a test after the
+     * given duration, in seconds.
+     *
+     * @since 4.12
+     */
+    public static Timeout seconds(long seconds) {
+        return new Timeout(seconds, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Gets the timeout configured for this rule, in the given units.
+     *
+     * @since 4.12
+     */
+    protected final long getTimeout(TimeUnit unit) {
+        return unit.convert(timeout, timeUnit);
+    }
+
+    /**
+     * Gets whether this {@code Timeout} will look for a stuck thread
+     * when the test times out.
+     *
+     * @since 4.12
+     */
+    protected final boolean getLookingForStuckThread() {
+        return lookForStuckThread;
+    }
+
+    /**
+     * Creates a {@link Statement} that will run the given
+     * {@code statement}, and timeout the operation based
+     * on the values configured in this rule. Subclasses
+     * can override this method for different behavior.
+     *
+     * @since 4.12
+     */
+    protected Statement createFailOnTimeoutStatement(
+            Statement statement) throws Exception {
+        return FailOnTimeout.builder()
+            .withTimeout(timeout, timeUnit)
+            .withLookingForStuckThread(lookForStuckThread)
+            .build(statement);
+    }
+
+    public Statement apply(Statement base, Description description) {
+        try {
+            return createFailOnTimeoutStatement(base);
+        } catch (final Exception e) {
+            return new Statement() {
+                @Override public void evaluate() throws Throwable {
+                    throw new RuntimeException("Invalid parameters for Timeout", e);
+                }
+            };
+        }
+    }
+
+    /**
+     * Builder for {@link Timeout}.
+     *
+     * @since 4.12
+     */
+    public static class Builder {
+        private boolean lookForStuckThread = false;
+        private long timeout = 0;
+        private TimeUnit timeUnit = TimeUnit.SECONDS;
+
+        protected Builder() {
+        }
+
+        /**
+         * Specifies the time to wait before timing out the test.
+         *
+         * <p>If this is not called, or is called with a
+         * {@code timeout} of {@code 0}, the returned {@code Timeout}
+         * rule instance will cause the tests to wait forever to
+         * complete, however the tests will still launch from a
+         * separate thread. This can be useful for disabling timeouts
+         * in environments where they are dynamically set based on
+         * some property.
+         *
+         * @param timeout the maximum time to wait
+         * @param unit the time unit of the {@code timeout} argument
+         * @return {@code this} for method chaining.
+         */
+        public Builder withTimeout(long timeout, TimeUnit unit) {
+            this.timeout = timeout;
+            this.timeUnit = unit;
+            return this;
+        }
+
+        protected long getTimeout() {
+            return timeout;
+        }
+
+        protected TimeUnit getTimeUnit()  {
+            return timeUnit;
+        }
+
+        /**
+         * Specifies whether to look for a stuck thread.  If a timeout occurs and this
+         * feature is enabled, the rule will look for a thread that appears to be stuck
+         * and dump its backtrace.  This feature is experimental.  Behavior may change
+         * after the 4.12 release in response to feedback.
+         *
+         * @param enable {@code true} to enable the feature
+         * @return {@code this} for method chaining.
+         */
+        public Builder withLookingForStuckThread(boolean enable) {
+            this.lookForStuckThread = enable;
+            return this;
+        }
+
+        protected boolean getLookingForStuckThread() {
+            return lookForStuckThread;
+        }
 
 
-@Rule 示例如下：
+        /**
+         * Builds a {@link Timeout} instance using the values in this builder.,
+         */
+        public Timeout build() {
+            return new Timeout(this);
+        }
+    }
+}
+```
+
+```java
+public class ExpectedException implements TestRule {
+    /**
+     * Returns a {@linkplain TestRule rule} that expects no exception to
+     * be thrown (identical to behavior without this rule).
+     */
+    public static ExpectedException none() {
+        return new ExpectedException();
+    }
+
+    private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
+
+    private String missingExceptionMessage= "Expected test to throw %s";
+
+    private ExpectedException() {
+    }
+
+    /**
+     * This method does nothing. Don't use it.
+     * @deprecated AssertionErrors are handled by default since JUnit 4.12. Just
+     *             like in JUnit &lt;= 4.10.
+     */
+    @Deprecated
+    public ExpectedException handleAssertionErrors() {
+        return this;
+    }
+
+    /**
+     * This method does nothing. Don't use it.
+     * @deprecated AssumptionViolatedExceptions are handled by default since
+     *             JUnit 4.12. Just like in JUnit &lt;= 4.10.
+     */
+    @Deprecated
+    public ExpectedException handleAssumptionViolatedExceptions() {
+        return this;
+    }
+
+    /**
+     * Specifies the failure message for tests that are expected to throw 
+     * an exception but do not throw any. You can use a {@code %s} placeholder for
+     * the description of the expected exception. E.g. "Test doesn't throw %s."
+     * will fail with the error message
+     * "Test doesn't throw an instance of foo.".
+     *
+     * @param message exception detail message
+     * @return the rule itself
+     */
+    public ExpectedException reportMissingExceptionWithMessage(String message) {
+        missingExceptionMessage = message;
+        return this;
+    }
+
+    public Statement apply(Statement base,
+            org.junit.runner.Description description) {
+        return new ExpectedExceptionStatement(base);
+    }
+
+    /**
+     * Verify that your code throws an exception that is matched by
+     * a Hamcrest matcher.
+     * <pre> &#064;Test
+     * public void throwsExceptionThatCompliesWithMatcher() {
+     *     NullPointerException e = new NullPointerException();
+     *     thrown.expect(is(e));
+     *     throw e;
+     * }</pre>
+     */
+    public void expect(Matcher<?> matcher) {
+        matcherBuilder.add(matcher);
+    }
+
+    /**
+     * Verify that your code throws an exception that is an
+     * instance of specific {@code type}.
+     * <pre> &#064;Test
+     * public void throwsExceptionWithSpecificType() {
+     *     thrown.expect(NullPointerException.class);
+     *     throw new NullPointerException();
+     * }</pre>
+     */
+    public void expect(Class<? extends Throwable> type) {
+        expect(instanceOf(type));
+    }
+
+    /**
+     * Verify that your code throws an exception whose message contains
+     * a specific text.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseMessageContainsSpecificText() {
+     *     thrown.expectMessage(&quot;happened&quot;);
+     *     throw new NullPointerException(&quot;What happened?&quot;);
+     * }</pre>
+     */
+    public void expectMessage(String substring) {
+        expectMessage(containsString(substring));
+    }
+
+    /**
+     * Verify that your code throws an exception whose message is matched 
+     * by a Hamcrest matcher.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseMessageCompliesWithMatcher() {
+     *     thrown.expectMessage(startsWith(&quot;What&quot;));
+     *     throw new NullPointerException(&quot;What happened?&quot;);
+     * }</pre>
+     */
+    public void expectMessage(Matcher<String> matcher) {
+        expect(hasMessage(matcher));
+    }
+
+    /**
+     * Verify that your code throws an exception whose cause is matched by 
+     * a Hamcrest matcher.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseCauseCompliesWithMatcher() {
+     *     NullPointerException expectedCause = new NullPointerException();
+     *     thrown.expectCause(is(expectedCause));
+     *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
+     * }</pre>
+     */
+    public void expectCause(Matcher<? extends Throwable> expectedCause) {
+        expect(hasCause(expectedCause));
+    }
+
+    private class ExpectedExceptionStatement extends Statement {
+        private final Statement next;
+
+        public ExpectedExceptionStatement(Statement base) {
+            next = base;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                next.evaluate();
+            } catch (Throwable e) {
+                handleException(e);
+                return;
+            }
+            if (isAnyExceptionExpected()) {
+                failDueToMissingException();
+            }
+        }
+    }
+
+    private void handleException(Throwable e) throws Throwable {
+        if (isAnyExceptionExpected()) {
+            assertThat(e, matcherBuilder.build());
+        } else {
+            throw e;
+        }
+    }
+
+    private boolean isAnyExceptionExpected() {
+        return matcherBuilder.expectsThrowable();
+    }
+
+    private void failDueToMissingException() throws AssertionError {
+        fail(missingExceptionMessage());
+    }
+    
+    private String missingExceptionMessage() {
+        String expectation= StringDescription.toString(matcherBuilder.build());
+        return format(missingExceptionMessage, expectation);
+    }
+}
+```
+
+#### RuleChain
+
+RuleChain 提供一种将多个 TestRule 串在一起执行的机制，它首先从 outChain() 方法开始创建一个最外层的 TestRule 创建的 Statement，而后调用 round() 方法，不断向内层添加 TestRule 创建的 Statement。如其注释文档中给出的一个例子：
+
+```java
+ @Rule
+public TestRule chain= RuleChain
+	.outerRule(new LoggingRule("outer rule"))
+	.around(new LoggingRule("middle rule"))
+	.around(new LoggingRule("inner rule"));
+```
+
+如果LoggingRule只是类似ExternalResource中的实现，并且在before()方法中打印starting…，在after()方法中打印finished…，那么这条链的执行结果为：
+
+```shell
+starting outer rule
+starting middle rule
+starting inner rule
+finished inner rule
+finished middle rule
+finished outer rule
+```
+
+由于 TestRule 的 apply() 方法是根据的当前传入的 Statement，创建一个新的 Statement，以决定当前 TestRule 逻辑的执行位置，因而第一个调用 apply() 的 TestRule 产生的 Statement 将在 Statement 链的最里面，也正是有这样的逻辑，所以around() 方法实现的时候，都是把新加入的 TestRule 放在第一个位置，然后才保持其他已存在的 TestRule 位置不变。其原型如下：
+
+```java
+public class RuleChain implements TestRule {
+    private static final RuleChain EMPTY_CHAIN = new RuleChain(
+            Collections.<TestRule>emptyList());
+
+    private List<TestRule> rulesStartingWithInnerMost;
+
+    /**
+     * Returns a {@code RuleChain} without a {@link TestRule}. This method may
+     * be the starting point of a {@code RuleChain}.
+     *
+     * @return a {@code RuleChain} without a {@link TestRule}.
+     */
+    public static RuleChain emptyRuleChain() {
+        return EMPTY_CHAIN;
+    }
+
+    /**
+     * Returns a {@code RuleChain} with a single {@link TestRule}. This method
+     * is the usual starting point of a {@code RuleChain}.
+     *
+     * @param outerRule the outer rule of the {@code RuleChain}.
+     * @return a {@code RuleChain} with a single {@link TestRule}.
+     */
+    public static RuleChain outerRule(TestRule outerRule) {
+        return emptyRuleChain().around(outerRule);
+    }
+
+    private RuleChain(List<TestRule> rules) {
+        this.rulesStartingWithInnerMost = rules;
+    }
+
+    /**
+     * Create a new {@code RuleChain}, which encloses the {@code nextRule} with
+     * the rules of the current {@code RuleChain}.
+     *
+     * @param enclosedRule the rule to enclose.
+     * @return a new {@code RuleChain}.
+     */
+    public RuleChain around(TestRule enclosedRule) {
+        List<TestRule> rulesOfNewChain = new ArrayList<TestRule>();
+        rulesOfNewChain.add(enclosedRule);
+        rulesOfNewChain.addAll(rulesStartingWithInnerMost);
+        return new RuleChain(rulesOfNewChain);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Statement apply(Statement base, Description description) {
+        for (TestRule each : rulesStartingWithInnerMost) {
+            base = each.apply(base, description);
+        }
+        return base;
+    }
+}
+```
+
+#### TestRule 在 Statement 的运行
+
+TestRule 实例的运行都是被封装在一个叫 RunRules 的 Statement 中运行的。在构造 RunRules 实例是传入 TestRule 实例的集合，然后遍历所有的 TestRule 实例，为每个 TestRule 实例调用一遍 apply() 方法以构造出要执行 TestRule 的 Statement 链。类似 RuleChain，这里在前面的 TestRule 构造的 Statement 被是最终构造出的 Statement 的最里层，结合 TestClass 在获取注解字段的顺序时，先查找子类，再查找父类，因而子类的 TestRule 实例产生的 Statement 是在 Statement 链的最里层，从而保证了类似 ExternalResource 实现中，before() 方法的执行父类要比子类要早，而 after() 方法的执行子类要比父类要早的特性。RunRules 的原型如下：
+
+```java
+public class RunRules extends Statement {
+    private final Statement statement;
+
+    public RunRules(Statement base, Iterable<TestRule> rules, Description description) {
+        statement = applyAll(base, rules, description);
+    }
+
+    @Override
+    public void evaluate() throws Throwable {
+        statement.evaluate();
+    }
+
+    private static Statement applyAll(Statement result, Iterable<TestRule> rules,
+            Description description) {
+        for (TestRule each : rules) {
+            result = each.apply(result, description);
+        }
+        return result;
+    }
+}
+```
+
+一个典型的 @Rule 示例如下：
 
 ```java
 import java.io.Closeable;
@@ -1348,7 +1841,7 @@ ExpensiveExternalResource after
 RulesTest @AfterClass tearDownClass
 ```
 
-从结果可以看出，ExternalResource 的 before 方法在 @Before 方法之前被调用，可见其作用与  @Before 方法类似；ExternalResource 的 after 方法在 @After 方法之后被调用之后调用，可见其作用与  @After 方法类似；ExternalResource 用来抽象出重用资源管理代码是一种不错方的法。可以使用子类管理资源的使用，从而达到代码的高度重用。
+从结果可以看出，ExternalResource 的 before() 方法在 @Before 方法之前被调用，可见其作用与  @Before 方法类似；ExternalResource 的 after() 方法在 @After 方法之后被调用之后调用，可见其作用与  @After 方法类似；ExternalResource 用来抽象出重用资源管理代码是一种不错方的法。可以使用子类管理资源的使用，从而达到代码的高度重用。
 
 下面的测试类在每次执行测试之前先创建一个临时文件夹，在每个测试执行结束后在删除该临时文件夹：
 
@@ -1385,8 +1878,6 @@ public static class HasTempFolder {
 	}
 }
 ```
-
-
 
 
 

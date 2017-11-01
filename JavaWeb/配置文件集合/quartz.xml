@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--一个稍复杂的JobDetailBean-->
+    <bean name="oneComplexJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <!--设置该Job的名称-->
+        <property name="name" value="oneComplexJobDetail"/>
+        <!--设置该JobDetail所属的组-->
+        <property name="group" value="complexJobDetail"/>
+        <!--设置该Job的描述信息-->
+        <property name="description" value="这是一个稍微复杂点的JobDetail"/>
+        <!--设置执行该Job的类（实现了QuartzJobBean抽象了），该类中重写的executeInternal方法负责具体的任务执行-->
+        <property name="jobClass" value="com.rosydawn.bean.PrintJobBean"/>
+        <!--durability 表示该Job的持久性，即该Job完成之后是否依然保留到job store（即使没有trigger指向该任务），默认false-->
+        <property name="durability" value="true"/>
+        <!--设置该Job在恢复或容错场景下是否再次执行-->
+        <property name="requestsRecovery" value="true"/>
+        <!--设置该Job的JobDataMap-->
+        <!--<property name="jobDataMap">
+            <map>
+                <entry key="..." value="..." />
+                <entry key="..." value="..." />
+            </map>
+        </property>-->
+        <!--通过一个map向该Job的jobDataMap添加objects，不同于SchedulerContext中的objects，这些objects仅属于该Job，当该Job的
+        JobDetail持久化存储到数据库中时，不要向JobDataMap中添加Spring关联的beans（这些beans应该添加到SchedulerContext中）或
+        ApplicationContext-->
+        <!--<property name="jobDataAsMap">
+            <map>
+                <entry key="..." value="..." />
+                <entry key="..." value="..." />
+            </map>
+        </property>-->
+        <!--为处在JobDataMap中的一个ApplicationContext引用设置一个key，默认没有。在QuartzJobBean中，这个引用会用作该Job的一个属性（
+        应该有一个对应的setApplicationContext方法）。注意：BeanFactory类型的回调接口如ApplicationContextAware不会自动应用到Quartz
+        Job实例中，因为Quartz它自己负责管理其Job的生命周期。另外，当该Job的JobDetail持久化存储到数据库中时，不要向JobDataMap中添加
+        ApplicationContext-->
+        <!--<property name="applicationContextJobDataKey" value="applicationContext"/>-->
+    </bean>
+
+    <!--一个稍微复杂的TriggerBean-->
+    <bean id="oneComplexTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--设置该Trigger的名称-->
+        <property name="name" value="oneComplexTrigger"/>
+        <!--设置该Trigger所属的组-->
+        <property name="group" value="complexTrigger"/>
+        <!--设置该Trigger的描述信息-->
+        <property name="description" value="这是一个稍微复杂点的Trigger"/>
+        <!--设置该Trigger相关连的JobDetail-->
+        <property name="jobDetail" ref="oneComplexJobDetail"/>
+        <!--设置该Trigger的JobDataMap-->
+        <!--<property name="jobDataMap">
+            <map>
+                <entry key="..." value="..." />
+                <entry key="..." value="..." />
+            </map>
+        </property>-->
+        <!--通过一个map向该Trigger的jobDataMap添加objects，不同于SchedulerContext中的objects，这些objects仅属于该Trigger-->
+        <!--<property name="jobDataAsMap">
+            <map>
+                <entry key="..." value="..." />
+                <entry key="..." value="..." />
+            </map>
+        </property>-->
+        <!--设置该Trigger的在其对应的bean启动后延迟启动的毫秒数-->
+        <property name="startDelay" value="10000"/>
+        <!--设置该Trigger的cron表达式来指定该Trigger的触发策略-->
+        <property name="cronExpression" value="0/30 * * * * ？ *"/>
+        <!--设置该Trigger对应的时区-->
+        <property name="timeZone" value="..."/>
+        <!--设置该Trigger的优先级（整数）-->
+        <property name="priority" value="1"/>
+        <!--设置该Trigger的misfire instruction-->
+        <property name="misfireInstruction" value="6000"/>
+        <!--<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>-->
+    </bean>
+
+    <bean name="quartzScheduler"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="triggers">
+            <list>
+                <!--<ref bean="trigger1"/>-->
+                <ref bean="oneComplexTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>
