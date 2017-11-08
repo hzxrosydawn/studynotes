@@ -56,3 +56,60 @@ export CLASSPATH=./JAVA_HOME/lib;$JAVA_HOME/jre/lib
 ### 阿里云服务器使用记录
 
 jdk、tomcat安装，环境变量、项目部署、防火墙
+
+### linux下如何启动和关闭weblogic
+
+在你定义的域中可以找到如下命令： 
+
+```powershell
+/[youHome]/domains/[yourDomain]/startWebLogic.sh 
+/[youHome]/domains/[yourDomain]/stopWebLogic.sh 
+```
+
+用telnet远程控制服务器， 远程启动WEBLOGIC服务，启动后关闭telnet，WebLogic服务也跟着停止，这是因为使用telnet启动的进程会随着telnet进程的关闭而关闭。所以我们可以使用一些UNIX下的命令来做到不关闭 
+
+启动weblogic，可以参考如下命令： 
+
+```powershell
+nohup ./startWebLogic.sh & 
+```
+
+其中，&的作用是让weblogic启动在后台运行。
+
+查看后台（nohup 会在当前目录下生成一个nohup.out文件作为输出） 
+
+```powershell
+tail -f nohup.out
+```
+
+或者： 
+
+```powershell
+nohup ./startWebLogic.sh >日志文件名 &
+```
+
+查看后台 
+
+```powershell
+tail -f 日志文件名
+```
+
+关闭weblogic
+一般情况很难关闭，需要杀掉后台进程（经常这样）    
+
+查看后台web进程 
+＃ps -ef|grep java 如：  
+
+    root 123456 2346546  
+    root 1346464    64646464  
+杀后台进程 ：＃kill -9 1346464  
+
+使用命令tail -f 文本文件名即可监视远程文件的变动情况，例如要监视Weblogic某一域的日志输出只需要输入命令：tail -f nohup.out 
+
+让weblogic后台启动的两种方法：
+
+第一种：输入：nohup ./startWebLogic.sh &
+
+第二种：输入： ./startWebLogic.sh，进行交互作用, 然后再按“ctrl+z”, 再输入bg
+
+​                     
