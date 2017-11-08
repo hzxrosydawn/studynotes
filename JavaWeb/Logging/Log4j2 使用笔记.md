@@ -1,7 +1,7 @@
----
 typora-copy-images-to: ..\appendix
 typora-root-url: ..\appendix
----
+
+### 为什么使用 Log4j 2？
 
 实践证明，日志打印是在开发中非常重要的功能模块。一旦将日志打印的语句写入代码中，日志的输出就不需要人工干预，还可以将日志持久化存储到本地文件中、数据库中、远程主机上，便于后续研究代码的执行逻辑。适用于 Java 日志打印框架有很多，比如 SLF4J、Logback、Log4j等，这里介绍一下应用最广的 Log4j。
 
@@ -22,15 +22,17 @@ Log4j 1.x 从 1999 年发布至今得到了非常广泛的应用，但经过这�
 11. [Syslog Appender](http://logging.apache.org/log4j/2.x/manual/appenders.html#SyslogAppender) 支持 TCP 和 UDP 协议，也支持 BSD syslog 和  [RFC 5424](http://tools.ietf.org/html/rfc5424) 格式；
 12. Log4j 2 应用了 Java 5 的并发支持和最低限度的加锁。Log4j 1.x 有一些死锁问题，这些问题多数在 Logback 得到了修复，但 Logback 类依然需要相当高级别的同步。
 
+### Log4j 2 架构详解
+
 Log4j 2 的架构图如下：
 
 ![Log4jClasses](/Log4jClasses.jpg)
 
 LogManager 通过 `getLogger(final Class<?> clazz)` 静态方法将定位到合适的 LoggerContext，然后从中得到一个 Logger 对象，要创建 Logger 需要关联一个 LoggerConfig，该 LoggerConfig 对象在 Configuration 中关联着传送 LogEvents 的 Appenders。 
 
-#### 日志级别
+#### Logger Hierarchy
 
- Log4j 1.x 中的日志级别由 Loggers 之间的关系来维护，在  Log4j 2 中这些关系已经不存在了，日志级别由 LoggerConfig  对象负责维护。Loggers 和 LoggerConfigs 都是命名的实体。Logger 的名称是大小写敏感的，遵循以下级别命名规则：
+ Log4j 1.x 中的 Logger 层级由各 Loggers 之间的关系来维护，而在 Log4j 2 中这种关系已经不存在了， Logger 层级由 LoggerConfig 对象负责维护。Loggers 和 LoggerConfigs 都是命名的实体。Logger 的名称是大小写敏感的，遵循以下层级命名规则：
 
 命名级别。如果一个 LoggerConfig 的名称 A 后有一个点号，该点号之后是另一个 LoggerConfig 的名称 B，B 后又有一个点号，该点号后是一个 Logger 名称 C，那么 A 是 C 的 ancestor，A 是 B 的 parent。
 
@@ -73,15 +75,13 @@ Logger y = LogManager.getLogger("wombat");
 
 [LoggerConfig](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/config/LoggerConfig.html) 对象创建于 Loggers 在配置文件中声明的时候。LoggerConfig 包含一些 Filters，这些 Filters 必须在 LogEvent 传递给 Appenders 之前允许其通过。它还包含了一些 Appenders 的引用，这些 Appenders 用来处理事件。
 
-
-
 ##### Log Levels
 
-LoggerConfigs will be assigned a Log [Level](http://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html). The set of built-in levels includes TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. Log4j 2 also supports [custom log levels](http://logging.apache.org/log4j/2.x/manual/customloglevels.html). Another mechanism for getting more granularity is to use [Markers](http://logging.apache.org/log4j/2.x/log4j-api/api.html#Markers) instead.
+LoggerConfigs 会被分配一个日志[级别](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html)。内建的日志级别有 TRACE、 DEBUG、INFO、WARN、ERROR 和 FATAL。Log4j 2也支持[自定义日志级别](https://logging.apache.org/log4j/2.x/manual/customloglevels.html)，另一种更细粒度化的机制是使用 [Markers](https://logging.apache.org/log4j/2.x/log4j-api/api.html#Markers) 来替代。
 
-[Log4j 1.x](http://logging.apache.org/log4j/1.2/manual.html) and [Logback](http://logback.qos.ch/manual/architecture.html#effectiveLevel) both have the concept of "Level Inheritance". In Log4j 2, Loggers and LoggerConfigs are two different objects so this concept is implemented differently. Each Logger references the appropriate LoggerConfig which in turn can reference its parent, thus achieving the same effect.
+Log4j 1.x 和 Logback 都有一个级别继承的概念。Log4j 2 中，Loggers 和 LoggerConfigs 是两个不同的对象，所以这个概念也有所不同。每个 Logger 参照合适的 LoggerConfig  ，该 LoggerConfig  又反过来继承了其 parent LoggerConfig 的日志级别。注意如果 root LoggerConfig 没有配置则它会被分配一个默认的日志级别。
 
-Below are five tables with various assigned level values and the resulting levels that will be associated with each Logger. Note that in all these cases if the root LoggerConfig is not configured a default Level will be assigned to it.
+在下面的示例中，只有 `root` Logger 通过与其名称匹配的 LoggerConfig 配置一个日志级别，所有其他参照了它的 Loggers 也使用了其日志级别。
 
 | Logger Name | Assigned LoggerConfig | LoggerConfig Level | Logger Level |
 | ----------- | --------------------- | ------------------ | ------------ |
@@ -90,7 +90,7 @@ Below are five tables with various assigned level values and the resulting level
 | X.Y         | root                  | DEBUG              | DEBUG        |
 | X.Y.Z       | root                  | DEBUG              | DEBUG        |
 
-In example 1 above, only the root logger is configured and has a Log Level. All the other Loggers reference the root LoggerConfig and use its Level.
+在下面的示例中，所有 Logger 都配置了与各自名称匹配的 LoggerConfig 并从中获取日志级别。
 
 | Logger Name | Assigned LoggerConfig | LoggerConfig Level | Level |
 | ----------- | --------------------- | ------------------ | ----- |
@@ -99,7 +99,7 @@ In example 1 above, only the root logger is configured and has a Log Level. All 
 | X.Y         | X.Y                   | INFO               | INFO  |
 | X.Y.Z       | X.Y.Z                 | WARN               | WARN  |
 
-In example 2, all loggers have a configured LoggerConfig and obtain their Level from it.
+在下面的示例中，`root` 、`X` 和 `X.Y.Z` Logger 每个都配置了各自的 LoggerConfig，但 `X.Y` Logger 没有配置匹配名称的 LoggerConfig，所以，它使用 `X` 的 LoggerConfig。
 
 | Logger Name | Assigned LoggerConfig | LoggerConfig Level | Level |
 | ----------- | --------------------- | ------------------ | ----- |
@@ -108,7 +108,7 @@ In example 2, all loggers have a configured LoggerConfig and obtain their Level 
 | X.Y         | X                     | ERROR              | ERROR |
 | X.Y.Z       | X.Y.Z                 | WARN               | WARN  |
 
-In example 3, the loggers`root`, `X` and `X.Y.Z` each have a configured LoggerConfig with the same name. The Logger `X.Y` does not have a configured LoggerConfig with a matching name so uses the configuration of LoggerConfig `X` since that is the LoggerConfig whose name has the longest match to the start of the Logger's name.
+在下面的示例中，`root` 和 `X` Logger 都配置了与各自名称匹配的 LoggerConfig，`X.Y` 和 `X.Y.Z` Logger 没有匹配 LoggerConfig，所以从分配给它们的 `X` LoggerConfig  中获取其日志级别。
 
 | Logger Name | Assigned LoggerConfig | LoggerConfig Level | level |
 | ----------- | --------------------- | ------------------ | ----- |
@@ -117,7 +117,7 @@ In example 3, the loggers`root`, `X` and `X.Y.Z` each have a configured LoggerCo
 | X.Y         | X                     | ERROR              | ERROR |
 | X.Y.Z       | X                     | ERROR              | ERROR |
 
-In example 4, the loggers `root` and `X` each have a Configured LoggerConfig with the same name. The loggers `X.Y` and `X.Y.Z` do not have configured LoggerConfigs and so get their Level from the LoggerConfig assigned to them,`X`, since it is the LoggerConfig whose name has the longest match to the start of the Logger's name.
+在下面的示例中，`root` ，`X` 和 `X.Y` Logger 都配置了与其各自名称匹配的 LoggerConfig，但 `X.YZ` Logger 没有配置 LoggerConfig，所以从分配给它的 `X` LoggerConfig 中获取其日志级别。由此可见，日志级别是继承自上一级的。  
 
 | Logger Name | Assigned LoggerConfig | LoggerConfig Level | level |
 | ----------- | --------------------- | ------------------ | ----- |
@@ -126,7 +126,7 @@ In example 4, the loggers `root` and `X` each have a Configured LoggerConfig wit
 | X.Y         | X.Y                   | INFO               | INFO  |
 | X.YZ        | X                     | ERROR              | ERROR |
 
-In example 5, the loggers`root`.`X`, and `X.Y` each have a Configured LoggerConfig with the same name. The logger `X.YZ` does not have configured LoggerConfig and so gets its Level from the LoggerConfig assigned to it,`X`, since it is the LoggerConfig whose name has the longest match to the start of the Logger's name. It is not associated with LoggerConfig `X.Y` since tokens after periods must match exactly.
+在下面的示例中，`X.Y` Logger 没有配置级别（不是没有配置 LoggerConfig），所以，它从 `X` LoggerConfig 获取其日志级别。而 `X.Y.Z` Logger 使用 `X.Y` LoggerConfig 从而其级别也从 `X` LoggerConfig 获得。
 
 | Logger Name | Assigned LoggerConfig | LoggerConfig Level | Level |
 | ----------- | --------------------- | ------------------ | ----- |
@@ -135,69 +135,47 @@ In example 5, the loggers`root`.`X`, and `X.Y` each have a Configured LoggerConf
 | X.Y         | X.Y                   |                    | ERROR |
 | X.Y.Z       | X.Y                   |                    | ERROR |
 
-In example 6, LoggerConfig X.Y it has no configured level so it inherits its level from LoggerConfig X. Logger X.Y.Z uses LoggerConfig X.Y since it doesn't have a LoggerConfig with a name that exactly matches. It too inherits its logging level from LoggerConfig X.
+下面的表格解释了级别过滤的工作机制。
 
-The table below illustrates how Level filtering works. In the table, the vertical header shows the Level of the LogEvent, while the horizontal header shows the Level associated with the appropriate LoggerConfig. The intersection identifies whether the LogEvent would be allowed to pass for further processing (Yes) or discarded (No).
-
-| Event Level | LoggerConfig Level |       |      |      |       |       |      |
-| ----------- | ------------------ | ----- | ---- | ---- | ----- | ----- | ---- |
-|             | TRACE              | DEBUG | INFO | WARN | ERROR | FATAL | OFF  |
-| ALL         | YES                | YES   | YES  | YES  | YES   | YES   | NO   |
-| TRACE       | YES                | NO    | NO   | NO   | NO    | NO    | NO   |
-| DEBUG       | YES                | YES   | NO   | NO   | NO    | NO    | NO   |
-| INFO        | YES                | YES   | YES  | NO   | NO    | NO    | NO   |
-| WARN        | YES                | YES   | YES  | YES  | NO    | NO    | NO   |
-| ERROR       | YES                | YES   | YES  | YES  | YES   | NO    | NO   |
-| FATAL       | YES                | YES   | YES  | YES  | YES   | YES   | NO   |
-| OFF         | NO                 | NO    | NO   | NO   | NO    | NO    | NO   |
+![BaiduShurufa_2017-11-2_22-20-22](/BaiduShurufa_2017-11-2_22-20-22.png)
 
 #### Filter
 
-In addition to the automatic log Level filtering that takes place as described in the previous section, Log4j provides [Filter](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Filter.html)s that can be applied before control is passed to any LoggerConfig, after control is passed to a LoggerConfig but before calling any Appenders, after control is passed to a LoggerConfig but before calling a specific Appender, and on each Appender. In a manner very similar to firewall filters, each Filter can return one of three results, `Accept`, `Deny` or `Neutral`. A response of `Accept`means that no other Filters should be called and the event should progress. A response of `Deny` means the event should be immediately ignored and control should be returned to the caller. A response of `Neutral` indicates the event should be passed to other Filters. If there are no other Filters the event will be processed.
+除了日志级别的自动过滤， Log4j 还提供了 [Filter](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Filter.html)s ，在控制到达 LoggerConfig 之前、在控制到达 LoggerConfig 之后但在调用任何 Appenders 之前、在控制到 LoggerConfig 之后但在调用某个特定 Appender 之前，以及在每个 Appender 上都可以使用 Filter 进行过滤日志级别。
 
-Although an event may be accepted by a Filter the event still might not be logged. This can happen when the event is accepted by the pre-LoggerConfig Filter but is then denied by a LoggerConfig filter or is denied by all Appenders.
+类似于防火墙的过滤器一样，每个 Filter 都可以返回 `Accept`、`Deny` 和 `Neutral`（中立）三个值之一：
+
+- `Accept` 表示不会调用其他 Filters，事件将进行处理；
+- `Deny` 表示事件被立即忽略并将控制返回给调用者；
+- `Neutral` 表示事件将传递给其他 Filters，如果没有其他 Filters，则事件将会被处理。
+
+即使一个事件被某个 Filter 接受了也不一定会输出。当事件被某个前置 LoggerConfig Filter 接受了但被后面的 LoggerConfig 拒绝了或被所有 Appenders 拒绝了就会出现这样的情况。
 
 #### Appender
 
-The ability to selectively enable or disable logging requests based on their logger is only part of the picture. Log4j allows logging requests to print to multiple destinations. In log4j speak, an output destination is called an [Appender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Appender.html). Currently, appenders exist for the console, files, remote socket servers, Apache Flume, JMS, remote UNIX Syslog daemons, and various database APIs. See the section on [Appenders](http://logging.apache.org/log4j/2.x/manual/appenders.html) for more details on the various types available. More than one Appender can be attached to a Logger.
+ Log4j 可将日志打印输出到多种位置（目前可以为控制台、文件、多种数据库 API、远程套接字服务器、Apache Flume、JMS、远程 UNIX Syslog daemon），Log4j 中的日志输出位置称为 [Appender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Appender.html)。可以通过调用当前 Configuration 的[addLoggerAppender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/config/Configuration.html#addLoggerAppenderorg.apache.logging.log4j.core.Logger20org.apache.logging.log4j.core.Appender) 方法将一个 Appender 添加给一个 Logger。如果一个 Logger 匹配的同名 LoggerConfig 不存在，就会创建一个，Appender 将被添加到该 LoggerConfig，所有其他 Loggers 将会收到通知并更新其 LoggerConfig 引用。
 
-An Appender can be added to a Logger by calling the [addLoggerAppender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/config/Configuration.html#addLoggerAppenderorg.apache.logging.log4j.core.Logger20org.apache.logging.log4j.core.Appender) method of the current Configuration. If a LoggerConfig matching the name of the Logger does not exist, one will be created, the Appender will be attached to it and then all Loggers will be notified to update their LoggerConfig references.
+给定 Logger 允许的所有日志打印请求都会传递给该 Logger 的 LoggerConfig 中的所有 Appenders，也会传递给该 LoggerConfig 的 parent LoggerConfig。也就是说，Appenders 会从 LoggerConfig 继承中叠加继承。例如，如果一个控制台 Appender 添加到 root Logger中，那么所有允许的日志打印请求将至少输出到控制台，如果一个文件 Appender添加到一个 LoggerConfig C 中，C 和 C 的 children 允许的日志打印请求将会输出到文件和控制台。可以在声明 Logger 的配置文件中设置 `additivity="false"` 来禁用这种叠加继承。
 
-**Each enabled logging request for a given logger will be forwarded to all the appenders in that Logger's LoggerConfig as well as the Appenders of the LoggerConfig's parents.** In other words, Appenders are inherited additively from the LoggerConfig hierarchy. For example, if a console appender is added to the root logger, then all enabled logging requests will at least print on the console. If in addition a file appender is added to a LoggerConfig, say *C*, then enabled logging requests for *C*and *C*'s children will print in a file *and* on the console. It is possible to override this default behavior so that Appender accumulation is no longer additive by setting `additivity="false"` on the Logger declaration in the configuration file.
+> Appender Additivity
+>
+> Logger L的一条日志打印语句将输出到 L 关联的 LoggerConfig C 中的所有 Appenders 以及该 LoggerConfig 的 ancestors。然而，如果 LoggerConfig 一个 ancestor P 的叠加标志设置为了 `false`，L 的输出将直接指向 C 中的所有 Appenders 以及 C 的 ancestor 直到 P（包括 P），不会指向到 P 的 ancestors 中的 Appenders。Logger 的叠加标识默认为 `true`。
 
-The rules governing appender additivity are summarized below.
+下面的表格展示了一个示例：
 
-- **Appender Additivity**
-
-  The output of a log statement of Logger *L* will go to all the Appenders in the LoggerConfig associated with *L* and the ancestors of that LoggerConfig. This is the meaning of the term "appender additivity".However, if an ancestor of the LoggerConfig associated with Logger *L*, say *P*, has the additivity flag set to `false`, then *L*'s output will be directed to all the appenders in *L*'s LoggerConfig and it's ancestors up to and including *P* but not the Appenders in any of the ancestors of *P*.Loggers have their additivity flag set to `true` by default.
-
-The table below shows an example:
-
-| LoggerName      | AddedAppenders | AdditivityFlag | Output Targets         | Comment                                  |
-| --------------- | -------------- | -------------- | ---------------------- | ---------------------------------------- |
-| root            | A1             | not applicable | A1                     | The root logger has no parent so additivity does not apply to it. |
-| x               | A-x1, A-x2     | true           | A1, A-x1, A-x2         | Appenders of "x" and root.               |
-| x.y             | none           | true           | A1, A-x1, A-x2         | Appenders of "x" and root. It would not be typical to configure a Logger with no Appenders. |
-| x.y.z           | A-xyz1         | true           | A1, A-x1, A-x2, A-xyz1 | Appenders in "x.y.z", "x" and root.      |
-| security        | A-sec          | false          | A-sec                  | No appender accumulation since the additivity flag is set to `false`. |
-| security.access | none           | true           | A-sec                  | Only appenders of "security" because the additivity flag in "security" is set to `false`. |
+| Logger Name     | Added Appenders | Additivity Flag | Output Targets         | Comment                                  |
+| --------------- | --------------- | --------------- | ---------------------- | ---------------------------------------- |
+| root            | A1              | not applicable  | A1                     | root Logger 没有 parent，所有叠加在这里不适用。        |
+| x               | A-x1, A-x2      | true            | A1, A-x1, A-x2         | x 的所有 Appenders 以及 root。                 |
+| x.y             | none            | true            | A1, A-x1, A-x2         | x 的所有 Appenders 以及 root。但一般不会配置一个没有 Appender 的 Logger。 |
+| x.y.z           | A-xyz1          | true            | A1, A-x1, A-x2, A-xyz1 | x.y.z、x 和 root 中的所有 Appenders。           |
+| security        | A-sec           | false           | A-sec                  | 由于叠加标志设置为 `false`，所有没有Appender 的叠加。      |
+| security.access | none            | true            | A-sec                  | 仅 security 的 Appenders 有叠加，因为 security 的叠加标志设置为了 `false`。 |
 
 #### Layout
 
-More often than not, users wish to customize not only the output destination but also the output format. This is accomplished by associating a [Layout](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Layout.html) with an Appender. The Layout is responsible for formatting the LogEvent according to the user's wishes, whereas an appender takes care of sending the formatted output to its destination. The [PatternLayout](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/layout/PatternLayout.html), part of the standard log4j distribution, lets the user specify the output format according to conversion patterns similar to the C language `printf` function.
-
-For example, the PatternLayout with the conversion pattern "%r [%t] %-5p %c - %m%n" will output something akin to:
-
-```
-176 [main] INFO  org.foo.Bar - Located nearest gas station.
-```
-
-The first field is the number of milliseconds elapsed since the start of the program. The second field is the thread making the log request. The third field is the level of the log statement. The fourth field is the name of the logger associated with the log request. The text after the '-' is the message of the statement.
-
-Log4j comes with many different [Layouts](http://logging.apache.org/log4j/2.x/manual/layouts.html) for various use cases such as JSON, XML, HTML, and Syslog (including the new RFC 5424 version). Other appenders such as the database connectors fill in specified fields instead of a particular textual layout.
-
-Just as importantly, log4j will render the content of the log message according to user specified criteria. For example, if you frequently need to log `Oranges`, an object type used in your current project, then you can create an OrangeMessage that accepts an Orange instance and pass that to Log4j so that the Orange object can be formatted into an appropriate byte array when required.
+Appender 的 [Layout](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Layout.html) 用来自定义日志事件的输出格式。[PatternLayout](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/layout/PatternLayout.html) 可以使用与 C 语言 printf 函数类似的转换模式来指定输出格式。Log4j 提供了多种不同的 [Layouts](http://logging.apache.org/log4j/2.x/manual/layouts.html) 适用于多种形式的输出，如JSON,、XML、HTML 和 Syslog (包括最新的 RFC 5424 版本)。
 
 #### StrSubstitutor and StrLookup
 
-The [StrSubstitutor ](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrSubstitutor.html)class and [StrLookup](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrLookup.html) interface were borrowed from [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/) and then modified to support evaluating LogEvents. In addition the [Interpolator](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/Interpolator.html) class was borrowed from Apache Commons Configuration to allow the StrSubstitutor to evaluate variables that from multiple StrLookups. It too was modified to support evaluating LogEvents. Together these provide a mechanism to allow the configuration to reference variables coming from System Properties, the configuration file, the ThreadContext Map, StructuredData in the LogEvent. The variables can either be resolved when the configuration is processed or as each event is processed, if the component is capable of handling it. See [Lookups](http://logging.apache.org/log4j/2.x/manual/lookups.html) for more information.
+[StrSubstitutor ](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrSubstitutor.html) 类和 [StrLookup](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrLookup.html) 接口是从 [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/) 借鉴修改而来用以处理 LogEvents。另外，[Interpolator](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/Interpolator.html) 类是从 Apache Commons Configuration 借鉴修改而来从而使 StrSubstitutor 可以处理多个 StrLookups 中的变量，该类也经过修改可以支持处理 LogEvents。这些类一起让配置可以引用 System Properties 、配置文件、ThreadContext Map以及 LogEvent 的 StructuredData 中的变量。

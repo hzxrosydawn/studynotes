@@ -103,8 +103,6 @@ typora-root-url: ..\..\graphs\photos
 
 > `/bin、/usr/bin`存放着给系统用户使用的指令（除root外的跑普通用户），而`/sbin、/usr/sbin`则存放着是给root用户使用的指令。
 
-#### 特殊目录
-
 在Linux文件系统中有几个特殊的目录：
 
 - `.` 表示用户所在的工作目录，也叫当前目录。
