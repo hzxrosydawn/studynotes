@@ -17,6 +17,7 @@
         <mockito.version>2.10.0</mockito.version>
 		<!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
         <powermock.version>1.7.1</powermock.version>
+		
 		<!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
         <spring.version>4.3.9.RELEASE</spring.version>
@@ -38,7 +39,7 @@
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
 		
 		<!-- -->
-        <javax.servlet-api>3.0.1</servlet-api.version>
+        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
 		<!-- -->
 		<jsp-api.version>2.2</jsp-api.version>
 		<!-- -->
