@@ -37,11 +37,13 @@
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
 		
-		<!-- -->
-        <javax.servlet-api>3.0.1</servlet-api.version>
-		<!-- -->
-		<jsp-api.version>2.2</jsp-api.version>
-		<!-- -->
+		<!-- servlet-api -->
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+        <!--<javax.servlet-api.version>3.0.1</javax.servlet-api.version>-->
+        <servlet-api.version>2.5</servlet-api.version>
+        <!-- jsp-api -->
+        <jsp-api.version>2.2</jsp-api.version>
+        <!-- jstl 标签库 -->
         <jstl.version>1.2</jstl.version>
 		
 		<!-- Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。
@@ -124,6 +126,16 @@
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.caucho</groupId>
@@ -162,7 +174,6 @@
             <version>${hibernate-validator}</version>
         </dependency>
 		
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
