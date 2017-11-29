@@ -17,6 +17,7 @@
         <mockito.version>2.10.0</mockito.version>
 		<!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
         <powermock.version>1.7.1</powermock.version>
+		
 		<!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
         <spring.version>4.3.9.RELEASE</spring.version>
@@ -37,6 +38,7 @@
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
 		
+<<<<<<< HEAD
 		<!-- servlet-api -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <!--<javax.servlet-api.version>3.0.1</javax.servlet-api.version>-->
@@ -44,6 +46,13 @@
         <!-- jsp-api -->
         <jsp-api.version>2.2</jsp-api.version>
         <!-- jstl 标签库 -->
+=======
+		<!-- -->
+        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+		<!-- -->
+		<jsp-api.version>2.2</jsp-api.version>
+		<!-- -->
+>>>>>>> ff0ebe80bdb27d1b43fea39958dbc1b932d3f32d
         <jstl.version>1.2</jstl.version>
 		
 		<!-- Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。

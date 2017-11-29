@@ -650,12 +650,12 @@ public class LambdaQs {
     }
     // 调用该方法需要Flyable对象
     public void drive(Flyable f) {
-        System.out.println("老司机正在开："+f);
-        f.fly("亮瞎眼");
+        System.out.println("老司机正在开车：" + f);
+        f.fly("天气不错");
     }
     // 调用该方法需要Addable对象
     public void test(Addable add) {
-        System.out.println("34与59的和为："+add.add(34, 59));
+        System.out.println("34与59的和为：" + add.add(34, 59));
     }
     public static void main(String[] args) {
         LambdaQs lq = new LambdaQs();
