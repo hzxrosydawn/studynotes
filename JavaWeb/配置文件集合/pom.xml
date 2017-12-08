@@ -11,48 +11,33 @@
     <properties>
 		<!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
         Junit 绑定了一个 hamcrest-core 1.3 的包，但不建议使它，最好排除这个jar包，而是使用 hamcrest-library 1.3的jar包-->
-		<junit.version>4.12</junit.version>
+        <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-		<!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
+        <!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
         <mockito.version>2.10.0</mockito.version>
-		<!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
+        <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
         <powermock.version>1.7.1</powermock.version>
-		
-		<!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
+        <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
-        <spring.version>4.3.9.RELEASE</spring.version>
-		
-		
-		<!--  -->
-        <hessian.version>4.3.9.RELEASE</hessian.version>
-		
-		<!-- Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
+        <spring.version>3.2.8.RELEASE</spring.version>
+        <!-- Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
         <ojdbc6.version>11.2.0.1</ojdbc6.version>
-		<!-- mysql-connector 5.1 适用于 JRE 1.5、1.6、1.7、1.8 和 MySQL Server 4.1、5.0、5.1、5.5、5.6、5.7、8.0-->
-        <mysql-connector.version>5.1.42</mysql-connector.version>
-		<!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上 -->
-        <mybatis.version>3.4.1</mybatis.version>
+        <!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上 -->
+        <!--<mybatis.version>3.4.1</mybatis.version>-->
         <!-- mybatis-spring 1.3.0+ 需要 mybatis 3.4.0+ 和 spring 3.0.0+ -->
-        <mybatis-spring.version>1.3.0</mybatis-spring.version>
+        <!--<mybatis-spring.version>1.3.0</mybatis-spring.version>-->
         <!-- Hibernate 5.2 需要 JDK 1.8+ 、JDBC 4.2+，Hibernate 5.1 和 Hibernate 5.0 需要 JDK 1.6+ 、JDBC 4.2+ -->
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
-		
-<<<<<<< HEAD
-		<!-- servlet-api -->
-        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <!--<javax.servlet-api.version>3.0.1</javax.servlet-api.version>-->
-        <servlet-api.version>2.5</servlet-api.version>
+
+        <!-- servlet 3.x.x api -->
+        <servlet-api.version>3.1.0</servlet-api.version>
+        <!--<servlet-api.version>3.0.1<servlet-api.version>-->
+		<!-- servlet 2.5 api -->
+        <!--<servlet-api.version>2.5</servlet-api.version>-->
         <!-- jsp-api -->
         <jsp-api.version>2.2</jsp-api.version>
         <!-- jstl 标签库 -->
-=======
-		<!-- -->
-        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
-		<!-- -->
-		<jsp-api.version>2.2</jsp-api.version>
-		<!-- -->
->>>>>>> ff0ebe80bdb27d1b43fea39958dbc1b932d3f32d
         <jstl.version>1.2</jstl.version>
 		
 		<!-- Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。
@@ -60,11 +45,13 @@
         <log4j2.version>2.3</log4j2.version>
         <log4j.version>1.2.17</log4j.version>
 		
-		<!-- commons 提供的文件上传包。commons-fileupload 1.3.3 需要 JDK 1.5+ -->
-        <commons-fileupload.veriosn>1.3.1</commons-fileupload.veriosn>
-        <!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
+		<!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
         commons-lang 3.5 开始要求 JDK 1.6+，commons-lang 3.6 要求 JDK 1.7+ -->
         <commons-lang3.version>3.5</commons-lang3.version>
+        <!-- DBCP 2 compiles and runs under Java 7 only (JDBC 4.1)
+        DBCP 1.4 compiles and runs under Java 6 only (JDBC 4) -->
+        <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
+        <commons-dbcp.version>1.4</commons-dbcp.version>
 		
 		<!-- Json 数据转换。
         jackson-databind 包是 spring-webmvc 包的可选依赖，该包还依赖于 jackson-core 包和 jackson-annotations 包。
@@ -186,9 +173,15 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet-api}</version>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
         </dependency>
-		<dependency>
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet</groupId>-->
+            <!--<artifactId>servlet-api</artifactId>-->
+            <!--<version>${servlet-api.version}</version>-->
+        <!--</dependency>-->
+        <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <version>${jsp-api.version}</version>
@@ -231,7 +224,23 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.commons</groupId>-->
+            <!--<artifactId>commons-dbcp2</artifactId>-->
+            <!--<version>${commons-dbcp2.version}</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp.version}</version>
+        </dependency>
 		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
 		<dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
