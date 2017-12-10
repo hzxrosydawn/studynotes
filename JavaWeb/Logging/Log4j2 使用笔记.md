@@ -1,6 +1,3 @@
-typora-copy-images-to: ..\appendix
-typora-root-url: ..\appendix
-
 ### 为什么使用 Log4j 2？
 
 实践证明，日志打印是在开发中非常重要的功能模块。一旦将日志打印的语句写入代码中，日志的输出就不需要人工干预，还可以将日志持久化存储到本地文件中、数据库中、远程主机上，便于后续研究代码的执行逻辑。适用于 Java 日志打印框架有很多，比如 SLF4J、Logback、Log4j等，这里介绍一下应用最广的 Log4j。
@@ -26,7 +23,7 @@ Log4j 1.x 从 1999 年发布至今得到了非常广泛的应用，但经过这�
 
 Log4j 2 的架构图如下：
 
-![Log4jClasses](/Log4jClasses.jpg)
+![Log4jClasses](../appendix/Log4jClasses.jpg)
 
 LogManager 通过 `getLogger(final Class<?> clazz)` 静态方法将定位到合适的 LoggerContext，然后从中得到一个 Logger 对象，要创建 Logger 需要关联一个 LoggerConfig，该 LoggerConfig 对象在 Configuration 中关联着传送 LogEvents 的 Appenders。 
 
@@ -137,7 +134,7 @@ Log4j 1.x 和 Logback 都有一个级别继承的概念。Log4j 2 中，Loggers 
 
 下面的表格解释了级别过滤的工作机制。
 
-![BaiduShurufa_2017-11-2_22-20-22](/BaiduShurufa_2017-11-2_22-20-22.png)
+![BaiduShurufa_2017-11-2_22-20-22](../appendix/BaiduShurufa_2017-11-2_22-20-22.png)
 
 #### Filter
 
