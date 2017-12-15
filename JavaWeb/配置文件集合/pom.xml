@@ -17,9 +17,8 @@
         <mockito.version>2.10.0</mockito.version>
         <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
         <powermock.version>1.7.1</powermock.version>
-        <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
-        spring-tx、spring-expression、spring-oxm 、spring-context-support-->
-        <spring.version>3.2.8.RELEASE</spring.version>
+        <!-- spring-webmvc 包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context 和 spring-expression-->
+        <spring.version>4.3.7.RELEASE</spring.version>
         <!-- Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
         <ojdbc6.version>11.2.0.1</ojdbc6.version>
         <!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上 -->
@@ -112,11 +111,7 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+		<!-- spring-orm 包依赖于spring-jdbc、spring-tx、spring-core 和 spring-beans-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
