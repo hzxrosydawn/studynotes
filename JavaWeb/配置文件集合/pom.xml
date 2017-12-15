@@ -17,30 +17,46 @@
         <mockito.version>2.10.0</mockito.version>
         <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
         <powermock.version>1.7.1</powermock.version>
+<<<<<<< HEAD
         <!-- spring-webmvc 包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context 和 spring-expression-->
         <spring.version>4.3.7.RELEASE</spring.version>
+=======
+        <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
+        spring-tx、spring-expression、spring-oxm 、spring-context-support-->
+        <spring.version>3.2.8.RELEASE</spring.version>
+		<!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1。 -->
+        <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
+		<!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
+		详见：https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions-java.html 。-->
+        <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
+>>>>>>> 3fde6478aefe8d702af659bd57e91b32a6f60762
         <!-- Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
         <ojdbc6.version>11.2.0.1</ojdbc6.version>
+		<!--DBCP 2 仅在 Java 7 上编译和运行(JDBC 4.1)。DBCP 1.4 仅在 Java 6 上编译和运行(JDBC 4)。
+        commons-dbcp2 包依赖于 commons-pool2 包，commons-dbcp 包依赖于 commons-pool 包。-->
+        <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
+        <commons-dbcp.version>1.4</commons-dbcp.version>
+		<!-- c3p0 0.9.5 可以在 Java 6 上运行。而后续的 c3p0 0.9.6 需要 Java 7 才能运行。-->
+        <c3p0.version>0.9.5.2</c3p0.version>
         <!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上 -->
-        <!--<mybatis.version>3.4.1</mybatis.version>-->
+        <mybatis.version>3.4.1</mybatis.version>
         <!-- mybatis-spring 1.3.0+ 需要 mybatis 3.4.0+ 和 spring 3.0.0+ -->
-        <!--<mybatis-spring.version>1.3.0</mybatis-spring.version>-->
-        <!-- Hibernate 5.2 需要 JDK 1.8+ 、JDBC 4.2+，Hibernate 5.1 和 Hibernate 5.0 需要 JDK 1.6+ 、JDBC 4.2+ -->
-        <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
-
+        <mybatis-spring.version>1.3.0</mybatis-spring.version>
+        <!-- Hibernate 5.2 需要 JDK 1.8+ ，Hibernate 5.1、5.0 和 4.3 需要 JDK 1.6+。Hibernate 4.3~5.2 需要 JPA 2.1+ -->
+        <hibernate-core.version>4.3.11.Final</hibernate-core.version>
+		
         <!-- servlet 3.x.x api -->
-        <servlet-api.version>3.1.0</servlet-api.version>
-        <!--<servlet-api.version>3.0.1<servlet-api.version>-->
+        <javax.servlet-api.version.version>3.1.0</javax.servlet-api.version.version>
+        <!--<javax.servlet-api.version>3.0.1<javax.servlet-api.version>-->
 		<!-- servlet 2.5 api -->
-        <!--<servlet-api.version>2.5</servlet-api.version>-->
+        <servlet-api.version>2.5</servlet-api.version>
         <!-- jsp-api -->
         <jsp-api.version>2.2</jsp-api.version>
         <!-- jstl 标签库 -->
         <jstl.version>1.2</jstl.version>
 		
-		<!-- Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。
-        Log4j 2.4 及以上版本需要 1.7 及以上的 JDK，Log4j 2.0-alpha1 到 2.3 版本需要 1.6 及以上的 JDK。-->
+		<!--Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。log4j-web 包依赖于 log4j-api 和 log4j-core 两个包。
+		Log4j 2.4 及以上版本需要 1.7 及以上的 JDK，Log4j 2.0-alpha1 到 2.3 版本需要 1.6 及以上的 JDK。-->
         <log4j2.version>2.3</log4j2.version>
         <log4j.version>1.2.17</log4j.version>
 		
@@ -127,6 +143,12 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
+		
+		<dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.caucho</groupId>
@@ -137,12 +159,27 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
+            <version>${mysql-connector-java.version}</version>
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${ojdbc6.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${commons-dbcp2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>${c3p0.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -157,25 +194,19 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
+            <version>${hibernate-core.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator}</version>
-        </dependency>
-		
+        
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
-            <scope>provided</scope>
+            <version>${javax.servlet-api.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>servlet-api</artifactId>-->
-            <!--<version>${servlet-api.version}</version>-->
-        <!--</dependency>-->
+        <!--<dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+        </dependency>-->
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
@@ -187,7 +218,7 @@
             <version>${jstl.version}</version>
         </dependency>
 		
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j2.version}</version>
@@ -196,7 +227,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j2.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
