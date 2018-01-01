@@ -19,10 +19,11 @@
         <mockito.version>2.10.0</mockito.version>
         <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
         <powermock.version>1.7.1</powermock.version>
+
         <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
-        <spring.version>3.2.8.RELEASE</spring.version>
-		<!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1。 -->
+        <spring.version>4.3.7.RELEASE</spring.version>
+		<!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1 -->
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
 		<!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
 		详见：https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions-java.html 。-->
@@ -33,6 +34,8 @@
         commons-dbcp2 包依赖于 commons-pool2 包，commons-dbcp 包依赖于 commons-pool 包。-->
         <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
+		<!--HttpClient 4.4.x 和 4.5.x 需要 Java 1.6+，HttpClient 5.x.x 需要 Java 1.7+ -->
+        <httpclient.version>4.5.2</httpclient.version>
 		<!-- c3p0 0.9.5 可以在 Java 6 上运行。而后续的 c3p0 0.9.6 需要 Java 7 才能运行。-->
         <c3p0.version>0.9.5.2</c3p0.version>
         <!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上 -->
@@ -135,11 +138,7 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+		<!-- spring-orm 包依赖于spring-jdbc、spring-tx、spring-core 和 spring-beans-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
@@ -187,6 +186,11 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>${commons-dbcp.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
 		<dependency>
             <groupId>com.mchange</groupId>

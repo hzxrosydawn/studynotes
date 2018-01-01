@@ -466,9 +466,9 @@ main  9
 
 守护线程特点如下：
 
- - **所有前台线程死亡之后，JVM会通知所有守护线程自动死亡，但这需要经过一段时间**。
- - **主线程默认是前台线程。但并不是所有的线程默认是前台线程，前台线程创建的线程默认为前台线程，守护线程创建的线程默认为守护线程**。
- - **如需将一个线程设置为守护线程，必须在该线程启动之前设置，即在start()方法之前调用setDaemon(true)方法，否则抛出IllegalThreadStateException异常**。
+- **所有前台线程死亡之后，JVM会通知所有守护线程自动死亡，但这需要经过一段时间**。
+- **主线程默认是前台线程。但并不是所有的线程默认是前台线程，前台线程创建的线程默认为前台线程，守护线程创建的线程默认为守护线程**。
+- **如需将一个线程设置为守护线程，必须在该线程启动之前设置，即在start()方法之前调用setDaemon(true)方法，否则抛出IllegalThreadStateException异常**。
 
 示例：
 ```java
@@ -920,21 +920,21 @@ public class DrawTest {
 
 **可变类的线程安全是以牺牲性能为代价的，为了减少线程安全所带来的负面影响**，通常建议：
 
- - 不要对线程安全类的所有方法进行同步，**仅对那些可能改变共享资源的操作进行方法同步**。
- - **如果可变类有两种运行环境：单线程和多线程，应该为该类提供线程安全和线程不安全两种版本，分别用于单线程环境下用于保证性能和多线程环境下保证安全，如线程不安全的StringBuilder在单线程情况下效率高，效率不高的StringBuffer在多线程操作时是安全的**。
+- 不要对线程安全类的所有方法进行同步，**仅对那些可能改变共享资源的操作进行方法同步**。
+- **如果可变类有两种运行环境：单线程和多线程，应该为该类提供线程安全和线程不安全两种版本，分别用于单线程环境下用于保证性能和多线程环境下保证安全，如线程不安全的StringBuilder在单线程情况下效率高，效率不高的StringBuffer在多线程操作时是安全的**。
 
 ####同步监视器锁定的释放
 线程在以下几种情况下**释放对同步监视器的锁定**：
 
- - 当前线程的同步方法、同步代码块**执行结束**后即释放同步监视器。
- - 当前线程的同步方法、同步代码块**遇到了return、break**终止了该同步方法、同步代码块的执行后立即释放同步监视器。
- - 当前线程的同步方法、同步代码块中**出现了未处理的Error或Exception**，导致该方法、代码块异常结束时立即释放同步监视器。
- - 当前线程的同步方法、同步代码块执行时，程序**执行了同步监视器的wait()方法**后，当前线程暂停并释放同步监视器。
+- 当前线程的同步方法、同步代码块**执行结束**后即释放同步监视器。
+- 当前线程的同步方法、同步代码块**遇到了return、break**终止了该同步方法、同步代码块的执行后立即释放同步监视器。
+- 当前线程的同步方法、同步代码块中**出现了未处理的Error或Exception**，导致该方法、代码块异常结束时立即释放同步监视器。
+- 当前线程的同步方法、同步代码块执行时，程序**执行了同步监视器的wait()方法**后，当前线程暂停并释放同步监视器。
 
 在**以下情况下线程不会释放同步监视器的锁定**：
 
- - 当前线程的同步方法、同步代码块执行时程序**调用了Thread.sleep()方法、Thread.yield()方法来暂停当前线程的执行**，当前线程不会释放同步监视器的锁定。
- - 当前线程的同步代码块执行时，**其他线程调用了该线程的suspen()方法（易导致死锁）将该线程挂起**，该线程不会释放同步监视器。当然，**应该尽量避免使用suspend()和resume()方法来控制线程**。
+- 当前线程的同步方法、同步代码块执行时程序**调用了Thread.sleep()方法、Thread.yield()方法来暂停当前线程的执行**，当前线程不会释放同步监视器的锁定。
+- 当前线程的同步代码块执行时，**其他线程调用了该线程的suspen()方法（易导致死锁）将该线程挂起**，该线程不会释放同步监视器。当然，**应该尽量避免使用suspend()和resume()方法来控制线程**。
 
 ####同步锁
 synchronized 方法和代码块提供的内部锁机制使得使用监视器锁编程方便了很多，而且还避免了很多涉及到锁的常见编程错误。**这种内部锁机制提供了对每个对象相关的隐式监视器锁的访问，但却强制所有锁的获取和释放均要出现在同一个块结构中：当获取了多个锁时，它们必须以相反的顺序释放（First Lock Last Unlock），且必须在与所有锁被获取时相同的范围内释放所有锁。而且synchronized提供的内部锁机制不能中断那些正在等待获取锁的线程，并且在请求锁失败的情况下必须无限等待**。有时需要更灵活地使用锁。例如，某些遍历并发访问的数据结果的算法要求使用 "hand-over-hand" 或 "chain locking"：获取节点 A 的锁，然后再获取节点 B 的锁，然后释放 A 并获取 C，然后释放 B 并获取 D，依此类推。Lock 接口的实现允许锁在不同的作用范围内获取和释放，并允许以任何顺序获取和释放多个锁。
@@ -1591,8 +1591,8 @@ public class DrawTest {
 ![](http://img.blog.csdn.net/20161224200622805?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcm9zeV9kYXdu/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 BlockingQueue提供了两个阻塞式方法：
 
- - put(E e)：尝试把E放入BlockingQueue尾部，如果队列已满，则阻塞该线程；
- - take()：尝试从BlockingQueue头部中取出元素，如果队列已空，则阻塞该线程。
+- put(E e)：尝试把E放入BlockingQueue尾部，如果队列已满，则阻塞该线程；
+- take()：尝试从BlockingQueue头部中取出元素，如果队列已空，则阻塞该线程。
 
 BlockingQueue中提供了以下方法：
 | 操作       | 抛出异常      | 返回值              | 阻塞线程方法 | 指定超时方法               |
@@ -1801,13 +1801,13 @@ JDK1.5中提供Executors工厂类来产生连接池，该工厂类中包含如�
 该类代表一个尽快执行的线程池（只要线程池中有空闲线程立即执行线程任务），程序只要将一个Runnable对象或Callable对象提交给该线程池即可，该线程就会尽快的执行该任务。
 ExecutorService有几个重要的方法：
 
- - boolean	isShutdown() ：如果此执行程序已关闭，则返回 true；
+- boolean	isShutdown() ：如果此执行程序已关闭，则返回 true；
     - booleanisTerminated() ：如果关闭后所有任务都已完成，则返回 true；
-     - voidshutdown() ： 用完线程池后，应该使用此方法启动线程池的关闭序列，调用该方法后线程池不会在接受新的任务，但会将以前所有已提交的任务执行完成。当线程池中的所有任务都执行完毕之后，池中的线程都会死亡；
-     - List&lt;Runnable>shutdownNow() ： 该方法也可以关闭线程池，试图停止所有正在执行的活动任务，暂停处理正在等待的任务，并返回等待执行的任务列表；
-     - &lt;T> Future &lt;T>submit(Callable&lt;T> task) ：将一个 Callable 对象提交给指定的线程池，线程池会在有空闲线程时执行Callable对象代表的任务。其中Future对象代表Callable对象里call()方法的返回值；
-     - Future &lt;?>submit(Runnable task) ：将一个 Runnable 对象提交给指定的线程池，线程池会在有空闲线程时执行Runnable对象代表的任务。其中Future对象代表Runnable任务的返回值——但是run()方法没有返回值，所以Future对象将在run()方法执行结束后返回null。但可以通过调用Future的isDone()、isCancelled()方法获得Runnable对象的执行状态；
-     - &lt;T> Future &lt;T>submit(Runnable task, T result) ：将一个 Runnable 对象提交给指定的线程池，线程池会在有空闲线程时执行Runnable对象代表的任务。其中result显式指定线程结束后的返回值，所以Future对象将在run()方法执行结束后返回result。
+    - voidshutdown() ： 用完线程池后，应该使用此方法启动线程池的关闭序列，调用该方法后线程池不会在接受新的任务，但会将以前所有已提交的任务执行完成。当线程池中的所有任务都执行完毕之后，池中的线程都会死亡；
+    - List&lt;Runnable>shutdownNow() ： 该方法也可以关闭线程池，试图停止所有正在执行的活动任务，暂停处理正在等待的任务，并返回等待执行的任务列表；
+    - &lt;T> Future &lt;T>submit(Callable&lt;T> task) ：将一个 Callable 对象提交给指定的线程池，线程池会在有空闲线程时执行Callable对象代表的任务。其中Future对象代表Callable对象里call()方法的返回值；
+    - Future &lt;?>submit(Runnable task) ：将一个 Runnable 对象提交给指定的线程池，线程池会在有空闲线程时执行Runnable对象代表的任务。其中Future对象代表Runnable任务的返回值——但是run()方法没有返回值，所以Future对象将在run()方法执行结束后返回null。但可以通过调用Future的isDone()、isCancelled()方法获得Runnable对象的执行状态；
+    - &lt;T> Future &lt;T>submit(Runnable task, T result) ：将一个 Runnable 对象提交给指定的线程池，线程池会在有空闲线程时执行Runnable对象代表的任务。其中result显式指定线程结束后的返回值，所以Future对象将在run()方法执行结束后返回result。
 
 ####**ScheduleExecutorService类**
 ScheduleExecutorService类代表可在指定延迟后或周期性执行线程任务的线程池。ScheduleExecutorService类是ExecutorService类的子类。所以，它里面也有直接提交任务的submit方法，并且新增了一些延迟任务处理的方法： 
@@ -1819,10 +1819,10 @@ ScheduleExecutorService类代表可在指定延迟后或周期性执行线程任
 
 使用线程池的步骤如下：
 
- - 调用Executors类的静态工厂办法创建一个ExecutorService对象，该对象代表一个线程池；
- - 创建Runnable实现类或Callable实现类的实例作为线程执行的任务；
- - 调用ExecutorService对象的submit()方法来提交Runnable实例或Callable实例；
- - 当不想提交任何任务时，调用ExecutorService对象的shutdown()方法来关闭线程池。
+- 调用Executors类的静态工厂办法创建一个ExecutorService对象，该对象代表一个线程池；
+- 创建Runnable实现类或Callable实现类的实例作为线程执行的任务；
+- 调用ExecutorService对象的submit()方法来提交Runnable实例或Callable实例；
+- 当不想提交任何任务时，调用ExecutorService对象的shutdown()方法来关闭线程池。
 
 示例：
 ```java
@@ -1849,8 +1849,8 @@ public class ThreadPoolTest {
 ####**ForkJoinPool类**
 为了充分利用如今多核CPU的并行计算优势，Java7提供了ForkJoinPool类，该类支持将一个任务拆分成多个"小任务"，再把小任务合并成总的计算结果。该类是ExecutorService接口的实现类，提供了以下两个构造器：
 
- - ForkJoinPool(int parallelism)：创建一个包含parallelism个并行线程的ForkJoinPool；
- - ForkJoinPool()：以Runtime.availableProcessors()方法的返回值作为parallelism参数创建ForkJoinPool。
+- ForkJoinPool(int parallelism)：创建一个包含parallelism个并行线程的ForkJoinPool；
+- ForkJoinPool()：以Runtime.availableProcessors()方法的返回值作为parallelism参数创建ForkJoinPool。
 
 主要方法如下：
 
@@ -2015,11 +2015,11 @@ public class Sum {
 方法摘要：
 
 - T get()： 返回此线程局部变量的当前线程副本中的值，如果这是线程第一次调用该方法，则创建并初始化此副本。
-- protected  T initialValue()：返回此线程局部变量的当前线程的“初始值”。线程第一次使用 get() 方法访问变量时将调用此方法，但如果线程之前调用了 set(T) 方法，则不会对该线程再调用 initialValue 方法。通常，此方法对每个线程最多调用一次，但如果在调用 get() 后又调用了 remove()，则可能再次调用此方法。 如果程序员希望将线程局部变量初始化为 null 以外的某个值，则必须为 ThreadLocal 创建子类，并重写此方法。通常，将使用匿名内部类。initialValue 的典型实现将调用一个适当的构造方法，并返回新构造的对象。
+- protected  T initialValue()：返回此线程局部变量的当前线程的“初始值”。线程第一次使用 get() 方法访问变量时将调用此方法，但如果线程之前调用了 set(T) 方法，则不会对该线程再调用 initialValue()方法。通常，此方法对每个线程最多调用一次，但如果在调用 get() 后又调用了 remove()，则可能再次调用此方法。 如果程序员希望将线程局部变量初始化为 null 以外的某个值，则必须为 ThreadLocal 创建子类，并重写此方法。通常，将使用匿名内部类。initialValue() 方法的典型实现将调用一个适当的构造方法，并返回新构造的对象。
 - void remove()： 移除此线程局部变量当前线程的值。这可能有助于减少线程局部变量的存储需求。如果再次访问此线程局部变量，那么在默认情况下它将拥有其 initialValue。
 - void set(T value)：设置此线程局部变量中当前线程副本中的值。许多应用程序不需要这项功能，它们只依赖于 initialValue() 方法来设置线程局部变量的值。
 
-在程序中一般都重写initialValue方法，以给定一个特定的初始值。
+在程序中一般都重写 initialValue() 方法，以给定一个特定的初始值。
 
 示例：
 ```java
