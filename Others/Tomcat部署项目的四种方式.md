@@ -47,11 +47,11 @@ jar -cvf mywar.war  myweb
 - `privileged`设置为true的时候，才允许Tomcat的Web应用使用容器内的Servlet。
 - `reloadable` **如果为true，则tomcat会自动检测应用程序的/WEB-INF/lib 和/WEB-INF/classes目录的变化，自动装载新的应用程序，可以在不重起tomcat的情况下改变应用程序，实现热部署**。
 
-antiResourceLocking和antiJARLocking  热部署是需要配置的参数，默认false避免更新了某个webapp，有时候Tomcat并不能把旧的webapp完全删除，通常会留下WEB-INF/lib下的某个jar包，必须关闭Tomcat才能删除，这就导致自动部署失败。设置为true，Tomcat在运行对应的webapp时，会把相应的源文件和jar文件复制到一个临时目录里。
+antiResourceLocking 和 antiJARLocking  热部署是需要配置的参数，默认 false 避免更新了某个 webapp，有时候 Tomcat 并不能把旧的 webapp 完全删除，通常会留下 WEB-INF/lib 下的某个 jar 包，必须关闭 Tomcat 才能删除，这就导致自动部署失败。设置为 true，Tomcat 在运行对应的 webapp 时，会把相应的源文件和 jar 文件复制到一个临时目录里。
 
 #### 创建一个Context文件 
 
-在`conf\Catalina\localhost`目录（如果该目录不完整就手动创建）中，在该目录中新建一个xml文件，名字不可以随意取，要和path后的那个名字一致。比如，按照下边这个path的配置，xml的名字应该就应该是hello（hello.xml），该xml文件的内容为：
+在`conf\Catalina\localhost`目录（如果该目录不完整就手动创建）中，在该目录中新建一个 xml 文件，名字不可以随意取，要和path后的那个名字一致。比如，按照下边这个 path 的配置，xml 的名字应该就应该是hello（hello.xml），该xml文件的内容为：
 
 ```xml
 <Context path="/hello" docBase="E:\workspace\hello\WebRoot" debug="0" privileged="true">
@@ -66,11 +66,11 @@ privileged="true" antiResourceLocking="false" antiJARLocking="false">
 </Context>
 ```
 
-这个例子是tomcat自带的，编辑的内容实际上和第二种方式是一样的，其中这xml文件名字就是访问路径，这样可以隐藏应用的真实名字。
+这个例子是 tomcat 自带的，编辑的内容实际上和第二种方式是一样的，其中这xml文件名字就是访问路径，这样可以隐藏应用的真实名字。
 
 4. 注意：
 
-​    删除一个Web应用同时也要删除webapps下相应的文件夹和server.xml中相应的Context，还要将Tomcat的conf\catalina\localhost目录下相应的xml文件删除，否则Tomcat仍会去配置并加载。。。
+​    删除一个 Web 应用同时也要删除 webapps 下相应的文件夹和 server.xml 中相应的 Context，还要将 Tomcat的conf\catalina\localhost 目录下相应的 xml 文件删除，否则 Tomcat 仍会去配置并加载。。。
 
 ### 动态部署
 
