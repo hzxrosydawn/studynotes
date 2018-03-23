@@ -494,18 +494,18 @@ FILE：指定显示头部内容的文件列表。
 
 ### sort 命令
 
-**sort 命令**是在 Linux 里非常有用，它将文件进行排序，并将排序结果标准输出。sort命令既可以从特定的文件，也可以从stdin中获取输入。
+**sort 命令**是在 Linux 里非常有用，它将数据进行排序，并将排序结果标准输出。要排序的内容可以是文件内容，也可以是命令输出。
 
-### 语法
+#### 语法
 
 ```
 Usage: sort [OPTION]... [FILE]...
    or: sort [OPTION]... --files0-from=F
 ```
 
-### 选项
+##### 选项
 
-```
+```shell
 -b：忽略每行前面开始出的空格字符；
 -c：检查文件是否已经按照顺序排序；
 -d：排序时，处理英文字母、数字及空格字符外，忽略其他的字符；
@@ -519,29 +519,24 @@ Usage: sort [OPTION]... [FILE]...
 -t<分隔字符>：指定排序时所用的栏位分隔字符；
 +<起始栏位>-<结束栏位>：以指定的栏位来排序，范围由起始栏位到结束栏位的前一栏位。
 
--b, --ignore-leading-blanks：忽略每行前面开始出的空格字符；
--d, --dictionary-order：排序时仅处理英文字母、数字及空格字符外，忽略其他的字符；
--f, --ignore-case：          fold lower case to upper case characters
--g, --general-numeric-sort  compare according to general numerical value
--i, --ignore-nonprinting    consider only printable characters
--M, --month-sort            compare (unknown) < 'JAN' < ... < 'DEC'
--h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)
--n, --numeric-sort          compare according to string numerical value
--R, --random-sort           sort by random hash of keys
-    --random-source=FILE    get random bytes from FILE
--r, --reverse               reverse the result of comparisons
-    --sort=WORD             sort according to WORD:
-                                general-numeric -g, human-numeric -h, month -M,
-                                numeric -n, random -R, version -V
--V, --version-sort          natural sort of (version) numbers within text
-
-Other options:
-
-    --batch-size=NMERGE   merge at most NMERGE inputs at once;
+-b, --ignore-leading-blanks：忽略每行前面开始出的空白字符（默认情况下空白符为空格、制表符，但可以通过LC_CTYPE 变量来指定）；
+-d, --dictionary-order：排序时仅考虑（ASCII表中的）字母、数值和空白字符，不考虑其他特殊字符；
+-f, --ignore-case：该选项会忽略大小写。默认情况下，会将大写字母排在前面；
+-g, --general-numeric-sort：排序时根据一般数值比较；
+-i, --ignore-nonprinting：排序时仅考虑可打印字符；
+-M, --month-sort：排序时比较三位字母表示的月份。当每行以 Apr、Au、Dec、Feb、Jan 等开头时可以使用该选项；
+-h, --human-numeric-sort：排序时比较简化的数值，如 2K、1G；
+-n, --numeric-sort：按字符串数值来排序（并不转换为浮点数）；
+-R, --random-sort：按随机生成的散列表的键值排序；
+    --random-source=FILE：从 FILE 所指定的文件中获取随机字节；
+-r, --reverse：反向排序；
+    --sort=WORD：根据 WORD 来排序。 WORD可以为 general-numeric（ -g）、human-numeric（-h）、month（-M）、numeric（-n）、random（-R）、version（-V）；
+-V, --version-sort：按文本中的数值自然排序；
+    --batch-size=NMERGE：   merge at most NMERGE inputs at once;
                             for more use temp files
--c, --check, --check=diagnose-first  check for sorted input; do not sort
--C, --check=quiet, --check=silent  like -c, but do not report first bad line
-    --compress-program=PROG  compress temporaries with PROG;
+-c, --check, --check=diagnose-first：检查给定的文件是否已经排序好了。如果没有排序好，则输出包含第一个乱序行的诊断信息，以状态码 1 退出。如果已经排序好了，就直接退出。最多给定一个文件；
+-C, --check=quiet, --check=silent：类似 -c 选项，但不在第一行报告的诊断信息；
+    --compress-program=PROG：  compress temporaries with PROG;
                               decompress them with PROG -d
     --debug               annotate the part of the line used to sort,
                               and warn about questionable usage to stderr
@@ -549,26 +544,27 @@ Other options:
                             NUL-terminated names in file F;
                             If F is - then read names from standard input
 -k, --key=KEYDEF          sort via a key; KEYDEF gives location and type
--m, --merge               merge already sorted files; do not sort
--o, --output=FILE         write result to FILE instead of standard output
--s, --stable              stabilize sort by disabling last-resort comparison
--S, --buffer-size=SIZE    use SIZE for main memory buffer
--t, --field-separator=SEP  use SEP instead of non-blank to blank transition
--T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or /tmp;
+-m, --merge：合并已经排序的文件，但不对合并排序；
+-o, --output=FILE：        write result to FILE instead of standard output
+-s, --stable：禁用最后重排序比较；              stabilize sort by disabling last-resort comparison
+-S, --buffer-size=SIZE：    use SIZE for main memory buffer
+-t, --field-separator=SEP：指定一个用来区分键位置的字符；  use SEP instead of non-blank to blank transition
+-T, --temporary-directory=DIR：指定一个位置来存储临时工作文件；  use DIR for temporaries, not $TMPDIR or /tmp;
                               multiple options specify multiple directories
     --parallel=N          change the number of sorts run concurrently to N
--u, --unique              with -c, check for strict ordering;
+-u, --unique：和-c参数一起使用时，检查严格排序；不和-c参数一起用时，仅
+输出第一例相似的两行              with -c, check for strict ordering;
                               without -c, output only the first of an equal run
--z, --zero-terminated     end lines with 0 byte, not newline
-    --help     display this help and exit
-    --version  output version information and exit
+-z, --zero-terminated:用NULL字符作为行尾，而不是用换行符    end lines with 0 byte, not newline
+    --help：显示帮助并退出；
+    --version：显示版本信息并退出。
 ```
 
-### 参数
+##### 参数
 
 文件：指定待排序的文件列表。
 
-### 实例
+#### 实例
 
 sort将文件/文本的每一行作为一个单位，相互比较，比较原则是从首字符向后，依次按[ASCII](http://zh.wikipedia.org/zh/ASCII)码值进行比较，最后将他们按升序输出。
 
@@ -727,8 +723,8 @@ df [OPTION]... [FILE]...
 -t, --type=TYPE：仅显示 TYPE 所指定的文件系统类型的磁盘信息；
 -T, --print-type：显示文件系统的类型；
 -x, --exclude-type=TYPE：仅显示非 TYPE 所指定的文件系统的磁盘信息；
-    --help：显示帮助；
-    --version：显示版本信息。
+    --help：显示帮助并退出；
+    --version：显示版本信息并退出。
 ```
 
 > 注意：以上长格式选项的参数也适用于对应的短格式的选项。例如 `df -BM` 等同于 `df --block-size=1M` 。
