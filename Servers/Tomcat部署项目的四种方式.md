@@ -45,7 +45,7 @@ jar -cvf mywar.war  myweb
 - `workDir` 是这个应用的工作目录，存放运行时生成的与这个应用相关的文件。缓存文件的放置地址。
 - `debug` 则是设定debug level,  0表示提供最少的信息，9表示提供最多的信息。
 - `privileged`设置为true的时候，才允许Tomcat的Web应用使用容器内的Servlet。
-- `reloadable` **如果为true，则tomcat会自动检测应用程序的/WEB-INF/lib 和/WEB-INF/classes目录的变化，自动装载新的应用程序，可以在不重起tomcat的情况下改变应用程序，实现热部署**。
+- `reloadable` **如果为true，则tomcat会自动检测应用程序的/WEB-INF/lib 和/WEB-INF/classes目录的变化，自动装载新的应用程序，可以在不重启tomcat的情况下改变应用程序，实现热部署**。
 
 antiResourceLocking 和 antiJARLocking  热部署是需要配置的参数，默认 false 避免更新了某个 webapp，有时候 Tomcat 并不能把旧的 webapp 完全删除，通常会留下 WEB-INF/lib 下的某个 jar 包，必须关闭 Tomcat 才能删除，这就导致自动部署失败。设置为 true，Tomcat 在运行对应的 webapp 时，会把相应的源文件和 jar 文件复制到一个临时目录里。
 
