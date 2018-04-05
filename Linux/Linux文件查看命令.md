@@ -60,14 +60,14 @@ ls [OPTION]... [FILE]...
 
 1. ls 命令的无选项形式显示当前目录下非隐藏文件与目录。
 
-```
+```shell
 [root@localhost ~]# ls
 anaconda-ks.cfg  install.log  install.log.syslog  satools
 ```
 
 1. ls -a 显示当前目录下包括隐藏文件在内的所有文件列表。
 
-```
+```shell
 [root@localhost ~]# ls -a
 .   anaconda-ks.cfg  .bash_logout   .bashrc  install.log         .mysql_history  satools  .tcshrc   .vilocalhostc
 ..  .bash_history    .bash_profile  .cshrc   install.log.syslog  .rnd            .ssh     .viminfo
@@ -75,7 +75,7 @@ anaconda-ks.cfg  install.log  install.log.syslog  satools
 
 1. ls -l 输出长格式列表。
 
-```
+```shell
 [root@localhost ~]# ls -l
 anaconda-ks.cfg
 install.log
@@ -87,7 +87,7 @@ satools
 
 索引节点（index inode，简称为“inode”）是Linux中一个特殊的概念。具有相同的索引节点号的两个文本本质上是同一个文件（除文件名不同外）。
 
-```
+```shell
 [root@localhost ~]# ls -il anaconda-ks.cfg install.log
 2345481 -rw------- 1 root root   859 Jun 11 22:49 anaconda-ks.cfg
 2345474 -rw-r--r-- 1 root root 13837 Jun 11 22:49 install.log
@@ -95,21 +95,21 @@ satools
 
 1. ls -m 以逗号分隔输出结果。
 
-```
+```shell
 [root@localhost /]# ls -m
 bin, boot, data, dev, etc, home, lib, lost+found, media, misc, mnt, opt, proc, root, sbin, selinux, srv, sys, tmp, usr, var
 ```
 
 1. ls -t 按最近修改时间排列输出结果，最近修改的文件显示在最上面。
 
-```
+```shell
 [root@localhost /]# ls -t
 tmp  root  etc  dev  lib  boot  sys  proc  data  home  bin  sbin  usr  var  lost+found  media  mnt  opt  selinux  srv  misc
 ```
 
 1. ls -R 显示递归文件。
 
-```
+```shell
 [root@localhost ~]# ls -R
 .:
 anaconda-ks.cfg  install.log  install.log.syslog  satools
@@ -120,7 +120,7 @@ black.txt  freemem.sh  iptables.sh  lnmp.sh  mysql  php502_check.sh  ssh_safe.sh
 
 1. ls -n 打印文件的UID和GID
 
-```
+```shell
 [root@localhost /]# ls -n
 total 254
 drwxr-xr-x   2 0 0  4096 Jun 12 04:03 bin
@@ -148,7 +148,7 @@ drwxr-xr-x  19 0 0  4096 Jun 11 23:38 var
 
 1. ls -l 列出文件和文件夹的详细信息（使用频率高）。
 
-```
+```shell
 [root@localhost /]# ls -l
 total 254
 drwxr-xr-x   2 root root  4096 Jun 12 04:03 bin
@@ -176,7 +176,7 @@ drwxr-xr-x  19 root root  4096 Jun 11 23:38 var
 
 1. ls -lh 将文件大小以更好的可读性显示出来。
 
-```
+```shell
 [root@localhost /]# ls -lh
 total 254K
 drwxr-xr-x   2 root root 4.0K Jun 12 04:03 bin
@@ -204,14 +204,14 @@ drwxr-xr-x  19 root root 4.0K Jun 11 23:38 var
 
 1. ls -ld 仅显示目录的信息。
 
-```
+```shell
 [root@localhost /]# ls -ld /etc/
 drwxr-xr-x 75 root root 4096 Oct 16 04:02 /etc/
 ```
 
 1. ls -lt 按 mtime 列出文件和目录的详细信息。最近修改的文件的在前面。
 
-```
+```shell
 [root@localhost /]# ls -lt
 total 254
 drwxrwxrwt   3 root root 98304 Oct 16 08:53 tmp
@@ -239,7 +239,7 @@ drwxr-xr-x   2 root root  4096 Nov  8  2010 misc
 
 1. ls -ltr 按最近修改时间的逆序列出文件和目录的详细信息。
 
-```
+```shell
 [root@localhost /]# ls -ltr
 total 254
 drwxr-xr-x   2 root root  4096 Nov  8  2010 misc
@@ -267,14 +267,14 @@ drwxrwxrwt   3 root root 98304 Oct 16 08:54 tmp
 
 1. ls -F 按照特殊字符对文件进行分类。
 
-```
+```shell
 [root@localhost nginx-1.2.1]# ls -F
 auto/  CHANGES  CHANGES.ru  conf/  configure*  contrib/  html/  LICENSE  Makefile  man/  objs/  README  src/
 ```
 
 1. ls --color=auto 列出文件并标记颜色分类。蓝色表示目录，绿色表示可执行文件，红色表示压缩文件，浅蓝色表示链接文件，灰色表示其他类型的文件。
 
-```
+```shell
 [root@localhost nginx-1.2.1]# ls --color=auto
 auto  CHANGES  CHANGES.ru  conf  configure  contrib  html  LICENSE  Makefile  man  objs  README  src
 ```
@@ -407,13 +407,13 @@ more -c -10 file
 
 #### 语法
 
-```
+```shell
 less [OPTION]... [FILE]...
 ```
 
 ##### 选项
 
-```
+```shell
 -e，-E：文件内容显示完毕后，自动退出；
 -f，--force：强制显示非一般文件；
 -g：不加亮显示搜索到的所有关键词，仅显示当前显示的关键字，以提高显示速度；
@@ -436,13 +436,13 @@ FILE：指定要分屏显示内容的文件。
 
 #### 语法
 
-```
+```shell
 tail [OPTION]... [FILE]...
 ```
 
 ##### 选项
 
-```
+```shell
 --retry：即是在tail命令启动时，文件不可访问或者文件稍后变得不可访问，都始终尝试打开文件。使用此选项时需要与选项“——follow=name”连用；
 -c, --bytes=K：输出文件尾部的 K（K 为整数）个字节内容。或者使用 -c +K 来从第 K 个字节内容开始显示；
 -f, --follow[={name|descriptor}]：显示文件最新追加的内容。“name”表示以文件名的方式监视文件的变化。“-f”与“-fdescriptor”等效；
@@ -475,13 +475,13 @@ tail -f app.log #显示日志文件app.log最新追加的内容。用于监控�
 
 #### 语法
 
-```
+```shell
 head [OPTION]... [FILE]...
 ```
 
 ##### 选项
 
-```
+```shell
 -n, --lines=[-]K：指定显示头部的 K 行内容。使用 -K 形式时，显示出除了末尾 K 行内容以外的所有内容；
 -c, --bytes=[-]K：指定显示头部的 K 个字符。使用 -K 形式时，显示出除了末尾 K 个字节以外的所有内容；
 -q, --quiet, --silent：在显示头信息时不显示文件名。
@@ -498,7 +498,7 @@ FILE：指定显示头部内容的文件列表。
 
 #### 语法
 
-```
+```shell
 Usage: sort [OPTION]... [FILE]...
    or: sort [OPTION]... --files0-from=F
 ```
