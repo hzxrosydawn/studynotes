@@ -65,7 +65,7 @@ ls [OPTION]... [FILE]...
 anaconda-ks.cfg  install.log  install.log.syslog  satools
 ```
 
-1. ls -a 显示当前目录下包括隐藏文件在内的所有文件列表。
+2. ls -a 显示当前目录下包括隐藏文件在内的所有文件列表。
 
 ```shell
 [root@localhost ~]# ls -a
@@ -73,7 +73,7 @@ anaconda-ks.cfg  install.log  install.log.syslog  satools
 ..  .bash_history    .bash_profile  .cshrc   install.log.syslog  .rnd            .ssh     .viminfo
 ```
 
-1. ls -l 输出长格式列表。
+3. ls -l 输出长格式列表。
 
 ```shell
 [root@localhost ~]# ls -l
@@ -83,9 +83,9 @@ install.log.syslog
 satools
 ```
 
-1. ls -i 显示文件的inode信息
+4. ls -i 显示文件的 inode 信息。
 
-索引节点（index inode，简称为“inode”）是Linux中一个特殊的概念。具有相同的索引节点号的两个文本本质上是同一个文件（除文件名不同外）。
+索引节点（index inode，简称为“inode”）是 Linux 中一个特殊的概念。具有相同的索引节点号的两个文本本质上是同一个文件（除文件名不同外）。
 
 ```shell
 [root@localhost ~]# ls -il anaconda-ks.cfg install.log
@@ -93,21 +93,21 @@ satools
 2345474 -rw-r--r-- 1 root root 13837 Jun 11 22:49 install.log
 ```
 
-1. ls -m 以逗号分隔输出结果。
+5. ls -m 以逗号分隔输出结果。
 
 ```shell
 [root@localhost /]# ls -m
 bin, boot, data, dev, etc, home, lib, lost+found, media, misc, mnt, opt, proc, root, sbin, selinux, srv, sys, tmp, usr, var
 ```
 
-1. ls -t 按最近修改时间排列输出结果，最近修改的文件显示在最上面。
+6. ls -t 按最近修改时间排列输出结果，最近修改的文件显示在最上面。
 
 ```shell
 [root@localhost /]# ls -t
 tmp  root  etc  dev  lib  boot  sys  proc  data  home  bin  sbin  usr  var  lost+found  media  mnt  opt  selinux  srv  misc
 ```
 
-1. ls -R 显示递归文件。
+7. ls -R 显示递归文件。
 
 ```shell
 [root@localhost ~]# ls -R
@@ -118,7 +118,7 @@ anaconda-ks.cfg  install.log  install.log.syslog  satools
 black.txt  freemem.sh  iptables.sh  lnmp.sh  mysql  php502_check.sh  ssh_safe.sh
 ```
 
-1. ls -n 打印文件的UID和GID
+8. ls -n 打印文件的 UID 和 GID。
 
 ```shell
 [root@localhost /]# ls -n
@@ -146,7 +146,7 @@ drwxr-xr-x  13 0 0  4096 Jun 11 23:38 usr
 drwxr-xr-x  19 0 0  4096 Jun 11 23:38 var
 ```
 
-1. ls -l 列出文件和文件夹的详细信息（使用频率高）。
+9. ls -l 列出文件和文件夹的详细信息（使用频率高）。
 
 ```shell
 [root@localhost /]# ls -l
@@ -174,7 +174,7 @@ drwxr-xr-x  13 root root  4096 Jun 11 23:38 usr
 drwxr-xr-x  19 root root  4096 Jun 11 23:38 var
 ```
 
-1. ls -lh 将文件大小以更好的可读性显示出来。
+10. ls -lh 将文件大小以更好的可读性显示出来。
 
 ```shell
 [root@localhost /]# ls -lh
@@ -202,14 +202,14 @@ drwxr-xr-x  13 root root 4.0K Jun 11 23:38 usr
 drwxr-xr-x  19 root root 4.0K Jun 11 23:38 var
 ```
 
-1. ls -ld 仅显示目录的信息。
+11. ls -ld 仅显示目录的信息。
 
 ```shell
 [root@localhost /]# ls -ld /etc/
 drwxr-xr-x 75 root root 4096 Oct 16 04:02 /etc/
 ```
 
-1. ls -lt 按 mtime 列出文件和目录的详细信息。最近修改的文件的在前面。
+12. ls -lt 按 mtime 列出文件和目录的详细信息。最近修改的文件的在前面。
 
 ```shell
 [root@localhost /]# ls -lt
@@ -237,7 +237,7 @@ drwxr-xr-x   2 root root  4096 May 11  2011 srv
 drwxr-xr-x   2 root root  4096 Nov  8  2010 misc
 ```
 
-1. ls -ltr 按最近修改时间的逆序列出文件和目录的详细信息。
+13. ls -ltr 按最近修改时间的逆序列出文件和目录的详细信息。
 
 ```shell
 [root@localhost /]# ls -ltr
@@ -265,21 +265,21 @@ drwxr-xr-x  75 root root  4096 Oct 16 04:02 etc
 drwxrwxrwt   3 root root 98304 Oct 16 08:54 tmp
 ```
 
-1. ls -F 按照特殊字符对文件进行分类。
+14. ls -F 按照特殊字符对文件进行分类。
 
 ```shell
 [root@localhost nginx-1.2.1]# ls -F
 auto/  CHANGES  CHANGES.ru  conf/  configure*  contrib/  html/  LICENSE  Makefile  man/  objs/  README  src/
 ```
 
-1. ls --color=auto 列出文件并标记颜色分类。蓝色表示目录，绿色表示可执行文件，红色表示压缩文件，浅蓝色表示链接文件，灰色表示其他类型的文件。
+15. ls --color=auto 列出文件并标记颜色分类。蓝色表示目录，绿色表示可执行文件，红色表示压缩文件，浅蓝色表示链接文件，灰色表示其他类型的文件。
 
 ```shell
 [root@localhost nginx-1.2.1]# ls --color=auto
 auto  CHANGES  CHANGES.ru  conf  configure  contrib  html  LICENSE  Makefile  man  objs  README  src
 ```
 
-1. 使用占位符来过滤文件列表。其中，问号（?）代表一个字符，星号（*）代表零个或多个字符，中括号（[]）可以进行范围匹配，感叹号（！）可以进行排除匹配。
+16. 使用占位符来过滤文件列表。其中，问号（?）代表一个字符，星号（*）代表零个或多个字符，中括号（[]）可以进行范围匹配，感叹号（！）可以进行排除匹配。
 
 ```shell
 [vincent@localhost package]$ ls -l redis-3.2.9.???.gz
@@ -305,13 +305,13 @@ ls -|*|grep "^-"| wc -|
 
 #### 语法
 
-```
+```shell
 cat [OPTION]... [FILE]...
 ```
 
 ##### 选项
 
-```
+```shell
 -n, --number：从1开始对所有输出的行数编号；
 -b, --number-nonblank：和 -n 相似，只不过对于空白行不编号；
 -s或--squeeze-blank：当遇到有连续两行以上的空白行，就代换为一行的空白行；
@@ -331,7 +331,7 @@ FILE：指定要拼接的文件列表。
 
 显示文本内容和拼接显示多个文本的内容。
 
-```
+```shell
 [root@localhost testdir01]# cat test01
 this is text in test01 file.
 [root@localhost testdir01]# cat test02
@@ -365,13 +365,13 @@ this is text in test01 file.
 
 #### 语法
 
-```
+```shell
 more [OPTION]... [FILE]...
 ```
 
 ##### 选项
 
-```
+```shell
 -NUM：指定每屏显示NUM行；
 -d：显示“[press space to continue,'q' to quit.]”和“[Press 'h' for instructions]”；
 -c：不进行滚屏操作。每次刷新这个屏幕；
@@ -506,16 +506,11 @@ Usage: sort [OPTION]... [FILE]...
 ##### 选项
 
 ```shell
--b：忽略每行前面开始出的空格字符；
+
 -c：检查文件是否已经按照顺序排序；
--d：排序时，处理英文字母、数字及空格字符外，忽略其他的字符；
--f：排序时，将小写字母视为大写字母；
--i：排序时，除了040至176之间的ASCII字符外，忽略其他的字符；
--m：将几个排序号的文件进行合并；
--M：将前面3个字母依照月份的缩写进行排序；
--n：依照数值的大小排序；
+
 -o<输出文件>：将排序后的结果存入制定的文件；
--r：以相反的顺序来排序；
+
 -t<分隔字符>：指定排序时所用的栏位分隔字符；
 +<起始栏位>-<结束栏位>：以指定的栏位来排序，范围由起始栏位到结束栏位的前一栏位。
 
@@ -532,7 +527,8 @@ Usage: sort [OPTION]... [FILE]...
 -r, --reverse：反向排序；
     --sort=WORD：根据 WORD 来排序。 WORD可以为 general-numeric（ -g）、human-numeric（-h）、month（-M）、numeric（-n）、random（-R）、version（-V）；
 -V, --version-sort：按文本中的数值自然排序；
-    --batch-size=NMERGE：   merge at most NMERGE inputs at once;
+# 其他选项
+    --batch-size=NMERGE：每次最多合并NMERGE个输入。当总合并数超过NMERGE时，；
                             for more use temp files
 -c, --check, --check=diagnose-first：检查给定的文件是否已经排序好了。如果没有排序好，则输出包含第一个乱序行的诊断信息，以状态码 1 退出。如果已经排序好了，就直接退出。最多给定一个文件；
 -C, --check=quiet, --check=silent：类似 -c 选项，但不在第一行报告的诊断信息；
