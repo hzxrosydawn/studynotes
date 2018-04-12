@@ -22,7 +22,7 @@
 
         <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
-        <spring.version>4.3.7.RELEASE</spring.version>
+        <spring.version>4.3.15.RELEASE</spring.version>
 		<!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1 -->
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
 		<!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
@@ -67,11 +67,6 @@
         DBCP 1.4 compiles and runs under Java 6 only (JDBC 4) -->
         <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-		<!--bcprov-jdk15on.jar 包提供了加密增强的支持。1.59 版本支持 JDK1.5~JDK1.8-->
-        <bcprov-jdk15on.version>1.59</bcprov-jdk15on.version>
-		<!-- Apache Commons Codec 主要用于编码格式转换，主要用于 Base64、二进制、十六进制、字符集和 Url 编码转换。
-        甚至也支持语音编码转换。 Codec 1.6~1.11 需要 JDK 1.6。-->
-        <commons-codec.version>1.10</commons-codec.version>
 		
 		<!-- Json 数据转换。
         jackson-databind 包是 spring-webmvc 包的可选依赖，该包还依赖于 jackson-core 包和 jackson-annotations 包。
@@ -81,7 +76,7 @@
 		
 		<!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
         建议使用 2.x 版本（1.x 版本功能有限且与难用，除非是古董级的项目） -->
-        <quartz.version></quartz.version>
+        <quartz.version>2.2.1</quartz.version>
     </properties>
 
     <dependencies>
@@ -280,17 +275,6 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>${commons-dbcp.version}</version>
-        </dependency>
-		<dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec.version}</version>
-        </dependency>
-		
-		<dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>${bcprov-jdk15on.version}</version>
         </dependency>
 		
 		<dependency>
