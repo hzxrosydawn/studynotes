@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.rosydawn</groupId>
-    <artifactId>demo-project</artifactId>
+    <artifactId>userblog</artifactId>
+    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-
+    <name>userblog Maven Webapp</name>
+    <url>http://maven.apache.org</url>
     <properties>
-		<!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
+        <!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
         Junit 绑定了一个 hamcrest-core 1.3 的包，但不建议使它，最好排除这个jar包，而是使用 hamcrest-library 1.3的jar包-->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-		<!-- testNG需要 JDK 1.7+ -->
-		<testng.version>6.10</testng.version>
+        <!-- testNG需要 JDK 1.7+ -->
+        <testng.version>6.10</testng.version>
         <!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
         <mockito.version>2.10.0</mockito.version>
         <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
@@ -22,21 +21,28 @@
 
         <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
-        <spring.version>4.3.15.RELEASE</spring.version>
-		<!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1 -->
+        <spring.version>4.3.16.RELEASE</spring.version>
+		<!-- Spring Security 5.0.4.RELEASE针对Spring Framework 5.0.5.RELEASE构建，
+        Spring Security 4.2.5.RELEASE针对Spring Framework 4.3.12.RELEASE构建，
+        但Spring Security 5.x和4.x应该可以与Spring Framework4.0.x一起使用。 -->
+		<spring-security.version>4.2.5.RELEASE</spring-security.version>
+        <!-- As of Spring 4.0, Spring requires Hessian 4.0 or above. -->
+        <hessian.version>4.0.38</hessian.version>
+
+        <!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1 -->
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
-		<!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
-		详见：https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions-java.html 。-->
+        <!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
+        详见：https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions-java.html 。-->
         <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
         <!-- Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
         <ojdbc6.version>11.2.0.1</ojdbc6.version>
-		<!--DBCP 2 仅在 Java 7 上编译和运行(JDBC 4.1)。DBCP 1.4 仅在 Java 6 上编译和运行(JDBC 4)。
+        <!--DBCP 2 仅在 Java 7 上编译和运行(JDBC 4.1)。DBCP 1.4 仅在 Java 6 上编译和运行(JDBC 4)。
         commons-dbcp2 包依赖于 commons-pool2 包，commons-dbcp 包依赖于 commons-pool 包。-->
         <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-		<!--HttpClient 4.4.x 和 4.5.x 需要 Java 1.6+，HttpClient 5.x.x 需要 Java 1.7+ -->
+        <!--HttpClient 4.4.x 和 4.5.x 需要 Java 1.6+，HttpClient 5.x.x 需要 Java 1.7+ -->
         <httpclient.version>4.5.2</httpclient.version>
-		<!-- c3p0 0.9.5 可以在 Java 6 上运行。而后续的 c3p0 0.9.6 需要 Java 7 才能运行。-->
+        <!-- c3p0 0.9.5 可以在 Java 6 上运行。而后续的 c3p0 0.9.6 需要 Java 7 才能运行。-->
         <c3p0.version>0.9.5.2</c3p0.version>
         <!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上 -->
         <mybatis.version>3.4.1</mybatis.version>
@@ -44,37 +50,44 @@
         <mybatis-spring.version>1.3.0</mybatis-spring.version>
         <!-- Hibernate 5.2 需要 JDK 1.8+ ，Hibernate 5.1、5.0 和 4.3 需要 JDK 1.6+。Hibernate 4.3~5.2 需要 JPA 2.1+ -->
         <hibernate-core.version>4.3.11.Final</hibernate-core.version>
-		
+
         <!-- servlet 3.x.x api -->
-        <javax.servlet-api.version.version>3.1.0</javax.servlet-api.version.version>
-        <!--<javax.servlet-api.version>3.0.1<javax.servlet-api.version>-->
-		<!-- servlet 2.5 api -->
+        <!--<javax.servlet-api.version>3.1.0</javax.servlet-api.version>-->
+        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <!-- servlet 2.5 api -->
         <servlet-api.version>2.5</servlet-api.version>
         <!-- jsp-api -->
         <jsp-api.version>2.2</jsp-api.version>
         <!-- jstl 标签库 -->
         <jstl.version>1.2</jstl.version>
-		
-		<!--Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。log4j-web 包依赖于 log4j-api 和 log4j-core 两个包。
-		Log4j 2.4 及以上版本需要 1.7 及以上的 JDK，Log4j 2.0-alpha1 到 2.3 版本需要 1.6 及以上的 JDK。-->
+
+        <!--Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。log4j-web 包依赖于 log4j-api 和 log4j-core 两个包。
+        Log4j 2.4 及以上版本需要 1.7 及以上的 JDK，Log4j 2.0-alpha1 到 2.3 版本需要 1.6 及以上的 JDK。-->
         <log4j2.version>2.3</log4j2.version>
         <log4j.version>1.2.17</log4j.version>
-		
-		<!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
+
+        <!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
         commons-lang 3.5 开始要求 JDK 1.6+，commons-lang 3.6 要求 JDK 1.7+ -->
         <commons-lang3.version>3.5</commons-lang3.version>
         <!-- DBCP 2 compiles and runs under Java 7 only (JDBC 4.1)
         DBCP 1.4 compiles and runs under Java 6 only (JDBC 4) -->
         <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-		
-		<!-- Json 数据转换。
+        <!-- Apache Commons FileUpload 1.3.3 (requires Java 1.5 or later) -->
+        <commons-fileupload.version>1.3.3</commons-fileupload.version>
+        <!-- Apache Commons Codec 主要用于编码格式转换，主要用于 Base64、二进制、十六进制、字符集和 Url 编码转换。
+            甚至也支持语音编码转换。 Codec 1.6~1.11 需要 JDK 1.6。-->
+        <commons-codec.version>1.10</commons-codec.version>
+        <!--bcprov-jdk15on.jar 包提供了加密增强的支持。1.59 版本支持 JDK1.5~JDK1.8-->
+        <bcprov-jdk15on.version>1.59</bcprov-jdk15on.version>
+
+        <!-- Json 数据转换。
         jackson-databind 包是 spring-webmvc 包的可选依赖，该包还依赖于 jackson-core 包和 jackson-annotations 包。
         从 jackson 2.4 开始需要 JDK 1.6+，从 jackson 2.7 开始, JDK 的基线为 1.7，但并没有全部使用 JDK 1.7 的新特性，所以
         jackson 2.7 应该可以用于 JDK 1.6，但从 jackson 2.8 开始，JDK 1.7+ 是必须的。 -->
-		<jackson.version>2.6.3</jackson.version>
-		
-		<!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
+        <jackson.version>2.6.7</jackson.version>
+
+        <!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
         建议使用 2.x 版本（1.x 版本功能有限且与难用，除非是古董级的项目） -->
         <quartz.version>2.2.1</quartz.version>
     </properties>
@@ -98,7 +111,7 @@
             <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
@@ -108,9 +121,9 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
-			<scope>test</scope>
+            <scope>test</scope>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4-legacy</artifactId>
             <version>${powermock.version}</version>
@@ -123,28 +136,33 @@
             <scope>test</scope>
         </dependency>
 
-		<dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectjweaver.version}</version>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
-        </dependency>		
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
-		<!-- spring-orm 包依赖于spring-jdbc、spring-tx、spring-core 和 spring-beans-->
+        <!-- spring-orm 包依赖于spring-jdbc、spring-tx、spring-core 和 spring-beans-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
             <version>${spring.version}</version>
@@ -154,11 +172,43 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
-		
-		<dependency>
+		<!-- spring-security相关包 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${spring-security.version}</version>
+            <scope>test</scope>
+        </dependency> 	
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator}</version>
+            <version>${hibernate-validator.version}</version>
         </dependency>
 
         <dependency>
@@ -177,7 +227,7 @@
             <artifactId>ojdbc6</artifactId>
             <version>${ojdbc6.version}</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
             <version>${commons-dbcp2.version}</version>
@@ -187,12 +237,12 @@
             <artifactId>commons-dbcp</artifactId>
             <version>${commons-dbcp.version}</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0.version}</version>
@@ -212,17 +262,17 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate-core.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet-api.version}</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>${servlet-api.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
@@ -233,8 +283,8 @@
             <artifactId>jstl</artifactId>
             <version>${jstl.version}</version>
         </dependency>
-		
-        <!--<dependency>
+
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j2.version}</version>
@@ -243,7 +293,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j2.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
@@ -255,35 +305,35 @@
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-		
+
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>${commons-fileupload.veriosn}</version>
+            <version>${commons-fileupload.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-dbcp2</artifactId>-->
-            <!--<version>${commons-dbcp2.version}</version>-->
-        <!--</dependency>-->
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>${commons-dbcp.version}</version>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
         </dependency>
-		
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bcprov-jdk15on.version}</version>
+        </dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartz.version}</version>
@@ -294,15 +344,14 @@
             <version>${quartz.version}</version>
         </dependency>
     </dependencies>
-
     <build>
-        <finalName>demo-project</finalName>
+        <finalName>userblog</finalName>
         <plugins>
             <!-- 此编译插件强制指定编译所用的JDK版本，可以避免必须每次手动将IDE中的编译JDK版本调整到已有较高JDK版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -338,26 +387,31 @@
                 <!-- 各版本的groupId稍有不同：
                 从9.x.x开始的版本的groupId为org.eclipse.jetty，
                 在8.x.x及之前的版本的groupId为org.mortbay.jetty -->
-                <groupId>org.eclipse.jetty</groupId>
+                <!--<groupId>org.eclipse.jetty</groupId>-->
+                <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <!-- 各插件版本对应的JDK、Servlet即JSP版本：
                 9.4.6.v20170531(JDK1.8+&Servlet3.1&JSP2.3)
                 9.2.8.v20150217（JDK1.7+&Servlet3.1&JSP2.3）
                 8.1.16.v20140903(JDK1.6+&Servlet3.0&JSP2.2)
                 7.6.16.v20140903(JDK1.5+&Servlet2.5&JSP2.1) -->
-                <version>9.4.6.v20170531</version>
+                <version>8.1.16.v20140903</version>
                 <!-- 7.x.x的版本不支持configuration元素 -->
                 <configuration>
-                    <httpConnector>
+                    <!--<httpConnector>
                         <port>8081</port>
-                    </httpConnector>
+                    </httpConnector>--> <!--jetty 9 config-->
                     <stopKey>shutdown</stopKey>
                     <stopPort>9966</stopPort>
-                    <!--
-                    <scanIntervalSeconds>2</scanIntervalSeconds>
-                    -->
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
                     <reload>manual</reload>
-                    <dumpOnStart>true</dumpOnStart>
+                    <!--<dumpOnStart>true</dumpOnStart>-->
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>8080</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors> <!--jetty 8 config-->
                     <webApp>
                         <contextPath>/${project.artifactId}</contextPath>
                         <!--
@@ -388,5 +442,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
