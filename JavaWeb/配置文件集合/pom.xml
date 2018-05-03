@@ -48,10 +48,10 @@
         <mybatis.version>3.4.1</mybatis.version>
         <!-- mybatis-spring 1.3.0+ 需要 mybatis 3.4.0+ 和 spring 3.0.0+ -->
         <mybatis-spring.version>1.3.0</mybatis-spring.version>
-       <!-- Hibernate 5.2 需要 JDK 1.8+ ，Hibernate 5.1、5.0 和 4.3 需要 JDK 1.6+。Hibernate 4.3~5.2 需要 JPA 2.1+。
+		<!-- Hibernate 5.2 需要 JDK 1.8+ ，Hibernate 5.1、5.0 和 4.3 需要 JDK 1.6+。Hibernate 4.3~5.2 需要 JPA 2.1+。
         Spring 从 4.0 开始要求 Hibernate 版本必需为 3.6 或更高版本。由于Hibernate 3 和 4 已不再更新，
         Spring 4 推荐使用 Hibernate 5.x-->
-        <hibernate-core.version>4.3.11.Final</hibernate-core.version>
+        <hibernate-core.version>5.1.13.Final</hibernate-core.version>
 
         <!-- servlet 3.x.x api -->
         <!--<javax.servlet-api.version>3.1.0</javax.servlet-api.version>-->
@@ -71,10 +71,6 @@
         <!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
         commons-lang 3.5 开始要求 JDK 1.6+，commons-lang 3.6 要求 JDK 1.7+ -->
         <commons-lang3.version>3.5</commons-lang3.version>
-        <!-- DBCP 2 compiles and runs under Java 7 only (JDBC 4.1)
-        DBCP 1.4 compiles and runs under Java 6 only (JDBC 4) -->
-        <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
         <!-- Apache Commons FileUpload 1.3.3 (requires Java 1.5 or later) -->
         <commons-fileupload.version>1.3.3</commons-fileupload.version>
         <!-- Apache Commons Codec 主要用于编码格式转换，主要用于 Base64、二进制、十六进制、字符集和 Url 编码转换。
