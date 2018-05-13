@@ -582,3 +582,57 @@ Inodes: Total: 2621440    Free: 2555692
 test.txt 64 8 81b4 1000 1000 fd01 2458583 1 0 0 1523797097 1519909208 1519909208 0 4096
 [root@localhost vincent]# 
 ```
+### type 命令
+
+type 命令用来显示指定命令的类型，判断给出的指令是内部指令还是外部指令。
+
+命令类型：
+
+- alias：别名。
+- keyword：关键字，Shell 保留字。
+- function：函数，Shell 函数。
+- builtin：内建命令，Shell 内建命令。
+- file：文件，磁盘文件，外部命令。
+- unfound：没有找到。
+
+#### 语法 
+
+```shell
+type [-afptP] COMMAND [COMMAND ...]
+type [OPTION] COMMAND [COMMAND ...]
+```
+
+##### 选项 
+
+```shell
+-t：输出“file”、“alias”或者“builtin”，分别表示给定的指令为“外部指令”、“命令别名”或者“内部指令”；
+-p：如果给出的指令为外部指令，则显示其绝对路径；
+-a：在环境变量“PATH”指定的路径中，显示给定指令的信息，包括命令别名。
+```
+
+##### 参数 
+
+COMMAND：要显示类型的指令。
+
+#### 实例 
+
+```shell
+[root@localhost ~]# type ls
+ls is aliased to `ls --color=tty'
+[root@localhost ~]# type cd
+cd is a shell builtin
+[root@localhost ~]# type date
+date is /bin/date
+[root@localhost ~]# type mysql
+mysql is /usr/bin/mysql
+[root@localhost ~]# type nginx
+-bash: type: nginx: not found
+[root@localhost ~]# type if
+if is a shell keyword
+[root@localhost ~]# type which
+which is aliased to `alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+[root@localhost ~]# type -a cd
+cd is a shell builtin
+[root@localhost ~]# type -a grep
+grep is /bin/grep
+```
