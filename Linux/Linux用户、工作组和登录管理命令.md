@@ -248,7 +248,7 @@ passwd 命令用于**设置用户的认证信息，包括用户密码、密码�
 #### 语法
 
 ```shell
- passwd  [-k] [-l] [-u [-f]] [-d] [-e] [-n mindays] [-x maxdays] [-w warndays] [-i inactivedays] [-S]  [--stdin] [username]
+passwd  [-k] [-l] [-u [-f]] [-d] [-e] [-n mindays] [-x maxdays] [-w warndays] [-i inactivedays] [-S]  [--stdin] [username]
 ```
 
 ##### 选项
