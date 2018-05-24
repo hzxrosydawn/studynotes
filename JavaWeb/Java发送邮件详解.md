@@ -1,6 +1,6 @@
 ---
-typora-copy-images-to: ..\..\graphs\photos
-typora-root-url: ..\..\graphs\photos
+typora-copy-images-to: ..\graphs\photos
+typora-root-url: ..\graphs\photos
 ---
 
 ### 邮件基础知识
