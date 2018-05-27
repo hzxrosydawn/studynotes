@@ -304,7 +304,7 @@ Changes to be committed:
         new file:   README.md
 ```
 
-在 Changes to be committed 这行下面的文件说明是已暂存状态。 如果此时提交，那么该文件此时此刻的版本将被留存在历史记录中。`git add`命令使用文件或目录的路径作为参数；如果参数是目录的路径，该命令将递归地跟踪该目录下的所有文件。如可以使用`git add .`命令将跟踪当前路径下的所有文件。
+**在 Changes to be committed 这行下面的文件说明是已暂存状态。 如果此时提交，那么该文件此时此刻的版本将被留存在历史记录中。`git add`命令使用文件或目录的路径作为参数；如果参数是目录的路径，该命令将递归地跟踪该目录下的所有文件。如可以使用`git add .`命令将跟踪当前路径下的所有文件**。
 
 #### **2.2.3 暂存已修改文件**
 
@@ -335,7 +335,7 @@ Changes not staged for commit:
         modified:   README.md
 ```
 
-README.md出现在Changes not staged for commit这行下面，说明已工作目录中的跟踪文件的内容发生了变化，但还没有放到暂存区。但是README.md也出现在Changes to be committed这行下面，就说明暂存区也有README.md的暂存版本（前面执行）。运行了`git add`之后又作了修改的文件，需要重新运行`git add`把最新版本重新暂存起来：
+**README.md出现在Changes not staged for commit这行下面，说明已工作目录中的跟踪文件的内容发生了变化，但还没有放到暂存区。但是README.md也出现在Changes to be committed这行下面，就说明暂存区也有README.md的暂存版本（前面执行）**。**运行了`git add`之后又作了修改的文件，需要重新运行`git add`把最新版本重新暂存起来**：
 
 ```shell
 $ git add README.md
@@ -350,7 +350,7 @@ Changes to be committed:
         new file:   README.md
 ```
 
-`git add`命令是一个多功能命令。它可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等。
+**`git add`命令是一个多功能命令，可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等**。
 
 #### **2.2.4 简化状态输出**
 
@@ -599,7 +599,7 @@ directory)
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-要想从Git中移除某个文件，就用`git rm`命令将文件从工作目录中和暂存区域中都移除，该文件也就从已跟踪文件清单中移除了，然后提交。这样该文件以后就不会出现在未跟踪文件清单中了。
+要想从Git中移除某个文件，就再用`git rm`命令将文件从工作目录中和暂存区域中都移除，该文件也就从已跟踪文件清单中移除了，然后提交。这样该文件以后就不会出现在未跟踪文件清单中了。
 
 ```shell
 $ git rm PROJECTS.md
@@ -614,7 +614,7 @@ Changes to be committed:
 
 > 注意：上面第二行的`rm 'README.md'`是前一行`git rm README.md`命令的输出结果，而不是`rm`删除命令。
 
-下一次提交时，该文件就不再纳入版本管理了。如果删除之前修改过并且已经放到暂存区域的话，则必须要用强制删除选项`-f`：
+下一次提交时，该文件就不再纳入版本管理了。如果想一步到位，直接从文件目录和暂存区都删除该文件，就用强制删除选项`-f`：
 
 ```shell
 $ git rm -f README.md
@@ -924,7 +924,11 @@ Changed but not updated:
 
 > 注意：虽然在调用时加上`--hard`选项可以令`git reset`成为一个危险的命令（译注：可能导致工作目录中所有当前进度丢失！），但本例中工作目录内的文件并不会被修改。不加选项地调用`git reset`并不危险 — 它只会修改暂存区域。
 
-#### **2.4.3 撤消对文件的修改**
+**2.4.3 撤消到某次提交**
+
+也可以使用 `git reset --hard commit ID` 命令来会滚到某次提交之前的状态。
+
+#### **2.4.4 撤消对文件的修改**
 
 如果想撤销某些修改，将它还原成上次提交时的样子（或者刚克隆完的样子，或者刚把它放入工作目录时的样子）。可以参考`git status`的提示：
 
@@ -957,7 +961,7 @@ Changes to be committed:
 
 #### **2.5.1 查看远程仓库**
 
-`git remote`命令会列出你指定的每一个远程服务器的简写。如果你已经克隆了自己的仓库，那么至少应该能看到`origin -`，这是Git给你克隆的仓库服务器的默认名字：
+`git remote`命令会列出你指定的每一个远程服务器的简写。如果你已经克隆了自己的仓库，那么至少应该能看到`origin -`，这是**所克隆的仓库服务器的默认名字**：
 
 ```shell
 $ git clone https://github.com/schacon/ticgit
@@ -1007,10 +1011,10 @@ $ git remote
 origin
 $ git remote add pb https://github.com/paulboone/ticgit
 $ git remote -v
-originhttps://github.com/schacon/ticgit (fetch)
-originhttps://github.com/schacon/ticgit (push)
-pbhttps://github.com/paulboone/ticgit (fetch)
-pbhttps://github.com/paulboone/ticgit (push)
+origin https://github.com/schacon/ticgit (fetch)
+origin https://github.com/schacon/ticgit (push)
+pb https://github.com/paulboone/ticgit (fetch)
+pb https://github.com/paulboone/ticgit (push)
 ```
 
 现在你可以在命令行中使用字符串`pb`来代替整个URL，如果你想拉取 Paul 的仓库中有但你没有的信息，可以运行`git fetch pb`：
@@ -1069,7 +1073,7 @@ $ git remote show origin
     master pushes to master (up to date)
 ```
 
-它同样会列出远程仓库的URL与跟踪分支的信息。这些信息非常有用，它告诉你正处于`master`分支，并且如果运行`git pull`，就会抓取所有的远程引用，然后将远程`master`分支合并到本地`master`分支。它也会列出拉取到的所有远程引用。
+它同样会列出远程仓库的URL与跟踪分支的信息。这些信息非常有用，它告诉你**正处于`master`分支**，并且**如果运行`git pull`，就会抓取所有的远程引用，然后将远程`master`分支合并到本地`master`分支**。它也会列出拉取到的所有远程引用。
 
 如果你是Git的重度使用者，那么还可以通过`git remote show`看到更多的信息：
 
