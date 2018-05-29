@@ -407,8 +407,8 @@
                     <reload>manual</reload>
                     <!-- 检查变更和自动热部署的时间间隔。 -->
                     <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <!--忽略代码校验，以免 Jetty 启动很慢。 -->
-                    <contextXml>${project.basedir}/src/test/resources/jetty-context.xml</contextXml>
+                    <!--忽略代码校验，以免 Jetty 启动很慢。-->
+                    <contextXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
 					<!--<dumpOnStart>true</dumpOnStart>-->
                     <connectors>
                         <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -435,8 +435,9 @@
                           <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
                           <!--<resourceBase>${project.basedir}/commons</resourceBase>-->
                         </resourceBases>
-						<!-- 指定一个jetty-env.xml文件的路径。在该文件中可使用JNDI。 -->
-                        <jettyEnvXml>${project.basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
+						<!-- 指定一个jetty-env.xml文件的路径，在该文件中可使用JNDI。
+						 确定该文件打包进classpath中，如果把该文件放在测试目录就不行。-->
+                        <jettyEnvXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXml>
                     </webApp>
                     <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
                         <filename>target/access-yyyy_mm_dd.log</filename>

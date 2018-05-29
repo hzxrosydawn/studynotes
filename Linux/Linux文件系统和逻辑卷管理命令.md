@@ -1101,37 +1101,93 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
    [root@localhost ~]# 
    ```
 
-   这个例子使用 `/dev/sdb1` 分区上创建的物理卷，创建了一个名为 `VG01` 的卷组。
+   这个例子使用 `/dev/sdb1` 分区上创建的物理卷，创建了一个名为 `VG01` 的卷组。`Cur PV（当前物理卷数）`、`Act PV（实际物理卷数）` 表示当前卷组由几个物理卷组成。
 
    使用 `vgextend <volume_group> <another_physical_volume>` 命令可以为已存在的卷组添加新的物理卷。
 
    ```shell
-   
+   [root@localhost ~]# vgextend VG01 /dev/sdb2 /dev/sdb3
+     Volume group "VG01" successfully extended
+   [root@localhost ~]# vgdisplay VG01 
+     --- Volume group ---
+     VG Name               VG01
+     System ID             
+     Format                lvm2
+     Metadata Areas        3
+     Metadata Sequence No  2
+     VG Access             read/write
+     VG Status             resizable
+     MAX LV                0
+     Cur LV                0
+     Open LV               0
+     Max PV                0
+     Cur PV                3
+     Act PV                3
+     VG Size               4.99 GiB
+     PE Size               4.00 MiB
+     Total PE              1277
+     Alloc PE / Size       0 / 0   
+     Free  PE / Size       1277 / 4.99 GiB
+     VG UUID               6aYut8-yFel-eniy-CWiO-dMi8-cRH5-uWKWrW
+      
+   [root@localhost ~]# 
    ```
 
-   使用 `vgextend <volume_group> <add_physical_volume>` 命令可以为已存在的卷组去除某些物理卷。
+   使用 `vgreduce <volume_group> <add_physical_volume>` 命令可以为已存在的卷组去除某些物理卷。仅有一个物理卷的卷组不允许再去除仅剩的物理卷。
 
    ```shell
-   
+   [root@localhost ~]# vgreduce VG01 /dev/sdb2 /dev/sdb3
+     Removed "/dev/sdb2" from volume group "VG01"
+     Removed "/dev/sdb3" from volume group "VG01"
+   [root@localhost ~]# vgreduce VG01 /dev/sdb1
+     Can't remove final physical volume "/dev/sdb1" from volume group "VG01"
+   [root@localhost ~]# vgdisplay VG01 
+     --- Volume group ---
+     VG Name               VG01
+     System ID             
+     Format                lvm2
+     Metadata Areas        1
+     Metadata Sequence No  7
+     VG Access             read/write
+     VG Status             resizable
+     MAX LV                0
+     Cur LV                0
+     Open LV               0
+     Max PV                0
+     Cur PV                1
+     Act PV                1
+     VG Size               2.00 GiB
+     PE Size               4.00 MiB
+     Total PE              511
+     Alloc PE / Size       0 / 0   
+     Free  PE / Size       511 / 2.00 GiB
+     VG UUID               6aYut8-yFel-eniy-CWiO-dMi8-cRH5-uWKWrW
+      
+   [root@localhost ~]# 
    ```
 
    使用 `vgremove <volume_group>` 命令可以删除已存在的整个卷组。
 
    ```shell
-   
+   [root@localhost ~]# vgremove VG01 
+     Volume group "VG01" successfully removed
+   [root@localhost ~]# vgdisplay VG01
+     Volume group "VG01" not found
+     Cannot process volume group VG01
+   [root@localhost ~]# 
    ```
 
    在创建卷组时可以一次性指定多个物理卷。
 
    ```shell
-   [root@localhost ~]# vgcreate VG02 /dev/sdb2 /dev/sdb3 
-     Volume group "VG02" successfully created
-   [root@localhost ~]# vgdisplay VG02
+   [root@localhost ~]# vgcreate VG01 /dev/sdb1 /dev/sdb2 /dev/sdb3
+     Volume group "VG01" successfully created
+   [root@localhost ~]# vgdisplay VG01
      --- Volume group ---
-     VG Name               VG02
+     VG Name               VG01
      System ID             
      Format                lvm2
-     Metadata Areas        2
+     Metadata Areas        3
      Metadata Sequence No  1
      VG Access             read/write
      VG Status             resizable
@@ -1139,14 +1195,14 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
      Cur LV                0
      Open LV               0
      Max PV                0
-     Cur PV                2
-     Act PV                2
-     VG Size               2.99 GiB
+     Cur PV                3
+     Act PV                3
+     VG Size               4.99 GiB
      PE Size               4.00 MiB
-     Total PE              766
+     Total PE              1277
      Alloc PE / Size       0 / 0   
-     Free  PE / Size       766 / 2.99 GiB
-     VG UUID               kdsNXS-hp3n-O46Q-9WDV-XFAO-8nJV-fbWYwF
+     Free  PE / Size       1277 / 4.99 GiB
+     VG UUID               4pOIcr-z8iP-IK3S-funj-8NI9-49Pd-klWHC0
       
    [root@localhost ~]# 
    ```
@@ -1155,12 +1211,14 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
 
 3. **创建逻辑卷**
 
-   Linux 系统使用逻辑卷来模拟物理分区，并在其中保存文件系统。 Linux 系统会像处理物理分区一样处理逻辑卷，允许你定义逻辑卷中的文件系统，然后将文件系统挂载到虚拟目录上。 要创建逻辑卷，使用 `lvcreate` 命令。虽然通常不需要在其他 Linux LVM 命令中使用命令行选项，但 `lvcreate` 命令要求至少输入一些选项。
+   Linux 系统使用逻辑卷来模拟物理分区，并在其中保存文件系统。 Linux 系统会像处理物理分区一样处理逻辑卷，允许你定义逻辑卷中的文件系统，然后将文件系统挂载到虚拟目录上。 要创建逻辑卷，使用 `lvcreate` 命令。`lvcreate` 命令通过指定卷组剩余的逻辑区段数来指定逻辑卷的大小。如果当前卷组没有足够的逻辑区段，则可以将向该卷组添加额外的物理卷，或者通过 `lvreduce` 命令来减少现有逻辑卷的大小。
+
+   虽然通常不需要在其他 Linux LVM 命令中使用命令行选项，但 `lvcreate` 命令要求至少输入一些选项。
 
    ```shell
-   -c --chunksize：指定快照逻辑卷的单位大小；
-   -C --contiguous：设置或重置连续分配策略；
-   -i --stripes：指定条带数；
+   -c,	--chunksize ChunkSize[b|B|s|S|k|K|m|M|g|G]：指定快照、缓存池、薄池逻辑卷（thin pool logical volumes）的块单位大小，默认为 KB。对于快照来说，该值必须是 4KiB 到 512KiB 之间 2 的次方，默认为 4KiB。对于缓存池来说，该值必须是32KiB and 1GiB之间 32KiB 的整数倍，默认为 64KiB。当通过逻辑缓存来指定大小，该值可能不小于缓存池的创建块大小。对于薄池，该值必须是 64KiB 到 1GiB 之间 64 KiB 的整数倍。如果没有指定池的元数据大小的话，默认值从 64 KiB 增长到适应池的元数据大小（在 128 MiB范围内）；
+   -C,	--contiguous {y|n}：设置或重置逻辑卷的连续分配策略，默认不连续分配；
+   -i,--stripes Stripes：指定条带数。该值等于分散逻辑卷数据的逻辑卷数量。在创建 RAID 4/5/6 逻辑卷时，额外分区对于内部解释来说同样必要。
    -I --stripesize：指定每个条带的大小；
    -l --extents：指定分配给新逻辑卷的逻辑区段数，或者要用的逻辑区段的百分比；
    -L --size：指定分配给新逻辑卷的硬盘大小；
@@ -1172,46 +1230,153 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
    -r --readahead：设置预读扇区数；
    -R --regionsize：指定将镜像分成多大的区；
    -s snapshot：创建快照逻辑卷；
-   -Z --zero：将新逻辑卷的前1 KB数据设置为零。
+   -Z --zero：将新逻辑卷的前 1 KB 数据设置为零。
    ```
 
-   大多数情况下用到的只是少数几个选项。
+   大多数情况下用到的只是少数几个选项。比如使用 `lvcreate -L <size> <volume_group> -n <logical_volume>` 指定新逻辑卷的大小、所在的卷组、名称后即可创建新的逻辑卷。-L 选项用于为要创建的逻辑卷指定空间大小，而 -n 选项用于为逻辑卷指定名称。
 
    ```shell
-   
+   [root@localhost ~]# lvcreate -L 2G VG01 -n lv01    
+     Logical volume "lv01" created.
+   [root@localhost ~]#
    ```
 
-   如果想查看你创建的逻辑卷的详细情况，可用 `lvdisplay` 命令。
+   也可以使用 -l 选项按照卷组空间的百分比来指定要创建逻辑卷的大小，比如 `lvcreate -l 50%FREE VG01 -n lv02` 命令将使用卷组剩余空间的 50% 来创建一个名为 lv02 的逻辑卷。如果想查看你创建的逻辑卷的详细情况，可用 `lvdisplay <volume_group>` 命令。
 
    ```shell
-   
+   [root@localhost ~]# lvcreate -l 50%FREE VG01 -n lv02
+     Logical volume "lv02" created.
+   [root@localhost ~]# lvdisplay VG01                  
+     --- Logical volume ---
+     LV Path                /dev/VG01/lv01
+     LV Name                lv01
+     VG Name                VG01
+     LV UUID                OoyXAQ-6Jkh-isGh-Ak5N-vvZ3-qatN-o4Q6yP
+     LV Write Access        read/write
+     LV Creation host, time localhost.localdomain, 2018-05-29 23:41:42 +0800
+     LV Status              available
+     # open                 0
+     LV Size                2.00 GiB
+     Current LE             512
+     Segments               2
+     Allocation             inherit
+     Read ahead sectors     auto
+     - currently set to     8192
+     Block device           253:3
+      
+     --- Logical volume ---
+     LV Path                /dev/VG01/lv02
+     LV Name                lv02
+     VG Name                VG01
+     LV UUID                Axe12D-fgnA-pCbv-Qq4F-nhC0-XT7l-MlGpKV
+     LV Write Access        read/write
+     LV Creation host, time localhost.localdomain, 2018-05-29 23:47:05 +0800
+     LV Status              available
+     # open                 0
+     LV Size                1.49 GiB
+     Current LE             382
+     Segments               1
+     Allocation             inherit
+     Read ahead sectors     auto
+     - currently set to     8192
+     Block device           253:4
+      
+   [root@localhost ~]#
    ```
-
-   卷组名用来标识创建新逻辑卷时要使用的卷组。 -l 选项定义了要为逻辑卷指定多少可用的卷组空间。注意，你可以按照卷组空闲空间的百分 比来指定这个值。本例中为新逻辑卷使用了所有的空闲空间。 你可以用-l选项来按可用空间的百分比来指定这个大小，或者用-L选项以字节、千字节 （KB）、兆字节（MB）或吉字节（GB）为单位来指定实际的大小。 -n选项允许你为逻辑卷指定 一个名称（在本例中称作 lvtest）。    
 
 4. **创建文件系统**
 
    运行完 `lvcreate` 命令之后，逻辑卷就已经产生了，但它还没有文件系统。你必须使用相应的命令行程序来创建所需要的文件系统。
 
    ```shell
+   [root@localhost ~]# mkfs.ext4 /dev/VG01/lv01
+   mke2fs 1.42.9 (28-Dec-2013)
+   Filesystem label=
+   OS type: Linux
+   Block size=4096 (log=2)
+   Fragment size=4096 (log=2)
+   Stride=0 blocks, Stripe width=0 blocks
+   131072 inodes, 524288 blocks
+   26214 blocks (5.00%) reserved for the super user
+   First data block=0
+   Maximum filesystem blocks=536870912
+   16 block groups
+   32768 blocks per group, 32768 fragments per group
+   8192 inodes per group
+   Superblock backups stored on blocks: 
+           32768, 98304, 163840, 229376, 294912
    
+   Allocating group tables: done                            
+   Writing inode tables: done                            
+   Creating journal (16384 blocks): done
+   Writing superblocks and filesystem accounting information: done 
+   
+   [root@localhost ~]# mkfs.ext3 /dev/VG01/lv02
+   mke2fs 1.42.9 (28-Dec-2013)
+   Filesystem label=
+   OS type: Linux
+   Block size=4096 (log=2)
+   Fragment size=4096 (log=2)
+   Stride=0 blocks, Stripe width=0 blocks
+   97920 inodes, 391168 blocks
+   19558 blocks (5.00%) reserved for the super user
+   First data block=0
+   Maximum filesystem blocks=402653184
+   12 block groups
+   32768 blocks per group, 32768 fragments per group
+   8160 inodes per group
+   Superblock backups stored on blocks: 
+           32768, 98304, 163840, 229376, 294912
+   
+   Allocating group tables: done                            
+   Writing inode tables: done                            
+   Creating journal (8192 blocks): done
+   Writing superblocks and filesystem accounting information: done 
+   
+   [root@localhost ~]# fdisk -l /dev/VG01/lv*
+   
+   Disk /dev/VG01/lv01: 2147 MB, 2147483648 bytes, 4194304 sectors
+   Units = sectors of 1 * 512 = 512 bytes
+   Sector size (logical/physical): 512 bytes / 512 bytes
+   I/O size (minimum/optimal): 512 bytes / 512 bytes
+   
+   
+   Disk /dev/VG01/lv02: 1602 MB, 1602224128 bytes, 3129344 sectors
+   Units = sectors of 1 * 512 = 512 bytes
+   Sector size (logical/physical): 512 bytes / 512 bytes
+   I/O size (minimum/optimal): 512 bytes / 512 bytes
+   
+   [root@localhost ~]# 
    ```
 
    在创建了新的文件系统之后，可以用标准 `mount` 命令将这个卷挂载到虚拟目录中，就跟它是物理分区一样。唯一的不同是你需要用特殊的路径来标识逻辑卷。
 
    ```shell
-   
+   [root@localhost ~]# mount /dev/VG01/lv01 /appData
+   [root@localhost appData]# ll -a /appData
+   total 24
+   drwxr-xr-x.  3 root root  4096 May 30 00:00 .
+   dr-xr-xr-x. 20 root root  4096 May 26 10:51 ..
+   drwx------.  2 root root 16384 May 30 00:00 lost+found
+   [root@localhost appData]# 
    ```
 
    注意，`mkfs.ext4` 和 `mount` 命令中用到的路径都有点奇怪。路径中使用了卷组名和逻辑卷名，而不是物理分区路径。文件系统被挂载之后，就可以访问虚拟目录中的这块新区域了。
 
-   
+此外，还可以使用以下命令来操作逻辑卷：
 
-   vgchange 激活和禁用卷组
-   
+- vgchange：激活和禁用卷组；
+- vgscan：搜索所有卷组；
+- pvresize：修改物理卷大小；
+- lvresize：修改逻辑卷大小；
+- lvscan：列出所有卷组中的所有逻辑卷；
+- lvs：显示逻辑卷信息；
+- lsblk：显示所有块信息；
+- lvremove：移除逻辑卷。
 
-   lvextend 
-   lvreduce 减小逻辑卷的大小 
+在手动增加或减小逻辑卷的大小时，要特别小心。逻辑卷中的文件系统需要手动修整来处理大小上的改变。大多数文件系统都包含了能够重新格式化文件系统的命令行程序，比如用于 ext2、 ext3 和 ext4 文件系统的 resize2fs 程序。
 
-   在手动增加或减小逻辑卷的大小时，要特别小心。逻辑卷中的文件系统需要手动修整来处理大小上的改变。大多数文件系统都包含了能够重新格式化文件系统的命令行程序，比如用于 ext2、 ext3 和 ext4 文件系统的 resize2fs 程序。
+关于 LVM 的更详细用法可以参考：
 
+- https://wiki.gentoo.org/wiki/LVM/zh-cn#Usage
+- https://wiki.archlinux.org/index.php/LVM
