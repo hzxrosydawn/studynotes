@@ -5,6 +5,10 @@ typora-copy-images-to: appendix
 
 ## eclipse基本配置
 
+显示行号
+
+Window -> Preferences -> General -> Editors -> Text Editors -> Show line numbers
+
 ### 添加 javadoc
 
 1. Window→Pereferences，打开参数选择对话框，展开Java节点，单击“Installed JREs"，此时右边窗口会显示已经加载的jre；
@@ -137,3 +141,34 @@ q1MHdGlxh7nCyn_FpHaVazxTdn1tajjeIABlcgJBc20
 ```
 
 2、重启 Eclipse viplugin 已经破解。
+
+
+
+Eclipse导入工程后工程上显示一个小红叉，但工程里没有文件错误，也没有语法错误，百思不得其解啊，后来在网上找了一些资料说是项目引用的类库路径有问题。【项目】->【右键】->【build path】->【configure build path】->【libraries】，查看一下引用的类库路径。网上都说是因为这里引用错误引起的，但是我在项目导入的时候做的第一件事情就是修改这里的library，因此不是这个原因。
+
+在problems中显示错误是：Target runtime Apache Tomcat 6.0 is not defined. 在网上查了一下终于找到解决方法。方法是：在工程目录下的.settings文件夹里，打开org.eclipse.wst.common.project.facet.core.xml文件，其内容是：
+
+```xml
+<?xmlversion="1.0"encoding="UTF-8"?> 
+<faceted-project> 
+	<runtimename="Apache Tomcat v6.0"/> 
+	<fixedfacet="jst.web"/> 
+	<fixedfacet="jst.java"/> 
+	<installedfacet="jst.java"version="6.0"/> 
+	<installedfacet="jst.web"version="2.5"/> 
+	<installedfacet="wst.jsdt.web"version="1.0"/> 
+</faceted-project>
+```
+
+将其修改为：
+
+```xml
+<?xmlversion="1.0"encoding="UTF-8"?> 
+<faceted-project> 
+	<installedfacet="jst.java"version="6.0"/> 
+	<installedfacet="jst.web"version="2.5"/> 
+	<installedfacet="wst.jsdt.web"version="1.0"/> 
+</faceted-project>
+```
+
+即可。

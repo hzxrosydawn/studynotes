@@ -399,25 +399,44 @@
                     <!--<httpConnector>
                         <port>8081</port>
                     </httpConnector>--> <!--jetty 9 config-->
-                    <stopKey>shutdown</stopKey>
+                    <!-- 指定接收stop命令的端口。 -->
                     <stopPort>9966</stopPort>
-                    <scanIntervalSeconds>5</scanIntervalSeconds>
+                    <!-- 指定发送到关闭端口的字符串来验证stop命令。 -->
+                    <stopKey>shutdown</stopKey>
+                    <!--设置内容改变后是否自动重新加载和部署。默认为automatic-->
                     <reload>manual</reload>
-                    <!--<dumpOnStart>true</dumpOnStart>-->
+                    <!-- 检查变更和自动热部署的时间间隔。 -->
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
+                    <!--忽略代码校验，以免 Jetty 启动很慢。 -->
+                    <contextXml>${project.basedir}/src/test/resources/jetty-context.xml</contextXml>
+					<!--<dumpOnStart>true</dumpOnStart>-->
                     <connectors>
                         <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+							<!-- 可通过命令行指令“mvn -Djetty.port=9999 jetty:run” 来更改默认端口。 -->
                             <port>8080</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
                     </connectors> <!--jetty 8 config-->
+						<!-- 指定系统属性。这里配置的属性不会覆盖命令行和JVM指定的属性，仅用于补充两者配置的属性。 -->
+                        <!--<systemProperties>
+                            <systemProperty>
+                                <name>fooprop</name>
+                                <value>222</value>
+                            </systemProperty>
+                        </systemProperties>-->
+                        <!-- 也可以选择使用属性文件类配置系统属性。
+                        这里配置的属性不会覆盖命令行、JVM和systemProperties指定的属性，仅用于补充三者配置的属性。-->
+                        <!--<systemPropertiesFile>${basedir}/mysys.props</systemPropertiesFile>-->
                     <webApp>
+						<!-- 设置项目的ContextPath，默认为“/${project.artifactId}”。 -->
                         <contextPath>/${project.artifactId}</contextPath>
-                        <!--
+						<!-- Jetty提供静态资源的多个目录，用来替换baseResource元素。 -->
                         <resourceBases>
                           <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
-                          <resourceBase>${project.basedir}/commons</resourceBase>
+                          <!--<resourceBase>${project.basedir}/commons</resourceBase>-->
                         </resourceBases>
-                        -->
+						<!-- 指定一个jetty-env.xml文件的路径。在该文件中可使用JNDI。 -->
+                        <jettyEnvXml>${project.basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
                     </webApp>
                     <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
                         <filename>target/access-yyyy_mm_dd.log</filename>
