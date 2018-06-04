@@ -106,7 +106,7 @@ typora-root-url: ..\graphs\photos
 
     此外，尚未被接受为正式数据类型的 subtype 可以使用 x- 开头的独立名称（例如 application/x-gzip）。vnd- 开头的固有名称也可以使用（例如 application/vnd.ms-excel）。
 
-    parameter 可以用来指定附加信息，更多情况下是用于指定 text/plain 和 text/html 等的文字编码方式的 charset 参数。MIME 根据 type 制定了默认的 subtype，当客户端不能确定消息的 subtype 的情况下，消息被看作默认的subtype 进行处理。text 默认是 text/plain，application 默认是 application/octet-stream，而 multipart 默认情况下被看作 multipart/mixed。
+    parameter 可以用来指定附加信息，更多情况下是用于指定 text/plain 和 text/html 等的文字编码方式的 charset 参数，如“Content-type: text/plain; charset=us-ascii ”。MIME 根据 type 制定了默认的 subtype，当客户端不能确定消息的 subtype 的情况下，消息被看作默认的subtype 进行处理。text 默认是 text/plain，application 默认是 application/octet-stream，而 multipart 默认情况下被看作 multipart/mixed。
 
   - Content-Transfer-Encoding：这个区域使指定 ASCII 以外的字符编码方式成为可能。形式如下
 
@@ -295,18 +295,6 @@ greenmail 1.5.x requires JDK 1.7+ and JavaMail 1.5+, greenmail 1.4.x requires JD
 </dependency>
 ```
 
-JavaMail API 的包有：
-
-- javax.mail：包含模拟邮件系统的类；
-
-- javax.mail.event：包含代表邮件系统的监听器和事件类。
-
-- javax.mail.internet：包含代表特定的邮件系统的类；
-
-- javax.mail.search：包含消息查询的类。
-
-- javax.mail.util：包含邮件操作的工具类。
-
 ##### Session
 
 javax.mail.Session final 类定义了基本的邮件会话。就像 Http 会话那样，邮件收发工作都是基于这个会话的。可以通过该类的以下静态方法获取其对象：
@@ -318,21 +306,20 @@ javax.mail.Session final 类定义了基本的邮件会话。就像 Http 会话�
 
 传入的 java.util.Properties 参数对象需要设置 [JavaMail 规范](https://javaee.github.io/javamail/docs/JavaMail-1.5.pdf) 中附录 A 列出的属性：
 
-- mail.store.protocol: Specifies the **default Message Access Protocol**. The Session.getStore() method returns a Store object that implements this protocol. The client can override this property and explicitly specify the protocol with the Session.getStore(String protocol) method. The default value is the first appropriate protocol in the config files.
-- mail.transport.protocol: Specifies the **default Transport Protocol**. The Session.getTransport() method returns a Transport object that implements this protocol. The client can override this property and explicitly specify the protocol by using Session.getTransport(String protocol) method. The default value is the first appropriate protocol in the config files.
-- mail.host: Specifies the **default Mail server**. The Store and Transport object’s connect methods use this property, if the protocol specific host property is absent, to locate the target host.The default value is the local machine
-- mail.user: Specifies **the username to provide when connecting to a Mail server**. The Store and Transport object’s connect methods use this property, if the protocol specific username property is absent, to obtain the username. The default value is user.name.
-- mail.protocol.host: Specifies **the protocol-specific default Mail server**. This **overrides the mail.host property**. The default value is mail.host.
-- mail.protocol.user: Specifies the protocol-specific default username for connecting to the Mail server. This overrides the mail.user property. The default value is mail.user.
-- mail.from: Specifies **the return address of the current user**. **Used by the InternetAddress.getLocalAddress method to specify the current user’s email address**. The default value is username@host.
-- mail.debug: Specifies **the initial debug mode**. **Setting this property to true will turn on debug mode**, while setting it to false turns debug mode off. Note that the Session.setDebug method also controls the debug mode. The default value is false.
+- **mail.store.protocol**: Specifies the **default Message Access Protocol**. The Session.getStore() method returns a Store object that implements this protocol. The client can override this property and explicitly specify the protocol with the Session.getStore(String protocol) method. The default value is the first appropriate protocol in the config files.
+- **mail.transport.protocol**: Specifies the **default Transport Protocol**. The Session.getTransport() method returns a Transport object that implements this protocol. The client can override this property and explicitly specify the protocol by using Session.getTransport(String protocol) method. The default value is the first appropriate protocol in the config files.
+- **mail.host**: Specifies the **default Mail server**. The Store and Transport object’s connect methods use this property, if the protocol specific host property is absent, to locate the target host.The default value is the local machine
+- **mail.user**: Specifies **the username to provide when connecting to a Mail server**. The Store and Transport object’s connect methods use this property, if the protocol specific username property is absent, to obtain the username. The default value is user.name.
+- **mail.protocol.host**: Specifies **the protocol-specific default Mail server**. This **overrides the mail.host property**. The default value is mail.host.
+- **mail.protocol.user**: Specifies the protocol-specific default username for connecting to the Mail server. This overrides the mail.user property. The default value is mail.user.
+- **mail.from**: Specifies **the return address of the current user**. **Used by the InternetAddress.getLocalAddress method to specify the current user’s email address**. The default value is username@host.
+- **mail.debug**: Specifies **the initial debug mode**. **Setting this property to true will turn on debug mode（which will print the interactive commands to the console）**, while setting it to false turns debug mode off. Note that the Session.setDebug method also controls the debug mode. The default value is false.
 
-传入的 javax.mail.Authenticator 抽象类描述了如何获取网络连接的认证信息。当需要认证时，系统会使用该抽象类的子类对象的方法来获取认证信息。创建 javax.mail.Session 对象时传入的 Authenticator 对象会与后续请求的 Authenticator 比较，如果相同或来自同一个 ClassLoader 则后续的请求才被允许。如果创建 javax.mail.Session 对象传入的 Authenticator 对象为 null，则后续的请求都可以获得并使用对应的 Session。
+当需要认证时，系统会使用 javax.mail.Authenticator 抽象类的子类对象的方法来获取认证信息。创建 javax.mail.Session 对象时传入的 Authenticator 对象会与后续请求的 Authenticator 比较，如果相同或来自同一个 ClassLoader 则后续的请求才被允许。如果创建 javax.mail.Session 对象传入的 Authenticator 对象为 null，则后续的请求都可以获得并使用对应的 Session。
 
 ```java
 // get default session
 Properties props = new Properties();
-
 Session session = Session.getDefaultInstance(props, null);
 
 // get customized session
@@ -368,10 +355,6 @@ Message 抽象类是创建和解析邮件的核心 API，用来模拟一封电�
 Transport
 
 javax.mail.Tranport 抽象类用于执行邮件的发送任务。该类继承了javax.mail.Service类，它用于连接 SMTP 服务器并把包含在 Message 对象中的邮件数据发送到 SMTP 服务器。Transport 类是一个抽象类，不同的实现子类实现不同的邮件发送协议。其常用方法有：
-
-
-
-
 
 
 

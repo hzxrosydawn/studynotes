@@ -88,6 +88,16 @@
         <!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
         建议使用 2.x 版本（1.x 版本功能有限且与难用，除非是古董级的项目） -->
         <quartz.version>2.2.1</quartz.version>
+		
+		<!-- javax.mail-api 1.6.x 需要 JDK 1.7＋，javax.mail-api 1.5.x 需要 JDK 1.5+ -->
+		<javax.mail.version>1.5.6</javax.mail.version>
+		<!-- commons-email基于JavaMail，目的是简化JavaMail的操作。commons-email各版本对JDK版本的要求同JavaMail API。-->
+        <commons-email.version>1.5</commons-email.version>
+		<!-- java mail test suite of email servers.
+        greenmail 1.5.x requires JDK 1.7+ and JavaMail 1.5+, greenmail 1.4.x requires JDK 1.6+ and JavaMail 1.5+ -->
+        <greenmail.version>1.4.1</greenmail.version>
+		<!-- slf4j-simple依赖于slf4j-api。某些框架仅包含了slf4j-api，故需要添加slf4j-simple才行。-->
+        <slf4j-simple.version>1.7.1</slf4j-simple.version>
     </properties>
 
     <dependencies>
@@ -341,6 +351,34 @@
             <artifactId>quartz-jobs</artifactId>
             <version>${quartz.version}</version>
         </dependency>
+		
+		<!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>${commons-email.version}</version>
+        </dependency>
+		<!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+            <version>${greenmail.version}</version>
+            <scope>test</scope>
+        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+		<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
+            <scope>test</scope>
+        </dependency>
+		
     </dependencies>
     <build>
         <finalName>userblog</finalName>
