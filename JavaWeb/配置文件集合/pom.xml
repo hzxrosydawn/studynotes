@@ -8,12 +8,16 @@
     <name>userblog Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
         Junit 绑定了一个 hamcrest-core 1.3 的包，但不建议使它，最好排除这个jar包，而是使用 hamcrest-library 1.3的jar包-->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <!-- testNG需要 JDK 1.7+ -->
-        <testng.version>6.10</testng.version>
+        <!-- The last version of TestNG supporting JDK 1.5 and 1.6 is 6.8.21.
+        The last version of TestNG supporting JDK 1.7 is -->
+        <testng.version>6.14.2</testng.version>
         <!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
         <mockito.version>2.10.0</mockito.version>
         <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
@@ -67,6 +71,9 @@
         Log4j 2.4 及以上版本需要 1.7 及以上的 JDK，Log4j 2.0-alpha1 到 2.3 版本需要 1.6 及以上的 JDK。-->
         <log4j2.version>2.3</log4j2.version>
         <log4j.version>1.2.17</log4j.version>
+		
+		<!-- dom4j 1.6.1基于JDK 1.4编译，自2006年到现在（201805）还未更新过。 -->
+		<dom4j.version>1.6.1</dom4j.version>
 
         <!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
         commons-lang 3.5 开始要求 JDK 1.6+，commons-lang 3.6 要求 JDK 1.7+ -->
@@ -313,6 +320,12 @@
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+		
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${dom4j.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -383,16 +396,163 @@
     <build>
         <finalName>userblog</finalName>
         <plugins>
-            <!-- 此编译插件强制指定编译所用的JDK版本，可以避免必须每次手动将IDE中的编译JDK版本调整到已有较高JDK版本 -->
+            <!-- maven 核心插件 -->
+            <!-- maven-clean-plugin 插件负责删除编译生成的 target 目录 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+            <!-- maven-resources-plugin -->
+            <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- maven-compiler-plugin 插件负责处理编译 -->
+			<!-- 此编译插件强制指定编译所用的JDK版本，可以避免必须每次手动将IDE中的编译JDK版本调整到已有较高JDK版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.6.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>utf-8</encoding>
+                    <!-- 指定编译的 JDK 版本。默认为 1.5，可以避免手动将 IDE 中的编译 JDK 版本调整到指定 JDK 版本。 -->
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <!-- 指定编译所用的字符集。 -->
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+
+            <!-- maven-source-plugin 插件用于生成源码 jar 包。 -->
+            <!-- see http://maven.apache.org/plugins/maven-source-plugin/ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.0</version>
+                <!-- 生成源码 jar 包的相关配置。  -->
+                <configuration>
+                    <!-- 指定源码 jar 包的输出目录。默认为 target 目录。 -->
+                    <!--<outputDirectory>/absolute/path/to/the/output/directory</outputDirectory>-->
+                    <!-- 指定生成源码 jar 包的名称。默认以“groupId-artifactId-version”开头、以"-sources.jar”结尾。
+                     测试源码包以“-test-sources.jar”结尾。 -->
+                    <!--<finalName>filename-of-generated-jar-file</finalName>-->
+                    <!-- 指定是否将源码添加到项目构件（artifact）列表中。 -->
+                    <attach>false</attach>
+                </configuration>
+                <!-- 每个 execution 子元素表示一个任务。 -->
+                <executions>
+                    <!-- 将指定的插件目标绑定到指定的生命周期阶段。-->
+                    <execution>
+                        <!-- 指定任务的 id。 -->
+                        <id>attach-sources</id>
+                        <!-- 指定目标绑定的生命周期阶段为 verify（默认绑定到 package 阶段）。 -->
+                        <phase>verify</phase>
+                        <goals>
+                            <!-- jar-no-fork 和 test-jar-no-fork 目标分别用于创建主源码包和测试源码包。 -->
+                            <goal>jar-no-fork</goal>
+                            <goal>test-jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 生成javadoc文档包的插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.2</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-shade-plugin 插件可以将应用打包为超级的 uber-jar（也称为fat jar，或shaded jar）。在打包的过程中，可以
+                包含依赖库、重命名依赖库的包名（以避免类库的冲突、有选择地打包。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <!-- shade goal 默认加入到 Maven 的 package 阶段 -->
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+
+                        <configuration>
+                            <!-- put your configurations here -->
+
+                            <transformers>
+                                <!-- ManifestResourceTransformer 设置 MANIFEST 中的 entries -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <!-- 指定应用带 main() 方法的类。这样打出的包可以直接运行（main方法） -->
+                                        <!--<Main-Class>${app.main.class}</Main-Class>-->
+                                        <X-Compile-Source-JDK>${manifest.compile.source}</X-Compile-Source-JDK>
+                                        <X-Compile-Target-JDK>${manifest.compile.target}</X-Compile-Target-JDK>
+                                    </manifestEntries>
+                                </transformer>
+
+                                <!-- DontIncludeResourceTransformer 用于在打包时不包含某些文件。
+                                下面的配置包含.txt文件 -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                                    <resource>.txt</resource>
+                                </transformer>
+
+                                <!-- IncludeResourceTransformer 用于在打包时包含某些文件。
+                                下面的配置包含META-INF/README/README.txt-->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>META-INF/README</resource>
+                                    <file>README.txt</file>
+                                </transformer>
+                            </transformers>
+
+                            <relocations>
+                                <!-- 改变默认包名以避免冲突 -->
+                                <!--<relocation>
+                                    <pattern>com.app.old.jar</pattern>
+                                    <shadedPattern>com.app.new.jar</shadedPattern>
+                                </relocation>-->
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <!-- toolchains插件使当前Maven之前老版本JDK项目的开发。
             需要将conf目录下的toolchains.xml文件配置好后放到本地仓库的根目录下。
