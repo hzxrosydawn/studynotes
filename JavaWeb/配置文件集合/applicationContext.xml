@@ -3,6 +3,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -22,9 +23,30 @@
             </list>
         </property>
     </bean>
+	
+	<!-- 配置JNDI数据源。开发、测试、UAT和生产的数据源配置是不同的，但JNDI数据源的名称可以相同。 -->
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+          p:jndiName="jndi/jndiDataSource"
+          p:lookupOnStartup="false"
+          p:cache="true"
+          p:proxyInterface="javax.sql.DataSource"/>
+
+    <!--DBCP2数据源-->
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+          p:driverClassName="com.mysql.jdbc.Driver"
+          p:url="jdbc:mysql://localhost:3306/sample_db"
+          p:username="vincent"
+          p:password="hzx123"
+          p:maxTotal="50"
+          p:maxIdle="20"
+          p:minIdle="10"
+          p:maxWaitMillis="6000"
+          p:testOnBorrow="false"
+          p:testWhileIdle="true"
+          p:timeBetweenEvictionRunsMillis="288700000"/>-->
 
     <!--c3p0连接池常用配置-->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <!--数据库连接驱动-->
         <property name="driverClass" value="${c3p0.driverClass}"/>
         <!--数据库的url-->
@@ -78,7 +100,7 @@
         <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false-->
         <!--c3p0是异步操作的，缓慢的JDBC操作通过帮助进程完成。扩展这些操作可以有效的提升性能通过多线程实现多个操作同时执行。默认: 3-->
         <property name="numHelperThreads" value="${c3p0.numHelperThreads}"/>
-    </bean>
+    </bean>-->
 
     <!--注入hibernate使用的SessionFactory对象-->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">

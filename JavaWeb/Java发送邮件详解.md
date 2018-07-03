@@ -106,7 +106,7 @@ typora-root-url: ..\graphs\photos
 
     此外，尚未被接受为正式数据类型的 subtype 可以使用 x- 开头的独立名称（例如 application/x-gzip）。vnd- 开头的固有名称也可以使用（例如 application/vnd.ms-excel）。
 
-    parameter 可以用来指定附加信息，更多情况下是用于指定 text/plain 和 text/html 等的文字编码方式的 charset 参数。MIME 根据 type 制定了默认的 subtype，当客户端不能确定消息的 subtype 的情况下，消息被看作默认的subtype 进行处理。text 默认是 text/plain，application 默认是 application/octet-stream，而 multipart 默认情况下被看作 multipart/mixed。
+    parameter 可以用来指定附加信息，更多情况下是用于指定 text/plain 和 text/html 等的文字编码方式的 charset 参数，如“Content-type: text/plain; charset=us-ascii ”。MIME 根据 type 制定了默认的 subtype，当客户端不能确定消息的 subtype 的情况下，消息被看作默认的subtype 进行处理。text 默认是 text/plain，application 默认是 application/octet-stream，而 multipart 默认情况下被看作 multipart/mixed。
 
   - Content-Transfer-Encoding：这个区域使指定 ASCII 以外的字符编码方式成为可能。形式如下
 
