@@ -160,9 +160,9 @@ Log4j 1.x 和 Logback 都有一个日志级别继承的概念。Log4j 2 中，Lo
 
 ### Appender
 
-Log4j 可将日志打印输出到多种位置（目前可以为控制台、文件、多种数据库 API 、远程套接字服务器、Apache Flume 、JMS 、远程 UNIX Syslog daemon），Log4j 中的日志输出位置称为 [Appender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Appender.html) （输出源）。可以通过调用当前 Configuration 的[addLoggerAppender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/config/Configuration.html#addLoggerAppenderorg.apache.logging.log4j.core.Logger20org.apache.logging.log4j.core.Appender) 方法将一个 Appender 添加给一个 Logger 。如果一个 Logger 匹配的同名 LoggerConfig 不存在，就会创建一个，Appender 将被添加到该 LoggerConfig ，其他所有 Logger 将会收到通知并更新其 LoggerConfig 引用。
+[Appender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Appender.html) （输出源）负责将日志事件数据写到目标位置。如果一个 Logger 匹配的同名 LoggerConfig 不存在，就会创建一个，Appender 将被添加到该 LoggerConfig ，其他所有 Logger 将会收到通知并更新其 LoggerConfig 引用。
 
-给定 Logger 所允许的每条日志打印请求都会传递给其 LoggerConfig 中的所有 Appender ，也会传递给该 LoggerConfig 的 parent LoggerConfig 中的 Appender 。也就是说，**Appender 会从 LoggerConfig 的继承中继承相加性**。例如，如果一个控制台 Appender 添加到 root Logger中，那么所有允许的日志打印请求将至少输出到控制台，如果一个文件 Appender 添加到一个 LoggerConfig C 中，C 和 C 的 children 允许的日志打印请求将会输出到文件和控制台。可以在声明 Logger 的配置文件中设置 `additivity="false"` 来禁用这种叠加继承。
+某个 Logger 所允许的每条日志打印请求都会传递给其 LoggerConfig 中的所有 Appender ，也会传递给该 LoggerConfig 的 parent LoggerConfig 中的 Appender 。也就是说，**Appender 会从 LoggerConfig 的继承中继承相加性**。例如，如果一个控制台 Appender 添加到 root Logger中，那么所有允许的日志打印请求将至少输出到控制台，如果一个文件 Appender 添加到一个 LoggerConfig C 中，C 和 C 的 children 允许的日志打印请求将会输出到文件和控制台。可以在声明 Logger 的配置文件中设置 `additivity="false"` 来禁用这种叠加继承。
 
 > Appender Additivity
 >
@@ -216,8 +216,6 @@ Log4j 包含 4 种 ConfigurationFactory 的实现，分别适用于 JSON 、YAML
 10. 如果上面的配置文件都没有找到，就使用默认的 DefaultConfiguration 配置。
 
 ### XML 配置简单示例
-
-**案例1**：
 
 创建一个名为 `log4j2test` 的应用，该应用有如下两个类：
 
@@ -307,8 +305,6 @@ ERROR StatusLogger No Log4j 2 configuration file found. Using default configurat
 ```
 
 ### 叠加性
-
-**案例2**：
 
 假如你想忽略除了 `com.foo.Bar` 以外的所有 `TRACE` 日志，仅更改日志级别无法达到目的，解决办法是在配置文件中新建一个 logger 定义：
 
@@ -560,25 +556,781 @@ Configuration 元素可以使用以下属性：
 - schema ：为类加载器定位 XML Schema 位置以验证配置。仅当 strict 属性设置为 true 时该属性才有效，如果不设置该属性，则不会验证 Schema ；  
 - shutdownHook ：设置当 JVM 关闭时 log4j 是否也自动关闭。默认是启用的，也可以设置该属性为 disable 来禁用该关闭钩子；
 - shutdownTimeout ：设置当 JVM 关闭后 Appender 和后台任务超时多少毫秒才关闭。默认为 0 ，表示每个 Appender 使用其默认的超时，不等待后台任务。这仅是个提示，而不能保证关闭进程不会花费更长的时间。将该值设置过小可能增加日志事件在还未输出到最终位置之前就丢失的风险。如果 shutdownHook 属性未设置，那么将不会使用该属性；
-- status ：应该打印到控制台的**内部 Log4j 日志事件**的级别，可设置的值有 `trace` 、`debug` 、`info` 、`warn` 、`error` 和 `fatal` ，Log4j 将会打印出内部初始化等事件的详细信息。设置该属性为 `trace` 是查找 Log4j 故障的第一手工具。也可以通过设置  `log4j2.debug` 系统属性来输出 Log4j 内部日志，包括配置文件加载前的内部日志；
+- status ：应该打印到控制台的**内部 Log4j 日志事件**的级别，可设置的值有 `trace` 、`debug` 、`info` 、`warn` 、`error` 和 `fatal` ，Log4j 将会打印出内部初始化等事件的详细信息（在发现配置文件之后）。设置该属性为 `trace` 是查找 Log4j 故障的第一手工具。也可以通过设置  `log4j2.debug` 系统属性来输出 Log4j 内部日志，包括配置文件加载前的内部日志（从 log4j 2.9 开始）；
 - strict ：使用严格的 XML 格式， JSON 格式的配置文件不支持该属性；
 - verbose ：加载插件时是否显示诊断信息。
+
+### 配置  Logger
+
+LoggerConfig  通过 logger 元素进行配置。logger 元素可用属性如下：
+
+- name ：必选，用于标识该 logger ；
+- level ：可选，用来设置日志级别。其值可以为 TRACE 、DEBUG 、INFO 、WARN 、ERROR 、ALL 或者 OFF。如果没有指定该属性，则默认为 ERROR ；
+- additivity ：可选的布尔值，用来设置相加性。如果没有指定该属性，则默认为 true 。
+
+LoggerConfig（包括 root LoggerConfig）可以通过属性来配置，这些属性将会添加到 ThreadContextMap 中的属性复本中。Appender 、Filter 、 Layout 等可以引用这些属性，就好像这些属性是 ThreadContextMap 中的属性一样。这些属性中的变量可以在解析（parse）配置或动态输出打印日志时计算（resolve）出来。
+
+LoggerConfig 也可以通过一个或多个 AppenderRef 元素来配置，每个 Appender 的引用将会关联到特定的 LoggerConfig。如果一个 LoggerConfig 配置了多个 Appender ，那么其中的每个 Appender 都会等价地处理日志事件。
+
+每个配置都必须要有一个 root Logger，如果没有显式配置 root LoggerConfig ，那么默认的 root LoggerConfig 的日志级别为 ERROR 、Appender 为 Console 。root Logger 和其他 Logger 的不同主要在于以下两点：
+
+- root Logger 没有 name 属性；
+- root Logger 不支持 additivity 属性，因为它没有 parent 。
+
+### 配置 Appender
+
+Log4j 使用 [Appender](http://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/Appender.html) 将日志事件数据写到各种目标位置（目前可以为控制台、文件、多种数据库 API 、远程套接字服务器、Apache Flume 、JMS 、远程 UNIX Syslog daemon）。
+
+Appender 可以通过特定的 Appender 插件名或 appender 元素（带有指定 Appender 插件名的 type 属性）来配置。另外，每个 Appender 都必须要有一个 name 属性，用来指定一个去别区其他 Appender 的唯一标识，该标识的值在 Logger 中通过 AppenderRef 来引用，从而将该 Appender 配置到该 Logger 中。
+
+Appender 在将日志数据写入目标位置之前，一般会将日志数据通过 Layout 进行格式化。Layout 也可以通过特定的 Layout 插件名或 layout 元素（带有指定 Layout 插件名的 type 属性）来配置。
+
+每个 Appender 都必须实现 Appender 接口，多数 Appender 都扩展自 [AbstractAppender](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/AbstractAppender.html) ，该抽象类添加了 [Lifecycle](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/LifeCycle.html) 和 [Filterable](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/filter/Filterable.html) 支持。Lifecycle 可以对日志组件在配置加载后进行初始化和在关闭时进行清理等操作。Filterable  可以让日志组件绑定用于处理日志事件的过滤器。
+
+代表不同目标位置的各种 Appender 也具有其功能所需的其他属性和子元素。这里选择常用的 Appender 加以介绍。
+
+#### ConsoleAppender
+
+ConsoleAppender 会将输出写入 System.out（默认目标位置）或 System.err 中。必须提供一个 Layout 来格式化 LogEvent。
+
+| 属性名           | 类型    | 描述                                                         |
+| ---------------- | ------- | ------------------------------------------------------------ |
+| filter           | Filter  | 指定一个过滤器来决定是否将日志事件传递给 Appender 处理。可以指定为一个 CompositeFilter 来使用多个过滤器。 |
+| layout           | Layout  | 指定格式化 LogEvent 的 Layout 。如果没有指定 Layout ，则默认使用 `%m%n` 格式。 |
+| follow           | boolean | 在配置好之后，是否可以通过 System.setOut 或 System.setErr 来重新指定输出位置为 System.out 或 System.err。不能在 Windows 下用于 Jansi ，也不能和 `direct` 属性一起使用。 |
+| direct           | boolean | 绕开 `java.lang.System.out/.err` 直接写入 `java.io.FileDescriptor` 。当输出重定向到文件或其他目标时可以节约 10 倍的性能消耗。不能在 Windows 下用于 Jansi ，也性不能和 `follow` 属性一起使用。在多线程应用中，输出不会遵循 `java.lang.System.setOut()/.setErr()` ，而是可能会和其他输出纠缠在一起输出到 `java.lang.System.out/.err` 。该属性是 2.6.2 版本新增的，目前仅在 Linux 和 Windows 下的 Oracle JVM 环境中测试过。 |
+| name             | String  | 必选的 Appender 的名称，表示区别于其他 Appender 的唯一标识。 |
+| ignoreExceptions | boolean | 默认为 `true` ，表示当输出事件时出现的异常将会被内部记录而忽略。 当设置为 `false` 时，则会将异常传播给调用者。当将该 Appender 包装成 [FailoverAppender](https://logging.apache.org/log4j/2.x/manual/appenders.html#FailoverAppender) 时，必须设置为 `false` 。 |
+| target           | String  | `SYSTEM_OUT` 或 `SYSTEM_ERR` 。默认为 `SYSTEM_OUT` 。        |
+
+典型的 ConsoleAppender 配置如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Appenders>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+#### RollingFileAppender
+
+RollingFileAppender 会将输出到 fileName 参数指定的文件中，且需要指定 [TriggeringPolicy](https://logging.apache.org/log4j/2.x/manual/appenders.html#TriggeringPolicies) 和 [RolloverStrategy](https://logging.apache.org/log4j/2.x/manual/appenders.html#RolloverStrategies) 。其中 TriggeringPolicy 决定是否生成新的日志文件，RolloverStrategy 决定如何生成新的日志文件。如果没有配置 RolloverStrategy ， 则会使用 [DefaultRolloverStrategy](https://logging.apache.org/log4j/2.x/manual/appenders.html#DefaultRolloverStrategy) 。从 Log4j 2.5 开始，可以在 DefaultRolloverStrategy 中配置一个[自定义的删除动作](https://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover)。从 Log4j 2.8 开始，如果没有指定文件名，则会使用 [DirectWriteRolloverStrategy](https://logging.apache.org/log4j/2.x/manual/appenders.html#DirectWriteRolloverStrategy) 来代替 DefaultRolloverStrategy 。从 Log4j 2.9 开始，可以在 DefaultRolloverStrategy 中配置一个[自定义的 POSIX 文件属性查看动作](https://logging.apache.org/log4j/2.x/manual/appenders.html#CustomPosixViewAttributeOnRollover)，如果没有定义该动作，则将会使用从 RollingFileAppender  继承的 POSIX 。
+
+RollingFileAppender 不支持文件锁。
+
+可用属性如下：
+
+| 属性名           | 类型             | 描述                                                         |
+| ---------------- | ---------------- | ------------------------------------------------------------ |
+| append           | boolean          | When true - the default, records will be appended to the end of the file. When set to false, the file will be cleared before new records are written. |
+| bufferedIO       | boolean          | When true - the default, records will be written to a buffer and the data will be written to disk when the buffer is full or, if immediateFlush is set, when the record is written. File locking cannot be used with bufferedIO. Performance tests have shown that using buffered I/O significantly improves performance, even if immediateFlush is enabled. |
+| bufferSize       | int              | When bufferedIO is true, this is the buffer size, the default is 8192 bytes. |
+| createOnDemand   | boolean          | The appender creates the file on-demand. The appender only creates the file when a log event passes all filters and is routed to this appender. Defaults to false. |
+| filter           | Filter           | A Filter to determine if the event should be handled by this Appender. More than one Filter may be used by using a CompositeFilter. |
+| fileName         | String           | The name of the file to write to. If the file, or any of its parent directories, do not exist, they will be created. |
+| filePattern      | String           | The pattern of the file name of the archived log file. The format of the pattern is dependent on the RolloverPolicy that is used. The DefaultRolloverPolicy will accept both a date/time pattern compatible with[SimpleDateFormat](http://download.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html) and/or a %i which represents an integer counter. The pattern also supports interpolation at runtime so any of the Lookups (such as the [DateLookup](https://logging.apache.org/log4j/2.x/manual/lookups.html#DateLookup)) can be included in the pattern. |
+| immediateFlush   | boolean          | When set to true - the default, each write will be followed by a flush. This will guarantee the data is written to disk but could impact performance.Flushing after every write is only useful when using this appender with synchronous loggers. Asynchronous loggers and appenders will automatically flush at the end of a batch of events, even if immediateFlush is set to false. This also guarantees the data is written to disk but is more efficient. |
+| layout           | Layout           | The Layout to use to format the LogEvent. If no layout is supplied the default pattern layout of "%m%n" will be used. |
+| name             | String           | The name of the Appender.                                    |
+| policy           | TriggeringPolicy | The policy to use to determine if a rollover should occur.   |
+| strategy         | RolloverStrategy | The strategy to use to determine the name and location of the archive file. |
+| ignoreExceptions | boolean          | The default is `true`, causing exceptions encountered while appending events to be internally logged and then ignored. When set to `false` exceptions will be propagated to the caller, instead. You must set this to `false` when wrapping this Appender in a [FailoverAppender](https://logging.apache.org/log4j/2.x/manual/appenders.html#FailoverAppender). |
+| filePermissions  | String           | File attribute permissions in POSIX format to apply whenever the file is created.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view.Examples: rw------- or rw-rw-rw- etc... |
+| fileOwner        | String           | File owner to define whenever the file is created.Changing file's owner may be restricted for security reason and Operation not permitted IOException thrown. Only processes with an effective user ID equal to the user ID of the file or with appropriate privileges may change the ownership of a file if [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) is in effect for path.Underlying files system shall support file [owner](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/FileOwnerAttributeView.html) attribute view. |
+| fileGroup        | String           | File group to define whenever the file is created.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view. |
+
+##### Triggering Policies
+
+##### Composite Triggering Policy
+
+The `CompositeTriggeringPolicy` combines multiple triggering policies and returns true if any of the configured policies return true. The `CompositeTriggeringPolicy` is configured simply by wrapping other policies in a `Policies` element.
+
+For example, the following XML fragment defines policies that rollover the log when the JVM starts, when the log size reaches twenty megabytes, and when the current date no longer matches the log’s start date.
+
+```xml
+<Policies>
+  <OnStartupTriggeringPolicy />
+  <SizeBasedTriggeringPolicy size="20 MB" />
+  <TimeBasedTriggeringPolicy />
+</Policies>
+```
+
+##### Cron Triggering Policy
+
+The `CronTriggeringPolicy` triggers rollover based on a cron expression.
+
+| Parameter Name    | Type    | Description                                                  |
+| ----------------- | ------- | ------------------------------------------------------------ |
+| schedule          | String  | The cron expression. The expression is the same as what is allowed in the Quartz scheduler. See [CronExpression](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/util/CronExpression.html) for a full description of the expression. |
+| evaluateOnStartup | boolean | On startup the cron expression will be evaluated against the file's last modification timestamp. If the cron expression indicates a rollover should have occurred between that time and the current time the file will be immediately rolled over. |
+
+##### OnStartup Triggering Policy
+
+The `OnStartupTriggeringPolicy` policy causes a rollover if the log file is older than the current JVM's start time and the minimum file size is met or exceeded.
+
+| Parameter Name | Type | Description                                                  |
+| -------------- | ---- | ------------------------------------------------------------ |
+| minSize        | long | The minimum size the file must have to roll over. A size of zero will cause a roll over no matter what the file size is. The default value is 1, which will prevent rolling over an empty file. |
+
+*Google App Engine note:*
+When running in Google App Engine, the OnStartup policy causes a rollover if the log file is older than *the time when Log4J initialized*. (Google App Engine restricts access to certain classes so Log4J cannot determine JVM start time with`java.lang.management.ManagementFactory.getRuntimeMXBean().getStartTime()` and falls back to Log4J initialization time instead.)
+
+##### SizeBased Triggering Policy
+
+The `SizeBasedTriggeringPolicy` causes a rollover once the file has reached the specified size. The size can be specified in bytes, with the suffix KB, MB or GB, for example `20MB`.
+
+##### TimeBased Triggering Policy
+
+The `TimeBasedTriggeringPolicy` causes a rollover once the date/time pattern no longer applies to the active file. This policy accepts an `interval` attribute which indicates how frequently the rollover should occur based on the time pattern and a `modulate` boolean attribute.
+
+| Parameter Name | Type    | Description                                                  |
+| -------------- | ------- | ------------------------------------------------------------ |
+| interval       | integer | How often a rollover should occur based on the most specific time unit in the date pattern. For example, with a date pattern with hours as the most specific item and and increment of 4 rollovers would occur every 4 hours. The default value is 1. |
+| modulate       | boolean | Indicates whether the interval should be adjusted to cause the next rollover to occur on the interval boundary. For example, if the item is hours, the current hour is 3 am and the interval is 4 then the first rollover will occur at 4 am and then next ones will occur at 8 am, noon, 4pm, etc. |
+| maxRandomDelay | integer | Indicates the maximum number of seconds to randomly delay a rollover. By default, this is 0 which indicates no delay. This setting is useful on servers where multiple applications are configured to rollover log files at the same time and can spread the load of doing so across time. |
+
+#### Rollover Strategies
+
+##### Default Rollover Strategy
+
+The default rollover strategy accepts both a date/time pattern and an integer from the filePattern attribute specified on the RollingFileAppender itself. If the date/time pattern is present it will be replaced with the current date and time values. If the pattern contains an integer it will be incremented on each rollover. If the pattern contains both a date/time and integer in the pattern the integer will be incremented until the result of the date/time pattern changes. If the file pattern ends with ".gz", ".zip", ".bz2", ".deflate", ".pack200", or ".xz" the resulting archive will be compressed using the compression scheme that matches the suffix. The formats bzip2, Deflate, Pack200 and XZ require [Apache Commons Compress](http://commons.apache.org/proper/commons-compress/). In addition, XZ requires [XZ for Java](http://tukaani.org/xz/java.html). The pattern may also contain lookup references that can be resolved at runtime such as is shown in the example below.
+
+The default rollover strategy supports three variations for incrementing the counter. The first is the "fixed window" strategy. To illustrate how it works, suppose that the min attribute is set to 1, the max attribute is set to 3, the file name is "foo.log", and the file name pattern is "foo-%i.log".
+
+| Number of rollovers | Active output target | Archived log files              | Description                                                  |
+| ------------------- | -------------------- | ------------------------------- | ------------------------------------------------------------ |
+| 0                   | foo.log              | -                               | All logging is going to the initial file.                    |
+| 1                   | foo.log              | foo-1.log                       | During the first rollover foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
+| 2                   | foo.log              | foo-1.log, foo-2.log            | During the second rollover foo-1.log is renamed to foo-2.log and foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
+| 3                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | During the third rollover foo-2.log is renamed to foo-3.log, foo-1.log is renamed to foo-2.log and foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
+| 4                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | In the fourth and subsequent rollovers, foo-3.log is deleted, foo-2.log is renamed to foo-3.log, foo-1.log is renamed to foo-2.log and foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
+
+By way of contrast, when the fileIndex attribute is set to "max" but all the other settings are the same the following actions will be performed.
+
+| Number of rollovers | Active output target | Archived log files              | Description                                                  |
+| ------------------- | -------------------- | ------------------------------- | ------------------------------------------------------------ |
+| 0                   | foo.log              | -                               | All logging is going to the initial file.                    |
+| 1                   | foo.log              | foo-1.log                       | During the first rollover foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
+| 2                   | foo.log              | foo-1.log, foo-2.log            | During the second rollover foo.log is renamed to foo-2.log. A new foo.log file is created and starts being written to. |
+| 3                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | During the third rollover foo.log is renamed to foo-3.log. A new foo.log file is created and starts being written to. |
+| 4                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | In the fourth and subsequent rollovers, foo-1.log is deleted, foo-2.log is renamed to foo-1.log, foo-3.log is renamed to foo-2.log and foo.log is renamed to foo-3.log. A new foo.log file is created and starts being written to. |
+
+Finally, as of release 2.8, if the fileIndex attribute is set to "nomax" then the min and max values will be ignored and file numbering will increment by 1 and each rollover will have an incrementally higher value with no maximum number of files.
+
+| Parameter Name            | Type    | Description                                                  |
+| ------------------------- | ------- | ------------------------------------------------------------ |
+| fileIndex                 | String  | If set to "max" (the default), files with a higher index will be newer than files with a smaller index. If set to "min", file renaming and the counter will follow the Fixed Window strategy described above. |
+| min                       | integer | The minimum value of the counter. The default value is 1.    |
+| max                       | integer | The maximum value of the counter. Once this values is reached older archives will be deleted on subsequent rollovers. The default value is 7. |
+| compressionLevel          | integer | Sets the compression level, 0-9, where 0 = none, 1 = best speed, through 9 = best compression. Only implemented for ZIP files. |
+| tempCompressedFilePattern | String  | The pattern of the file name of the archived log file during compression. |
+
+##### DirectWrite Rollover Strategy
+
+The DirectWriteRolloverStrategy causes log events to be written directly to files represented by the file pattern. With this strategy file renames are not performed. If the size-based triggering policy causes multiple files to be written durring the specified time period they will be numbered starting at one and continually incremented until a time-based rollover occurs.
+
+Warning: If the file pattern has a suffix indicating compression should take place the current file will not be compressed when the application is shut down. Furthermore, if the time changes such that the file pattern no longer matches the current file it will not be compressed at startup either.
+
+| Parameter Name            | Type    | Description                                                  |
+| ------------------------- | ------- | ------------------------------------------------------------ |
+| maxFiles                  | String  | The maximum number of files to allow in the time period matching the file pattern. If the number of files is exceeded the oldest file will be deleted. If specified, the value must be greater than 1. If the value is less than zero or omitted then the number of files will not be limited. |
+| compressionLevel          | integer | Sets the compression level, 0-9, where 0 = none, 1 = best speed, through 9 = best compression. Only implemented for ZIP files. |
+| tempCompressedFilePattern | String  | The pattern of the file name of the archived log file during compression. |
+
+Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 7 archives on the same day (1-7) that are stored in a directory based on the current year and month, and will compress each archive using gzip:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="logs/app.log"
+                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+下面的例子演示了在删除前保留 20 个文件的重新生成策略：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="logs/app.log"
+                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="20"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 7 archives on the same day (1-7) that are stored in a directory based on the current year and month, and will compress each archive using gzip and will roll every 6 hours when the hour is divisible by 6: 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="logs/app.log"
+                 filePattern="logs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+This sample configuration uses a RollingFileAppender with both the cron and size based triggering policies, and writes directly to an unlimited number of archive files. The cron trigger causes a rollover every hour while the file size is limited to 250MB: 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Appenders>
+    <RollingFile name="RollingFile" filePattern="logs/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <CronTriggeringPolicy schedule="0 0 * * * ?"/>
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+This sample configuration is the same as the previous but limits the number of files saved each hour to 10: 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Appenders>
+    <RollingFile name="RollingFile" filePattern="logs/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <CronTriggeringPolicy schedule="0 0 * * * ?"/>
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+      <DirectWriteRolloverStrategy maxFiles="10"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+##### Log Archive Retention Policy: Delete on Rollover
+
+Log4j-2.5 introduces a `Delete` action that gives users more control over what files are deleted at rollover time than what was possible with the DefaultRolloverStrategy `max` attribute. The Delete action lets users configure one or more conditions that select the files to delete relative to a base directory.
+
+Note that it is possible to delete any file, not just rolled over log files, so use this action with care! With the `testMode` parameter you can test your configuration without accidentally deleting the wrong files.
+
+| Parameter Name  | Type            | Description                                                  |
+| --------------- | --------------- | ------------------------------------------------------------ |
+| basePath        | String          | *Required.* Base path from where to start scanning for files to delete. |
+| maxDepth        | int             | The maximum number of levels of directories to visit. A value of 0 means that only the starting file (the base path itself) is visited, unless denied by the security manager. A value of Integer.MAX_VALUE indicates that all levels should be visited. The default is 1, meaning only the files in the specified base directory. |
+| followLinks     | boolean         | Whether to follow symbolic links. Default is false.          |
+| testMode        | boolean         | If true, files are not deleted but instead a message is printed to the [status logger](https://logging.apache.org/log4j/2.x/manual/configuration.html#StatusMessages) at INFO level. Use this to do a dry run to test if the configuration works as expected. Default is false. |
+| pathSorter      | PathSorter      | A plugin implementing the [PathSorter](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/PathSorter.html) interface to sort the files before selecting the files to delete. The default is to sort most recently modified files first. |
+| pathConditions  | PathCondition[] | *Required if no ScriptCondition is specified.* One or more PathCondition elements.If more than one condition is specified, they all need to accept a path before it is deleted. Conditions can be nested, in which case the inner condition(s) are evaluated only if the outer condition accepts the path. If conditions are not nested they may be evaluated in any order.Conditions can also be combined with the logical operators AND, OR and NOT by using the `IfAll`, `IfAny` and `IfNot` composite conditions.Users can create custom conditions or use the built-in conditions:[IfFileName](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfFileName) - accepts files whose path (relative to the base path) matches a [regular expression](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html) or a [glob](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)).[IfLastModified](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfLastModified) - accepts files that are as old as or older than the specified [duration](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/Duration.html#parseCharSequence).[IfAccumulatedFileCount](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfAccumulatedFileCount) - accepts paths after some count threshold is exceeded during the file tree walk.[IfAccumulatedFileSize](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfAccumulatedFileSize) - accepts paths after the accumulated file size threshold is exceeded during the file tree walk.IfAll - accepts a path if all nested conditions accept it (logical AND). Nested conditions may be evaluated in any order.IfAny - accepts a path if one of the nested conditions accept it (logical OR). Nested conditions may be evaluated in any order.IfNot - accepts a path if the nested condition does not accept it (logical NOT). |
+| scriptCondition | ScriptCondition | *Required if no PathConditions are specified.* A ScriptCondition element specifying a script.The ScriptCondition should contain a [Script, ScriptRef or ScriptFile](https://logging.apache.org/log4j/2.x/manual/appenders.html#ScriptCondition) element that specifies the logic to be executed. (See also the [ScriptFilter](https://logging.apache.org/log4j/2.x/manual/filters.html#Script) documentation for more examples of configuring ScriptFiles and ScriptRefs.)The script is passed a number of [parameters](https://logging.apache.org/log4j/2.x/manual/appenders.html#ScriptParameters), including a list of paths found under the base path (up to `maxDepth`) and must return a list with the paths to delete. |
+
+| Parameter Name   | Type            | Description                                                  |
+| ---------------- | --------------- | ------------------------------------------------------------ |
+| glob             | String          | *Required if regex not specified.* Matches the relative path (relative to the base path) using a limited pattern language that resembles regular expressions but with a [simpler syntax](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)). |
+| regex            | String          | *Required if glob not specified.* Matches the relative path (relative to the base path) using a regular expression as defined by the [Pattern](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html) class. |
+| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the path name matches). |
+
+| Parameter Name   | Type            | Description                                                  |
+| ---------------- | --------------- | ------------------------------------------------------------ |
+| age              | String          | *Required.* Specifies a [duration](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/Duration.html#parseCharSequence). The condition accepts files that are as old or older than the specified duration. |
+| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the file is old enough). |
+
+| Parameter Name   | Type            | Description                                                  |
+| ---------------- | --------------- | ------------------------------------------------------------ |
+| exceeds          | int             | *Required.* The threshold count from which files will be deleted. |
+| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the threshold count has been exceeded). |
+
+| Parameter Name   | Type            | Description                                                  |
+| ---------------- | --------------- | ------------------------------------------------------------ |
+| exceeds          | String          | *Required.* The threshold accumulated file size from which files will be deleted. The size can be specified in bytes, with the suffix KB, MB or GB, for example `20MB`. |
+| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the threshold accumulated file size has been exceeded). |
+
+Below is a sample configuration that uses a RollingFileAppender with the cron triggering policy configured to trigger every day at midnight. Archives are stored in a directory based on the current year and month. All files under the base directory that match the "*/app-*.log.gz" glob and are 60 days old or older are deleted at rollover time.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Properties>
+    <Property name="baseDir">logs</Property>
+  </Properties>
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="${baseDir}/app.log"
+          filePattern="${baseDir}/$${date:yyyy-MM}/app-%d{yyyy-MM-dd}.log.gz">
+      <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+      <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+      <DefaultRolloverStrategy>
+        <Delete basePath="${baseDir}" maxDepth="2">
+          <IfFileName glob="*/app-*.log.gz" />
+          <IfLastModified age="60d" />
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 100 archives on the same day (1-100) that are stored in a directory based on the current year and month, and will compress each archive using gzip and will roll every hour. During every rollover, this configuration will delete files that match "*/app-*.log.gz" and are 30 days old or older, but keep the most recent 100 GB or the most recent 10 files, whichever comes first. 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+  <Properties>
+    <Property name="baseDir">logs</Property>
+  </Properties>
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="${baseDir}/app.log"
+          filePattern="${baseDir}/$${date:yyyy-MM}/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
+      <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="100">
+        <!--
+        Nested conditions: the inner condition is only evaluated on files
+        for which the outer conditions are true.
+        -->
+        <Delete basePath="${baseDir}" maxDepth="2">
+          <IfFileName glob="*/app-*.log.gz">
+            <IfLastModified age="30d">
+              <IfAny>
+                <IfAccumulatedFileSize exceeds="100 GB" />
+                <IfAccumulatedFileCount exceeds="10" />
+              </IfAny>
+            </IfLastModified>
+          </IfFileName>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+| Parameter Name | Type                            | Description                                                  |
+| -------------- | ------------------------------- | ------------------------------------------------------------ |
+| script         | Script, ScriptFile or ScriptRef | The Script element that specifies the logic to be executed. The script is passed a list of paths found under the base path and must return the paths to delete as a `java.util.List<PathWithAttributes>`. See also the [ScriptFilter](https://logging.apache.org/log4j/2.x/manual/filters.html#Script) documentation for an example of how ScriptFiles and ScriptRefs can be configured. |
+
+| Parameter Name | Type                                 | Description                                                  |
+| -------------- | ------------------------------------ | ------------------------------------------------------------ |
+| basePath       | `java.nio.file.Path`                 | The directory from where the Delete action started scanning for files to delete. Can be used to relativize the paths in the pathList. |
+| pathList       | `java.util.List<PathWithAttributes>` | The list of paths found under the base path up to the specified max depth, sorted most recently modified files first. The script is free to modify and return this list. |
+| statusLogger   | StatusLogger                         | The StatusLogger that can be used to log internal events during script execution. |
+| configuration  | Configuration                        | The Configuration that owns this ScriptCondition.            |
+| substitutor    | StrSubstitutor                       | The StrSubstitutor used to replace lookup variables.         |
+| ?              | String                               | Any properties declared in the configuration.                |
+
+Below is a sample configuration that uses a RollingFileAppender with the cron triggering policy configured to trigger every day at midnight. Archives are stored in a directory based on the current year and month. The script returns a list of rolled over files under the base directory dated Friday the 13th. The Delete action will delete all files returned by the script.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="trace" name="MyApp" packages="">
+  <Properties>
+    <Property name="baseDir">logs</Property>
+  </Properties>
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="${baseDir}/app.log"
+          filePattern="${baseDir}/$${date:yyyy-MM}/app-%d{yyyyMMdd}.log.gz">
+      <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+      <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+      <DefaultRolloverStrategy>
+        <Delete basePath="${baseDir}" maxDepth="2">
+          <ScriptCondition>
+            <Script name="superstitious" language="groovy"><![CDATA[
+                import java.nio.file.*;
+ 
+                def result = [];
+                def pattern = ~/\d*\/app-(\d*)\.log\.gz/;
+ 
+                pathList.each { pathWithAttributes ->
+                  def relative = basePath.relativize pathWithAttributes.path
+                  statusLogger.trace 'SCRIPT: relative path=' + relative + " (base=$basePath)";
+ 
+                  // remove files dated Friday the 13th
+ 
+                  def matcher = pattern.matcher(relative.toString());
+                  if (matcher.find()) {
+                    def dateString = matcher.group(1);
+                    def calendar = Date.parse("yyyyMMdd", dateString).toCalendar();
+                    def friday13th = calendar.get(Calendar.DAY_OF_MONTH) == 13 \
+                                  && calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY;
+                    if (friday13th) {
+                      result.add pathWithAttributes;
+                      statusLogger.trace 'SCRIPT: deleting path ' + pathWithAttributes;
+                    }
+                  }
+                }
+                statusLogger.trace 'SCRIPT: returning ' + result;
+                result;
+              ]] >
+            </Script>
+          </ScriptCondition>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+##### Log Archive File Attribute View Policy: Custom file attribute on Rollover
+
+Log4j-2.9 introduces a `PosixViewAttribute` action that gives users more control over which file attribute permissions, owner and group should be applied. The PosixViewAttribute action lets users configure one or more conditions that select the eligible files relative to a base directory.
+
+| Parameter Name  | Type            | Description                                                  |
+| --------------- | --------------- | ------------------------------------------------------------ |
+| basePath        | String          | *Required.* Base path from where to start scanning for files to apply attributes. |
+| maxDepth        | int             | The maximum number of levels of directories to visit. A value of 0 means that only the starting file (the base path itself) is visited, unless denied by the security manager. A value of Integer.MAX_VALUE indicates that all levels should be visited. The default is 1, meaning only the files in the specified base directory. |
+| followLinks     | boolean         | Whether to follow symbolic links. Default is false.          |
+| pathConditions  | PathCondition[] | see [DeletePathCondition](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition) |
+| filePermissions | String          | File attribute permissions in POSIX format to apply when action is executed.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view.Examples: rw------- or rw-rw-rw- etc... |
+| fileOwner       | String          | File owner to define when action is executed.Changing file's owner may be restricted for security reason and Operation not permitted IOException thrown. Only processes with an effective user ID equal to the user ID of the file or with appropriate privileges may change the ownership of a file if [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) is in effect for path.Underlying files system shall support file [owner](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/FileOwnerAttributeView.html) attribute view. |
+| fileGroup       | String          | File group to define whene action is executed.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view. |
+
+Below is a sample configuration that uses a RollingFileAppender and defines different POSIX file attribute view for current and rolled log files.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="trace" name="MyApp" packages="">
+  <Properties>
+    <Property name="baseDir">logs</Property>
+  </Properties>
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="${baseDir}/app.log"
+          		 filePattern="${baseDir}/$${date:yyyy-MM}/app-%d{yyyyMMdd}.log.gz"
+                 filePermissions="rw-------">
+      <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+      <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+      <DefaultRolloverStrategy stopCustomActionsOnError="true">
+        <PosixViewAttribute basePath="${baseDir}/$${date:yyyy-MM}" filePermissions="r--r--r--">
+        	<IfFileName glob="*.gz" />
+        </PosixViewAttribute>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+  </Appenders>
+ 
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
+```
+
+### 配置 Filter
+
+Log4j 可以在以下四个地方指定 Filter ：
+
+- 和 Appenders 、Loggers 、Properties 元素同级的位置。这里的 Filter 可以在日志事件传递给某个 LoggerConfig 之前接受或拒绝它们；
+- 在 Logger 元素中。这里的 Filter 可以接受或拒绝到特定 Logger 的日志事件；
+- 在 Appender 元素（包括简明格式）中。这里的 Filter 可以阻止或产生 Appender 要处理的日志事件；
+- 在 Appender 引用元素中。这里的 Filter 决定是否将日志事件从 Logger 发送的指定的 Appender 。
+
+虽然只能配置一个 Filter ，但可以通过 filters 元素表示一个 CompositeFilter ，filters 元素允许包含任意多个 filter 子元素。下面的例子演示了在一个 Console Appender 中配置了多个 Filter ：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" name="XMLConfigTest" packages="org.apache.logging.log4j.test">
+  <Properties>
+    <Property name="filename">target/test.log</Property>
+  </Properties>
+  <ThresholdFilter level="trace"/>
+ 
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout pattern="%m MDC%X%n"/>
+    </Console>
+    <Console name="FLOW">
+      <!-- this pattern outputs class name and line number -->
+      <PatternLayout pattern="%C{1}.%M %m %ex%n"/>
+      <filters>
+        <MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="EXCEPTION" onMatch="ACCEPT" onMismatch="DENY"/>
+      </filters>
+    </Console>
+    <File name="File" fileName="${filename}">
+      <PatternLayout>
+        <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+      </PatternLayout>
+    </File>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="org.apache.logging.log4j.test1" level="debug" additivity="false">
+      <ThreadContextMapFilter>
+        <KeyValuePair key="test" value="123"/>
+      </ThreadContextMapFilter>
+      <AppenderRef ref="STDOUT"/>
+    </Logger>
+ 
+    <Logger name="org.apache.logging.log4j.test2" level="debug" additivity="false">
+      <Property name="user">${sys:user.name}</Property>
+      <AppenderRef ref="File">
+        <ThreadContextMapFilter>
+          <KeyValuePair key="test" value="123"/>
+        </ThreadContextMapFilter>
+      </AppenderRef>
+      <AppenderRef ref="STDOUT" level="error"/>
+    </Logger>
+ 
+    <Root level="trace">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
+```
+
+### 属性替换
+
+Log4j 2 支持使用特定符号来引用其他地方定义的属性。某些属性在翻译配置文件时计算（resolve）出来，某些属性传递到组件（component，比如 Logger 、Appender 等元素）中在运行时求值（evaluate）。Log4j 使用 [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/) 的 [StrSubstitutor](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrSubstitutor.html) 和 [StrLookup](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrLookup.html) 类来实现这一功能。与 Ant 或 Maven 相似的方式，允许使用 `${name}` 形式的变量来计算配置中声明（通过 Property 元素）的属性。例如，下面的例子演示了如何声明和使用 RollingFile Appender 所用的日志输出文件名属性。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" name="RoutingTest" packages="org.apache.logging.log4j.test">
+  <Properties>
+    <Property name="filename">target/rolling1/rollingtest-$${sd:type}.log</Property>
+  </Properties>
+  <ThresholdFilter level="debug"/>
+ 
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout pattern="%m%n"/>
+      <ThresholdFilter level="debug"/>
+    </Console>
+    <Routing name="Routing">
+      <Routes pattern="$${sd:type}">
+        <Route>
+          <RollingFile name="Rolling-${sd:type}" fileName="${filename}"
+                       filePattern="target/rolling1/test1-${sd:type}.%i.log.gz">
+            <PatternLayout>
+              <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="500" />
+          </RollingFile>
+        </Route>
+        <Route ref="STDOUT" key="Audit"/>
+      </Routes>
+    </Routing>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="EventLogger" level="info" additivity="false">
+      <AppenderRef ref="Routing"/>
+    </Logger>
+ 
+    <Root level="error">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
+```
+
+Log4j 也支持 `${prefix:name}` 格式的语法，其中 prefix 标识告诉 Log4j 该变量应该在特定的上下文中求值（evaluate）。Log4j 内置的上下文如下：
+
+| Prefix     | Context                                                      |
+| ---------- | ------------------------------------------------------------ |
+| bundle     | Resource bundle 。格式为 `${bundle:BundleName:BundleKey}` 。其中，bundle name 遵循包名转换，例如，`${bundle:com.domain.Messages:MyKey}` 。 |
+| ctx        | Thread Context Map (MDC)                                     |
+| date       | 使用特定的格式插入当前日期和/或时间。                        |
+| env        | 系统环境变量。格式为 `${env:ENV_NAME}` 和 `${env:ENV_NAME:-default_value}` 。 |
+| jndi       | 默认 JNDI Context 中设置的值。                               |
+| jvmrunargs | 通过 JMX 访问的 JVM 输出参数，但不是主参数。参考 [RuntimeMXBean.getInputArguments()](http://docs.oracle.com/javase/6/docs/api/java/lang/management/RuntimeMXBean.html#getInputArguments--) 。 Android 上不可用。 |
+| log4j      | Log4j 的配置属性。表达式 `${log4j:configLocation}` 和 `${log4j:configParentLocation}` 分别额提供log4j 配置文件的绝对路径和其父文件夹。 |
+| main       | 通过 [MapLookup.setMainArguments(String[])](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/MapLookup.html#setMainArguments-java.lang.String:A-) 设置的一个值。 |
+| map        | MapMessage 中的一个值。                                      |
+| sd         | StructuredDataMessage 中的一个值。id 键将返回没有企业号（enterprise number）的 StructuredDataId 名。type 键将返回消息类型。其他键将获取 Map 中独立的元素。 |
+| sys        | 系统属性。格式为 `${sys:some.property}` 和 `${sys:some.property:-default_value}` 。 |
+
+可以在配置文件中声明一个默认的属性映射。如果一个值在特定查找中无法定位到，那么将会使用默认属性映射中的值。默认属性映射预填充了一个表示当前系统主机名和 IP 的 `hostName` 属性 ，以及一个表示当前日志上下文的名为 `contextName` 属性。
+
+当一个变量引用的开头为多个 `$` 的字符时，StrLookup 将会去除前面的 `$` 字符。在前面的例子中，Routes 元素能够在运行时计算（resolve）出 `$${sd:type}` 变量应用中的变量 `sd:type` 。该变量的前缀为两个 `$` 字符，配置文件第一次处理时会去掉第一个 `$` 字符，Routes 元素在运行时能够求出声明为 `${sd:type}` 的变量，就会检查事件的 StructuredDataMessage ，如果存在，则其 type 属性将用作 routing key 。并不是所有的元素都可以在运行时计算（resolve）变量。
+
+如果在前缀关联的 Lookup 中没有找到对应的键值，那么将会使用配置文件里属性声明中的键值。如果没有找到值，则将变量声明作为值返回。配置文件中的默认值可以这样声明：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Properties>
+    <Property name="type">Audit</property>
+  </Properties>
+  ...
+</Configuration>
+```
+
+注意：在处理配置文件时，并不会对 RollingFile Appender 声明中的变量求值。这是因为整个 RollingFile 元素的解析会推迟到出现匹配时。
+
+### XInclude
+
+XML 配置文件通过 [XInclude](http://www.xml.com/lpt/a/1009) 来引用其他文件。下面演示了 log4j2.xml  文件引用了其他两个文件。
+
+ log4j2.xml 文件内容如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xi="http://www.w3.org/2001/XInclude" status="warn" name="XIncludeDemo">
+  <properties>
+    <property name="filename">xinclude-demo.log</property>
+  </properties>
+  <ThresholdFilter level="debug"/>
+  <xi:include href="log4j-xinclude-appenders.xml" />
+  <xi:include href="log4j-xinclude-loggers.xml" />
+</configuration>
+```
+
+log4j-xinclude-appenders.xml 文件内容如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<appenders>
+  <Console name="STDOUT">
+    <PatternLayout pattern="%m%n" />
+  </Console>
+  <File name="File" fileName="${filename}" bufferedIO="true" immediateFlush="true">
+    <PatternLayout>
+      <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+    </PatternLayout>
+  </File>
+</appenders>
+```
+
+log4j-xinclude-loggers.xml 文件内容如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<loggers>
+  <logger name="org.apache.logging.log4j.test1" level="debug" additivity="false">
+    <ThreadContextMapFilter>
+      <KeyValuePair key="test" value="123" />
+    </ThreadContextMapFilter>
+    <AppenderRef ref="STDOUT" />
+  </logger>
+ 
+  <logger name="org.apache.logging.log4j.test2" level="debug" additivity="false">
+    <AppenderRef ref="File" />
+  </logger>
+ 
+  <root level="error">
+    <AppenderRef ref="STDOUT" />
+  </root>
+</loggers>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 Log4j 2 在用于 Java EE Web 应用时有一些额外事项需要注意。要确保日志资源在容器关闭或 Web 应用取消部署时能恰当地清理。为了做到这一点，需要在 Web 应用中添加 `log4j-web` 的依赖，可以从 Maven 仓库中找到该依赖。
-
-
-
-
-
-
-
-
-
-
-
-
 
 Log4j 2 只能运行在支持 Servlet 3.0 及以上版本的 Web 应用中，它可以在应用部署时和关闭时随之自动启动和关闭。
 
