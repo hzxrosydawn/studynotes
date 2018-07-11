@@ -654,8 +654,6 @@ RollingFileAppender 不支持文件锁。
 
 `CompositeTriggeringPolicy` 组合了多个触发规则（policy），如果配置的任意规则返回 true 时，则 `CompositeTriggeringPolicy` 也返回 true 。 `CompositeTriggeringPolicy` 通过将其规则包装进 `Policies` 元素即可配置。
 
-For example, the following XML fragment defines policies that rollover the log when the JVM starts, when the log size reaches twenty megabytes, and when the current date no longer matches the log’s start date.
-
 下面的 XML 片段定义了这样一个日志滚动规则：当 JVM 启动时、日志文件大小达到 20 MB 且当前日期不再匹配日志开始日期时就滚动日志。
 
 ```xml
@@ -701,49 +699,49 @@ For example, the following XML fragment defines policies that rollover the log w
 
 ###### Default Rollover Strategy
 
-The default rollover strategy accepts both a date/time pattern and an integer from the filePattern attribute specified on the RollingFileAppender itself. If the date/time pattern is present it will be replaced with the current date and time values. If the pattern contains an integer it will be incremented on each rollover. If the pattern contains both a date/time and integer in the pattern the integer will be incremented until the result of the date/time pattern changes. If the file pattern ends with ".gz", ".zip", ".bz2", ".deflate", ".pack200", or ".xz" the resulting archive will be compressed using the compression scheme that matches the suffix. The formats bzip2, Deflate, Pack200 and XZ require [Apache Commons Compress](http://commons.apache.org/proper/commons-compress/). In addition, XZ requires [XZ for Java](http://tukaani.org/xz/java.html). The pattern may also contain lookup references that can be resolved at runtime such as is shown in the example below.
+默认的滚动策略接受日期/时间模式和 filePattern 属性中的一个整数。如果配置了日期/时间模式，那么它将会替换为当前日期和时间值。如果模式包含了一个整数，那么它将会在每次滚动时递增。如果模式包含了日期/时间和一个整数，那么这个整数将会递增，直到日期/时间模式的结果改变为止。如果文件模式以 `.gz`、`.zip`、`.bz2`、`deflate`、`pack200` 或 `xz`，则最终归档文件将以后缀对应的格式进行压缩。bzip2 、Deflate、Pack200 和 XZ 需要 [Apache Commons mpress](http://commons.apache.org/proper/commons-compress/)。另外，XZ 需要 [XZ for Java](http://tukaani.org/xz/java.html)。该模式也可以包含运行时计算的查找引用，比如下面的例子。
 
-The default rollover strategy supports three variations for incrementing the counter. The first is the "fixed window" strategy. To illustrate how it works, suppose that the min attribute is set to 1, the max attribute is set to 3, the file name is "foo.log", and the file name pattern is "foo-%i.log".
+默认的滚动策略支持三种递增计数器。第一种是“固定窗口（fixed window）”策略，为了演示其如何工作的，假定 min 属性设置为 1，max 属性设置为 3，文件名为“foo.log”，文件名模式为“foo-%i.log”。
 
-| Number of rollovers | Active output target | Archived log files              | Description                              |
-| ------------------- | -------------------- | ------------------------------- | ---------------------------------------- |
-| 0                   | foo.log              | -                               | All logging is going to the initial file. |
-| 1                   | foo.log              | foo-1.log                       | During the first rollover foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
-| 2                   | foo.log              | foo-1.log, foo-2.log            | During the second rollover foo-1.log is renamed to foo-2.log and foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
-| 3                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | During the third rollover foo-2.log is renamed to foo-3.log, foo-1.log is renamed to foo-2.log and foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
-| 4                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | In the fourth and subsequent rollovers, foo-3.log is deleted, foo-2.log is renamed to foo-3.log, foo-1.log is renamed to foo-2.log and foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
+| 滚动数 | 当前目标文件 | 归档文件                        | 描述                                                         |
+| ------ | ------------ | ------------------------------- | ------------------------------------------------------------ |
+| 0      | foo.log      | -                               | 所有日志都写入初始文件。                                     |
+| 1      | foo.log      | foo-1.log                       | 第一次滚动时，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 2      | foo.log      | foo-1.log, foo-2.log            | 第二次滚动时，foo-1.log 文件重命名为 foo-2.log，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 3      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 第三次滚动时，foo-2.log 文件重命名为foo-3.log，foo-1.log 文件重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 4      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 在第四次以及后续的滚动时，foo-3.log 会被删除，foo-2.log 重命名为 foo-3.log，foo-1.log 重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
 
-By way of contrast, when the fileIndex attribute is set to "max" but all the other settings are the same the following actions will be performed.
+作为对比，fileIndex 属性设置为 `max` ，而所有其他设置和上面都一样。
 
-| Number of rollovers | Active output target | Archived log files              | Description                              |
-| ------------------- | -------------------- | ------------------------------- | ---------------------------------------- |
-| 0                   | foo.log              | -                               | All logging is going to the initial file. |
-| 1                   | foo.log              | foo-1.log                       | During the first rollover foo.log is renamed to foo-1.log. A new foo.log file is created and starts being written to. |
-| 2                   | foo.log              | foo-1.log, foo-2.log            | During the second rollover foo.log is renamed to foo-2.log. A new foo.log file is created and starts being written to. |
-| 3                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | During the third rollover foo.log is renamed to foo-3.log. A new foo.log file is created and starts being written to. |
-| 4                   | foo.log              | foo-1.log, foo-2.log, foo-3.log | In the fourth and subsequent rollovers, foo-1.log is deleted, foo-2.log is renamed to foo-1.log, foo-3.log is renamed to foo-2.log and foo.log is renamed to foo-3.log. A new foo.log file is created and starts being written to. |
+| 滚动数 | 当前目标文件 | 归档文件                        | 描述                                                         |
+| ------ | ------------ | ------------------------------- | ------------------------------------------------------------ |
+| 0      | foo.log      | -                               | 所有日志都写入初始文件。                                     |
+| 1      | foo.log      | foo-1.log                       | 第一次滚动时，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 2      | foo.log      | foo-1.log, foo-2.log            | 第二次滚动时，foo.log 文件重命名为 foo-2.log，f创建一个新的 foo.log 文件来开始写入日志。 |
+| 3      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 第二次滚动时，foo.log 文件重命名为 foo-3.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 4      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 在第四次以及后续的滚动时，foo-1.log 会被删除，foo-2.log 重命名为 foo-1.log，foo-3.log 重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
 
-Finally, as of release 2.8, if the fileIndex attribute is set to "nomax" then the min and max values will be ignored and file numbering will increment by 1 and each rollover will have an incrementally higher value with no maximum number of files.
+自 2.8 版本开始，如果 fileIndex 属性设置为 `nomax`，则 min 和 max 属性值都将会被忽略，文件编号将每次递增 1，每次滚动都会递增到更大的值，且没有最大文件编号的限制。
 
-| Parameter Name            | Type    | Description                              |
-| ------------------------- | ------- | ---------------------------------------- |
+| 属性名                    | 类型    | 描述                                                         |
+| ------------------------- | ------- | ------------------------------------------------------------ |
 | fileIndex                 | String  | If set to "max" (the default), files with a higher index will be newer than files with a smaller index. If set to "min", file renaming and the counter will follow the Fixed Window strategy described above. |
-| min                       | integer | The minimum value of the counter. The default value is 1. |
+| min                       | integer | The minimum value of the counter. The default value is 1.    |
 | max                       | integer | The maximum value of the counter. Once this values is reached older archives will be deleted on subsequent rollovers. The default value is 7. |
 | compressionLevel          | integer | Sets the compression level, 0-9, where 0 = none, 1 = best speed, through 9 = best compression. Only implemented for ZIP files. |
 | tempCompressedFilePattern | String  | The pattern of the file name of the archived log file during compression. |
 
 ###### DirectWrite Rollover Strategy
 
-The DirectWriteRolloverStrategy causes log events to be written directly to files represented by the file pattern. With this strategy file renames are not performed. If the size-based triggering policy causes multiple files to be written durring the specified time period they will be numbered starting at one and continually incremented until a time-based rollover occurs.
+DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文件。该策略不进行文件重命名。如果基于大小的触发规则要在特定时间段内写入多个文件，这些文件编号将从 1 开始持续递增，直到出现基于时间的滚动。
 
-Warning: If the file pattern has a suffix indicating compression should take place the current file will not be compressed when the application is shut down. Furthermore, if the time changes such that the file pattern no longer matches the current file it will not be compressed at startup either.
+警告：如果文件模式有一个表示压缩格式的后缀以进行文件压缩，当应用关闭时当前文件并不会进行压缩。此外，如果由于时间改变造成文件模式不在匹配当前文件了，那么当前文件在下次启动时也不会进行压缩。
 
-| Parameter Name            | Type    | Description                              |
-| ------------------------- | ------- | ---------------------------------------- |
-| maxFiles                  | String  | The maximum number of files to allow in the time period matching the file pattern. If the number of files is exceeded the oldest file will be deleted. If specified, the value must be greater than 1. If the value is less than zero or omitted then the number of files will not be limited. |
-| compressionLevel          | integer | Sets the compression level, 0-9, where 0 = none, 1 = best speed, through 9 = best compression. Only implemented for ZIP files. |
-| tempCompressedFilePattern | String  | The pattern of the file name of the archived log file during compression. |
+| 属性名                    | 类型    | 描述                                                         |
+| ------------------------- | ------- | ------------------------------------------------------------ |
+| maxFiles                  | String  | 匹配文件模式期间所允许的最大文件数。超过最早文件编号的文件将会删除。如果指定了该属性值，那么必须要大于 1。如果该属性值小于 0 或 省略掉了，则将不会再限制文件编号。 |
+| compressionLevel          | integer | 设置压缩级别，0-9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
+| tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                                 |
 
 Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 7 archives on the same day (1-7) that are stored in a directory based on the current year and month, and will compress each archive using gzip:
 
