@@ -703,30 +703,30 @@ RollingFileAppender 不支持文件锁。
 
 默认的滚动策略支持三种递增计数器。第一种是“固定窗口（fixed window）”策略，为了演示其如何工作的，假定 min 属性设置为 1，max 属性设置为 3，文件名为“foo.log”，文件名模式为“foo-%i.log”。
 
-| 滚动数 | 当前目标文件 | 归档文件                        | 描述                                                         |
-| ------ | ------------ | ------------------------------- | ------------------------------------------------------------ |
-| 0      | foo.log      | -                               | 所有日志都写入初始文件。                                     |
-| 1      | foo.log      | foo-1.log                       | 第一次滚动时，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
-| 2      | foo.log      | foo-1.log, foo-2.log            | 第二次滚动时，foo-1.log 文件重命名为 foo-2.log，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
-| 3      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 第三次滚动时，foo-2.log 文件重命名为foo-3.log，foo-1.log 文件重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
-| 4      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 在第四次以及后续的滚动时，foo-3.log 会被删除，foo-2.log 重命名为 foo-3.log，foo-1.log 重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 滚动数  | 当前目标文件  | 归档文件                            | 描述                                       |
+| ---- | ------- | ------------------------------- | ---------------------------------------- |
+| 0    | foo.log | -                               | 所有日志都写入初始文件。                             |
+| 1    | foo.log | foo-1.log                       | 第一次滚动时，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 2    | foo.log | foo-1.log, foo-2.log            | 第二次滚动时，foo-1.log 文件重命名为 foo-2.log，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 3    | foo.log | foo-1.log, foo-2.log, foo-3.log | 第三次滚动时，foo-2.log 文件重命名为foo-3.log，foo-1.log 文件重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 4    | foo.log | foo-1.log, foo-2.log, foo-3.log | 在第四次以及后续的滚动时，foo-3.log 会被删除，foo-2.log 重命名为 foo-3.log，foo-1.log 重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
 
 作为对比，fileIndex 属性设置为 `max` ，而所有其他设置和上面都一样。
 
-| 滚动数 | 当前目标文件 | 归档文件                        | 描述                                                         |
-| ------ | ------------ | ------------------------------- | ------------------------------------------------------------ |
-| 0      | foo.log      | -                               | 所有日志都写入初始文件。                                     |
-| 1      | foo.log      | foo-1.log                       | 第一次滚动时，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
-| 2      | foo.log      | foo-1.log, foo-2.log            | 第二次滚动时，foo.log 文件重命名为 foo-2.log，f创建一个新的 foo.log 文件来开始写入日志。 |
-| 3      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 第二次滚动时，foo.log 文件重命名为 foo-3.log，创建一个新的 foo.log 文件来开始写入日志。 |
-| 4      | foo.log      | foo-1.log, foo-2.log, foo-3.log | 在第四次以及后续的滚动时，foo-1.log 会被删除，foo-2.log 重命名为 foo-1.log，foo-3.log 重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 滚动数  | 当前目标文件  | 归档文件                            | 描述                                       |
+| ---- | ------- | ------------------------------- | ---------------------------------------- |
+| 0    | foo.log | -                               | 所有日志都写入初始文件。                             |
+| 1    | foo.log | foo-1.log                       | 第一次滚动时，foo.log 文件重命名为 foo-1.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 2    | foo.log | foo-1.log, foo-2.log            | 第二次滚动时，foo.log 文件重命名为 foo-2.log，f创建一个新的 foo.log 文件来开始写入日志。 |
+| 3    | foo.log | foo-1.log, foo-2.log, foo-3.log | 第二次滚动时，foo.log 文件重命名为 foo-3.log，创建一个新的 foo.log 文件来开始写入日志。 |
+| 4    | foo.log | foo-1.log, foo-2.log, foo-3.log | 在第四次以及后续的滚动时，foo-1.log 会被删除，foo-2.log 重命名为 foo-1.log，foo-3.log 重命名为 foo-2.log，创建一个新的 foo.log 文件来开始写入日志。 |
 
 自 2.8 版本开始，如果 fileIndex 属性设置为 `nomax`，则 min 和 max 属性值都将会被忽略，文件编号将每次递增 1，每次滚动都会递增到更大的值，且没有最大文件编号的限制。
 
-| 属性名                    | 类型    | 描述                                                         |
-| ------------------------- | ------- | ------------------------------------------------------------ |
+| 属性名                       | 类型      | 描述                                       |
+| ------------------------- | ------- | ---------------------------------------- |
 | fileIndex                 | String  | If set to "max" (the default), files with a higher index will be newer than files with a smaller index. If set to "min", file renaming and the counter will follow the Fixed Window strategy described above. |
-| min                       | integer | The minimum value of the counter. The default value is 1.    |
+| min                       | integer | The minimum value of the counter. The default value is 1. |
 | max                       | integer | The maximum value of the counter. Once this values is reached older archives will be deleted on subsequent rollovers. The default value is 7. |
 | compressionLevel          | integer | Sets the compression level, 0-9, where 0 = none, 1 = best speed, through 9 = best compression. Only implemented for ZIP files. |
 | tempCompressedFilePattern | String  | The pattern of the file name of the archived log file during compression. |
@@ -737,13 +737,13 @@ DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文�
 
 警告：如果文件模式有一个表示压缩格式的后缀以进行文件压缩，当应用关闭时当前文件并不会进行压缩。此外，如果由于时间改变造成文件模式不在匹配当前文件了，那么当前文件在下次启动时也不会进行压缩。
 
-| 属性名                    | 类型    | 描述                                                         |
-| ------------------------- | ------- | ------------------------------------------------------------ |
+| 属性名                       | 类型      | 描述                                       |
+| ------------------------- | ------- | ---------------------------------------- |
 | maxFiles                  | String  | 匹配文件模式期间所允许的最大文件数。超过最早文件编号的文件将会删除。如果指定了该属性值，那么必须要大于 1。如果该属性值小于 0 或 省略掉了，则将不会再限制文件编号。 |
 | compressionLevel          | integer | 设置压缩级别，0-9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
-| tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                                 |
+| tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                           |
 
-Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 7 archives on the same day (1-7) that are stored in a directory based on the current year and month, and will compress each archive using gzip:
+下面的 RollingFileAppender 配置同时指定了基于时间和大小的触发规则，将会一天最多创建 7 个归档文件（1 - 7），存放在当前年月目录下，每个归档文件使用 gzip 进行压缩：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -794,7 +794,7 @@ Below is a sample configuration that uses a RollingFileAppender with both the ti
 </Configuration>
 ```
 
-Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 7 archives on the same day (1-7) that are stored in a directory based on the current year and month, and will compress each archive using gzip and will roll every 6 hours when the hour is divisible by 6: 
+下面的 RollingFileAppender 配置同时指定了基于时间和大小的触发规则，将会一天最多创建 7 个归档文件（1 - 7），存放在当前年月目录下，每个归档文件使用 gzip 进行压缩，每 6 个小时滚动一次（小时数能被 6 整除）：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -819,7 +819,7 @@ Below is a sample configuration that uses a RollingFileAppender with both the ti
 </Configuration>
 ```
 
-This sample configuration uses a RollingFileAppender with both the cron and size based triggering policies, and writes directly to an unlimited number of archive files. The cron trigger causes a rollover every hour while the file size is limited to 250MB: 
+下面的 RollingFileAppender 同时使用了基于 cron 表达式和大小的触发规则，直接将日志写入无编号限制的归档文件中。cron 触发器会每小时滚动一次，而每个日志文件的大小限制在 250 MB，超过此大小就会滚动（新文件的编号递增）：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -843,7 +843,7 @@ This sample configuration uses a RollingFileAppender with both the cron and size
 </Configuration>
 ```
 
-This sample configuration is the same as the previous but limits the number of files saved each hour to 10: 
+下面的配置和上面的基本一样，但是限制每小时里文件编号最大为 10：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

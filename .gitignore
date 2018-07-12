@@ -2,6 +2,8 @@
 ### Example user template template
 ### Example user template
 
-# IntelliJ project files
-out
-gen
+##################################################################################
+ Ignored IntelliJ project setting files
+ Ref:https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+##################################################################################
+.idea
