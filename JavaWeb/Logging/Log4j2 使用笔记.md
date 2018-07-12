@@ -668,6 +668,8 @@ RollingFileAppender 不支持文件锁。
 
 `CronTriggeringPolicy` 基于 cron 表达式来滚动日志。
 
+`CronTriggeringPolicy` 属性如下表所示。
+
 | 属性名               | 类型      | 描述                                       |
 | ----------------- | ------- | ---------------------------------------- |
 | schedule          | String  | 和 Quartz 调度器一样的 cron 表达式。参考 [CronExpression](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/util/CronExpression.html) 来查看关于该表达式的详细描述。 |
@@ -676,6 +678,8 @@ RollingFileAppender 不支持文件锁。
 ###### OnStartup Triggering Policy
 
 `OnStartupTriggeringPolicy` 在日志文件比当前 JVM 启动时间较早时进行日志滚动，同时遵循下面的 minSize 属性规则。
+
+`OnStartupTriggeringPolicy` 属性如下表所示。
 
 | 属性名     | 类型   | 描述                                       |
 | ------- | ---- | ---------------------------------------- |
@@ -689,6 +693,8 @@ RollingFileAppender 不支持文件锁。
 
 `TimeBasedTriggeringPolicy` 只要日期/时间模式（pattern）不再应用于当前文件时就进行日志滚动。这种规则通过 `interval` 和 `modulate` 属性来配置。
 
+`TimeBasedTriggeringPolicy` 属性如下表所示。
+
 | 属性名            | 类型      | 描述                                       |
 | -------------- | ------- | ---------------------------------------- |
 | interval       | integer | 基于日期/时间模式中的最大的时间单位多久滚动一次。例如，日期/时间模式使用小时作为最大时间单位且每次递增 4，则会每 4 小时滚动一次。默认值为 1 。 |
@@ -699,9 +705,9 @@ RollingFileAppender 不支持文件锁。
 
 ###### Default Rollover Strategy
 
-默认的滚动策略接受日期/时间模式和 filePattern 属性中的一个整数。如果配置了日期/时间模式，那么它将会替换为当前日期和时间值。如果模式包含了一个整数，那么它将会在每次滚动时递增。如果模式包含了日期/时间和一个整数，那么这个整数将会递增，直到日期/时间模式的结果改变为止。如果文件模式以 `.gz`、`.zip`、`.bz2`、`deflate`、`pack200` 或 `xz`，则最终归档文件将以后缀对应的格式进行压缩。bzip2 、Deflate、Pack200 和 XZ 需要 [Apache Commons mpress](http://commons.apache.org/proper/commons-compress/)。另外，XZ 需要 [XZ for Java](http://tukaani.org/xz/java.html)。该模式也可以包含运行时计算的查找引用，比如下面的例子。
+DefaultRolloverStrategy 使用一种基于时间和固定窗口（fixed window，窗口在这里的意思大致是对数量的限制，参考TCP 中的 [Window Scale](https://en.wikipedia.org/wiki/TCP_window_scale_option) 概念）的组合策略。如果配置了时间模式，那么将会使用时间间隔来计算用于文件模式的时间。如果文件模式包含了一个整数替换符，那么在时间模式的匹配结果改变之前，该整数值将会在每次滚动时递增。以 `.gz`、`.zip`、`.bz2`、`deflate`、`pack200` 或 `xz`，则最终归档文件将以后缀对应的格式进行压缩。bzip2 、Deflate、Pack200 和 XZ 需要 [Apache Commons compress](http://commons.apache.org/proper/commons-compress/)。另外，XZ 需要 [XZ for Java](http://tukaani.org/xz/java.html)。
 
-默认的滚动策略支持三种递增计数器。第一种是“固定窗口（fixed window）”策略，为了演示其如何工作的，假定 min 属性设置为 1，max 属性设置为 3，文件名为“foo.log”，文件名模式为“foo-%i.log”。
+默认的滚动策略支持三种递增计数器。为了演示其如何工作的，这里假定 min 属性设置为 1，max 属性设置为 3，文件名为“foo.log”，文件名模式为“foo-%i.log”。
 
 | 滚动数  | 当前目标文件  | 归档文件                            | 描述                                       |
 | ---- | ------- | ------------------------------- | ---------------------------------------- |
@@ -723,13 +729,15 @@ RollingFileAppender 不支持文件锁。
 
 自 2.8 版本开始，如果 fileIndex 属性设置为 `nomax`，则 min 和 max 属性值都将会被忽略，文件编号将每次递增 1，每次滚动都会递增到更大的值，且没有最大文件编号的限制。
 
+DefaultRolloverStrategy 属性如下表所示。
+
 | 属性名                       | 类型      | 描述                                       |
 | ------------------------- | ------- | ---------------------------------------- |
-| fileIndex                 | String  | If set to "max" (the default), files with a higher index will be newer than files with a smaller index. If set to "min", file renaming and the counter will follow the Fixed Window strategy described above. |
-| min                       | integer | The minimum value of the counter. The default value is 1. |
-| max                       | integer | The maximum value of the counter. Once this values is reached older archives will be deleted on subsequent rollovers. The default value is 7. |
-| compressionLevel          | integer | Sets the compression level, 0-9, where 0 = none, 1 = best speed, through 9 = best compression. Only implemented for ZIP files. |
-| tempCompressedFilePattern | String  | The pattern of the file name of the archived log file during compression. |
+| fileIndex                 | String  | 如果设置为 `max`（默认），则具有更大索引的文件比具有更小索引的文件更新。如果设置为 `min`，文件将重命名且计数器将遵循前面介绍的 Fixed Window 策略。 |
+| min                       | integer | 计数器的最小值，默认为 1。                           |
+| max                       | integer | 计数器的最大值。一旦计数器达到了最大值，最早的归档将会在每次滚动时被删除。默认值为 7。 |
+| compressionLevel          | integer | 设置压缩级别，0 - 9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
+| tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                           |
 
 ###### DirectWrite Rollover Strategy
 
@@ -737,13 +745,15 @@ DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文�
 
 警告：如果文件模式有一个表示压缩格式的后缀以进行文件压缩，当应用关闭时当前文件并不会进行压缩。此外，如果由于时间改变造成文件模式不在匹配当前文件了，那么当前文件在下次启动时也不会进行压缩。
 
+DirectWriteRolloverStrategy 属性如下表所示。
+
 | 属性名                       | 类型      | 描述                                       |
 | ------------------------- | ------- | ---------------------------------------- |
 | maxFiles                  | String  | 匹配文件模式期间所允许的最大文件数。超过最早文件编号的文件将会删除。如果指定了该属性值，那么必须要大于 1。如果该属性值小于 0 或 省略掉了，则将不会再限制文件编号。 |
-| compressionLevel          | integer | 设置压缩级别，0-9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
+| compressionLevel          | integer | 设置压缩级别，0 - 9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
 | tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                           |
 
-下面的 RollingFileAppender 配置同时指定了基于时间和大小的触发规则，将会一天最多创建 7 个归档文件（1 - 7），存放在当前年月目录下，每个归档文件使用 gzip 进行压缩：
+下面的 RollingFileAppender 配置同时指定了基于时间和大小的触发规则，将会一天最多创建 7 个归档文件（未配置 DefaultRolloverStrategy 时，其 max 属性默认为 7），存放在当前年月目录下，每个归档文件使用 gzip 进行压缩：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -794,7 +804,7 @@ DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文�
 </Configuration>
 ```
 
-下面的 RollingFileAppender 配置同时指定了基于时间和大小的触发规则，将会一天最多创建 7 个归档文件（1 - 7），存放在当前年月目录下，每个归档文件使用 gzip 进行压缩，每 6 个小时滚动一次（小时数能被 6 整除）：
+下面的 RollingFileAppender 配置同时指定了基于时间和大小的触发规则，将会一天最多创建 7 个归档文件，存放在当前年月目录下，每个归档文件使用 gzip 进行压缩，每 6 个小时滚动一次（小时数能被 6 整除）：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -819,7 +829,7 @@ DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文�
 </Configuration>
 ```
 
-下面的 RollingFileAppender 同时使用了基于 cron 表达式和大小的触发规则，直接将日志写入无编号限制的归档文件中。cron 触发器会每小时滚动一次，而每个日志文件的大小限制在 250 MB，超过此大小就会滚动（新文件的编号递增）：
+下面的 RollingFileAppender 同时使用了基于 cron 表达式和大小的触发规则，直接将日志以编号无限制的方式写入的归档文件中。cron 触发器会每小时滚动一次，而每个日志文件的大小限制在 250 MB，超过此大小就会滚动（新文件的编号递增）：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -870,40 +880,50 @@ DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文�
 
 ###### Log Archive Retention Policy: Delete on Rollover
 
-Log4j-2.5 introduces a `Delete` action that gives users more control over what files are deleted at rollover time than what was possible with the DefaultRolloverStrategy `max` attribute. The Delete action lets users configure one or more conditions that select the files to delete relative to a base directory.
+Log4j 2.5 引入了`删除动作`。在滚动删除旧的日志文件时，相比使用 DefaultRolloverStrategy 的 max 属性，该功能可以让用户拥有更多的删除控制。删除动作可以让用户配置若干个条件来删除相对于基准目录的文件。
 
-Note that it is possible to delete any file, not just rolled over log files, so use this action with care! With the `testMode` parameter you can test your configuration without accidentally deleting the wrong files.
+注意：该功能可以删除非日志文件，使用时一定要小心。可以通过 testMode 属性来测试配置是否会错删文件。
 
-| Parameter Name  | Type            | Description                              |
+删除属性如下表所示。
+
+| 属性名             | 类型              | 描述                                       |
 | --------------- | --------------- | ---------------------------------------- |
-| basePath        | String          | *Required.* Base path from where to start scanning for files to delete. |
-| maxDepth        | int             | The maximum number of levels of directories to visit. A value of 0 means that only the starting file (the base path itself) is visited, unless denied by the security manager. A value of Integer.MAX_VALUE indicates that all levels should be visited. The default is 1, meaning only the files in the specified base directory. |
-| followLinks     | boolean         | Whether to follow symbolic links. Default is false. |
-| testMode        | boolean         | If true, files are not deleted but instead a message is printed to the [status logger](https://logging.apache.org/log4j/2.x/manual/configuration.html#StatusMessages) at INFO level. Use this to do a dry run to test if the configuration works as expected. Default is false. |
-| pathSorter      | PathSorter      | A plugin implementing the [PathSorter](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/PathSorter.html) interface to sort the files before selecting the files to delete. The default is to sort most recently modified files first. |
-| pathConditions  | PathCondition[] | *Required if no ScriptCondition is specified.* One or more PathCondition elements.If more than one condition is specified, they all need to accept a path before it is deleted. Conditions can be nested, in which case the inner condition(s) are evaluated only if the outer condition accepts the path. If conditions are not nested they may be evaluated in any order.Conditions can also be combined with the logical operators AND, OR and NOT by using the `IfAll`, `IfAny` and `IfNot` composite conditions.Users can create custom conditions or use the built-in conditions:[IfFileName](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfFileName) - accepts files whose path (relative to the base path) matches a [regular expression](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html) or a [glob](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)).[IfLastModified](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfLastModified) - accepts files that are as old as or older than the specified [duration](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/Duration.html#parseCharSequence).[IfAccumulatedFileCount](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfAccumulatedFileCount) - accepts paths after some count threshold is exceeded during the file tree walk.[IfAccumulatedFileSize](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfAccumulatedFileSize) - accepts paths after the accumulated file size threshold is exceeded during the file tree walk.IfAll - accepts a path if all nested conditions accept it (logical AND). Nested conditions may be evaluated in any order.IfAny - accepts a path if one of the nested conditions accept it (logical OR). Nested conditions may be evaluated in any order.IfNot - accepts a path if the nested condition does not accept it (logical NOT). |
-| scriptCondition | ScriptCondition | *Required if no PathConditions are specified.* A ScriptCondition element specifying a script.The ScriptCondition should contain a [Script, ScriptRef or ScriptFile](https://logging.apache.org/log4j/2.x/manual/appenders.html#ScriptCondition) element that specifies the logic to be executed. (See also the [ScriptFilter](https://logging.apache.org/log4j/2.x/manual/filters.html#Script) documentation for more examples of configuring ScriptFiles and ScriptRefs.)The script is passed a number of [parameters](https://logging.apache.org/log4j/2.x/manual/appenders.html#ScriptParameters), including a list of paths found under the base path (up to `maxDepth`) and must return a list with the paths to delete. |
+| basePath        | String          | 指定扫描要删除文件的基准目录。必选。                       |
+| maxDepth        | int             | 指定扫描的目录的最大层级。0 值表示仅能访问基准目录（安全限制不能访问的情况除外）。Integer.MAX_VALUE 值表示可以访问所有层级。默认值为 1，表示仅扫描基准目录下的文件。 |
+| followLinks     | boolean         | 设置是否跟随符号链接。默认为 false。                    |
+| testMode        | boolean         | 如果设置为 true，文件不会实际删除，而是在 [status logger](https://logging.apache.org/log4j/2.x/manual/configuration.html#StatusMessages) 打印一条 INFO 级别的消息。可以使用该功能来测试是否会错删文件。默认为 false。 |
+| pathSorter      | PathSorter      | 设置一个实现了 [PathSorter](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/PathSorter.html) 接口的插件来在选择删除文件之前排列文件。默认优先排列最近改动的文件。 |
+| pathConditions  | PathCondition[] | 如果没有指定 ScriptCondition 则**必须指定**一个或多个 PathCondition 元素。如果指定了不止一个条件，则这些条件都需要在删除之前接受某个路径。这些条件可以嵌套，只有外部条件接受某个路径之后，其内部条件才会决定是否接受该路径。如果这些条件没有嵌套，则它们的执行顺序是任意的。这些条件也可以通过使用 `IfAll`, `IfAny` 和 `IfNot` 等组合条件进行 AND、OR 和 NOT 等逻辑运算。用户也可以创建自定义条件或使用内置条件：[IfFileName](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfFileName) （接受匹配[正则表达式](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)或[glob](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String))的文件路径），[IfLastModified](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfLastModified)（接受比指定时段早或一样早的文件），[IfAccumulatedFileCount](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfAccumulatedFileCount) （在遍历文件树时文件总数超过文件数上限后接受路径），[IfAccumulatedFileSize](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeleteIfAccumulatedFileSize) （在遍历文件树时文件总大小超过上限后接受路径），IfAll（如果所有内嵌条件都接受了某个路径才会接受该路径，相当于 AND 逻辑。内嵌条件的执行顺序是任意的），IfAny（如果任意一个内嵌条件接受了某个目录就接受该目录，相当于 OR 逻辑。内嵌条件的执行顺序是任意的，IfNot（如果内嵌条件不接受某个路径就接收该路径，相当于 NOT 逻辑）。 |
+| scriptCondition | ScriptCondition | 如果没有指定 PathConditions 则**必须指定**该属性。ScriptCondition 元素应该通过包含 [Script， ScriptRef 或 ScriptFile](https://logging.apache.org/log4j/2.x/manual/appenders.html#ScriptCondition) 元素来指定一个脚本。这里不做重点介绍。 |
 
-| Parameter Name   | Type            | Description                              |
-| ---------------- | --------------- | ---------------------------------------- |
-| glob             | String          | *Required if regex not specified.* Matches the relative path (relative to the base path) using a limited pattern language that resembles regular expressions but with a [simpler syntax](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)). |
-| regex            | String          | *Required if glob not specified.* Matches the relative path (relative to the base path) using a regular expression as defined by the [Pattern](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html) class. |
-| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the path name matches). |
+IfFileName 条件属性如下表所示。
 
-| Parameter Name   | Type            | Description                              |
+| 属性名              | 类型              | 描述                                       |
 | ---------------- | --------------- | ---------------------------------------- |
-| age              | String          | *Required.* Specifies a [duration](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/Duration.html#parseCharSequence). The condition accepts files that are as old or older than the specified duration. |
-| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the file is old enough). |
+| glob             | String          | 如果 regex 属性没有指定则必须指定该属性。使用受限的模式语言（类似于正则表达式但[语法](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String))更简单）来匹配相对路径（基于基准路径）。 |
+| regex            | String          | 如果 glob 属性没有指定则必须指定该属性。使用 [Pattern](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html) 类定义的正则表达式来匹配相对路径（基于基准路径）。 |
+| nestedConditions | PathCondition[] | 可选的内嵌 PathCondition 结合。                  |
 
-| Parameter Name   | Type            | Description                              |
-| ---------------- | --------------- | ---------------------------------------- |
-| exceeds          | int             | *Required.* The threshold count from which files will be deleted. |
-| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the threshold count has been exceeded). |
+IfLastModified 属性如下表所示。
 
-| Parameter Name   | Type            | Description                              |
+| 属性名              | 类型              | 描述                                       |
 | ---------------- | --------------- | ---------------------------------------- |
-| exceeds          | String          | *Required.* The threshold accumulated file size from which files will be deleted. The size can be specified in bytes, with the suffix KB, MB or GB, for example `20MB`. |
-| nestedConditions | PathCondition[] | An optional set of nested [PathConditions](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition). If any nested conditions exist they all need to accept the file before it is deleted. Nested conditions are only evaluated if the outer condition accepts a file (if the threshold accumulated file size has been exceeded). |
+| age              | String          | 必须指定一个[时段](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/appender/rolling/action/Duration.html#parseCharSequence)。该条件接受比指定时段早或一样早的文件。 |
+| nestedConditions | PathCondition[] | 可选的内嵌 PathCondition 结合。                  |
+
+IfAccumulatedFileCount  属性如下表所示。
+
+| 属性名              | 类型              | 描述                               |
+| ---------------- | --------------- | -------------------------------- |
+| exceeds          | int             | 必须指定一个文件总数上限值。如果文件数超过了该上限值则删除文件。 |
+| nestedConditions | PathCondition[] | 可选的内嵌 PathCondition 结合。          |
+
+IfAccumulatedFileSize 属性如下表所示。
+
+| 属性名              | 类型              | 描述                                       |
+| ---------------- | --------------- | ---------------------------------------- |
+| exceeds          | String          | 必须指定一个文件总大小上限值。如果文件累计总大小超过了该上限值则删除文件。该值可以通过 KB、MB 或 GB 等后缀来指定，例如 20MB。 |
+| nestedConditions | PathCondition[] | 可选的内嵌 PathCondition 结合。                  |
 
 Below is a sample configuration that uses a RollingFileAppender with the cron triggering policy configured to trigger every day at midnight. Archives are stored in a directory based on the current year and month. All files under the base directory that match the "*/app-*.log.gz" glob and are 60 days old or older are deleted at rollover time.
 
@@ -976,81 +996,11 @@ Below is a sample configuration that uses a RollingFileAppender with both the ti
 </Configuration>
 ```
 
-| Parameter Name | Type                            | Description                              |
-| -------------- | ------------------------------- | ---------------------------------------- |
-| script         | Script, ScriptFile or ScriptRef | The Script element that specifies the logic to be executed. The script is passed a list of paths found under the base path and must return the paths to delete as a `java.util.List<PathWithAttributes>`. See also the [ScriptFilter](https://logging.apache.org/log4j/2.x/manual/filters.html#Script) documentation for an example of how ScriptFiles and ScriptRefs can be configured. |
-
-| Parameter Name | Type                                 | Description                              |
-| -------------- | ------------------------------------ | ---------------------------------------- |
-| basePath       | `java.nio.file.Path`                 | The directory from where the Delete action started scanning for files to delete. Can be used to relativize the paths in the pathList. |
-| pathList       | `java.util.List<PathWithAttributes>` | The list of paths found under the base path up to the specified max depth, sorted most recently modified files first. The script is free to modify and return this list. |
-| statusLogger   | StatusLogger                         | The StatusLogger that can be used to log internal events during script execution. |
-| configuration  | Configuration                        | The Configuration that owns this ScriptCondition. |
-| substitutor    | StrSubstitutor                       | The StrSubstitutor used to replace lookup variables. |
-| ?              | String                               | Any properties declared in the configuration. |
-
-Below is a sample configuration that uses a RollingFileAppender with the cron triggering policy configured to trigger every day at midnight. Archives are stored in a directory based on the current year and month. The script returns a list of rolled over files under the base directory dated Friday the 13th. The Delete action will delete all files returned by the script.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="trace" name="MyApp" packages="">
-  <Properties>
-    <Property name="baseDir">logs</Property>
-  </Properties>
-  <Appenders>
-    <RollingFile name="RollingFile" fileName="${baseDir}/app.log"
-          filePattern="${baseDir}/$${date:yyyy-MM}/app-%d{yyyyMMdd}.log.gz">
-      <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
-      <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
-      <DefaultRolloverStrategy>
-        <Delete basePath="${baseDir}" maxDepth="2">
-          <ScriptCondition>
-            <Script name="superstitious" language="groovy"><![CDATA[
-                import java.nio.file.*;
- 
-                def result = [];
-                def pattern = ~/\d*\/app-(\d*)\.log\.gz/;
- 
-                pathList.each { pathWithAttributes ->
-                  def relative = basePath.relativize pathWithAttributes.path
-                  statusLogger.trace 'SCRIPT: relative path=' + relative + " (base=$basePath)";
- 
-                  // remove files dated Friday the 13th
- 
-                  def matcher = pattern.matcher(relative.toString());
-                  if (matcher.find()) {
-                    def dateString = matcher.group(1);
-                    def calendar = Date.parse("yyyyMMdd", dateString).toCalendar();
-                    def friday13th = calendar.get(Calendar.DAY_OF_MONTH) == 13 \
-                                  && calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY;
-                    if (friday13th) {
-                      result.add pathWithAttributes;
-                      statusLogger.trace 'SCRIPT: deleting path ' + pathWithAttributes;
-                    }
-                  }
-                }
-                statusLogger.trace 'SCRIPT: returning ' + result;
-                result;
-              ]] >
-            </Script>
-          </ScriptCondition>
-        </Delete>
-      </DefaultRolloverStrategy>
-    </RollingFile>
-  </Appenders>
-  <Loggers>
-    <Root level="error">
-      <AppenderRef ref="RollingFile"/>
-    </Root>
-  </Loggers>
-</Configuration>
-```
-
 ###### Log Archive File Attribute View Policy: Custom file attribute on Rollover
 
 Log4j-2.9 introduces a `PosixViewAttribute` action that gives users more control over which file attribute permissions, owner and group should be applied. The PosixViewAttribute action lets users configure one or more conditions that select the eligible files relative to a base directory.
 
-| Parameter Name  | Type            | Description                              |
+| 属性名             | 类型              | 描述                                       |
 | --------------- | --------------- | ---------------------------------------- |
 | basePath        | String          | *Required.* Base path from where to start scanning for files to apply attributes. |
 | maxDepth        | int             | The maximum number of levels of directories to visit. A value of 0 means that only the starting file (the base path itself) is visited, unless denied by the security manager. A value of Integer.MAX_VALUE indicates that all levels should be visited. The default is 1, meaning only the files in the specified base directory. |

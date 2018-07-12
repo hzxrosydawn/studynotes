@@ -6,4 +6,5 @@
  Ignored IntelliJ project setting files
  Ref:https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 ##################################################################################
-.idea
+.idea/
+*.iml
