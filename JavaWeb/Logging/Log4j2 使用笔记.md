@@ -925,7 +925,7 @@ IfAccumulatedFileSize 属性如下表所示。
 | exceeds          | String          | 必须指定一个文件总大小上限值。如果文件累计总大小超过了该上限值则删除文件。该值可以通过 KB、MB 或 GB 等后缀来指定，例如 20MB。 |
 | nestedConditions | PathCondition[] | 可选的内嵌 PathCondition 结合。                  |
 
-Below is a sample configuration that uses a RollingFileAppender with the cron triggering policy configured to trigger every day at midnight. Archives are stored in a directory based on the current year and month. All files under the base directory that match the "*/app-*.log.gz" glob and are 60 days old or older are deleted at rollover time.
+下面配置中的 RollingFileAppender 使用 cron 触发规则，每天晚上触发一次。归档文件存放在当前年月目录。所有位于基准目录下匹配 `*/app-*.log.gz` 的文件，达到或超过 60 天的文件将会在滚动时删除。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -955,6 +955,8 @@ Below is a sample configuration that uses a RollingFileAppender with the cron tr
 ```
 
 Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 100 archives on the same day (1-100) that are stored in a directory based on the current year and month, and will compress each archive using gzip and will roll every hour. During every rollover, this configuration will delete files that match "*/app-*.log.gz" and are 30 days old or older, but keep the most recent 100 GB or the most recent 10 files, whichever comes first. 
+
+
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
