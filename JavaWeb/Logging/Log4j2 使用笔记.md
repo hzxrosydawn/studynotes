@@ -589,7 +589,7 @@ Appender 在将日志数据写入目标位置之前，一般会将日志数据�
 
 代表不同目标位置的各种 Appender 也具有其功能所需的其他属性和子元素。这里选择常用的 Appender 加以介绍。
 
-#### ConsoleAppender
+#### ConsoleAppender 
 
 ConsoleAppender 会将输出写入 System.out（默认目标位置）或 System.err 中。必须提供一个 Layout 来格式化 LogEvent 。
 
@@ -648,9 +648,9 @@ RollingFileAppender 不支持文件锁。
 | fileOwner        | String           | 指定每次创建文件的属主。由于权限原因，可能不允许更改文件属主，这时会抛出 IOException 。仅当有效的目标用户 ID 和文件的用户 ID 相同，或目标用户 ID 具有修改文件属主的权限（如果  [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) 在日志文件路径下有效）时才会处理。底层文件系统应该支持 owner 文件属性视图。 |
 | fileGroup        | String           | 指定每次创建文件的属组。底层文件系统应该支持 [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) 格式的文件属性视图。 |
 
-##### Triggering Policies
+##### 触发规则
 
-###### Composite Triggering Policy
+###### 组合触发规则
 
 `CompositeTriggeringPolicy` 组合了多个触发规则（policy），如果配置的任意规则返回 true 时，则 `CompositeTriggeringPolicy` 也返回 true 。 `CompositeTriggeringPolicy` 通过将其规则包装进 `Policies` 元素即可配置。
 
@@ -664,7 +664,7 @@ RollingFileAppender 不支持文件锁。
 </Policies>
 ```
 
-###### Cron Triggering Policy
+###### Cron 触发规则
 
 `CronTriggeringPolicy` 基于 cron 表达式来滚动日志。
 
@@ -675,7 +675,7 @@ RollingFileAppender 不支持文件锁。
 | schedule          | String  | 和 Quartz 调度器一样的 cron 表达式。参考 [CronExpression](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/util/CronExpression.html) 来查看关于该表达式的详细描述。 |
 | evaluateOnStartup | boolean | 在启动时，该 cron 表达式将基于文件的上次修改时间戳来求值。         |
 
-###### OnStartup Triggering Policy
+###### 启动触发规则
 
 `OnStartupTriggeringPolicy` 在日志文件比当前 JVM 启动时间较早时进行日志滚动，同时遵循下面的 minSize 属性规则。
 
@@ -685,11 +685,11 @@ RollingFileAppender 不支持文件锁。
 | ------- | ---- | ---------------------------------------- |
 | minSize | long | 日志文件滚动的最小大小。大小为 0 表示不管文件大小为多大都滚动。默认值 1 将阻止对空文件进行滚动。 |
 
-###### SizeBased Triggering Policy
+###### 基于文件大小的触发规则
 
 `SizeBasedTriggeringPolicy` 在文件大小达到指定的大小时进行日志滚动。文件大小可以使用 KB 、MB 或 GB 等后缀，例如，20 MB。
 
-###### TimeBased Triggering Policy
+###### 基于时间的触发规则
 
 `TimeBasedTriggeringPolicy` 只要日期/时间模式（pattern）不再应用于当前文件时就进行日志滚动。这种规则通过 `interval` 和 `modulate` 属性来配置。
 
@@ -701,9 +701,9 @@ RollingFileAppender 不支持文件锁。
 | modulate       | boolean | 是否调整 interval 属性值，以便下次滚动发生在 interval 边界处。例如，如果时间单位为小时，当前时间为早上 3 点，间隔为 4 小时，则第一次滚动将发生在 早上 4 点时，后续滚动将发生在 早上 8 点、中午 12 点、下午 4 点等时刻。 |
 | maxRandomDelay | integer | 滚动操作随机延迟的最长秒数。默认 0 表示无延迟。该设置在有多个应用同时滚动日志的服务器上很有用，可以扩宽滚动日志的的负载时间范围，避免某一个时刻由于滚动日志造成高 I/O 压力。 |
 
-##### Rollover Strategies
+##### 滚动策略
 
-###### Default Rollover Strategy
+###### 默认滚动规则
 
 DefaultRolloverStrategy 使用一种基于时间和固定窗口（fixed window，窗口在这里的意思大致是对数量的限制，参考TCP 中的 [Window Scale](https://en.wikipedia.org/wiki/TCP_window_scale_option) 概念）的组合策略。如果配置了时间模式，那么将会使用时间间隔来计算用于文件模式的时间。如果文件模式包含了一个整数替换符，那么在时间模式的匹配结果改变之前，该整数值将会在每次滚动时递增。以 `.gz`、`.zip`、`.bz2`、`deflate`、`pack200` 或 `xz`，则最终归档文件将以后缀对应的格式进行压缩。bzip2 、Deflate、Pack200 和 XZ 需要 [Apache Commons compress](http://commons.apache.org/proper/commons-compress/)。另外，XZ 需要 [XZ for Java](http://tukaani.org/xz/java.html)。
 
@@ -739,7 +739,7 @@ DefaultRolloverStrategy 属性如下表所示。
 | compressionLevel          | integer | 设置压缩级别，0 - 9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
 | tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                           |
 
-###### DirectWrite Rollover Strategy
+###### 直写滚动规则
 
 DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文件。该策略不进行文件重命名。如果基于大小的触发规则要在特定时间段内写入多个文件，这些文件编号将从 1 开始持续递增，直到出现基于时间的滚动。
 
@@ -878,7 +878,7 @@ DirectWriteRolloverStrategy 属性如下表所示。
 </Configuration>
 ```
 
-###### Log Archive Retention Policy: Delete on Rollover
+###### 日志归档保留规则：滚动时删除
 
 Log4j 2.5 引入了`删除动作`。在滚动删除旧的日志文件时，相比使用 DefaultRolloverStrategy 的 max 属性，该功能可以让用户拥有更多的删除控制。删除动作可以让用户配置若干个条件来删除相对于基准目录的文件。
 
@@ -954,9 +954,7 @@ IfAccumulatedFileSize 属性如下表所示。
 </Configuration>
 ```
 
-Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 100 archives on the same day (1-100) that are stored in a directory based on the current year and month, and will compress each archive using gzip and will roll every hour. During every rollover, this configuration will delete files that match "*/app-*.log.gz" and are 30 days old or older, but keep the most recent 100 GB or the most recent 10 files, whichever comes first. 
-
-
+下面配置中的 RollingFileAppender 使用基于时间和文件大小的触发规则，每天最多生成 100 个归档日志文件，使用 gzip 压缩，存放在当前年月目录，每小时都会滚动。每次滚动，该配资都会删除匹配 `*/app-*.log.gz` 、达到或超过 30 天的文件，但会保留最近 100 GB 的文件或最近的 10 个文件（这两个条件哪个先满足就使用哪一个条件）。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -998,21 +996,21 @@ Below is a sample configuration that uses a RollingFileAppender with both the ti
 </Configuration>
 ```
 
-###### Log Archive File Attribute View Policy: Custom file attribute on Rollover
+###### 日志归档文件属：滚动时自定义文件属性
 
-Log4j-2.9 introduces a `PosixViewAttribute` action that gives users more control over which file attribute permissions, owner and group should be applied. The PosixViewAttribute action lets users configure one or more conditions that select the eligible files relative to a base directory.
+Log4j 2.9 引入了一个 `PosixViewAttribute` 动作，用户可以更好地控制选择文件的属主、属组、权限等属性中的哪一个来作为滚动依据。`PosixViewAttribute` 动作让用户配置一个或多个条件来筛选相对于基准目录的文件。
 
 | 属性名             | 类型              | 描述                                       |
 | --------------- | --------------- | ---------------------------------------- |
-| basePath        | String          | *Required.* Base path from where to start scanning for files to apply attributes. |
-| maxDepth        | int             | The maximum number of levels of directories to visit. A value of 0 means that only the starting file (the base path itself) is visited, unless denied by the security manager. A value of Integer.MAX_VALUE indicates that all levels should be visited. The default is 1, meaning only the files in the specified base directory. |
-| followLinks     | boolean         | Whether to follow symbolic links. Default is false. |
-| pathConditions  | PathCondition[] | see [DeletePathCondition](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition) |
-| filePermissions | String          | File attribute permissions in POSIX format to apply when action is executed.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view.Examples: rw------- or rw-rw-rw- etc... |
-| fileOwner       | String          | File owner to define when action is executed.Changing file's owner may be restricted for security reason and Operation not permitted IOException thrown. Only processes with an effective user ID equal to the user ID of the file or with appropriate privileges may change the ownership of a file if [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) is in effect for path.Underlying files system shall support file [owner](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/FileOwnerAttributeView.html) attribute view. |
-| fileGroup       | String          | File group to define whene action is executed.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view. |
+| basePath        | String          | 必选的用于扫描文件的基本目录。                          |
+| maxDepth        | int             | 指定扫描的目录的最大层级。0 值表示仅能访问基准目录（安全限制不能访问的情况除外）。Integer.MAX_VALUE 值表示可以访问所有层级。默认值为 1，表示仅扫描基准目录下的文件。 |
+| followLinks     | boolean         | 设置是否跟随符号链接。默认为 false。                    |
+| pathConditions  | PathCondition[] | 参考 [DeletePathCondition](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition) 。 |
+| filePermissions | String          | 设置每当创建文件时所用的 POSIX 格式的文件属性权限。底层文件系统应该支持 [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) 格式的文件属性视图。比如： rw------- 或 rw-rw-rw- 等。 |
+| fileOwner       | String          | 指定每次创建文件的属主。由于权限原因，可能不允许更改文件属主，这时会抛出 IOException 。仅当有效的目标用户 ID 和文件的用户 ID 相同，或目标用户 ID 具有修改文件属主的权限（如果  [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) 在日志文件路径下有效）时才会处理。底层文件系统应该支持 owner 文件属性视图。 |
+| fileGroup       | String          | 指定每次创建文件的属组。底层文件系统应该支持 [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) 格式的文件属性视图。 |
 
-Below is a sample configuration that uses a RollingFileAppender and defines different POSIX file attribute view for current and rolled log files.
+下面配置中的 RollingFileAppender  为当前和已滚动日志文件定义了不同的 POSIX 文件属性视图。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1042,6 +1040,20 @@ Below is a sample configuration that uses a RollingFileAppender and defines diff
  
 </Configuration>
 ```
+
+#### RollingRandomAccessFileAppender
+
+RollingRandomAccessFileAppender 基本上与 RollingFileAppender 相同，只是 RollingRandomAccessFileAppender 的缓冲是不可关闭的，它使用 `ByteBuffer + RandomAccessFile` 来代替  `BufferedOutputStream`。实际测试表名，使用 RollingRandomAccessFileAppender 比使用设置了 `bufferedIO=true` RollingFileAppender 有提高 20-200% 的性能提升。
+
+#### JDBCAppender
+
+JDBCAppender 可以使用标准的 JDBC 将日志事件写入关系型数据库表中。它可以通过使用 JNDI 数据源或自定义的工厂方法（都支持数据库连接池）来获取 JDBC 连接。如果配置的 JDBC 驱动支持批处理语句（batch statement），且 `bufferSize` 设置为一个正数，日志事件就可以分批处理。从 Log4j 2.8 开始，有两种配置日志事件的数据列映射：仅允许字符串和时间戳的原始 `ColumnConfig` 风格，和使用 Log4j 内置的类型转换（支持更多数据类型）的新的 `ColumnMapping` 插件。
+
+
+
+### 配置 Layout
+
+
 
 ### 配置 Filter
 
