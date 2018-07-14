@@ -1,4 +1,4 @@
-实践证明，日志打印是在开发中非常重要的功能模块。一旦将日志打印的语句写入代码中，日志的输出就不需要人工干预，还可以将日志持久化存储到本地文件中、数据库中、远程主机上，便于后续研究代码的执行逻辑。适用于 Java 日志打印框架有很多，比如 SLF4J、Logback、Log4j 等，这里介绍一下应用最广的 Log4j。
+ 实践证明，日志打印是在开发中非常重要的功能模块。一旦将日志打印的语句写入代码中，日志的输出就不需要人工干预，还可以将日志持久化存储到本地文件中、数据库中、远程主机上，便于后续研究代码的执行逻辑。适用于 Java 日志打印框架有很多，比如 SLF4J、Logback、Log4j 等，这里介绍一下应用最广的 Log4j。
 
 ## 为什么使用 Log4j 2？
 
@@ -1049,9 +1049,202 @@ RollingRandomAccessFileAppender 基本上与 RollingFileAppender 相同，只是
 
 JDBCAppender 可以使用标准的 JDBC 将日志事件写入关系型数据库表中。它可以通过使用 JNDI 数据源或自定义的工厂方法（都支持数据库连接池）来获取 JDBC 连接。如果配置的 JDBC 驱动支持批处理语句（batch statement），且 `bufferSize` 设置为一个正数，日志事件就可以分批处理。从 Log4j 2.8 开始，有两种配置日志事件的数据列映射：仅允许字符串和时间戳的原始 `ColumnConfig` 风格，和使用 Log4j 内置的类型转换（支持更多数据类型）的新的 `ColumnMapping` 插件。
 
+JDBCAppender 属性如下表所示。
 
+| 属性名              | 类型               | 描述                                       |
+| ---------------- | ---------------- | ---------------------------------------- |
+| name             | String           | 必选的 Appender 的名称。                        |
+| ignoreExceptions | boolean          | 默认为 `true` ，表示当输出事件时出现的异常将会被内部记录而忽略。 当设置为 `false` 时，则会将异常传播给调用者。当将该 Appender 包装成 [FailoverAppender](https://logging.apache.org/log4j/2.x/manual/appenders.html#FailoverAppender) 时，必须设置为 `false` 。 |
+| filter           | Filter           | 指定一个过滤器来决定是否将日志事件传递给 Appender 处理。可以指定为一个 CompositeFilter 来使用多个过滤器。 |
+| bufferSize       | int              | 如果设置的整数值大于 0，Appender 将会缓冲日志事件，当缓冲区达到指定大小时 flush。 |
+| connectionSource | ConnectionSource | 必选。设置获取数据库连接的连接源。                        |
+| tableName        | String           | 必选。设置写入日期事件的数据库表。                        |
+| columnConfigs    | ColumnConfig[]   | 必选（和/或 columnMappings）。通过多个 Column 元素来设置写入日志数据的数据列以及如何写入日志数据。 |
+| columnMappings   | ColumnMapping[]  | 必选（和/或 columnConfigs）。设置数据列映射列表。每一列必须指定一个列名，每一列都可以通过指定全限定类名来设置转换类型。如果配置的类型是 [ReadOnlyStringMap](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/util/ReadOnlyStringMap.html) / [ThreadContextMap](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/spi/ThreadContextMap.html) 或 [ThreadContextStack](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/spi/ThreadContextStack.html) 赋值兼容的（assignment-compatib），那么该列将会分别使用 MDC 或 NDC （取决于数据库如何处理 Map 或 List 类型的值）来填充。如果配置的类型是 `java.util.Date` 类型赋值兼容的，那么日志时间戳将转换为配置的日期类型。如果配置的类型是 `java.sql.Clob` 或 `java.sql.NClob` 兼容的，那么格式化的事件将分别设置为 Clob 或 NClob（与传统的 ColumnConfig 插件类似）。如果指定了 `literal` 属性，那么其值将会被用于 `INSERT` 查询而不会转译。否则，指定的布局或模式（layout 或 pattern）将会转换为配置的类型，存储在该列中。 |
 
-### 配置 Layout
+当配置了 JDBCAppender，必须指定一个 `ConnectionSource` 实现来获取 JDBC 连接。必须指定以下某个内嵌元素：
+
+- [`<DataSource>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCDataSource) ：使用 JNDI；
+- [`<ConnectionFactory>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCConnectionFactory) ：指向提供 JDBC 连接的类方法对；
+- [`<DriverManager>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCDataSource) ：不使用连接池，这是一种快速但不推荐的脏方法；
+- [`<PoolingDriver>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCPoolingDriver) ：使用 Apache Commons DBCP 提供连接池。
+
+DataSource 元素属性如下表所示。
+
+| 属性名      | 类型     | 描述                                       |
+| -------- | ------ | ---------------------------------------- |
+| jndiName | String | 必选。设置 `javax.sql.DataSource` 绑定的完整 JNDI 前缀，比如 `java:/comp/env/jdbc/LoggingDatabase` 。`DataSource` 必须支持连接池，否则，日志记录会很慢。 |
+
+ConnectionFactory 元素属性如下表所示。
+
+| 属性名    | 类型     | 描述                                       |
+| ------ | ------ | ---------------------------------------- |
+| class  | Class  | 必选。设置一个全限定类名，该类含有一个获取 JDBC 连接的静态工厂方法。    |
+| method | Method | 必选。设置获取 JDBC 连接的静态工厂方法名。该方法不能有参数，且其返回值必须得是 `java.sql.Connection` 或 `DataSource` 。如果该方法返回的是数据库连接，那么数据库连接必须是连接池提供的，不然日志记录就会很慢。如果该方法返回的是数据源，那么该数据源只需要获取一次，出于同样的原因，该数据源也需要支持连接池。 |
+
+DriverManager 元素属性如下表所示。
+
+| 属性名              | 类型         | 描述                                   |
+| ---------------- | ---------- | ------------------------------------ |
+| connectionString | String     | 必选。设置基于特定驱动的 JDBC 连接字符串。             |
+| userName         | String     | 数据库用户名。不能同时中指定 properties 属性和用户名或密码。 |
+| password         | String     | 数据库用户名。不能同时指定 properties 属性和用户名或密码。  |
+| driverClassName  | String     | JDBC 驱动类名。某些老的 JDBC 驱动只能显式通过类名来加载。   |
+| properties       | Property[] | 属性列表。 不能同时指定 properties 属性和用户名或密码。   |
+
+PoolingDriver 元素属性如下表所示。
+
+| 属性名                      | 类型                       | 描述                                       |
+| ------------------------ | ------------------------ | ---------------------------------------- |
+| DriverManager parameters | DriverManager parameters | 连接源从 DriverManager 连接源继承来所有参数。           |
+| poolName                 | String                   | The pool name used to pool JDBC Connections. Defaults to `example`. You can use the JDBC connection string prefix `jdbc:apache:commons:dbcp:` followed by the pool name if you want to use a pooled connection elsewhere. For example: `jdbc:apache:commons:dbcp:example`. |
+
+When configuring the JDBCAppender, use the nested `<Column>` elements to specify which columns in the table should be written to and how to write to them. The JDBCAppender uses this information to formulate a `PreparedStatement` to insert records without SQL injection vulnerability.	
+
+Column 元素属性如下表所示。
+
+| 属性名              | 类型      | 描述                                       |
+| ---------------- | ------- | ---------------------------------------- |
+| name             | String  | *Required.* The name of the database column. |
+| pattern          | String  | Use this attribute to insert a value or values from the log event in this column using a `PatternLayout` pattern. Simply specify any legal pattern in this attribute. Either this attribute, `literal`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| literal          | String  | Use this attribute to insert a literal value in this column. The value will be included directly in the insert SQL, without any quoting (which means that if you want this to be a string, your value should contain single quotes around it like this: `literal="'Literal String'"`). This is especially useful for databases that don't support identity columns. For example, if you are using Oracle you could specify `literal="NAME_OF_YOUR_SEQUENCE.NEXTVAL"` to insert a unique ID in an ID column. Either this attribute, `pattern`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| parameter        | String  | Use this attribute to insert an expression with a parameter marker '?' in this column. The value will be included directly in the insert SQL, without any quoting (which means that if you want this to be a string, your value should contain single quotes around it like this:`<ColumnMapping name="instant" parameter="TIMESTAMPADD('MILLISECOND', ?, TIMESTAMP '1970-01-01')"/>`You can only specify one of `literal` or `parameter`. |
+| isEventTimestamp | boolean | Use this attribute to insert the event timestamp in this column, which should be a SQL datetime. The value will be inserted as a `java.sql.Types.TIMESTAMP`. Either this attribute (equal to `true`), `pattern`, or `isEventTimestamp` must be specified, but not more than one of these. |
+| isUnicode        | boolean | This attribute is ignored unless `pattern` is specified. If `true` or omitted (default), the value will be inserted as unicode (`setNString` or `setNClob`). Otherwise, the value will be inserted non-unicode (`setString` or `setClob`). |
+| isClob           | boolean | This attribute is ignored unless `pattern` is specified. Use this attribute to indicate that the column stores Character Large Objects (CLOBs). If `true`, the value will be inserted as a CLOB (`setClob` or `setNClob`). If `false` or omitted (default), the value will be inserted as a VARCHAR or NVARCHAR (`setString` or `setNString`). |
+
+ColumnMapping 元素属性如下表所示。
+
+| 属性名     | 类型     | 描述                                       |
+| ------- | ------ | ---------------------------------------- |
+| name    | String | *Required.* The name of the database column. |
+| pattern | String | Use this attribute to insert a value or values from the log event in this column using a `PatternLayout` pattern. Simply specify any legal pattern in this attribute. Either this attribute, `literal`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| literal | String | Use this attribute to insert a literal value in this column. The value will be included directly in the insert SQL, without any quoting (which means that if you want this to be a string, your value should contain single quotes around it like this: `literal="'Literal String'"`). This is especially useful for databases that don't support identity columns. For example, if you are using Oracle you could specify `literal="NAME_OF_YOUR_SEQUENCE.NEXTVAL"` to insert a unique ID in an ID column. Either this attribute, `pattern`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| layout  | Layout | The Layout to format the LogEvent.       |
+| type    | String | Conversion type name, a fully-qualified class name. |
+
+Here are a couple sample configurations for the JDBCAppender, as well as a sample factory implementation that uses Commons Pooling and Commons DBCP to pool database connections:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error">
+  <Appenders>
+    <JDBC name="databaseAppender" tableName="dbo.application_log">
+      <DataSource jndiName="java:/comp/env/jdbc/LoggingDataSource" />
+      <Column name="eventDate" isEventTimestamp="true" />
+      <Column name="level" pattern="%level" />
+      <Column name="logger" pattern="%logger" />
+      <Column name="message" pattern="%message" />
+      <Column name="exception" pattern="%ex{full}" />
+    </JDBC>
+  </Appenders>
+  <Loggers>
+    <Root level="warn">
+      <AppenderRef ref="databaseAppender"/>
+    </Root>
+  </Loggers>
+</Configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error">
+  <Appenders>
+    <JDBC name="databaseAppender" tableName="LOGGING.APPLICATION_LOG">
+      <ConnectionFactory class="net.example.db.ConnectionFactory" method="getDatabaseConnection" />
+      <Column name="EVENT_ID" literal="LOGGING.APPLICATION_LOG_SEQUENCE.NEXTVAL" />
+      <Column name="EVENT_DATE" isEventTimestamp="true" />
+      <Column name="LEVEL" pattern="%level" />
+      <Column name="LOGGER" pattern="%logger" />
+      <Column name="MESSAGE" pattern="%message" />
+      <Column name="THROWABLE" pattern="%ex{full}" />
+    </JDBC>
+  </Appenders>
+  <Loggers>
+    <Root level="warn">
+      <AppenderRef ref="databaseAppender"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+```java
+package net.example.db;
+ 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
+ 
+import javax.sql.DataSource;
+ 
+import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.PoolableConnection;
+import org.apache.commons.dbcp.PoolableConnectionFactory;
+import org.apache.commons.dbcp.PoolingDataSource;
+import org.apache.commons.pool.impl.GenericObjectPool;
+ 
+public class ConnectionFactory {
+    private static interface Singleton {
+        final ConnectionFactory INSTANCE = new ConnectionFactory();
+    }
+ 
+    private final DataSource dataSource;
+ 
+    private ConnectionFactory() {
+        Properties properties = new Properties();
+        properties.setProperty("user", "logging");
+        properties.setProperty("password", "abc123"); // or get properties from some configuration file
+ 
+        GenericObjectPool<PoolableConnection> pool = new GenericObjectPool<PoolableConnection>();
+        DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(
+                "jdbc:mysql://example.org:3306/exampleDb", properties
+        );
+        new PoolableConnectionFactory(
+                connectionFactory, pool, null, "SELECT 1", 3, false, false, Connection.TRANSACTION_READ_COMMITTED
+        );
+ 
+        this.dataSource = new PoolingDataSource(pool);
+    }
+ 
+    public static Connection getDatabaseConnection() throws SQLException {
+        return Singleton.INSTANCE.dataSource.getConnection();
+    }
+}
+```
+
+This appender is [MapMessage](https://logging.apache.org/log4j/2.x/manual/messages.html#MapMessage)-aware.
+
+The following configuration uses a `MessageLayout` to indicate that the Appender should match the keys of a `MapMessage` to the names of `ColumnMapping`s when setting the values of the Appender's SQL INSERT statement. This let you insert rows for custom values in a database table based on a Log4j `MapMessage` instead of values from `LogEvent`s.
+
+```xml
+<Configuration status="debug">
+ 
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout pattern="%C{1.} %m %level MDC%X%n"/>
+    </Console>
+    <Jdbc name="databaseAppender" tableName="dsLogEntry" ignoreExceptions="false">
+      <DataSource jndiName="java:/comp/env/jdbc/TestDataSourceAppender" />
+      <ColumnMapping name="Id" />
+      <ColumnMapping name="ColumnA" />
+      <ColumnMapping name="ColumnB" />
+      <MessageLayout />
+    </Jdbc>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="org.apache.logging.log4j.core.appender.db" level="debug" additivity="false">
+      <AppenderRef ref="databaseAppender" />
+    </Logger>
+ 
+    <Root level="fatal">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
+```
+
+### 配置 Layout：
+
+ 
 
 
 
