@@ -11,17 +11,21 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+		<!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
+		<!-- powermock-api-mockito2 1.7.x artifact depends on mockito2 2.8.9 -->
+        <!-- powermock-module-testng 1.7.x artifact depends on testng 6.9.10 -->
+		<!-- powermock-module-junit4 1.7.x artifact depends on junit4 4.4+ -->   
+        <!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
+        <!-- The last version of TestNG supporting JDK 1.5 and 1.6 is 6.8.21.
+        The last version of TestNG supporting JDK 1.7 is -->
+        <powermock.version>1.7.1</powermock.version>
+		<!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
+        <mockito.version>2.10.0</mockito.version>
+        <testng.version>6.14.2</testng.version>
         <!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
         Junit 绑定了一个 hamcrest-core 1.3 的包，但不建议使它，最好排除这个jar包，而是使用 hamcrest-library 1.3的jar包-->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <!-- The last version of TestNG supporting JDK 1.5 and 1.6 is 6.8.21.
-        The last version of TestNG supporting JDK 1.7 is -->
-        <testng.version>6.14.2</testng.version>
-        <!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
-        <mockito.version>2.10.0</mockito.version>
-        <!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
-        <powermock.version>1.7.1</powermock.version>
 
         <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
@@ -107,10 +111,13 @@
         从 jackson 2.4 开始需要 JDK 1.6+，从 jackson 2.7 开始, JDK 的基线为 1.7，但并没有全部使用 JDK 1.7 的新特性，所以
         jackson 2.7 应该可以用于 JDK 1.6，但从 jackson 2.8 开始，JDK 1.7+ 是必须的。 -->
         <jackson.version>2.6.7</jackson.version>
+		<!-- fastjson 1.2.44 needs JDK 6.0+ -->
+        <fastjson.version>1.2.44</fastjson.version>
 
         <!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
         建议使用 2.x 版本（1.x 版本功能有限且与难用，除非是古董级的项目） -->
         <quartz.version>2.2.1</quartz.version>
+		
 		
 		<!-- javax.mail-api 1.6.x 需要 JDK 1.7＋，javax.mail-api 1.5.x 需要 JDK 1.5+ -->
 		<javax.mail.version>1.5.6</javax.mail.version>
@@ -152,19 +159,28 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+		<!-- powermock-module-testng 1.7.x artifact depends on testng 6.9.10-->
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4-legacy</artifactId>
+            <artifactId>powermock-module-testng</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- powermock-api-mockito2 1.7.x artifact depends on mockito2 2.8.9 -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
-
+		<!-- powermock-module-junit4 1.7.x artifact depends on junit4 4.4+ -->
+        <dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
@@ -431,6 +447,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
 
         <dependency>
