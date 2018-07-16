@@ -1,4 +1,4 @@
-实践证明，日志打印是在开发中非常重要的功能模块。一旦将日志打印的语句写入代码中，日志的输出就不需要人工干预，还可以将日志持久化存储到本地文件中、数据库中、远程主机上，便于后续研究代码的执行逻辑。适用于 Java 日志打印框架有很多，比如 SLF4J、Logback、Log4j 等，这里介绍一下应用最广的 Log4j。
+ 实践证明，日志打印是在开发中非常重要的功能模块。一旦将日志打印的语句写入代码中，日志的输出就不需要人工干预，还可以将日志持久化存储到本地文件中、数据库中、远程主机上，便于后续研究代码的执行逻辑。适用于 Java 日志打印框架有很多，比如 SLF4J、Logback、Log4j 等，这里介绍一下应用最广的 Log4j。
 
 ## 为什么使用 Log4j 2？
 
@@ -589,7 +589,7 @@ Appender 在将日志数据写入目标位置之前，一般会将日志数据�
 
 代表不同目标位置的各种 Appender 也具有其功能所需的其他属性和子元素。这里选择常用的 Appender 加以介绍。
 
-#### ConsoleAppender
+#### ConsoleAppender 
 
 ConsoleAppender 会将输出写入 System.out（默认目标位置）或 System.err 中。必须提供一个 Layout 来格式化 LogEvent 。
 
@@ -648,9 +648,9 @@ RollingFileAppender 不支持文件锁。
 | fileOwner        | String           | 指定每次创建文件的属主。由于权限原因，可能不允许更改文件属主，这时会抛出 IOException 。仅当有效的目标用户 ID 和文件的用户 ID 相同，或目标用户 ID 具有修改文件属主的权限（如果  [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) 在日志文件路径下有效）时才会处理。底层文件系统应该支持 owner 文件属性视图。 |
 | fileGroup        | String           | 指定每次创建文件的属组。底层文件系统应该支持 [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) 格式的文件属性视图。 |
 
-##### Triggering Policies
+##### 触发规则
 
-###### Composite Triggering Policy
+###### 组合触发规则
 
 `CompositeTriggeringPolicy` 组合了多个触发规则（policy），如果配置的任意规则返回 true 时，则 `CompositeTriggeringPolicy` 也返回 true 。 `CompositeTriggeringPolicy` 通过将其规则包装进 `Policies` 元素即可配置。
 
@@ -664,7 +664,7 @@ RollingFileAppender 不支持文件锁。
 </Policies>
 ```
 
-###### Cron Triggering Policy
+###### Cron 触发规则
 
 `CronTriggeringPolicy` 基于 cron 表达式来滚动日志。
 
@@ -675,7 +675,7 @@ RollingFileAppender 不支持文件锁。
 | schedule          | String  | 和 Quartz 调度器一样的 cron 表达式。参考 [CronExpression](https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/util/CronExpression.html) 来查看关于该表达式的详细描述。 |
 | evaluateOnStartup | boolean | 在启动时，该 cron 表达式将基于文件的上次修改时间戳来求值。         |
 
-###### OnStartup Triggering Policy
+###### 启动触发规则
 
 `OnStartupTriggeringPolicy` 在日志文件比当前 JVM 启动时间较早时进行日志滚动，同时遵循下面的 minSize 属性规则。
 
@@ -685,11 +685,11 @@ RollingFileAppender 不支持文件锁。
 | ------- | ---- | ---------------------------------------- |
 | minSize | long | 日志文件滚动的最小大小。大小为 0 表示不管文件大小为多大都滚动。默认值 1 将阻止对空文件进行滚动。 |
 
-###### SizeBased Triggering Policy
+###### 基于文件大小的触发规则
 
 `SizeBasedTriggeringPolicy` 在文件大小达到指定的大小时进行日志滚动。文件大小可以使用 KB 、MB 或 GB 等后缀，例如，20 MB。
 
-###### TimeBased Triggering Policy
+###### 基于时间的触发规则
 
 `TimeBasedTriggeringPolicy` 只要日期/时间模式（pattern）不再应用于当前文件时就进行日志滚动。这种规则通过 `interval` 和 `modulate` 属性来配置。
 
@@ -701,9 +701,9 @@ RollingFileAppender 不支持文件锁。
 | modulate       | boolean | 是否调整 interval 属性值，以便下次滚动发生在 interval 边界处。例如，如果时间单位为小时，当前时间为早上 3 点，间隔为 4 小时，则第一次滚动将发生在 早上 4 点时，后续滚动将发生在 早上 8 点、中午 12 点、下午 4 点等时刻。 |
 | maxRandomDelay | integer | 滚动操作随机延迟的最长秒数。默认 0 表示无延迟。该设置在有多个应用同时滚动日志的服务器上很有用，可以扩宽滚动日志的的负载时间范围，避免某一个时刻由于滚动日志造成高 I/O 压力。 |
 
-##### Rollover Strategies
+##### 滚动策略
 
-###### Default Rollover Strategy
+###### 默认滚动规则
 
 DefaultRolloverStrategy 使用一种基于时间和固定窗口（fixed window，窗口在这里的意思大致是对数量的限制，参考TCP 中的 [Window Scale](https://en.wikipedia.org/wiki/TCP_window_scale_option) 概念）的组合策略。如果配置了时间模式，那么将会使用时间间隔来计算用于文件模式的时间。如果文件模式包含了一个整数替换符，那么在时间模式的匹配结果改变之前，该整数值将会在每次滚动时递增。以 `.gz`、`.zip`、`.bz2`、`deflate`、`pack200` 或 `xz`，则最终归档文件将以后缀对应的格式进行压缩。bzip2 、Deflate、Pack200 和 XZ 需要 [Apache Commons compress](http://commons.apache.org/proper/commons-compress/)。另外，XZ 需要 [XZ for Java](http://tukaani.org/xz/java.html)。
 
@@ -739,7 +739,7 @@ DefaultRolloverStrategy 属性如下表所示。
 | compressionLevel          | integer | 设置压缩级别，0 - 9。0 = none，1 = best speed，9 = best compression。仅应用于 ZIP 文件。 |
 | tempCompressedFilePattern | String  | 压缩时归档文件的文件名模式。                           |
 
-###### DirectWrite Rollover Strategy
+###### 直写滚动规则
 
 DirectWriteRolloverStrategy 将日志事件直接写入文件模式表示的文件。该策略不进行文件重命名。如果基于大小的触发规则要在特定时间段内写入多个文件，这些文件编号将从 1 开始持续递增，直到出现基于时间的滚动。
 
@@ -878,7 +878,7 @@ DirectWriteRolloverStrategy 属性如下表所示。
 </Configuration>
 ```
 
-###### Log Archive Retention Policy: Delete on Rollover
+###### 日志归档保留规则：滚动时删除
 
 Log4j 2.5 引入了`删除动作`。在滚动删除旧的日志文件时，相比使用 DefaultRolloverStrategy 的 max 属性，该功能可以让用户拥有更多的删除控制。删除动作可以让用户配置若干个条件来删除相对于基准目录的文件。
 
@@ -954,9 +954,7 @@ IfAccumulatedFileSize 属性如下表所示。
 </Configuration>
 ```
 
-Below is a sample configuration that uses a RollingFileAppender with both the time and size based triggering policies, will create up to 100 archives on the same day (1-100) that are stored in a directory based on the current year and month, and will compress each archive using gzip and will roll every hour. During every rollover, this configuration will delete files that match "*/app-*.log.gz" and are 30 days old or older, but keep the most recent 100 GB or the most recent 10 files, whichever comes first. 
-
-
+下面配置中的 RollingFileAppender 使用基于时间和文件大小的触发规则，每天最多生成 100 个归档日志文件，使用 gzip 压缩，存放在当前年月目录，每小时都会滚动。每次滚动，该配资都会删除匹配 `*/app-*.log.gz` 、达到或超过 30 天的文件，但会保留最近 100 GB 的文件或最近的 10 个文件（这两个条件哪个先满足就使用哪一个条件）。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -998,21 +996,21 @@ Below is a sample configuration that uses a RollingFileAppender with both the ti
 </Configuration>
 ```
 
-###### Log Archive File Attribute View Policy: Custom file attribute on Rollover
+###### 日志归档文件属：滚动时自定义文件属性
 
-Log4j-2.9 introduces a `PosixViewAttribute` action that gives users more control over which file attribute permissions, owner and group should be applied. The PosixViewAttribute action lets users configure one or more conditions that select the eligible files relative to a base directory.
+Log4j 2.9 引入了一个 `PosixViewAttribute` 动作，用户可以更好地控制选择文件的属主、属组、权限等属性中的哪一个来作为滚动依据。`PosixViewAttribute` 动作让用户配置一个或多个条件来筛选相对于基准目录的文件。
 
 | 属性名             | 类型              | 描述                                       |
 | --------------- | --------------- | ---------------------------------------- |
-| basePath        | String          | *Required.* Base path from where to start scanning for files to apply attributes. |
-| maxDepth        | int             | The maximum number of levels of directories to visit. A value of 0 means that only the starting file (the base path itself) is visited, unless denied by the security manager. A value of Integer.MAX_VALUE indicates that all levels should be visited. The default is 1, meaning only the files in the specified base directory. |
-| followLinks     | boolean         | Whether to follow symbolic links. Default is false. |
-| pathConditions  | PathCondition[] | see [DeletePathCondition](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition) |
-| filePermissions | String          | File attribute permissions in POSIX format to apply when action is executed.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view.Examples: rw------- or rw-rw-rw- etc... |
-| fileOwner       | String          | File owner to define when action is executed.Changing file's owner may be restricted for security reason and Operation not permitted IOException thrown. Only processes with an effective user ID equal to the user ID of the file or with appropriate privileges may change the ownership of a file if [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) is in effect for path.Underlying files system shall support file [owner](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/FileOwnerAttributeView.html) attribute view. |
-| fileGroup       | String          | File group to define whene action is executed.Underlying files system shall support [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) file attribute view. |
+| basePath        | String          | 必选的用于扫描文件的基本目录。                          |
+| maxDepth        | int             | 指定扫描的目录的最大层级。0 值表示仅能访问基准目录（安全限制不能访问的情况除外）。Integer.MAX_VALUE 值表示可以访问所有层级。默认值为 1，表示仅扫描基准目录下的文件。 |
+| followLinks     | boolean         | 设置是否跟随符号链接。默认为 false。                    |
+| pathConditions  | PathCondition[] | 参考 [DeletePathCondition](https://logging.apache.org/log4j/2.x/manual/appenders.html#DeletePathCondition) 。 |
+| filePermissions | String          | 设置每当创建文件时所用的 POSIX 格式的文件属性权限。底层文件系统应该支持 [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) 格式的文件属性视图。比如： rw------- 或 rw-rw-rw- 等。 |
+| fileOwner       | String          | 指定每次创建文件的属主。由于权限原因，可能不允许更改文件属主，这时会抛出 IOException 。仅当有效的目标用户 ID 和文件的用户 ID 相同，或目标用户 ID 具有修改文件属主的权限（如果  [_POSIX_CHOWN_RESTRICTED](http://www.gnu.org/software/libc/manual/html_node/Options-for-Files.html) 在日志文件路径下有效）时才会处理。底层文件系统应该支持 owner 文件属性视图。 |
+| fileGroup       | String          | 指定每次创建文件的属组。底层文件系统应该支持 [POSIX](https://docs.oracle.com/javase/7/docs/api/java/nio/file/attribute/PosixFileAttributeView.html) 格式的文件属性视图。 |
 
-Below is a sample configuration that uses a RollingFileAppender and defines different POSIX file attribute view for current and rolled log files.
+下面配置中的 RollingFileAppender  为当前和已滚动日志文件定义了不同的 POSIX 文件属性视图。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1042,6 +1040,213 @@ Below is a sample configuration that uses a RollingFileAppender and defines diff
  
 </Configuration>
 ```
+
+#### RollingRandomAccessFileAppender
+
+RollingRandomAccessFileAppender 基本上与 RollingFileAppender 相同，只是 RollingRandomAccessFileAppender 的缓冲是不可关闭的，它使用 `ByteBuffer + RandomAccessFile` 来代替  `BufferedOutputStream`。实际测试表名，使用 RollingRandomAccessFileAppender 比使用设置了 `bufferedIO=true` RollingFileAppender 有提高 20-200% 的性能提升。
+
+#### JDBCAppender
+
+JDBCAppender 可以使用标准的 JDBC 将日志事件写入关系型数据库表中。它可以通过使用 JNDI 数据源或自定义的工厂方法（都支持数据库连接池）来获取 JDBC 连接。如果配置的 JDBC 驱动支持批处理语句（batch statement），且 `bufferSize` 设置为一个正数，日志事件就可以分批处理。从 Log4j 2.8 开始，有两种配置日志事件的数据列映射：仅允许字符串和时间戳的原始 `ColumnConfig` 风格，和使用 Log4j 内置的类型转换（支持更多数据类型）的新的 `ColumnMapping` 插件。
+
+JDBCAppender 属性如下表所示。
+
+| 属性名              | 类型               | 描述                                       |
+| ---------------- | ---------------- | ---------------------------------------- |
+| name             | String           | 必选的 Appender 的名称。                        |
+| ignoreExceptions | boolean          | 默认为 `true` ，表示当输出事件时出现的异常将会被内部记录而忽略。 当设置为 `false` 时，则会将异常传播给调用者。当将该 Appender 包装成 [FailoverAppender](https://logging.apache.org/log4j/2.x/manual/appenders.html#FailoverAppender) 时，必须设置为 `false` 。 |
+| filter           | Filter           | 指定一个过滤器来决定是否将日志事件传递给 Appender 处理。可以指定为一个 CompositeFilter 来使用多个过滤器。 |
+| bufferSize       | int              | 如果设置的整数值大于 0，Appender 将会缓冲日志事件，当缓冲区达到指定大小时 flush。 |
+| connectionSource | ConnectionSource | 必选。设置获取数据库连接的连接源。                        |
+| tableName        | String           | 必选。设置写入日期事件的数据库表。                        |
+| columnConfigs    | ColumnConfig[]   | 必选（和/或 columnMappings）。通过多个 Column 元素来设置写入日志数据的数据列以及如何写入日志数据。 |
+| columnMappings   | ColumnMapping[]  | 必选（和/或 columnConfigs）。设置数据列映射列表。每一列必须指定一个列名，每一列都可以通过指定全限定类名来设置转换类型。如果配置的类型是 [ReadOnlyStringMap](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/util/ReadOnlyStringMap.html) / [ThreadContextMap](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/spi/ThreadContextMap.html) 或 [ThreadContextStack](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/spi/ThreadContextStack.html) 赋值兼容的（assignment-compatib），那么该列将会分别使用 MDC 或 NDC （取决于数据库如何处理 Map 或 List 类型的值）来填充。如果配置的类型是 `java.util.Date` 类型赋值兼容的，那么日志时间戳将转换为配置的日期类型。如果配置的类型是 `java.sql.Clob` 或 `java.sql.NClob` 兼容的，那么格式化的事件将分别设置为 Clob 或 NClob（与传统的 ColumnConfig 插件类似）。如果指定了 `literal` 属性，那么其值将会被用于 `INSERT` 查询而不会转译。否则，指定的布局或模式（layout 或 pattern）将会转换为配置的类型，存储在该列中。 |
+
+当配置了 JDBCAppender，必须指定一个 `ConnectionSource` 实现来获取 JDBC 连接。必须指定以下某个内嵌元素：
+
+- [`<DataSource>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCDataSource) ：使用 JNDI；
+- [`<ConnectionFactory>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCConnectionFactory) ：指向提供 JDBC 连接的类方法对；
+- [`<DriverManager>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCDataSource) ：不使用连接池，这是一种快速但不推荐的脏方法；
+- [`<PoolingDriver>`](https://logging.apache.org/log4j/2.x/manual/appenders.html#JDBCPoolingDriver) ：使用 Apache Commons DBCP 提供连接池。
+
+DataSource 元素属性如下表所示。
+
+| 属性名      | 类型     | 描述                                       |
+| -------- | ------ | ---------------------------------------- |
+| jndiName | String | 必选。设置 `javax.sql.DataSource` 绑定的完整 JNDI 前缀，比如 `java:/comp/env/jdbc/LoggingDatabase` 。`DataSource` 必须支持连接池，否则，日志记录会很慢。 |
+
+ConnectionFactory 元素属性如下表所示。
+
+| 属性名    | 类型     | 描述                                       |
+| ------ | ------ | ---------------------------------------- |
+| class  | Class  | 必选。设置一个全限定类名，该类含有一个获取 JDBC 连接的静态工厂方法。    |
+| method | Method | 必选。设置获取 JDBC 连接的静态工厂方法名。该方法不能有参数，且其返回值必须得是 `java.sql.Connection` 或 `DataSource` 。如果该方法返回的是数据库连接，那么数据库连接必须是连接池提供的，不然日志记录就会很慢。如果该方法返回的是数据源，那么该数据源只需要获取一次，出于同样的原因，该数据源也需要支持连接池。 |
+
+DriverManager 元素属性如下表所示。
+
+| 属性名              | 类型         | 描述                                   |
+| ---------------- | ---------- | ------------------------------------ |
+| connectionString | String     | 必选。设置基于特定驱动的 JDBC 连接字符串。             |
+| userName         | String     | 数据库用户名。不能同时中指定 properties 属性和用户名或密码。 |
+| password         | String     | 数据库用户名。不能同时指定 properties 属性和用户名或密码。  |
+| driverClassName  | String     | JDBC 驱动类名。某些老的 JDBC 驱动只能显式通过类名来加载。   |
+| properties       | Property[] | 属性列表。 不能同时指定 properties 属性和用户名或密码。   |
+
+PoolingDriver 元素属性如下表所示。
+
+| 属性名                      | 类型                       | 描述                                       |
+| ------------------------ | ------------------------ | ---------------------------------------- |
+| DriverManager parameters | DriverManager parameters | 连接源从 DriverManager 连接源继承来所有参数。           |
+| poolName                 | String                   | The pool name used to pool JDBC Connections. Defaults to `example`. You can use the JDBC connection string prefix `jdbc:apache:commons:dbcp:` followed by the pool name if you want to use a pooled connection elsewhere. For example: `jdbc:apache:commons:dbcp:example`. |
+
+When configuring the JDBCAppender, use the nested `<Column>` elements to specify which columns in the table should be written to and how to write to them. The JDBCAppender uses this information to formulate a `PreparedStatement` to insert records without SQL injection vulnerability.	
+
+Column 元素属性如下表所示。
+
+| 属性名              | 类型      | 描述                                       |
+| ---------------- | ------- | ---------------------------------------- |
+| name             | String  | *Required.* The name of the database column. |
+| pattern          | String  | Use this attribute to insert a value or values from the log event in this column using a `PatternLayout` pattern. Simply specify any legal pattern in this attribute. Either this attribute, `literal`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| literal          | String  | Use this attribute to insert a literal value in this column. The value will be included directly in the insert SQL, without any quoting (which means that if you want this to be a string, your value should contain single quotes around it like this: `literal="'Literal String'"`). This is especially useful for databases that don't support identity columns. For example, if you are using Oracle you could specify `literal="NAME_OF_YOUR_SEQUENCE.NEXTVAL"` to insert a unique ID in an ID column. Either this attribute, `pattern`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| parameter        | String  | Use this attribute to insert an expression with a parameter marker '?' in this column. The value will be included directly in the insert SQL, without any quoting (which means that if you want this to be a string, your value should contain single quotes around it like this:`<ColumnMapping name="instant" parameter="TIMESTAMPADD('MILLISECOND', ?, TIMESTAMP '1970-01-01')"/>`You can only specify one of `literal` or `parameter`. |
+| isEventTimestamp | boolean | Use this attribute to insert the event timestamp in this column, which should be a SQL datetime. The value will be inserted as a `java.sql.Types.TIMESTAMP`. Either this attribute (equal to `true`), `pattern`, or `isEventTimestamp` must be specified, but not more than one of these. |
+| isUnicode        | boolean | This attribute is ignored unless `pattern` is specified. If `true` or omitted (default), the value will be inserted as unicode (`setNString` or `setNClob`). Otherwise, the value will be inserted non-unicode (`setString` or `setClob`). |
+| isClob           | boolean | This attribute is ignored unless `pattern` is specified. Use this attribute to indicate that the column stores Character Large Objects (CLOBs). If `true`, the value will be inserted as a CLOB (`setClob` or `setNClob`). If `false` or omitted (default), the value will be inserted as a VARCHAR or NVARCHAR (`setString` or `setNString`). |
+
+ColumnMapping 元素属性如下表所示。
+
+| 属性名     | 类型     | 描述                                       |
+| ------- | ------ | ---------------------------------------- |
+| name    | String | *Required.* The name of the database column. |
+| pattern | String | Use this attribute to insert a value or values from the log event in this column using a `PatternLayout` pattern. Simply specify any legal pattern in this attribute. Either this attribute, `literal`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| literal | String | Use this attribute to insert a literal value in this column. The value will be included directly in the insert SQL, without any quoting (which means that if you want this to be a string, your value should contain single quotes around it like this: `literal="'Literal String'"`). This is especially useful for databases that don't support identity columns. For example, if you are using Oracle you could specify `literal="NAME_OF_YOUR_SEQUENCE.NEXTVAL"` to insert a unique ID in an ID column. Either this attribute, `pattern`, or `isEventTimestamp="true"` must be specified, but not more than one of these. |
+| layout  | Layout | The Layout to format the LogEvent.       |
+| type    | String | Conversion type name, a fully-qualified class name. |
+
+Here are a couple sample configurations for the JDBCAppender, as well as a sample factory implementation that uses Commons Pooling and Commons DBCP to pool database connections:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error">
+  <Appenders>
+    <JDBC name="databaseAppender" tableName="dbo.application_log">
+      <DataSource jndiName="java:/comp/env/jdbc/LoggingDataSource" />
+      <Column name="eventDate" isEventTimestamp="true" />
+      <Column name="level" pattern="%level" />
+      <Column name="logger" pattern="%logger" />
+      <Column name="message" pattern="%message" />
+      <Column name="exception" pattern="%ex{full}" />
+    </JDBC>
+  </Appenders>
+  <Loggers>
+    <Root level="warn">
+      <AppenderRef ref="databaseAppender"/>
+    </Root>
+  </Loggers>
+</Configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error">
+  <Appenders>
+    <JDBC name="databaseAppender" tableName="LOGGING.APPLICATION_LOG">
+      <ConnectionFactory class="net.example.db.ConnectionFactory" method="getDatabaseConnection" />
+      <Column name="EVENT_ID" literal="LOGGING.APPLICATION_LOG_SEQUENCE.NEXTVAL" />
+      <Column name="EVENT_DATE" isEventTimestamp="true" />
+      <Column name="LEVEL" pattern="%level" />
+      <Column name="LOGGER" pattern="%logger" />
+      <Column name="MESSAGE" pattern="%message" />
+      <Column name="THROWABLE" pattern="%ex{full}" />
+    </JDBC>
+  </Appenders>
+  <Loggers>
+    <Root level="warn">
+      <AppenderRef ref="databaseAppender"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+```java
+package net.example.db;
+ 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
+ 
+import javax.sql.DataSource;
+ 
+import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.PoolableConnection;
+import org.apache.commons.dbcp.PoolableConnectionFactory;
+import org.apache.commons.dbcp.PoolingDataSource;
+import org.apache.commons.pool.impl.GenericObjectPool;
+ 
+public class ConnectionFactory {
+    private static interface Singleton {
+        final ConnectionFactory INSTANCE = new ConnectionFactory();
+    }
+ 
+    private final DataSource dataSource;
+ 
+    private ConnectionFactory() {
+        Properties properties = new Properties();
+        properties.setProperty("user", "logging");
+        properties.setProperty("password", "abc123"); // or get properties from some configuration file
+ 
+        GenericObjectPool<PoolableConnection> pool = new GenericObjectPool<PoolableConnection>();
+        DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(
+                "jdbc:mysql://example.org:3306/exampleDb", properties
+        );
+        new PoolableConnectionFactory(
+                connectionFactory, pool, null, "SELECT 1", 3, false, false, Connection.TRANSACTION_READ_COMMITTED
+        );
+ 
+        this.dataSource = new PoolingDataSource(pool);
+    }
+ 
+    public static Connection getDatabaseConnection() throws SQLException {
+        return Singleton.INSTANCE.dataSource.getConnection();
+    }
+}
+```
+
+This appender is [MapMessage](https://logging.apache.org/log4j/2.x/manual/messages.html#MapMessage)-aware.
+
+The following configuration uses a `MessageLayout` to indicate that the Appender should match the keys of a `MapMessage` to the names of `ColumnMapping`s when setting the values of the Appender's SQL INSERT statement. This let you insert rows for custom values in a database table based on a Log4j `MapMessage` instead of values from `LogEvent`s.
+
+```xml
+<Configuration status="debug">
+ 
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout pattern="%C{1.} %m %level MDC%X%n"/>
+    </Console>
+    <Jdbc name="databaseAppender" tableName="dsLogEntry" ignoreExceptions="false">
+      <DataSource jndiName="java:/comp/env/jdbc/TestDataSourceAppender" />
+      <ColumnMapping name="Id" />
+      <ColumnMapping name="ColumnA" />
+      <ColumnMapping name="ColumnB" />
+      <MessageLayout />
+    </Jdbc>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="org.apache.logging.log4j.core.appender.db" level="debug" additivity="false">
+      <AppenderRef ref="databaseAppender" />
+    </Logger>
+ 
+    <Root level="fatal">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
+```
+
+### 配置 Layout：
+
+ 
+
+
 
 ### 配置 Filter
 
