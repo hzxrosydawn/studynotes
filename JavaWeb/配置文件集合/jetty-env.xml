@@ -21,8 +21,7 @@
                 <Set name="url">jdbc:mysql://localhost:3306/sample_db</Set>
                 <Set name="username">vincent</Set>
                 <Set name="password">hzx123</Set>
-                <Set name="maxTotal">50</Set>
-                <Set name="maxActive">500</Set>  
+                <Set name="maxTotal">50</Set> 
                 <Set name="maxIdle">20</Set>
                 <Set name="minIdle">10</Set>
                 <Set name="maxWaitMillis">10000</Set>
