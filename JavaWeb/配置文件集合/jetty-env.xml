@@ -3,7 +3,7 @@
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">  
     <!-- 应用数据源 -->  
     <New id="test" class="org.eclipse.jetty.plus.jndi.Resource">
-        <Arg>jdbc/test-local</Arg>    <!--这个要和数据源里面的对应-->
+        <Arg>jndi/jndiDataSource</Arg>    <!--这个要和数据源的Bean配置对应-->
         <Arg>
 			<!--bdcp数据源-->
             <New class="org.apache.commons.dbcp.BasicDataSource">  
@@ -22,7 +22,6 @@
                 <Set name="username">vincent</Set>
                 <Set name="password">hzx123</Set>
                 <Set name="maxTotal">50</Set>
-                <Set name="maxActive">500</Set>  
                 <Set name="maxIdle">20</Set>
                 <Set name="minIdle">10</Set>
                 <Set name="maxWaitMillis">10000</Set>
