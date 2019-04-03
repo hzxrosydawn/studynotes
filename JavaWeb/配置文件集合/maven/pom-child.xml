@@ -132,9 +132,6 @@
 				<excludes>
 					<exclude>**/*test*.*</exclude>
 				</excludes>
-				<!-- 指定“${ }”和“@ @”的转义字符以在属性替换之后仍可以使用“${ }”和“@ @”，
-				外部属性文件的属性值之前需要添加下面指定的注意字符（如\${java.home} -> ${java.home}） -->
-				<escapeString>\</escapeString>
 			</resource>
         </resources>
         <testResources>

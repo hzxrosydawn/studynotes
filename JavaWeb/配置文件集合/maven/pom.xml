@@ -353,11 +353,6 @@
             <version>${commons-dbcp.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0.version}</version>
@@ -454,7 +449,11 @@
             <artifactId>dom4j</artifactId>
             <version>${dom4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
@@ -521,35 +520,54 @@
 
     <build>
         <plugins>
-            <!-- maven 核心插件 -->
-            <!-- maven-clean-plugin 插件负责删除编译生成的 target 目录 -->
+            <!-- maven核心插件 -->
+            <!-- maven-clean-plugin插件负责删除编译生成的target目录 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.0.0</version>
             </plugin>
-            <!-- maven-resources-plugin -->
-            <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+            <!-- maven-resources-plugin负责处理资源文件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.0.2</version>
+                <!-- 如果通过project.build.sourceEncoding属性显式指定了编码格式，那么该插件将自动使用该属性所设置的编码格式。
+                当然，该插件也可以通过以下配置显式改变编码格式 -->
                 <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <!-- 默认值为${project.build.sourceEncoding}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                    <encoding>UTF-8</encoding>
+                    <!-- 指定不进行属性替换属性的资源文件 -->
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>swf</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
             <!-- maven-compiler-plugin 插件负责处理编译 -->
-            <!-- 此编译插件强制指定编译所用的JDK版本，可以避免必须每次手动将IDE中的编译JDK版本调整到已有较高JDK版本 -->
+            <!-- 此编译插件可以强制指定编译所用的JDK版本，这样就避免必须每次手动将IDE中的编译JDK版本调整到已有较高JDK版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <!-- 指定编译的 JDK 版本。默认为 1.5，可以避免手动将 IDE 中的编译 JDK 版本调整到指定 JDK 版本。 -->
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <!-- 指定编译所用的字符集。 -->
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <!-- 如果通过${maven.compiler.source}和${maven.compiler.target}属性指定了编译的JDK版本（3.6.x版本默
+                    认为1.5），那么该插件将自动使用该属性所设置的编码格式，就不需要在插件中显示指定JDK版本了。当然，该插件也可
+                    以通过以下配置显式改变编码格式 -->
+                    <!-- 默认值为${maven.compiler.source}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                    <source>1.8</source>
+                    <!-- 默认值为${maven.compiler.target}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                    <target>1.8</target>
+                    <!-- 默认值为${project.build.sourceEncoding}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                    <encoding>UTF-8</encoding>
+                    <!-- 指定传递给javac程序的参数 -->
+                    <compilerArgs>
+                        <arg>-verbose</arg>
+                        <arg>-Xlint:all,-options,-path</arg>
+                    </compilerArgs>
+                    <!-- 指定编译的初始内存和最大内存 -->
+                    <meminitial>128m</meminitial>
+                    <maxmem>512m</maxmem>
                 </configuration>
             </plugin>
             <plugin>
@@ -572,20 +590,32 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>
             </plugin>
-
+            <!-- Web应用模块打包的maven-war-plugin插件，2.6版本是可用于JDK6的最新版本 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <!-- 默认打成war时不包含pom.xml -->
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                    <!-- 指定打成war时不包含的文件 -->
+                    <packagingExcludes>WEB-INF/jetty-*.xml</packagingExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
             <!-- maven-source-plugin 插件用于生成源码 jar 包。 -->
-            <!-- see http://maven.apache.org/plugins/maven-source-plugin/ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.0</version>
                 <!-- 生成源码 jar 包的相关配置。  -->
                 <configuration>
-                    <!-- 指定源码 jar 包的输出目录。默认为 target 目录。 -->
-                    <!--<outputDirectory>/absolute/path/to/the/output/directory</outputDirectory>-->
-                    <!-- 指定生成源码 jar 包的名称。默认以“groupId-artifactId-version”开头、以"-sources.jar”结尾。
-                     测试源码包以“-test-sources.jar”结尾。 -->
-                    <!--<finalName>filename-of-generated-jar-file</finalName>-->
                     <!-- 指定是否将源码添加到项目构件（artifact）列表中。 -->
                     <attach>false</attach>
                 </configuration>

@@ -5,133 +5,78 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.cntaiping.aiplatform</groupId>
-    <artifactId>aiplatform</artifactId>
+    <groupId>com.rosydawn.myapp</groupId>
+    <artifactId>myapp</artifactId>
     <version>1.1.0.RELEASE</version>
     <packaging>pom</packaging>
-    <name>AIPlatform Root Module</name>
+    <name>MyApp Root Module</name>
 
     <modules>
-        <module>aidispatch-test</module>
-        <module>aidispatch-web</module>
-        <module>aidispatch-transmit</module>
-        <module>facelib-web</module>
-        <module>commons</module>
-        <module>visualize-forward</module>
+        <module>myapp-web</module>
+        <module>myapp-commons</module>
     </modules>
 
     <properties>
-        <!--以下三个属性可以被maven-resources-plugin和maven-compiler-plugin插件默认引用。
-		配置这三个属性后，就不用在maven-resources-plugin和maven-compiler-plugin插件中显示指定对应的配置-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
-        <!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
-        Junit 绑定了一个 hamcrest-core 1.3 的包，但不建议使它，最好排除这个jar包，而是使用 hamcrest-library 1.3的jar包-->
-        <junit.version>4.12</junit.version>
-        <hamcrest.version>1.3</hamcrest.version>
-        <powermock-module-junit4.version>1.7.4</powermock-module-junit4.version>
-        <powermock-api-mockito2.version>1.7.4</powermock-api-mockito2.version>
+        <powermock.version>1.7.1</powermock.version>
+        <mockito.version>2.10.0</mockito.version>
+        <testng.version>6.14.2</testng.version>
 
-        <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
-        spring-tx、spring-expression、spring-oxm 、spring-context-support-->
-        <spring.version>4.3.19.RELEASE</spring.version>
+        <log4j2.version>2.3</log4j2.version>
+        <log4j-slf4j-impl.version>2.3</log4j-slf4j-impl.version>
 
-        <!-- slf4j-log4j12 依赖于 sl4j-api 和 log4j。slf4j-log4j12 版本和 sl4j-api 版本相同。
-		slf4j-log4j12 从 1.6.1 版本开始依赖的 log4j 版本为 1.2.16，从 1.6.5 开始依赖的 log4j 版本为 1.2.17 -->
-        <slf4j-log4j12.version>1.7.25</slf4j-log4j12.version>
-
-        <!-- commons 提供的 java.lang API 的功能增加包，包括字符串、数值、反射、并发、序列化以及系统属性操作等功能的增强。
-        commons-lang 3.5 开始要求 JDK 1.6+，commons-lang 3.6 要求 JDK 1.7+ -->
+        <httpclient.version>4.5.2</httpclient.version>
         <commons-lang3.version>3.5</commons-lang3.version>
-        <!-- Apache Commons Codec 主要用于编码格式转换，主要用于 Base64、二进制、十六进制、字符集和 Url 编码转换。
-            甚至也支持语音编码转换。 Codec 1.6~1.11 需要 JDK 1.6。-->
         <commons-codec.version>1.10</commons-codec.version>
-
-        <!-- Json 数据转换。
-        jackson-databind 包是 spring-webmvc 包的可选依赖，该包还依赖于 jackson-core 包和 jackson-annotations 包。
-        从 jackson 2.4 开始需要 JDK 1.6+，从 jackson 2.7 开始, JDK 的基线为 1.7，但并没有全部使用 JDK 1.7 的新特性，所以
-        jackson 2.7 应该可以用于 JDK 1.6，但从 jackson 2.8 开始，JDK 1.7+ 是必须的。 -->
-        <jackson.version>2.6.7</jackson.version>
+        <quartz.version>2.2.1</quartz.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>${powermock-module-junit4.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-library</artifactId>
-                <version>${hamcrest.version}</version>
+                <artifactId>powermock-module-testng</artifactId>
+                <version>${powermock.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-api-mockito2</artifactId>
-                <version>${powermock-api-mockito2.version}</version>
+                <version>${powermock.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j-slf4j-impl.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-instrument</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-oxm</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-web</artifactId>
+                <version>${log4j2.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j-log4j12.version}</version>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -142,10 +87,16 @@
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
             </dependency>
+
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz-jobs</artifactId>
+                <version>${quartz.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -184,13 +135,14 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.0</version>
                     <configuration>
-						<!-- 如果通过maven.compiler.source和maven.compiler.target属性指定了编译的JDK版本（3.6.x版本默认为1.5），那么该插件将自动使用该属
-						性所设置的编码格式，就不需要在插件中显示指定JDK版本了。当然，该插件也可以通过以下配置显式改变编码格式 -->
-						<!-- 默认值为${maven.compiler.source}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                        <!-- 如果通过${maven.compiler.source}和${maven.compiler.target}属性指定了编译的JDK版本（3.6.x版本默
+                        认为1.5），那么该插件将自动使用该属性所设置的编码格式，就不需要在插件中显示指定JDK版本了。当然，该插件也可
+                        以通过以下配置显式改变编码格式 -->
+                        <!-- 默认值为${maven.compiler.source}，如果parent模块中已声明相关属性就这里不用设置了 -->
                         <source>1.8</source>
-						<!-- 默认值为${maven.compiler.target}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                        <!-- 默认值为${maven.compiler.target}，如果parent模块中已声明相关属性就这里不用设置了 -->
                         <target>1.8</target>
-						<!-- 默认值为${project.build.sourceEncoding}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                        <!-- 默认值为${project.build.sourceEncoding}，如果parent模块中已声明相关属性就这里不用设置了 -->
                         <encoding>UTF-8</encoding>
 						<!-- 指定传递给javac程序的参数 -->
 						<compilerArgs>
@@ -221,6 +173,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
                 </plugin>
                 <!-- maven-source-plugin 插件用于生成源码 jar 包。 -->
                 <plugin>
