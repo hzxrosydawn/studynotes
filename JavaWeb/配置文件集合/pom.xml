@@ -11,30 +11,39 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-		<!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
-		<!-- powermock-api-mockito2 1.7.x artifact depends on mockito2 2.8.9 -->
-        <!-- powermock-module-testng 1.7.x artifact depends on testng 6.9.10 -->
-		<!-- powermock-module-junit4 1.7.x artifact depends on junit4 4.4+ -->
-        <!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
-        <!-- The last version of TestNG supporting JDK 1.5 and 1.6 is 6.8.21.
+		
+		<!-- The last version of TestNG supporting JDK 1.5 and 1.6 is 6.8.21.
         The last version of TestNG supporting JDK 1.7 is -->
-        <powermock.version>1.7.1</powermock.version>
-		<!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
-        <mockito.version>2.10.0</mockito.version>
-        <testng.version>6.14.2</testng.version>
+        <testng.version>6.8.21</testng.version>
+		
         <!-- Junit 4.xx 使用了注解、泛型和静态导入等特性，所以至少需要 JDK 1.5+ 的支持。而Junit 3.xx 需要 JDK 1.2+ 支持。
         Junit 绑定了一个 hamcrest-core 1.3 的包，但不建议使它，最好排除这个jar包，而是使用 hamcrest-library 1.3的jar包-->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
+		
+		<!-- mockito 2 需要 JDK 1.6+ 支持，它可以自动检测到 JDK 8 并使用其新特性 -->
+        <mockito.version>2.8.9</mockito.version>
+		
+		<!-- powermock-module-junit4 1.7.x artifact depends on junit4 4.4+ -->
+        <powermock-module-junit4.version>1.7.4</powermock-module-junit4.version>
 
+		<!-- powermock-module-testng 1.6.4 artifact depends on testng 6.8.21，1.6.5+ depends on testng 6.9.10。 -->
+		<powermock-module-testng.version>1.6.4</powermock-module-testng.version>
+		
+		<!--每个版本的 mockito 都有对应的 powermock，详情请参考：https://github.com/powermock/powermock/wiki/Mockito-->
+		<!-- powermock-api-mockito2 1.7.x artifact depends on mockito2 2.8.0-2.8.9 -->
+		<powermock-api-mockito2.version>1.6.4</powermock-api-mockito2.version>
+        
         <!-- spring-webmvc包依赖于spring-beans、spring-web、spring-core、spring-aop、spring-context、
         spring-tx、spring-expression、spring-oxm 、spring-context-support-->
         <spring.version>4.3.16.RELEASE</spring.version>
+		<spring-data-commons.version>1.13.14.RELEASE</spring-data-commons.version>
+		<spring-data-jpa.version>1.11.14.RELEASE</spring-data-jpa.version>
+        <spring-data-redis.version>1.8.14.RELEASE</spring-data-redis.version>
 		<!-- Spring Security 5.0.4.RELEASE针对Spring Framework 5.0.5.RELEASE构建，
         Spring Security 4.2.5.RELEASE针对Spring Framework 4.3.12.RELEASE构建，
         但Spring Security 5.x和4.x应该可以与Spring Framework4.0.x一起使用。 -->
 		<spring-security.version>4.2.5.RELEASE</spring-security.version>
-		
 		<shiro.version>1.3.2</shiro.version>
         <!-- As of Spring 4.0, Spring requires Hessian 4.0 or above. -->
         <hessian.version>4.0.38</hessian.version>
@@ -162,24 +171,29 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-testng</artifactId>
-            <version>${powermock.version}</version>
+            <version>${powermock-module-testng.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- powermock-api-mockito2 1.7.x artifact depends on mockito2 2.8.9 -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powermock.version}</version>
+            <version>${powermock-api-mockito2.version}</version>
             <scope>test</scope>
         </dependency>
 		<!-- powermock-module-junit4 1.7.x artifact depends on junit4 4.4+ -->
         <dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
+			<version>${powermock-module-junit4.version}</version>
 			<scope>test</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>3.1</version>
+		</dependency>
 		<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -217,6 +231,24 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
+		
+		
+		<dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>${spring-data-commons.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-data-jpa.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>${spring-data-redis.version}</version>
+        </dependency>
+		
 		<!-- spring-security相关包 -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -672,64 +704,63 @@
                 </configuration>
             </plugin>-->
 
+			<!--Jetty 9.x插件。You should use Maven 3.3+ for this plugin-->
             <plugin>
-                <!-- 各版本的groupId稍有不同：
-                从9.x.x开始的版本的groupId为org.eclipse.jetty，
-                在8.x.x及之前的版本的groupId为org.mortbay.jetty -->
-                <!--<groupId>org.eclipse.jetty</groupId>-->
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <!-- 各插件版本对应的JDK、Servlet即JSP版本：
-                9.4.6.v20170531(JDK1.8+&Servlet3.1&JSP2.3)
-                9.2.8.v20150217（JDK1.7+&Servlet3.1&JSP2.3）
-                8.1.16.v20140903(JDK1.6+&Servlet3.0&JSP2.2)
-                7.6.16.v20140903(JDK1.5+&Servlet2.5&JSP2.1) -->
-                <version>8.1.16.v20140903</version>
-                <!-- 7.x.x的版本不支持configuration元素 -->
+                <version>9.2.25.v20180606</version>
+                <!--<version>9.3.24.v20180605</version>-->
+                <!--<version>9.4.11.v20180605</version>-->
                 <configuration>
-                    <!--<httpConnector>
-                        <port>8081</port>
-                    </httpConnector>--> <!--jetty 9 config-->
-                    <!-- 指定接收stop命令的端口。 -->
-                    <stopPort>9966</stopPort>
-                    <!-- 指定发送到关闭端口的字符串来验证stop命令。 -->
-                    <stopKey>shutdown</stopKey>
-                    <!--设置内容改变后是否自动重新加载和部署。默认为automatic-->
-                    <reload>manual</reload>
-                    <!-- 检查变更和自动热部署的时间间隔。 -->
+                    <!--可选。httpConnector元素用于配置connector-->
+                    <!--如果没有指定该元素，则会默认创建一个监听8080端口的ServerConnector。也可以通过标准的jetty xml配置文件
+                    来设置connector，然后在jettyXml元素中引入这些配置文件-->
+                    <httpConnector>
+                        <!--port元素指定connector的监听端口。默认为8080-->
+                        <port>8080</port>
+
+                        <!--host元素指定connector监听的接口。默认监听所有接口-->
+                        <!--<host>localhost</host>-->
+
+                        <!--name元素指定connector名称。在配置特定connector的响应上下文时有用-->
+                        <!--<name>jetty-connector</name>-->
+
+                        <!--idleTimeout元素指定连接的最大空闲时间-->
+                        <!--<idleTimeout>1800</idleTimeout>-->
+
+                        <!--soLinger元素设置socket linger时间-->
+                        <!--<soLinger>0</soLinger>-->
+                    </httpConnector>
+
+                    <!--可选。jettyXml元素指定逗号分隔的jetty xml文件列表，用于配置其他jetty信息，功能强大-->
+                    <!--jetty-context.xml文件配置忽略代码校验，以免jetty启动很慢-->
+                    <jettyXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-context.xml</jettyXml>
+
+                    <!--可选。scanIntervalSeconds元素设置检查是否发生变更以及如果有变更就自动热部署的时间间隔-->
+                    <!-- if you save changes and recompile your class files, Jetty redeploys your webapp, and you can
+                    instantly test the changes you just made-->
+                    <!--默认为0，表示不进行变更检查和自动热部署-->
                     <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <!--忽略代码校验，以免 Jetty 启动很慢。-->
-                    <contextXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
-					<!--<dumpOnStart>true</dumpOnStart>-->
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<!-- 可通过命令行指令“mvn -Djetty.port=9999 jetty:run” 来更改默认端口。 -->
-                            <port>8080</port>
-                            <maxIdleTime>60000</maxIdleTime>
-                        </connector>
-                    </connectors> <!--jetty 8 config-->
-						<!-- 指定系统属性。这里配置的属性不会覆盖命令行和JVM指定的属性，仅用于补充两者配置的属性。 -->
-                        <!--<systemProperties>
-                            <systemProperty>
-                                <name>fooprop</name>
-                                <value>222</value>
-                            </systemProperty>
-                        </systemProperties>-->
-                        <!-- 也可以选择使用属性文件类配置系统属性。
-                        这里配置的属性不会覆盖命令行、JVM和systemProperties指定的属性，仅用于补充三者配置的属性。-->
-                        <!--<systemPropertiesFile>${basedir}/mysys.props</systemPropertiesFile>-->
-                    <webApp>
-						<!-- 设置项目的ContextPath，默认为“/${project.artifactId}”。 -->
-                        <contextPath>/${project.artifactId}</contextPath>
-						<!-- Jetty提供静态资源的多个目录，用来替换baseResource元素。 -->
-                        <resourceBases>
-                          <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
-                          <!--<resourceBase>${project.basedir}/commons</resourceBase>-->
-                        </resourceBases>
-						<!-- 指定一个jetty-env.xml文件的路径，在该文件中可使用JNDI。
-						 确定该文件打包进classpath中，如果把该文件放在测试目录就不行。-->
-                        <jettyEnvXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXml>
-                    </webApp>
+
+                    <!--可选。reload元素设置内容改变后是否自动重新加载和部署。默认为automatic，结合scanIntervalSeconds元素的非零值使用。-->
+                    <!--设置为manual将忽略scanIntervalSeconds元素的设置-->
+                    <!--<reload>manual</reload>-->
+
+                    <!--可选。dumpOnStart元素设置在启动时是否清空容器（dump out the server structure）。默认为false-->
+                    <!--<dumpOnStart>true</dumpOnStart>-->
+
+                    <!--可选。loginServices元素可配置多个org.eclipse.jetty.security.LoginService实现。注意，并没有默认
+                    的realm，如果你在web.xml中用到了一个realm，可以在这里指定相关的realm。也可以通过标准的jetty xml配置文件
+                    来设置connector，然后在jettyXml元素中引入这些配置文件-->
+                    <!--<loginServices>
+                        <loginService implementation="org.eclipse.jetty.security.HashLoginService">
+                            <name>Test Realm</name>
+                            <config>${basedir}/src/etc/realm.properties</config>
+                        </loginService>
+                    </loginServices>-->
+
+                    <!--可选。requestLog元素指定一个org.eclipse.jetty.server.RequestLog实现类。还可以有其他三种方式来配置：
+                    jetty xml文件和jettyXml元素，context xml文件和contextXml元素，webApp元素-->
                     <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
                         <filename>target/access-yyyy_mm_dd.log</filename>
                         <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
@@ -740,14 +771,229 @@
                         <retainDays>120</retainDays>
                         <logCookies>true</logCookies>
                     </requestLog>
+
+                    <!--自Jetty 9.3.1版本开始可选。配置一个org.eclipse.jetty.server.Server实例。
+                    一般不用设置该元素，尤其是使用了jettyXml元素的情况下（在jetty xml中就可以配置Server）。
+                    如果同时配置了两者，那么jetty xml文件将会覆盖pom.xml配置-->
+                    <!--<server></server>-->
+
+                    <!--可选。stopPort元素指定接收stop命令的端口。与jetty:stop或jetty:run-forked目标一起使用时有用-->
+                    <stopPort>9966</stopPort>
+                    <!--可选。stopKey元素和stopPort元素配合使用，用于指定发送到关闭端口的关闭命令的字符串，从而来验证stop命令。 -->
+                    <stopKey>shutdown</stopKey>
+
+                    <!--可选。systemProperties元素用于配置该插件运行时的系统属性-->
+                    <!--<systemProperties>
+                        <systemProperty>
+                            <name>foo_prop</name>
+                            <value>bar_value</value>
+                        </systemProperty>
+                    </systemProperties>-->
+
+                    <!--可选。systemPropertiesFile指定指定一个包含该插件运行时的系统属性的文件。
+                    这里设置的系统属性默认不会覆盖命令行、JVM和systemProperties元素指定的系统属性，也可以设置为强制覆盖-->
+                    <!--<systemPropertiesFile></systemPropertiesFile>-->
+
+                    <!--可选。skip元素用于设置是否执行该插件，默认为false。与在命令行设置-Djetty.skip系统属性有相同效果。
+                    在集成测试中想要跳过测试时这样配置jetty很有用-->
+                    <!--<skip>true</skip>-->
+
+                    <!--默认为false。如果为true，则会将<scope>provided</scope>类型的依赖添加到容器的类路径中，一般都会使用容
+                    器已经提供的依赖，所以，一般都不用配置该元素。除非容器提供的依赖达不到使用要求-->
+                    <!--<useProvidedScope>true</useProvidedScope>-->
+
+                    <!--可选。excludedGoals元素指定不执行的Jetty插件的目标列表-->
+                    <!--<excludedGoals>run,run-exploded</excludedGoals>-->
+
+                    <!--忽略代码校验，以免 Jetty 启动很慢。-->
+                    <contextXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
+
+                    <!-- 指定系统属性。这里配置的属性不会覆盖命令行和JVM指定的属性，仅用于补充两者配置的属性。 -->
+                    <!--<systemProperties>
+                        <systemProperty>
+                            <name>foo_prop</name>
+                            <value>bar_value</value>
+                        </systemProperty>
+                    </systemProperties>-->
+                    <!-- 也可以选择使用属性文件类配置系统属性。这里配置的属性不会覆盖命令行、JVM和systemProperties指定的属性，
+                    仅用于补充三者配置的属性。-->
+                    <!--<systemPropertiesFile>${project.basedir}/my.props</systemPropertiesFile>-->
+
+                    <webApp>
+                        <!-- 设置项目的ContextPath，默认为“/${project.artifactId}”。 -->
+                        <contextPath>/${project.artifactId}</contextPath>
+                        <!-- Jetty提供静态资源的多个目录，用来替换baseResource元素。 -->
+                        <resourceBases>
+                            <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                            <!--<resourceBase>${project.basedir}/commons</resourceBase>-->
+                        </resourceBases>
+                        <!-- 指定一个jetty-env.xml文件的路径，在该文件中可使用JNDI。
+                         确定该文件打包进classpath中，如果把该文件放在测试目录就不行。-->
+                        <jettyEnvXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXml>
+                    </webApp>
                 </configuration>
             </plugin>
-            <!-- tomcat插件最新只支持到tomcat7(JDK1.6+&Servlet3.0&JSP2.2)，
-            从2013-11-11发布后到现在(2017-8-17)也没有更新，好像放弃了 -->
+			
+            <!--Jetty 7.x or Jetty 8.x插件。You will need to use maven 3 from jetty-7.5.3 release going forwards-->
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.16.v20140903</version>
+                <configuration>
+                    <!--可选。connectors元素指定一个org.eclipse.jetty.server.Connector对象（jetty的端口监听器）列表。如果没有指定，
+                    则会默认在8080端口上配置一个NIO org.eclipse.jetty.server.nio.SelectChannelConnector对象。也可以在标准
+                    jetty xml文件里配置connectors，然后在jettyXml元素中引用该配置文件-->
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <!-- 可通过命令行指令“mvn -Djetty.port=9999 jetty:run” 来设置jetty.port系统属性更改默认端口。 -->
+                            <port>8080</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>9090</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+
+                    <!--可选。jettyXml元素指定逗号分隔的jetty xml文件列表，用于配置其他jetty信息，功能强大-->
+                    <!--jetty-context.xml文件配置忽略代码校验，以免jetty启动很慢-->
+                    <jettyXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-context.xml</jettyXml>
+
+                    <!--可选。scanIntervalSeconds元素设置检查是否发生变更以及如果有变更就自动热部署的时间间隔-->
+                    <!-- if you save changes and recompile your class files（you can use IDE auto build function）,
+                    Jetty redeploys your webapp, and instantly test the changes you just made-->
+                    <!--默认为0，表示不进行变更检查和自动热部署-->
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
+
+                    <!--可选。systemProperties元素用于配置该插件运行时的系统属性-->
+                    <!--<systemProperties>
+                        <systemProperty>
+                            <name>foo_prop</name>
+                            <value>bar_value</value>
+                        </systemProperty>
+                    </systemProperties>-->
+                    <!--可选。systemPropertiesFile指定指定一个包含该插件运行时的系统属性的文件。这里设置的系统属性默认不会覆盖命令
+                    行、JVM和systemProperties元素指定的系统属性，仅用于补充三者配置的属性，也可以设置为强制覆盖-->
+                    <!--<systemPropertiesFile>${basedir}/my.props</systemPropertiesFile>-->
+
+                    <!--可选。skip元素用于设置是否执行该插件，默认为false。与在命令行设置-Djetty.skip系统属性有相同效果。
+                    这在集成测试中配置jetty跳过测试时很有用-->
+                    <!--<skip>true</skip>-->
+
+                    <!--可选。loginServices元素可配置多个org.eclipse.jetty.security.LoginService实现。注意，并没有默认
+                    的realm，如果你在web.xml中用到了一个realm，可以在这里指定相关的realm。也可以通过标准的jetty xml配置文件
+                    来设置connector，然后在jettyXml元素中引入这些配置文件-->
+                    <!--<loginServices>
+                        <loginService implementation="org.eclipse.jetty.security.HashLoginService">
+                            <name>Test Realm</name>
+                            <config>${basedir}/src/etc/realm.properties</config>
+                        </loginService>
+                    </loginServices>-->
+
+                    <!--可选。requestLog元素指定一个org.eclipse.jetty.server.RequestLog实现类。还可以有其他三种方式来配置：
+                    jetty xml文件和jettyXml元素，context xml文件和contextXml元素，webApp元素-->
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <filename>target/access-yyyy_mm_dd.log</filename>
+                        <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                        <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                        <logTimeZone>GMT+8:00</logTimeZone>
+                        <append>true</append>
+                        <logServer>true</logServer>
+                        <retainDays>120</retainDays>
+                        <logCookies>true</logCookies>
+                    </requestLog>
+
+                    <!--可选。stopPort元素指定接收stop命令的端口。与jetty:stop或jetty:run-forked目标一起使用时有用-->
+                    <stopPort>9966</stopPort>
+                    <!--可选。stopKey元素和stopPort元素配合使用，用于指定发送到关闭端口的关闭命令的字符串，从而来验证stop命令。 -->
+                    <stopKey>shutdown</stopKey>
+
+                    <!--可选。scanIntervalSeconds元素设置检查是否发生变更以及如果有变更就自动热部署的时间间隔-->
+                    <!-- if you save changes and recompile your class files, Jetty redeploys your webapp, and you can
+                    instantly test the changes you just made-->
+                    <!--默认为0，表示不进行变更检查和自动热部署-->
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
+
+                    <!--可选。reload元素设置内容改变后是否自动重新加载和部署。默认为automatic，结合scanIntervalSeconds元素的非零值使用。-->
+                    <!--设置为manual将忽略scanIntervalSeconds元素的设置-->
+                    <!--<reload>manual</reload>-->
+
+                    <!--忽略代码校验，以免 Jetty 启动很慢。-->
+                    <contextXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
+                    <!--<dumpOnStart>true</dumpOnStart>-->
+
+                    <!--可选。systemProperties元素用于配置该插件运行时的系统属性-->
+                    <!--<systemProperties>
+                        <systemProperty>
+                            <name>foo_prop</name>
+                            <value>bar_value</value>
+                        </systemProperty>
+                    </systemProperties>-->
+                    <!--可选。systemPropertiesFile指定指定一个包含该插件运行时的系统属性的文件。这里设置的系统属性默认不会覆盖命令
+                    行、JVM和systemProperties元素指定的系统属性，仅用于补充三者配置的属性，也可以设置为强制覆盖-->
+                    <!--<systemPropertiesFile>${basedir}/my.props</systemPropertiesFile>-->
+
+                    <!--Configuring Your WebApp-->
+                    <!--webApp元素配置一个org.eclipse.jetty.webapp.WebAppContext的扩展，其任何setter方法都可用来配置Web应用-->
+                    <webApp>
+                        <!-- set the context path for your webapp，default is “/${project.artifactId}”-->
+                        <contextPath>/${project.artifactId}</contextPath>
+
+                        <!-- Optional. Location of a jetty-env.xml file, which allows you to make JNDI bindings that
+                        satisfies <env-entry>, <resource-env-ref> and <resource-ref> linkages in the web.xml. Note that
+                        these can also be made in a <jettyXml> file if you want them to apply to more than one webapp.
+                        确保该文件打包进classpath中，如果把该文件放在测试目录就不行。-->
+                        <jettyEnvXml>${project.basedir}/src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXml>
+
+                        <!--The path to a dir that Jetty can use to expand or copy jars and jsp compiles when your
+                        webapp is running. The default is ${project.build.outputDirectory}/tmp-->
+                        <!--<tempDirectory>${project.build.outputDirectory}/tmp</tempDirectory>-->
+
+                        <!--the path from which Jetty will serve static resources. Defaults to src/main/webapp.-->
+                        <!--<baseResource>${project.basedir}/src/main/webapp</baseResource>-->
+
+                        <!-- use instead of <baseResource> if you have multiple dirs from which you want to serve static
+                        content. This is an array of dir names.-->
+                        <resourceBases>
+                            <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                            <!--<resourceBase>${project.basedir}/commons</resourceBase>-->
+                        </resourceBases>
+
+                        <!--The path to the web.xml file for your webapp-->
+                        <!--<descriptor>${project.basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>-->
+
+                        <!--The path to a webdefault.xml file that will be applied to your webapp before the web.xml.
+                        If none is supplied, Jetty uses a default one baked into the jetty-webapp.jar.-->
+                        <!--<defaultsDescriptor></defaultsDescriptor>-->
+
+                        <!--The path to a web.xml file that will be applied after your web.xml is read.
+                        You can use this to replace or add configuration.-->
+                        <!--<overrideDescriptor></overrideDescriptor>-->
+
+                        <!--Optional. Defaults to "true". Controls whether any overlaid wars are added before or after
+                        the original base resource(s) of the webapp.-->
+                        <!--<baseAppFirst>true</baseAppFirst>-->
+
+                        <!--Since jetty-8.1.x. Optional. A pattern to match against the urls of the jars on the
+                        container path to select those that should be examined for things like META-INF fragments,
+                        resources, tlds and class inheritance hierarchy-->
+                        <!--<containerIncludeJarPattern></containerIncludeJarPattern>-->
+
+                        <!--Since jetty-8.1.6. Optional. A pattern to match against the urls of the jars considered to
+                        be on the webapp's WEB-INF classpath to select those that should be examined for META-INF
+                        fragments, resources, tlds, and class inheritance hierarchy. The default is to potentially
+                        examine them all, subject to any ordering exclusions configured in web.xml.-->
+                        <!--<webInfIncludeJarPattern></webInfIncludeJarPattern>-->
+                    </webApp>
+
+                    <!--The location of the built WAR file(jetty:run-war) or the exploded WAR(jetty:run-exploded).
+                    This defaults to ${project.build.directory}/${project.build.finalName}[.war]-->
+                    <war>${basedir}/target/myApp</war>
+                    <!--<war>${basedir}/target/myApp.war</war>-->
+
+                    <!--Optional. The path to a context xml file that is applied to your webapp AFTER the <webApp>.-->
+                    <!--<contextXml></contextXml>-->
+                </configuration>
             </plugin>
         </plugins>
     </build>

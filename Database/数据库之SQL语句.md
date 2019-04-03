@@ -1022,7 +1022,7 @@ WHERE ... ;
 根据约束的范围分为：单行约束和多行约束。
 
 ###NOT NULL 约束
-NOT NULL 约束强制列不接受 NULL 值.如果不向字段添加值，就无法插入新记录或者更新记录。
+NOT NULL 约束强制列不接受 NULL 值，如果不向字段添加值，就无法插入新记录或者更新记录。
 下面的 SQL 语句强制 "Id_P" 列和 "LastName" 列不接受 NULL 值：
 
 ```mysql
@@ -1036,7 +1036,7 @@ CREATE TABLE Persons (
 ```
 
 ###UNIQUE 约束
-UNIQUE 约束唯一标识数据库表中的每条记录。
+UNIQUE 约束唯一标识数据库表中的每条记录。MySQL 的 InnoDB 引擎下唯一索引列可以存在多个 NULL 值。
 **创建表时添加唯一约束的介绍**：
 
 1. **为单列创建 UNIQUE 约束**语法：
@@ -1068,7 +1068,7 @@ CREATE TABLE Persons (
 
 2. 如果要**为多个列定义 UNIQUE 约束（唯一标识多列的组合）**，请使用下面的表级语法：
 
-  ​MySQL / SQL Server / Oracle / MS Access：
+  MySQL / SQL Server / Oracle / MS Access：
 
 ```mysql
 CREATE TABLE Persons (

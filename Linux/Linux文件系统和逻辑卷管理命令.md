@@ -136,7 +136,7 @@ Usage: du [OPTION]... [FILE]...
 -P, --no-dereference：不遵循任何符号链接（默认）；
 -S, --separate-dirs：对于目录来说，不包含其子目录的大小；
     --si：类似“-h”，但使用 1000 作为进率，而不是 1024；
--s, --summarize：：显示每个输出参数的总计；
+-s, --summarize：：显示每个输出参数的总计，即只显示目录的统计结果而不显示其包含的子目录和文件；
 -t, --threshold=SIZE：不包含小于 SIZE（正值） 的条目或者大于 SIZE（负值） 的条目；
     --time：显示目录中所有文件和子目录的最后修改时间；
     --time=WORD：显示 WORD所表示的时间，WORD 可以为：atime、access、use、ctime 或者 status；
@@ -587,12 +587,12 @@ dir：挂载点。
 - `/home` ：其分区大小取决于本地保存数据量、用户数量等等。/home 目录包含用户定义的配置文件、缓存、应用程序数据和媒体文件。该分区的存在可以让你在不删除用户数据文件的情况下进行升级或者重装 CentOS。如果存储空间超过 50 GB，则会在创建其他分区的同时自动创建 /home 分区。考虑为所有可能包含敏感数据的分区加密。考虑为所有可能包含敏感数据的分区加密。加密可防止对这些分区中数据的未授权访问，即使他们可以访问物理存储设备。在大多数情况下，应该至少对 /home 分区加密。
 - `swap` ：swap 分区支持虚拟内存。当没有足够的 RAM 保存系统处理的数据时会将数据写入 swap 分区。当系统缺乏 swap 空间时，内核会因 RAM 内存耗尽而终止进程。配置过多 swap 空间会造成存储设备处于分配状态而闲置，这是浪费资源。过多 swap 空间还会掩盖内存泄露。内存小于 4G 时设置该分区大小为内存的 2 倍 ，内存大于 4G 时设置该分区的大小和内存大小一致即可 。下表根据系统中的 RAM 容量以及是否需要足够的内存以便系统休眠来提供推荐的 swap 分区大小。
 
-| 系统 RAM 容量 | 建议 swap 空间大小        | 允许休眠的建议 swap 空间大小 |
-| ------------- | ------------------------- | ---------------------------- |
-| 低于 2 GB     | RAM 容量的两倍            | RAM 容量的三倍               |
-| 2 GB - 8 GB   | 与 RAM 容量相等           | RAM 容量的两倍               |
-| 8 GB - 64 GB  | 4 GB 到 RAM 容量的 0.5 倍 | RAM 容量的 1.5 倍            |
-| 超过 64 GB    | 独立负载（至少 4GB）      | 不建议使用休眠功能           |
+| 系统 RAM 容量    | 建议 swap 空间大小         | 允许休眠的建议 swap 空间大小 |
+| ------------ | -------------------- | ----------------- |
+| 低于 2 GB      | RAM 容量的两倍            | RAM 容量的三倍         |
+| 2 GB - 8 GB  | 与 RAM 容量相等           | RAM 容量的两倍         |
+| 8 GB - 64 GB | 4 GB 到 RAM 容量的 0.5 倍 | RAM 容量的 1.5 倍     |
+| 超过 64 GB     | 独立负载（至少 4GB）         | 不建议使用休眠功能         |
 
 
 
@@ -838,59 +838,60 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
    ```shell
    # 查看新添加新硬盘后新建分区的系统 id，发现为默认的 Linxu
    [root@localhost ~]# fdisk -l /dev/sdb*
-   
+
    Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
    Disk label type: dos
    Disk identifier: 0x000391ab
-   
+
       Device Boot      Start         End      Blocks   Id  System
    /dev/sdb1            2048     4196351     2097152   83  Linux
    /dev/sdb2         4196352     8390655     2097152   83  Linux
    /dev/sdb3         8390656    10487807     1048576   83  Linux
-   
+
    Disk /dev/sdb1: 2147 MB, 2147483648 bytes, 4194304 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
-   
+   ```
+
+
    Disk /dev/sdb2: 2147 MB, 2147483648 bytes, 4194304 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
-   
+
+
    Disk /dev/sdb3: 1073 MB, 1073741824 bytes, 2097152 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
+
    # 修改新建分区的系统 id
    [root@localhost ~]# fdisk /dev/sdb
    Welcome to fdisk (util-linux 2.23.2).
-   
+
    Changes will remain in memory only, until you decide to write them.
    Be careful before using the write command.
-   
+
    Command (m for help): p
-   
+
    Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
    Disk label type: dos
    Disk identifier: 0x000391ab
-   
+
       Device Boot      Start         End      Blocks   Id  System
    /dev/sdb1            2048     4196351     2097152   83  Linux
    /dev/sdb2         4196352     8390655     2097152   83  Linux
    /dev/sdb3         8390656    10487807     1048576   83  Linux
-   
+
    Command (m for help): l
-   
+
     0  Empty           24  NEC DOS         81  Minix / old Lin bf  Solaris        
     1  FAT12           27  Hidden NTFS Win 82  Linux swap / So c1  DRDOS/sec (FAT-
     2  XENIX root      39  Plan 9          83  Linux           c4  DRDOS/sec (FAT-
@@ -916,78 +917,78 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
    1b  Hidden W95 FAT3 70  DiskSecure Mult bb  Boot Wizard hid fe  LANstep        
    1c  Hidden W95 FAT3 75  PC/IX           be  Solaris boot    ff  BBT            
    1e  Hidden W95 FAT1 80  Old Minix      
-   
+
    Command (m for help): t
    Partition number (1-3, default 3): 1
    Hex code (type L to list all codes): 8e
    Changed type of partition 'Linux' to 'Linux LVM'
-   
+
    Command (m for help): t
    Partition number (1-3, default 3): 2
    Hex code (type L to list all codes): 8e
    Changed type of partition 'Linux' to 'Linux LVM'
-   
+
    Command (m for help): t
    Partition number (1-3, default 3): 3
    Hex code (type L to list all codes): 8e
    Changed type of partition 'Linux' to 'Linux LVM'
-   
+
    Command (m for help): p
-   
+
    Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
    Disk label type: dos
    Disk identifier: 0x000391ab
-   
+
       Device Boot      Start         End      Blocks   Id  System
    /dev/sdb1            2048     4196351     2097152   8e  Linux LVM
    /dev/sdb2         4196352     8390655     2097152   8e  Linux LVM
    /dev/sdb3         8390656    10487807     1048576   8e  Linux LVM
-   
+
    Command (m for help): w
    The partition table has been altered!
-   
+
    Calling ioctl() to re-read partition table.
-   
+
    WARNING: Re-reading the partition table failed with error 16: Device or resource busy.
    The kernel still uses the old table. The new table will be used at
    the next reboot or after you run partprobe(8) or kpartx(8)
    Syncing disks.
-   
+
    # 再次查看新建分区的系统 id，发现已经变成了 Linux LVM
    [root@localhost ~]# fdisk -l /dev/sdb*
-   
+
    Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
    Disk label type: dos
    Disk identifier: 0x000391ab
-   
+
       Device Boot      Start         End      Blocks   Id  System
    /dev/sdb1            2048     4196351     2097152   8e  Linux LVM
    /dev/sdb2         4196352     8390655     2097152   8e  Linux LVM
    /dev/sdb3         8390656    10487807     1048576   8e  Linux LVM
-   
+
    Disk /dev/sdb1: 2147 MB, 2147483648 bytes, 4194304 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
-   
+
+
    Disk /dev/sdb2: 2147 MB, 2147483648 bytes, 4194304 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
-   
+
+
    Disk /dev/sdb3: 1073 MB, 1073741824 bytes, 2097152 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
+
    [root@localhost ~]# 
    ```
 
@@ -1305,12 +1306,12 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
    8192 inodes per group
    Superblock backups stored on blocks: 
            32768, 98304, 163840, 229376, 294912
-   
+
    Allocating group tables: done                            
    Writing inode tables: done                            
    Creating journal (16384 blocks): done
    Writing superblocks and filesystem accounting information: done 
-   
+
    [root@localhost ~]# mkfs.ext3 /dev/VG01/lv02
    mke2fs 1.42.9 (28-Dec-2013)
    Filesystem label=
@@ -1327,25 +1328,26 @@ Linux LVM 包只提供了命令行程序来创建和管理逻辑卷管理系统�
    8160 inodes per group
    Superblock backups stored on blocks: 
            32768, 98304, 163840, 229376, 294912
-   
+
    Allocating group tables: done                            
    Writing inode tables: done                            
    Creating journal (8192 blocks): done
    Writing superblocks and filesystem accounting information: done 
-   
+
    [root@localhost ~]# fdisk -l /dev/VG01/lv*
-   
+
    Disk /dev/VG01/lv01: 2147 MB, 2147483648 bytes, 4194304 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
-   
+   ```
+
+
    Disk /dev/VG01/lv02: 1602 MB, 1602224128 bytes, 3129344 sectors
    Units = sectors of 1 * 512 = 512 bytes
    Sector size (logical/physical): 512 bytes / 512 bytes
    I/O size (minimum/optimal): 512 bytes / 512 bytes
-   
+
    [root@localhost ~]# 
    ```
 
