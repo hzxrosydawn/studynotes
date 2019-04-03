@@ -1,0 +1,13 @@
+// 将某些.class文件打包成jar包	
+jar -cvf xx.jar .
+			
+// 	将自定义的jar包生成自定义的Maven依赖
+mvn install:install-file -Dfile=D:\JavaDev\repository\myapp.jar -DgroupId=com.rosydawn.myapp -DartifactId=myapp-core -Dversion=1.0.0 -Dpackaging=jar
+
+
+
+
+ 
+
+
+

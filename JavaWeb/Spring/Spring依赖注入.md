@@ -419,7 +419,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 这个 `c:cd-ref` 属性的名字有点诡异：
 
-![cnamespace](../../graphs/photos/cnamespace.png)
+![cnamespace](../../Graphs/photos/cnamespace.png)
 
 **属性名以 `c:` 开头，也就是命名空间的前缀。接下来就是要装配的构造器参数名，后面的 `-ref` 会告诉Spring装配的是一个bean的引用，这个bean的ID是 `compactDisc`。显然，使用c-命名空间属性比使用 `<constructor-arg>` 元素更易读，还缩短了代码的长度**。
 
@@ -655,7 +655,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 p-命名空间属性的组成如下图所示：
 
-![pnamespace](../../graphs/photos/pnamespace.png)
+![pnamespace](../../Graphs/photos/pnamespace.png)
 
 属性的名字使用了 `p:` 前缀，表明所设置的是一个属性。后面是要注入的属性名。最后，属性的名称后的 `-ref` 表明Spring要进行装配的是引用，而不是字面量。
 

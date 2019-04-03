@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+       default-lazy-init="false">
+
+    <!-- 定时任务内容配置 -->
+    <!--<bean id="syncStaffsToYITUJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="name" value="syncStaffsToYITUJob"/>
+        <property name="group" value="faceLibGroup"/>
+        <property name="jobClass" value="com.cntaiping.facelib.web.sys.job.FaceLibSyncStaffsToYITUJob"/>
+        <property name="durability" value="true"/>
+    </bean>
+    <bean id="reportFaceLibOptJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="name" value="reportFaceLibOptJob"/>
+        <property name="group" value="faceLibGroup"/>
+        <property name="jobClass" value="com.cntaiping.facelib.web.sys.job.ReportFacLibOptJob"/>
+        <property name="durability" value="true"/>
+    </bean>
+
+    &lt;!&ndash; 定时任务的触发器配置 &ndash;&gt;
+    <bean id="syncStaffsToYITUTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="name" value="syncStaffsToYITUTrigger"/>
+        <property name="group" value="facelibGroup"/>
+        <property name="jobDetail" ref="syncStaffsToYITUJob"/>
+        <property name="misfireInstruction" value="2"/>
+        <property name="cronExpression" value="${trigger.corn.syncStaffsToYITU}"/>
+    </bean>
+    <bean id="reportFaceLibTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="name" value="reportFaceLibTrigger"/>
+        <property name="group" value="facelibGroup"/>
+        <property name="jobDetail" ref="reportFaceLibOptJob"/>
+        <property name="misfireInstruction" value="2"/>
+        <property name="cronExpression" value="${trigger.corn.report}"/>
+    </bean>
+
+    &lt;!&ndash; 定时任务的调度器配置 &ndash;&gt;
+    <bean id="facelibScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="syncStaffsToYITUTrigger"/>
+                <ref bean="reportFaceLibTrigger"/>
+            </list>
+        </property>
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="autoStartup" value="true"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>-->
+</beans>

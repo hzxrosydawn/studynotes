@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--################## Spring 常见的几种数据源配置 #####################-->
+    <!-- 属性文件读入 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 开发、测试、UAT和生产的数据源配置是不同的，但JNDI数据源的名称可以相同，这样可以避免在应用中配置数据用户密码 -->
+    <!--简单的JNDI数据源配置-->
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+          p:jndiName="jndi/jndiDataSource"/>
+    <!--更详细的JNDI数据源配置-->
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+          p:jndiName="jndi/jndiDataSource"
+          p:lookupOnStartup="false"
+          p:cache="true"
+          p:proxyInterface="javax.sql.DataSource"/>
+
+    <!--DBCP2数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+          p:driverClassName="com.mysql.jdbc.Driver"
+          p:url="jdbc:mysql://localhost:3306/sample_db"
+          p:username="myUsername"
+          p:password="myPassword"
+          p:maxTotal="50"
+          p:maxIdle="20"
+          p:minIdle="10"
+          p:maxWaitMillis="6000"
+          p:testOnBorrow="false"
+          p:testWhileIdle="true"
+          p:timeBetweenEvictionRunsMillis="288700000"/>
+
+    <!--c3p0连接池常用配置-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${c3p0.driverClass}"/>
+        <property name="jdbcUrl" value="${c3p0.jdbcUrl}"/>
+        <property name="user" value="${c3p0.user}"/>
+        <property name="password" value="${c3p0.password}"/>
+        <!--以上为必填配置，以下为可选配置-->
+        <!--连接池中保留的最大连接数。默认值: 15 -->
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}"/>
+        <!--连接池中保留的最小连接数，默认为：3-->
+        <property name="minPoolSize" value="${c3p0.minPoolSize}"/>
+        <!--初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3-->
+        <property name="initialPoolSize" value="${c3p0.initialPoolSize}"/>
+
+        <!--当连接池连接耗尽时，客户端调用getConnection()后等待获取新连接的时间，
+        超时后将抛出SQLException，如设为0则无限期等待。单位毫秒。默认: 0 -->
+        <property name="checkoutTimeout" value="${c3p0.checkoutTimeout}"/>
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}"/>
+        <!--定义在从数据库获取新连接失败后重复尝试的次数。默认值: 30 ；小于等于0表示无限次-->
+        <property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}"/>
+        <!--重新尝试的时间间隔，默认为：1000毫秒-->
+        <property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}"/>
+
+        <!--关闭连接时，是否提交未提交的事务，默认为false，即关闭连接，回滚未提交的事务 -->
+        <property name="autoCommitOnClose" value="${c3p0.autoCommitOnClose}"/>
+
+        <!--c3p0将建一张名为Test的空表，并使用其自带的查询语句进行测试。
+        如果定义了这个参数那么属性preferredTestQuery将被忽略。
+        你不能在这张Test表上进行任何操作，它将只供c3p0测试使用。默认值: null -->
+        <property name="automaticTestTable" value="${c3p0.automaticTestTable}"/>
+        <property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}"/>
+        <!--<property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}"/>-->
+        <!--如果为false，则获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常，
+        但是数据源仍有效保留，并在下次调用getConnection()的时候继续尝试获取连接。
+        如果设为true，那么在尝试获取连接失败后该数据源将申明已断开并永久关闭。默认: false-->
+        <property name="breakAfterAcquireFailure" value="${c3p0.breakAfterAcquireFailure}"/>
+        <!--每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 -->
+        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}"/>
+        <!--最大空闲时间，60秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 -->
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}"/>
+        <!--设置c3p0全局的PreparedStatements缓存的大小。如果maxStatements与maxStatementsPerConnection均为0，
+        则缓存不生效，只要有一个不为0，则语句的缓存就能生效。如果默认值: 0-->
+        <property name="maxStatements" value="${c3p0.maxStatements}"/>
+        <!--maxStatementsPerConnection定义了连接池内单个连接所拥有statements的最大缓存数。默认值: 0 -->
+        <property name="maxStatementsPerConnection" value="${c3p0.maxStatementsPerConnection}"/>
+        <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false-->
+        <!--c3p0是异步操作的，缓慢的JDBC操作通过帮助进程完成。扩展这些操作可以有效的提升性能通过多线程实现多个操作同时执行。默认: 3-->
+        <property name="numHelperThreads" value="${c3p0.numHelperThreads}"/>
+    </bean>
+
+    <!--配置 druid 数据库连接池。-->
+    <!-- 外部属性文件读入 -->
+    <bean id="dbcpDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.jdbcUrl}"/>
+        <!--这一项可配可不配，如果不配置，druid 会根据 url 自动识别 dbType，然后选择相应的 driverClassName。建议配置下。-->
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+
+        <!--通常来说，只需要修改initialSize、minIdle、maxActive。-->
+        <!--初始化时建立物理连接的个数。初始化发生在显示调用 init 方法，或者第一次 getConnection 时。-->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <!--最小连接数量。-->
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <!--最大连接数量。-->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+
+        <!--是否缓存 preparedStatement，也就是 PSCache。
+        PSCache 对支持游标的数据库（如 Oracle）性能提升巨大，其他数据库配置为 false。分库分表较多的数据库，建议配置为 false。-->
+        <property name="poolPreparedStatements" value="false"/>
+        <!--要启用 PSCache，必须配置大于 0，当大于 0 时，poolPreparedStatements 自动触发修改为 true。
+        在 Druid 中，不会存在 Oracle 下 PSCache 占用内存过多的问题，可以把这个数值配置大一些，比如说 100。-->
+        <property name="maxOpenPreparedStatements" value="-1"/>
+        <!--指定每个连接上 PSCache 的大小。-->
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
+
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="30000"/>
+
+        <!-- 配置获取连接等待超时的时间，单位为毫秒。-->
+        <property name="maxWait" value="10000"/>
+
+        <!--是否自动提交，默认为 true，可以不用配置。-->
+        <property name="defaultAutoCommit" value="true"/>
+
+        <!--验证连接可用与否的 SQL，可以通过以下三个以名称 test 开头属性配置何时进行检查。-->
+        <property name="validationQuery" value="SELECT 1"/>
+        <!-- 申请连接时执行 validationQuery 检测连接是否有效，做了这个配置会降低性能。-->
+        <property name="testOnBorrow" value="false"/>
+        <!--归还连接时执行 validationQuery 检测连接是否有效，做了这个配置会降低性能。-->
+        <property name="testOnReturn" value="false"/>
+        <!--空闲时时执行 validationQuery 检测连接是否有效。如果空闲时间大于 timeBetweenEvictionRunsMillis，
+        执行 validationQuery 检测连接是否有效。-->
+        <property name="testWhileIdle" value="true"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒。-->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+
+        <!--通过逗号分隔别名列表的方式配置扩展插件。常用的插件有：
+        stat，表示监控统计；
+        log4j、log4j2、slf4j、commonLogging 等表示使用日志记录 SQL 操作。如果这里要用，建议使用 slf4j；
+        wall，表示防止防御sql注入；
+        config，表示通过外部配置配置 druid。
+        所有可用的别名映射配置信息参考 druid-xxx.jar!/META-INF/druid-filter.properties。-->
+        <property name="filters" value="wall,config"/>
+        <!--配置解密密码的RSA算法公钥。用法参考：https://github.com/alibaba/druid/wiki/%E4%BD%BF%E7%94%A8ConfigFilter。
+        相比于 proxyFilters 在引用的 bean 中配置插件，filters 使用 connectionProperties 配置插件。-->
+        <property name="connectionProperties" value="config.decrypt=true;config.decrypt.key=${jdbc.publicKey}"/>
+        <!--也可以通过bean的方式配置扩展插件。-->
+        <property name="proxyFilters">
+            <list>
+                <!--配置记录SQL日志的插件。-->
+                <ref bean="slf4Filter"/>
+                <!--配置监控插件-->
+                <ref bean="statFilter"/>
+            </list>
+        </property>
+        <!--filters 和 proxyFilters 属性是组合关系的，不是替换的。-->
+
+        <!--指定数据源名称。当存在多个数据源时，监控的时候可以通过名字来区分开来。-->
+        <property name="name" value="${jdbc.dataSourceName}"/>
+        <!--合并多个数据源的监控数据。-->
+        <!--<property name="useGlobalDataSourceStat" value="true"/>-->
+    </bean>
+    <!--配置 druid 日志插件配置。同时还需要在 log4j x 的配置文件里配置 SQL 日志输出的 appender。-->
+    <bean id="slf4Filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+        <!--输出可执行的SQL。-->
+        <property name="statementExecutableSqlLogEnable" value="true"/>
+        <!--不输出结果集。-->
+        <property name="resultSetLogEnabled" value="false"/>
+    </bean>
+    <!--配置 druid 监控插件。-->
+    <bean id="statFilter" class="com.alibaba.druid.filter.stat.StatFilter">
+        <!--配置慢SQL的时间。执行时间超过 slowSqlMillis 的就是慢 SQL。单位为毫秒。-->
+        <property name="slowSqlMillis" value="10000"/>
+        <!--是否打印慢 SQL。-->
+        <property name="logSlowSql" value="true"/>
+        <!--是否合并仅参数不同的某些 SQL。-->
+        <property name="mergeSql" value="true"/>
+    </bean>
+    <!--################## Spring 常见的几种数据源配置 #####################-->
+
+
+    <!--################## Spring + Mybatis 配置 #####################-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--引入Mybatis配置文件-->
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
+        <!--引入Mybatis映射文件-->
+        <property name="mapperLocations" value="classpath:/mybatis/mappers/*.xml"/>
+    </bean>
+    <!--配置Mybatis映射接口，并为其创建代理bean-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--指定映射接口位置。如果指定的包的层级较高，可能会出现将所有接口（包括Service层接口）扫描到的问题，就会抛出
+        BindingException，提示Service层方法为无效的绑定，可以结合annotationClass和markerInterface来限制更严格的扫描规则-->
+        <property name="basePackage" value="com.rosydawn.dao.forward"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+        <property name="markerInterface" value="com.rosydawn.dao.BaseMapper"/>
+        <!--导入SqlSessionFactoryBean-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <!--指定所用的事务管理器，用于Weblogic时可以使用org.springframework.transaction.jta.WebLogicJtaTransactionManager-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--指定所管理的数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--对标注了Transactional注解的bean进行加工处理，以织入事务管理切面 -->
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+    <!--################## Spring + Mybatis 配置 #####################-->
+
+
+    <!--################## Spring + Hibernate 配置 #####################-->
+    <!--注入hibernate使用的SessionFactory对象-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+                <!--设置Hibernate方言-->
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <!--是否自动更新表-->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+        <!--使用mappingResources，指定要加载的配置文件，但是文件多了不方便-->
+        <!--<property name="mappingResources">
+            <list><value>xxx.hbm.xml</value></list>
+        </property>-->
+        <!--直接指定一个配置文件所在的目录，方便了许多-->
+        <!--<property name="mappingDirectoryLocations">
+            <list><value>mapping</value></list>
+        </property>-->
+        <!--如果用了注解，可以使用packagesToScan、annotatedPackages、annotatedClasses来设置-->
+        <property name="packagesToScan">
+            <list>
+                <value>com</value>
+            </list>
+        </property>
+    </bean>
+    <!--配置Spring的事务管理-->
+    <bean id="transactionManager" lazy-init="false"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <!--引入数据源依赖 -->
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <!--使用事务注解时加上下面两句-->
+    <context:annotation-config/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!--################## Spring + Hibernate 配置 #####################-->
+
+
+    <!--################## Spring + freemarker 邮件配置 #####################-->
+    <!-- Spring 邮件发送 Bean -->
+    <bean id="mailSendService" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="protocol" value="${mail.transport.protocol}"/>
+        <property name="host" value="${mail.smtp.host}"/>
+        <property name="port" value="${mail.smtp.port}"/>
+        <property name="username" value="${mail.smtp.username}"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+    <!-- freemarker 邮件模板配置 -->
+    <bean id="freeMarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="templateLoaderPath" value="classpath:freemarker"/>
+    </bean>
+    <!--################## Spring + freemarker 邮件配置 #####################-->
+
+
+    <!-- 导入定时任务相关bean的配置 -->
+    <import resource="spring-quartz.xml"/>
+</beans>

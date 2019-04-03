@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>myapp</artifactId>
+        <groupId>com.rosydawn.myapp</groupId>
+        <version>1.1.0.RELEASE</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>myapp-web</artifactId>
+    <packaging>war</packaging>
+    <name>MyApp Webapp Module</name>
+    <url>http://www.example.com</url>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+
+            <properties>
+                <activeProfile>dev</activeProfile>
+            </properties>
+
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>uat</id>
+
+            <properties>
+                <activeProfile>uat</activeProfile>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>pro</id>
+
+            <properties>
+                <activeProfile>pro</activeProfile>
+            </properties>
+        </profile>
+    </profiles>
+
+    <properties>
+		<!--引入parent模块中没有的其他自定义的Maven模块-->
+        <rosydawn-commons.version>1.1.0.RELEASE</rosydawn-commons.version>
+        <!--Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
+        <ojdbc6.version>11.2.0.1</ojdbc6.version>
+
+        <!--引入parent模块中没有的第三方依赖-->
+        <fastjson.version>1.2.44</fastjson.version>
+    </properties>
+
+    <dependencies>
+		<!--引入parent模块中没有的其他自定义的Maven模块-->
+        <dependency>
+            <groupId>com.rosydawn.myapp</groupId>
+            <artifactId>commons</artifactId>
+            <version>${rosydawn-commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>${ojdbc6.version}</version>
+        </dependency>
+        <!--引入parent模块中没有的第三方依赖-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+		<!--引入parent模块声明的依赖时不用配置版本，会自动使用parent模块中的依赖版本-->
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>myapp-web</finalName>
+        <filters>
+            <filter>src/main/filters/filter-values-${activeProfile}.properties</filter>
+        </filters>
+        <resources>
+			<!-- 指定模块中所用资源所在的目录。可以使用多个resource元素来指定多个资源目录 -->
+            <resource>
+				<!-- 默认资源目录为src/main/resources，建议将不同环境下都相同的资源文件放在该默认资源目录下 -->
+                <directory>src/main/resources</directory>
+				<!-- 指定需要输出资源文件（需要指定所有需要输出的资源文件） -->
+				<includes>
+					<include>**/*.txt</include> <!-- 输出src/main/resources目录下的所有txt资源文件 -->
+					<include>**/*.xml</include> <!-- 输出src/main/resources目录下的所有xml资源文件 -->
+				</includes>
+				<!-- 指定不需要输出资源文件（需要指定所有需要输出的资源文件） -->
+				<excludes>
+					<exclude>**/*.bmp</exclude> <!-- 不输出src/main/resources目录下的所有bmp资源文件 -->
+					<exclude>**/*.jpg</exclude> <!-- 不输出src/main/resources目录下的所有jpg资源文件 -->
+				</excludes>
+            </resource>
+			<resource>
+				<!-- 建议将不同环境中不同的资源文件放在其他资源目录下，结合将filtering设置为true来适应不同环境的配置 -->
+				<directory>src/main/resources-filtered</directory>
+				<!-- filtering设置为true会将资源文件中使用${}表示的属性值替换为properties元素中的对应属性值
+				或filters元素指定的外部.properties属性文件中的对应属性值（建议使用此种方式，方便维护） -->
+                <filtering>true</filtering>
+				<!-- includes和excludes可以组合使用。如下配置会输出资源目录下的所有txt文件但除了名称中包含test的txt文件以外 -->
+				<includes>
+					<include>**/*.txt</include>
+				</includes>
+				<excludes>
+					<exclude>**/*test*.*</exclude>
+				</excludes>
+				<!-- 指定“${ }”和“@ @”的转义字符以在属性替换之后仍可以使用“${ }”和“@ @”，
+				外部属性文件的属性值之前需要添加下面指定的注意字符（如\${java.home} -> ${java.home}） -->
+				<escapeString>\</escapeString>
+			</resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+				<!-- 子模块中引用parent模块中声明的maven核心插件（groupId为org.apache.maven.plugins）时，不用配置groupId和version -->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+			<!-- maven-resources-plugin负责处理资源文件 -->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <!-- 如果通过project.build.sourceEncoding属性显式指定了编码格式，那么该插件将自动使用该属性所设置的编码格式。
+                    当然，该插件也可以通过以下配置显式改变编码格式 -->
+                    <configuration>
+						<!-- 默认值为${project.build.sourceEncoding}，如果parent模块中已声明相关属性就这里不用设置了 -->
+                        <encoding>UTF-8</encoding> 
+						<!-- 指定不进行属性替换属性的资源文件的文件名后缀。二进制文件进行属性替换会出现问题 -->
+						<nonFilteredFileExtensions>
+							<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>swf</nonFilteredFileExtension>
+							</nonFilteredFileExtensions>
+                    </configuration>
+                </plugin>
+			<!-- Web应用模块打包的maven-war-plugin插件，2.6版本是可用于JDK6的最新版本 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <!-- 默认打成war时不包含pom.xml -->
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+					<!-- 指定打成war时不包含的文件 -->
+                    <packagingExcludes>WEB-INF/jetty-*.xml</packagingExcludes>
+                </configuration>
+            </plugin>
+			
+			<!-- exec-maven-plugin插件用于运行包含main方法的类 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.3.1</version>
+            </plugin>
+            <!--Jetty 7.x or Jetty 8.x插件。You will need to use maven 3 from jetty-7.5.3 release going forwards-->
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.16.v20140903</version>
+                <configuration>
+                    <!--可选。stopPort元素指定接收stop命令的端口。与jetty:stop或jetty:run-forked目标一起使用时有用-->
+                    <stopPort>9966</stopPort>
+                    <!--可选。stopKey元素和stopPort元素配合使用，用于指定发送到关闭端口的关闭命令的字符串，从而来验证stop命令。 -->
+                    <stopKey>shutdown</stopKey>
+
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>8001</port>
+                            <!--<maxIdleTime>60000</maxIdleTime>-->
+                        </connector>
+                    </connectors>
+
+                    <!--可选。scanIntervalSeconds元素设置检查是否发生变更以及如果有变更就自动热部署的时间间隔-->
+                    <!-- if you save changes and recompile your class files（you can use IDE auto build function）,
+                    Jetty redeploys your webapp, and instantly test the changes you just made-->
+                    <!--默认为0，表示不进行变更检查和自动热部署-->
+                    <!--<scanIntervalSeconds>5</scanIntervalSeconds>-->
+
+                    <!-- 忽略校验代码，解决 Jetty 启动慢的问题。 -->
+                    <!--<contextXml>src/main/resources/jetty/jetty-context.xml</contextXml>-->
+
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
+
+                    <war>${basedir}/target/</war>
+
+                    <!--Configuring Your WebApp-->
+                    <webApp>
+                        <!-- set the context path for your webapp，default is “/${project.artifactId}”-->
+                        <contextPath>/${project.build.finalName}</contextPath>
+                        <!-- 引入JNDI配置。如果配置文件位于WEB-INF目录（默认读取位置）下，则不需要显示指定 -->
+                        <!--<jettyEnvXml>src/main/resources/jetty/jetty-env.xml</jettyEnvXml>-->
+                    </webApp>
+
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <filename>target/access-yyyy_mm_dd.log</filename>
+                        <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                        <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                        <logTimeZone>GMT+8:00</logTimeZone>
+                        <append>true</append>
+                        <logServer>true</logServer>
+                        <retainDays>120</retainDays>
+                        <logCookies>true</logCookies>
+                    </requestLog>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

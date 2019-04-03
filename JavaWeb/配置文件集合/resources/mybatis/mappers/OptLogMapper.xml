@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cntaiping.visualize.forward.common.dao.OptLogMapper">
+    <insert id="insertOptLogPO" parameterType="OptLogPO">
+        <selectKey resultType="long" order="BEFORE" keyProperty="logicId">
+            SELECT SEQ_VISUALIZE_OPT_LOG.nextval FROM dual
+        </selectKey>
+        INSERT INTO TB_VISUALIZE_OPT_LOG (logic_id, source_end, opt_type, start_time,
+                                          source_entity, opt_end, done_code, done_msg, done_entity,
+                                          done_time, done_result, done_desc, local_host, create_time)
+        VALUES
+            (
+                #{logicId, jdbcType=NUMERIC},
+                #{sourceEnd, jdbcType=VARCHAR},
+                #{optType, jdbcType=VARCHAR},
+                #{startTime, jdbcType=VARCHAR},
+                #{sourceEntity, jdbcType=VARCHAR},
+                #{optEnd, jdbcType=VARCHAR},
+                #{doneCode, jdbcType=VARCHAR},
+                #{doneMsg, jdbcType=VARCHAR},
+                #{doneEntity, jdbcType=VARCHAR},
+                #{doneTime, jdbcType=VARCHAR},
+                #{doneResult, jdbcType=VARCHAR},
+                #{doneDesc, jdbcType=VARCHAR},
+                #{localHost, jdbcType=VARCHAR},
+                #{createTime, jdbcType=TIMESTAMP}
+            )
+    </insert>
+
+    <resultMap id="optLogListResultMap" type="OptLogPO">
+        <id property="logicId" column="logic_id"/>
+        <result property="sourceEnd" column="source_end"/>
+        <result property="optType" column="opt_type"/>
+        <result property="startTime" column="start_time"/>
+        <result property="sourceEntity" column="source_entity"/>
+        <result property="optEnd" column="opt_end"/>
+        <result property="doneCode" column="done_code"/>
+        <result property="doneMsg" column="done_msg"/>
+        <result property="doneEntity" column="done_entity"/>
+        <result property="doneTime" column="done_time"/>
+        <result property="doneResult" column="done_result"/>
+        <result property="doneDesc" column="done_desc"/>
+        <result property="localHost" column="local_host"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    <select id="selectOptLogPOList" resultMap="optLogListResultMap">
+        SELECT
+        l.logic_id,
+        l.source_end,
+        l.opt_type,
+        l.start_time,
+        l.source_entity,
+        l.opt_end,
+        l.done_code,
+        l.done_msg,
+        l.done_entity,
+        l.done_time,
+        l.done_result,
+        l.done_desc,
+        l.local_host,
+        l.create_time
+        FROM TB_VISUALIZE_OPT_LOG l
+        <where>
+            l.create_time >= #{fromTime}
+            AND l.create_time <![CDATA[<]]> #{toTime}
+            <if test="doneResult != null">
+                AND l.done_result = #{doneResult}
+            </if>
+        </where>
+    </select>
+</mapper>

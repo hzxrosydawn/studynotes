@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 扫描指定包下使用了 Spring 注解的类，并为这些类创建 bean-->
+    <context:component-scan base-package="com.cntaiping.visualize.forward"/>
+
+    <!-- 启用 spring-mvc 配置 -->
+    <mvc:annotation-driven>
+        <!-- 使用FastJsonHttpMessageConverter用于JSON或XML的报文与对象之间的转换 -->
+        <!-- register-defaults 属性用于设置是否注册默认的HttpMessageConverters，默认为true -->
+        <!-- 相比于默认注册的HttpMessageConverters，这里注册的HttpMessageConverter会优先选择 -->
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="fastJsonConfig" ref="fastJsonConfig"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <bean id="fastJsonConfig" class="com.alibaba.fastjson.support.config.FastJsonConfig">
+        <property name="serializerFeatures">
+            <list>
+                <value>PrettyFormat</value>
+                <value>WriteDateUseDateFormat</value>
+            </list>
+        </property>
+    </bean>
+
+
+</beans>

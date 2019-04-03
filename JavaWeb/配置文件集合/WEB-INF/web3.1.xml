@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1" metadata-complete="true">
+    <!-- 404错误拦截 -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error404.html</location>
+    </error-page>
+    <!-- 500错误拦截 -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error500.html</location>
+    </error-page>
+
+    <filter>
+        <filter-name>characterEncoding</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>characterEncoding</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 从类路径加载配置文件 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring-context.xml</param-value>
+    </context-param>
+    <!-- 启动 Spring 容器的监听器，它将引用上面指定的 Spring 配置文件-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- 拦截并转发所有以 bgm 开头的 Url 请求 -->
+    <servlet>
+        <servlet-name>bgm</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!--显式指定spring的hessian servlet配置。
+        否则默认读取/WEB_INF/<servlet-name>-servlet.xml文件，即/WEB_INF/hessian.servlet.xml-->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>bgm</servlet-name>
+        <url-pattern>/bgm/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- 设置开始页面 -->
+    <welcome-file-list>
+        <welcome-file>/login.html</welcome-file>
+        <welcome-file>/index.html</welcome-file>
+    </welcome-file-list>
+</web-app>

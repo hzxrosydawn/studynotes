@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cntaiping.visualize.forward.wblr.dao.MonitorDataMapper">
+    <resultMap id="minuteMonitorPOListResultMap" type="MinuteMonitorPO">
+        <result property="typeName" column="type_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="fileCount" column="file_count"/>
+        <result property="startTime" column="start_time"/>
+        <result property="dueTime" column="due_time"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <select id="selectMinuteMonitorPOList" resultMap="minuteMonitorPOListResultMap">
+        SELECT
+            m.type_name,
+            m.company_name,
+            m.file_count,
+            m.start_time,
+            m.due_time,
+            m.insert_time,
+            m.update_time
+        FROM T_WBLR_TIME_MONITOR m
+        WHERE m.start_time >= #{fromTime} AND m.due_time <![CDATA[<=]]> #{toTime}
+    </select>
+
+    <resultMap id="dayMonitorPOListResultMap" type="DayMonitorPO">
+        <result property="typeName" column="type_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="fileCount" column="file_count"/>
+        <result property="returnedCount" column="is_work"/>
+        <result property="notReturnedCount" column="no_work"/>
+        <result property="totalWorkHours" column="sum_work_time"/>
+        <result property="onTimeCount" column="on_time_work"/>
+        <result property="passedCount" column="pass_work"/>
+        <result property="startTime" column="start_time"/>
+        <result property="dueTime" column="due_time"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <select id="selectDayMonitorPOList" resultMap="dayMonitorPOListResultMap">
+        SELECT
+            m.type_name,
+            m.company_name,
+            m.file_count,
+            m.is_work,
+            m.no_work,
+            m.sum_work_time,
+            m.on_time_work,
+            m.pass_work,
+            m.start_time,
+            m.due_time,
+            m.insert_time,
+            m.update_time
+        FROM T_WBLR_DAY_MONITOR m
+        WHERE m.start_time >= #{fromTime} AND m.due_time <![CDATA[<]]> #{toTime}
+    </select>
+
+</mapper>
