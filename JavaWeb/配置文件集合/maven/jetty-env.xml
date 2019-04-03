@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">  
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">  
+    <!-- 应用数据源 -->  
+    <New id="dev" class="org.eclipse.jetty.plus.jndi.Resource">
+        <Arg>jndi/devJndiDataSource</Arg>    <!-- 该值与Spring的JNDI数据源Bean的jndiName属性的值相同 -->
+        <Arg>
+			<!--dbcp数据源-->
+            <New class="org.apache.commons.dbcp.BasicDataSource">  
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://localhost:3306/dbName</Set>
+                <Set name="username">myUsername</Set>
+                <Set name="password">myPassword</Set>
+                <Set name="maxActive">500</Set>  
+                <Set name="maxIdle">30</Set>  
+                <Set name="maxWait">10000</Set>  
+            </New>
+        </Arg>  
+    </New>
+
+    <New id="uat" class="org.eclipse.jetty.plus.jndi.Resource">
+        <Arg>jndi/uatJndiDataSource</Arg>    <!-- 该值与Spring的JNDI数据源Bean的jndiName属性的值相同 -->
+        <Arg>
+            <!--dbcp2数据源-->
+            <New class="org.apache.commons.dbcp2.BasicDataSource">
+                <Set name="driverClassName">oracle.jdbc.driver.OracleDriver</Set>
+                <Set name="url">jdbc:oracle:thin:@localhost:1521:dbName</Set>
+                <Set name="username">myUsername</Set>
+                <Set name="password">myPassword</Set>
+                <Set name="maxTotal">50</Set>
+                <Set name="maxIdle">20</Set>
+                <Set name="minIdle">10</Set>
+                <Set name="maxWaitMillis">10000</Set>
+            </New>
+        </Arg>
+    </New>
+</Configure>
