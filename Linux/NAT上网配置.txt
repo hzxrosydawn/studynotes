@@ -1,0 +1,21 @@
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+DEVICE=ens33
+UUID=23c84934-11d3-4da6-bff7-d5bb7bc99b5e
+# 主要改动一下配置
+ONBOOT=yes		# 改为yes，即开机自启动
+BOOTPROTO=static	# 改为static以使用静态IP
+IPADDR=192.168.198.129	# 设置静态IP，必须与VMware NAT模式下DHCP设置的IP地址范围内
+GATEWAY=192.168.198.2	# 网关地址，必须为VMware NAT模式下NAT设置的网关地址
+DNS1=8.8.8.8			# 可以设置为实际的DNS服务器IP（8.8.8.8为Google的DNS服务器）
+DNS2=119.29.29.29		# 可以设置为实际的DNS服务器IP（119.29.29.29为Tencent的DNS服务器）
+NETMASK=255.255.255.0	# 设置子网掩码

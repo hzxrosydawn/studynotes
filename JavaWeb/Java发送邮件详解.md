@@ -5,7 +5,7 @@ typora-root-url: ..\graphs\photos
 
 ### 邮件基础知识
 
-在学习使用 Java 发送邮件之前，我们先来看一下关于电子邮件的基础知识。
+在学习发送邮件之前，我们先来看一下关于电子邮件的基础知识。
 
 **电子邮件（Electronic mail，email 或 e-mail）**是一种通过电子设备进行交流信息（邮件）的方式。最早的电子邮件仅支持 ASCII 文本，后来通过多用途互联网邮件扩展（[Multipurpose Internet Mail Extensions](https://en.wikipedia.org/wiki/Multipurpose_Internet_Mail_Extensions)，简称 MIME）添加了其他字符集和多媒体附件支持。另一种**国际邮件（[International email](https://en.wikipedia.org/wiki/International_email)，或称 IDN email、Intl email）**标准采用 UTF-8 编码的国际化邮件地址，已经规范化，但还未（2017年）广泛应用。
 
@@ -131,7 +131,7 @@ typora-root-url: ..\graphs\photos
 
 下图展示了一个典型的邮件发送过程。邮件发送方 Alice 通过邮件用户代理（[mail user agent](https://en.wikipedia.org/wiki/E-mail_client)，即 MUA，一般为邮件客户端程序，如 Outlook、Foxmail 等）向指定的接收方邮件地址发送了一条消息。
 
-![800px-Email.svg](/800px-Email.svg.png)
+![800px-Email.svg](https://raw.githubusercontent.com/hzxrosydawn/studynotes/master/Graphs/photos/800px-Email.svg.png)
 
 具体过程：MUA 将消息格式化为邮件格式，使用 SMTP 传输协议向本地的邮件提交代理（[mail submission agent](https://en.wikipedia.org/wiki/Mail_submission_agent)，即 MSA）（本例中为 *smtp.a.org*）发送消息内容。MSA 确定 SMTP 协议（而非消息头）提供的目标地址（本例中为 *bob@b.org*），然后向 MX DNS 服务器（本例中为 *ns.b.org*）查询接受方邮件地址中的域名（即 @ 符号后面的部分，@ 符号前面的部分是地址的本地部分，通常是接受方的用户名），MX DNS 服务器从其邮件交换记录（mail exchanger record，MX record）的全限定域名列表中选择一个优先匹配的全限定域名（本例中为 *mx.b.org*）返回，从而得到接受方的邮件接收服务器的全限定域名（本例中为 mx.b.org）。MUA （smtp.a.org）使用 SMTP 发送消息给接受方的邮件接收服务器（mx.b.org）。接受方的邮件接收服务器通过 POP3 或 IMAP 将消息传递给接受方的 MUA。实际过程中还存在其他一些细节，这里不再详述。
 
@@ -203,11 +203,9 @@ MIME 标准引入了字符集说明符和两种内容传输编码来传输非 AS
 - **可打印字符引用编码（[Quoted-printable](https://zh.wikipedia.org/wiki/Quoted-printable)，或称 QP encoding）** ：使用可打印的 ASCII 字符 （如字母、数字与"="）表示各种编码格式下的字符，以便能在 7-bit 数据通路上传输 8-bit 数据, 或者更一般地说，在非 8-bit clean 媒体上正确处理数据；
 - [Base64](https://zh.wikipedia.org/wiki/Base64)：用于传输任意二进制数据。
 
-### 使用 JavaMail 发送邮件
+### 常用邮箱配置
 
-[JavaMail](https://javaee.github.io/javamail/) API 提供了一个平台无关的、协议无关的邮件和消息程序构建框架，它属于 Java EE 平台的一部分，也可以在 Java SE 平台上可以添加该包。
-
-在使用 JavaMail API 收发 QQ 邮件、163 邮件、或 Gmail 邮件之前，我们必须开启这些邮件服务器的 POP3/SMTP 和 IMAP/SMTP 服务才行。处于安全考虑，可以配置 SSL 连接。另外，现在许多邮箱需要使用授权码作为密码才能在第三方邮件客户端登录，比如 QQ 邮箱和 163 邮箱等。
+收发 QQ 邮件、163 邮件、或 Gmail 邮件之前，我们必须开启这些邮件服务器的 POP3/SMTP 和 IMAP/SMTP 服务才行。处于安全考虑，可以配置 SSL 连接。另外，现在许多邮箱需要使用授权码作为密码才能在第三方邮件客户端登录，比如 QQ 邮箱和 163 邮箱等。
 
 #### 设置邮件服务器
 
@@ -215,7 +213,7 @@ MIME 标准引入了字符集说明符和两种内容传输编码来传输非 AS
 
 登录 QQ 邮箱之后，选择“设置”，然后选择“账户”，在“POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务”这一项可以开启 POP3/SMTP 和 IMAP/SMTP 服务。
 
-![TIM截图20180519123426](/TIM截图20180519123426.png)
+![TIM截图20180519123426](https://raw.githubusercontent.com/hzxrosydawn/studynotes/master/Graphs/photos/TIM截图20180519123426.png)
 
 QQ邮箱的第三客户端连接的配置如下：
 
@@ -230,15 +228,15 @@ QQ邮箱的第三客户端连接的配置如下：
 
 登录 163 邮箱之后，选择“设置”，然后选择“POP3/SMTP/IMAP”就选择可以开启 POP3/SMTP 和 IMAP/SMTP 服务。
 
-![TIM截图20180519124425_看图王](/TIM截图20180519124425_看图王.png)
+![TIM截图20180519124425_看图王](https://raw.githubusercontent.com/hzxrosydawn/studynotes/master/Graphs/photos/TIM截图20180519124425_看图王.png)
 
 也可以根据提示配置 SSL 连接。
 
-![d911b41f3f1ec5f60cfe5b29430ba087](/d911b41f3f1ec5f60cfe5b29430ba087.jpg)
+![d911b41f3f1ec5f60cfe5b29430ba087](https://raw.githubusercontent.com/hzxrosydawn/studynotes/master/Graphs/photos/d911b41f3f1ec5f60cfe5b29430ba087.jpg)
 
 163 邮箱也提供了授权码来登录第三方客户端。
 
-![TIM截图20180519124526](/TIM截图20180519124526.png)
+![TIM截图20180519124526](https://raw.githubusercontent.com/hzxrosydawn/studynotes/master/Graphs/photos/TIM截图20180519124526.png)
 
 针对发送失败的错误，我们可以仔细分析出错的 code 码来查找对应的错误原因。网易邮箱的 code 码参考地址：
 
@@ -248,7 +246,7 @@ http://help.163.com/09/1224/17/5RAJ4LMH00753VB8.html。
 
 登录 Gmail 邮箱（需要翻越 GFW）之后，点击右上方的“设置”图标，然后点击“设置”，选择“转发和 POP/IMAP”标签。在“POP 下载”部分，选择**对所有邮件启用 POP** 或**对从现在起收到的邮件启用 POP**。在“IMAP 访问”部分，点击**启用 IMAP**。点击页面底部的**保存更改**。
 
-![TIM截图20180519130719](/TIM截图20180519130719.png)
+![TIM截图20180519130719](https://raw.githubusercontent.com/hzxrosydawn/studynotes/master/Graphs/photos/TIM截图20180519130719.png)
 
 第三方邮件客户端设置：
 
@@ -262,6 +260,12 @@ http://help.163.com/09/1224/17/5RAJ4LMH00753VB8.html。
 某些应用和设备使用的登录技术不够安全，Gmail 拒绝登录以免使帐号受到侵害。Gmail 建议**禁止**这些应用访问您的帐号。但如果你甘愿冒险，则转到“我的帐号”页面的“不够安全的应用”部分可设置**允许**这些应用访问你的帐号。
 
 配置好邮件服务器后，我们就可以使用 Java-Mail API 来操作邮件的收发了。
+
+### 使用 JavaMail 发送邮件
+
+[JavaMail](https://javaee.github.io/javamail/) API 提供了一个平台无关的、协议无关的邮件和消息程序构建框架，它属于 Java EE 平台的一部分，也可以在 Java SE 平台上可以添加该包。
+
+在使用 JavaMail API 发送邮件之前需要确定好邮件服务器的配置信息：发送（SMTP协议）邮件服务器、接收（POP3协议或IMAP协议）邮件服务器的主机（域名或IP，以及端口号），是否需要加密传输等。
 
 ####  JavaMail API 详解
 
@@ -306,7 +310,7 @@ javax.mail.Session final 类定义了基本的邮件会话。就像 Http 会话�
 
 传入的 java.util.Properties 参数对象需要设置 [JavaMail 规范](https://javaee.github.io/javamail/docs/JavaMail-1.5.pdf) 中附录 A 列出的属性：
 
-- **mail.store.protocol**: Specifies the **default Message Access Protocol**. The Session.getStore() method returns a Store object that implements this protocol. The client can override this property and explicitly specify the protocol with the Session.getStore(String protocol) method. The default value is the first appropriate protocol in the config files.
+- **mail.store.protocol**: 指定默认的邮件接收协议。Session.getStore() 方法返回一个实现了该协议的 Store 对象。客户端可以覆盖该属性，并通过 Session.getStore(String protocol)  方法来显式指定邮件接收协议，Specifies the **default Message Access Protocol**. The Session.getStore() method returns a Store object that implements this protocol. The client can override this property and explicitly specify the protocol with the Session.getStore(String protocol) method. The default value is the first appropriate protocol in the config files.
 - **mail.transport.protocol**: Specifies the **default Transport Protocol**. The Session.getTransport() method returns a Transport object that implements this protocol. The client can override this property and explicitly specify the protocol by using Session.getTransport(String protocol) method. The default value is the first appropriate protocol in the config files.
 - **mail.host**: Specifies the **default Mail server**. The Store and Transport object’s connect methods use this property, if the protocol specific host property is absent, to locate the target host.The default value is the local machine
 - **mail.user**: Specifies **the username to provide when connecting to a Mail server**. The Store and Transport object’s connect methods use this property, if the protocol specific username property is absent, to obtain the username. The default value is user.name.
@@ -352,13 +356,15 @@ Message 抽象类是创建和解析邮件的核心 API，用来模拟一封电�
 
 一旦 Message 的某个实现类对象初始化完成了，就可以通过 Transport.send 方法发送消息了。
 
-Transport
+##### Transport
 
 javax.mail.Tranport 抽象类用于执行邮件的发送任务。该类继承了javax.mail.Service类，它用于连接 SMTP 服务器并把包含在 Message 对象中的邮件数据发送到 SMTP 服务器。Transport 类是一个抽象类，不同的实现子类实现不同的邮件发送协议。其常用方法有：
 
 
 
-Store类       javax.mail.Store类是接收邮件的核心API类。其实实例对象实现了某个邮件接收协议的邮件接收对象。只需要获取到该Store对象就可以获取邮件对象，此时的邮件对象也是封装在Message对象中。 
+##### Store       
+
+javax.mail.Store 类是接收邮件的核心API类。其实例对象是一个实现了某个邮件接收协议的邮件接收对象。只需要获取到该 Store对象就可以获取邮件对象，此时的邮件对象也是封装在Message对象中。 
 
 JAF(JavaBean Activation Framework, JavaBean激活架构)是一个专用的数据处理框架，它用于封装数据并且为应用程序提供访问和操作数据的接口。JavaMail API可以利用JAF从某种数据源中读取数据和获知数据的MIME类型，并用这些数据生成MIME消息中的消息头和消息类型。JavaMail API可以利用JAF从某种数据源中读取数据和获知数据的MIME类型，并用这些数据生成MIME消息中的消息体和消息类型。目前使用的版本(Java SE、Java EE)中JAF也已经包含了
 

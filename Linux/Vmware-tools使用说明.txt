@@ -1,0 +1,240 @@
+卸载Vmware-tools：
+[root@localhost bin]# cd /usr/bin/
+[root@localhost bin]# ll | grep vmware
+[root@localhost bin]# ./vmware-uninstall-tools.pl
+
+
+yum -y install kernel-devel-$(uname -r) kernel-devel-$(uname -r)
+
+安装Vmware-tools：
+[root@localhost Downloads]# cd /home/vincent/Downloads/
+[root@localhost Downloads]# tar -xzvf VMwareTools-10.1.6-5214329.tar.gz
+[root@localhost Downloads]# cd vmware-tools-distrib/
+[root@localhost vmware-tools-distrib]# ll
+total 392
+drwxr-xr-x.  2 root root   4096 Mar 17  2017 bin
+drwxr-xr-x.  5 root root   4096 Mar 17  2017 caf
+drwxr-xr-x.  2 root root   4096 Mar 17  2017 doc
+drwxr-xr-x.  5 root root   4096 Mar 17  2017 etc
+-rw-r--r--.  1 root root 149442 Mar 17  2017 FILES
+-rw-r--r--.  1 root root   2538 Mar 17  2017 INSTALL
+drwxr-xr-x.  2 root root   4096 Mar 17  2017 installer
+drwxr-xr-x. 15 root root   4096 Mar 17  2017 lib
+drwxr-xr-x.  3 root root   4096 Mar 17  2017 vgauth
+-rwxr-xr-x.  1 root root 216748 Mar 17  2017 vmware-install.pl
+[root@localhost vmware-tools-distrib]# ./vmware-install.pl 
+open-vm-tools packages are available from the OS vendor and VMware recommends 
+using open-vm-tools packages. See http://kb.vmware.com/kb/2073803 for more 
+information.
+Do you still want to proceed with this installation? [yes] yes
+
+A previous installation of VMware Tools has been detected.
+
+Uninstallation of previous install failed. Would you like to remove the install
+DB? [no] yes
+
+Removing installer DB, please re-run the installer.
+
+Failure
+
+Execution aborted.
+
+[root@localhost vmware-tools-distrib]# ./vmware-install.pl 
+open-vm-tools packages are available from the OS vendor and VMware recommends 
+using open-vm-tools packages. See http://kb.vmware.com/kb/2073803 for more 
+information.
+Do you still want to proceed with this installation? [no] 
+
+[root@localhost vmware-tools-distrib]# ./vmware-install.pl 
+open-vm-tools packages are available from the OS vendor and VMware recommends 
+using open-vm-tools packages. See http://kb.vmware.com/kb/2073803 for more 
+information.
+Do you still want to proceed with this installation? [no] yes
+
+Creating a new VMware Tools installer database using the tar4 format.
+
+Installing VMware Tools.
+
+In which directory do you want to install the binary files? 
+[/usr/bin] 
+
+What is the directory that contains the init directories (rc0.d/ to rc6.d/)? 
+[/etc/rc.d] 
+
+What is the directory that contains the init scripts? 
+[/etc/rc.d/init.d] 
+
+In which directory do you want to install the daemon files? 
+[/usr/sbin] 
+
+In which directory do you want to install the library files? 
+[/usr/lib/vmware-tools] 
+
+In which directory do you want to install the common agent library files? 
+[/usr/lib] 
+
+In which directory do you want to install the common agent transient files? 
+[/var/lib] 
+
+In which directory do you want to install the documentation files? 
+[/usr/share/doc/vmware-tools] 
+
+The installation of VMware Tools 10.1.6 build-5214329 for Linux completed 
+successfully. You can decide to remove this software from your system at any 
+time by invoking the following command: "/usr/bin/vmware-uninstall-tools.pl".
+
+Before running VMware Tools for the first time, you need to configure it by 
+invoking the following command: "/usr/bin/vmware-config-tools.pl". Do you want 
+this program to invoke the command for you now? [yes] 
+
+Initializing...
+
+
+Making sure services for VMware Tools are stopped.
+
+
+
+The module vmci has already been installed on this system by another installer 
+or package and will not be modified by this installer.
+
+The module vsock has already been installed on this system by another installer
+or package and will not be modified by this installer.
+
+The module vmxnet3 has already been installed on this system by another 
+installer or package and will not be modified by this installer.
+
+The module pvscsi has already been installed on this system by another 
+installer or package and will not be modified by this installer.
+
+The module vmmemctl has already been installed on this system by another 
+installer or package and will not be modified by this installer.
+
+The VMware Host-Guest Filesystem allows for shared folders between the host OS 
+and the guest OS in a Fusion or Workstation virtual environment.  Do you wish 
+to enable this feature? [yes] 
+
+
+Before you can compile modules, you need to have the following installed... 
+
+make
+gcc
+kernel headers of the running kernel
+
+
+Searching for GCC...
+Detected GCC binary at "/bin/gcc".
+The path "/bin/gcc" appears to be a valid path to the gcc binary.
+Would you like to change it? [no] 
+
+Searching for a valid kernel header path...
+Detected the kernel headers at 
+"/lib/modules/3.10.0-514.el7.x86_64/build/include".
+The path "/lib/modules/3.10.0-514.el7.x86_64/build/include" appears to be a 
+valid path to the 3.10.0-514.el7.x86_64 kernel headers.
+Would you like to change it? [no] 
+
+Using kernel build system.
+make: Entering directory `/tmp/modconfig-su29ue/vmhgfs-only'
+/bin/make -C /lib/modules/3.10.0-514.el7.x86_64/build/include/.. SUBDIRS=$PWD SRCROOT=$PWD/. \
+  MODULEBUILDDIR= modules
+make[1]: Entering directory `/usr/src/kernels/3.10.0-514.el7.x86_64'
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/backdoorGcc64.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/message.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/dir.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/request.o
+/tmp/modconfig-su29ue/vmhgfs-only/backdoorGcc64.o: warning: objtool: BackdoorHbIn()+0xd: duplicate frame pointer save
+/tmp/modconfig-su29ue/vmhgfs-only/backdoorGcc64.o: warning: objtool: BackdoorHbOut()+0xd: duplicate frame pointer save
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/hgfsUtil.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/cpName.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/link.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/rpcout.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/hgfsEscape.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/file.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/bdhandler.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/transport.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/super.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/fsutil.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/cpNameLinux.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/hgfsBd.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/filesystem.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/module.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/page.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/stubs.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/backdoor.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/inode.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/dentry.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/cpNameLite.o
+  CC [M]  /tmp/modconfig-su29ue/vmhgfs-only/kernelStubsLinux.o
+  LD [M]  /tmp/modconfig-su29ue/vmhgfs-only/vmhgfs.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /tmp/modconfig-su29ue/vmhgfs-only/vmhgfs.mod.o
+  LD [M]  /tmp/modconfig-su29ue/vmhgfs-only/vmhgfs.ko
+make[1]: Leaving directory `/usr/src/kernels/3.10.0-514.el7.x86_64'
+/bin/make -C $PWD SRCROOT=$PWD/. \
+  MODULEBUILDDIR= postbuild
+make[1]: Entering directory `/tmp/modconfig-su29ue/vmhgfs-only'
+make[1]: `postbuild' is up to date.
+make[1]: Leaving directory `/tmp/modconfig-su29ue/vmhgfs-only'
+cp -f vmhgfs.ko ./../vmhgfs.o
+make: Leaving directory `/tmp/modconfig-su29ue/vmhgfs-only'
+
+The vmxnet driver is no longer supported on kernels 3.3 and greater. Please 
+upgrade to a newer virtual NIC. (e.g., vmxnet3 or e1000e)
+
+The vmblock enables dragging or copying files between host and guest in a 
+Fusion or Workstation virtual environment.  Do you wish to enable this feature?
+[yes] 
+
+VMware automatic kernel modules enables automatic building and installation of
+VMware kernel modules at boot that are not already present. This feature can
+be enabled/disabled by re-running vmware-config-tools.pl.
+
+Would you like to enable VMware automatic kernel modules?
+[yes] 
+
+Thinprint provides driver-free printing. Do you wish to enable this feature? 
+[yes] 
+
+
+Disabling timer-based audio scheduling in pulseaudio.
+
+Do you want to enable Guest Authentication (vgauth)? Enabling vgauth is needed 
+if you want to enable Common Agent (caf). [yes] 
+
+Do you want to enable Common Agent (caf)? [yes] 
+
+
+
+Detected X server version 1.17.2
+
+
+
+Distribution provided drivers for Xorg X server are used.
+
+Skipping X configuration because X drivers are not included.
+
+Creating a new initrd boot image for the kernel.
+Generating the key and certificate files.
+Successfully generated the key and certificate files.
+The configuration of VMware Tools 10.1.6 build-5214329 for Linux for this 
+running kernel completed successfully.
+
+You must restart your X session before any mouse or graphics changes take 
+effect.
+
+You can now run VMware Tools by invoking "/usr/bin/vmware-toolbox-cmd" from the
+command line.
+
+To enable advanced X features (e.g., guest resolution fit, drag and drop, and 
+file and text copy/paste), you will need to do one (or more) of the following:
+1. Manually start /usr/bin/vmware-user
+2. Log out and log back into your desktop session
+3. Restart your X session.
+
+Enjoy,
+
+--the VMware team
+
+[root@localhost vmware-tools-distrib]# 
+

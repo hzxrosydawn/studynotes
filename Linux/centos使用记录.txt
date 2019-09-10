@@ -1,0 +1,14 @@
+[root@localhost Downloads]# rpm -ivh libaio-0.3.105-2.src.rpm 
+warning: libaio-0.3.105-2.src.rpm: Header V3 DSA/SHA1 Signature, key ID 443e1821: NOKEY
+   1:libaio                 warning: user buildcentos does not exist - using root
+warning: group buildcentos does not exist - using root
+warning: user buildcentos does not exist - using root
+warning: group buildcentos does not exist - using root
+########################################### [100%]
+
+[root@localhost SPECS]# cd /root/rpmbuild/SPECS/
+[root@localhost SPECS]# rpmbuild 
+bash: rpmbuild: command not found
+[root@localhost SPECS]# yum install rpm-build
+
+

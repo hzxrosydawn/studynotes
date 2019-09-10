@@ -1,0 +1,5 @@
+# 该文件或application.properties会使用${}来filter属性配置，故Maven的filter需要使用@@引入属性配置以示区别
+server:
+  port: 8080
+  servlet:
+    context-path: /hello

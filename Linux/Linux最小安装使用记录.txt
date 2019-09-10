@@ -1,0 +1,93 @@
+
+使用GPT分区
+安装CentOS7时，选择“Install CentOS 7”，然后按下“Tab”，在屏幕下方的“quiet”后面输入一个空格加“inst.gpt”来使用GPT分区
+
+创建root和管理员用户
+
+
+
+设置yum源
+
+
+
+原来默认安装后，默认设置DNS SERVER为192.168.xxx.xxxx，可能会导致解析域名失败。 修改resolv.conf，增加GOOGLE的DNS服务器后如下：
+# cat /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+后来重启虚拟机后，发现ping www.baidu.com又失败了，查看resolve.conf，发现被改回去了：
+# cat /etc/resolv.conf
+nameserver 192.168.137.1
+原来resolve.conf在机器重启或者network重启后，会自动从/etc/sysconfig/network-scripts/ifcfg-ethXX（XX一般为几个数字，也可以在安装时自定义ethXX名称）文件中生成。 
+
+
+
+
+
+1.请使用host-only网络（仅主机模式），以免影响其他人 取消“编辑”–“虚拟网络编辑器”里VMnet1网络的DHCP自动获取IP服务。
+2.在虚拟机的右下角点开此图标，右键打开设置，修改箭头所指位置为仅主机模式
+3. 在虚拟机的命令窗口输入命令：ifconfig ens33 192.168.7.6/24 修改ip为192.168.7.6
+修改对应的/etc/sysconfig/network-scripts/ifcfg-ethXX文件如下，主要是增加两个DNS服务器地址：
+TYPE=Ethernet
+BOOTPROTO=static
+DEFROUTE=yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=d0eb86ee-751e-48b9-8dcc-0bf324420790
+DEVICE=ens33
+ONBOOT=yes
+IPADDR=192.168.1.100
+GATEWAY=192.168.1.1
+NETMASK=255.255.255.0
+DNS1=114.114.114.114 #国内的114DNS
+DNS2=119.29.29.29 #腾讯的DNS
+NETWORKING=yes
+HOSTNAME=localhost
+
+
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=eth0
+UUID=20852887-968f-4042-9ef4-c36104f221f8
+DEVICE=eth0
+ONBOOT=yes
+BOOTPROTO="static"
+IPADDR=192.168.137.101
+GATEWAY=192.168.137.1
+DNS1=192.168.137.1
+DNS2=192.168.137.1
+
+
+service network restart或systemctl restart network
+
+还是ping不同114.114.114.114，关闭防火墙
+临时关闭防火墙 
+systemctl stop firewalld
+•永久防火墙开机自关闭 
+systemctl disable firewalld
+•临时打开防火墙 
+systemctl start firewalld
+•防火墙开机启动 
+systemctl enable firewalld
+•查看防火墙状态 
+systemctl status firewalld
+
+
+

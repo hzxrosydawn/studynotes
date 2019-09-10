@@ -1,0 +1,50 @@
+﻿1. 在VMware的“编辑”菜单中的“虚拟网络编辑器”中选择右下方的“更改配置”按钮（需要管理员权限），
+将“VMnet信息”设置为桥接模式，选择桥接到当前宿主机的网卡（比如Intel笔记本的无线网卡名称为：Intel(R）Wireless-AC 9560）。
+
+2. 将在/etc/sysconfig/network文件中增加默认网关的IP地址： 
+NETWORKING=yes 
+HOSTNAME=localhost.localdomain 
+GATEWAY=192.168.0.1 # 与宿主主机的默认网关一致
+
+3. 将/etc/sysconfig/network-scripts/ifcfg-eth1文件（eth1”是网卡号，不同主机可能不同）为设置如下：
+TYPE=Ethernet
+DEVICE=ens33 
+BOOTPROTO=static # 静态获取虚拟机IP 
+HWADDR=00:50:56:38:20:58
+IPV6INIT=yes
+NM_CONTROLLED=yes
+ONBOOT=yes
+UUID=0bcb4e59-7264-41a9-a5ac-6ebc3e1f264c
+GATEWAY=192.168.0.1 # 与宿主主机的默认网关一致
+DNS1=101.266.4.6 # 域名解释服务器地址1，可使用宿主主机相同的地址
+DNS2=8.8.8.8 # 域名解释服务器地址2，可使用宿主主机相同的地址
+IPADDR=192.168.0.123 # 与宿主主机同网段的虚拟机IP地址
+NETMASK=255.255.255.0 # 与宿主主机一致的子网掩码
+USERCTL=no
+ARPCHECK=no
+
+4. 停止虚拟主机的NetworkManager服务进程，需root权限： 
+chkconfig NetworkManager off # 禁止开机启动 
+service NetworkManager stop # 停止服务的运行
+重启network服务进程，需root权限 
+service network restart
+
+5. 用ping验证是否上网 
+1）可ping通宿主主机IP 
+2）可ping通外网域名，比如：www.baidu.com 
+到此，桥接成功，可以开心的从虚拟机联网了。
+
+
+
+
+
+
+NAT上网模式配置
+
+Hiper-V
+与某个NTP服务器的时间同步可以使用命令：
+/usr/sbin/ntpdate ntp.api.bz
+可以考虑将该命令添加到定时任务中
+
+
+

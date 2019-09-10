@@ -1,0 +1,318 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!--
+        Spring Boot 2.1.4.RELEASE 需要 Java 8，兼容至 Java 11，依赖于  Spring Framework 5.1.6.RELEASE 及以上版本。
+        构建工具要求：
+        - Maven 3.3+
+        - Gradle 4.4+
+        支持的内嵌 Servlet 容器：
+        - Tomcat 9.0（Servlet 4.0）
+        - Jetty 9.4（Servlet 3.1）
+        - Undertow 2.0（Servlet 4.0）
+        可以将 Spring Boot 应用部署到任何兼容 Servlet 3.1+ 的容器中。
+    -->
+
+    <!--
+        Spring Boot 1.5.20.RELEASE 默认需要 Java 7+，兼容 Java 6（需要额外配置，建议使用更高的 Java 版本），
+        依赖于 Spring Framework 4.3.23.RELEASE 及以上版本。
+        构建工具要求：
+        - Maven 3.2+
+        - Gradle [2.9, 3.x]+
+        支持的内嵌 Servlet 容器：
+        - Tomcat 8（Servlet 3.1，Java 7+）
+        - Tomcat 7（Servlet 3.0，Java 6+）
+        - Jetty 9.3（Servlet 3.1，Java 8+）
+        - Jetty 9.2（Servlet 3.1，Java 7+）
+        - Jetty 8（Servlet 3.0，Java 6+）
+        - Undertow 1.3（Servlet 3.1，Java 7+）
+        可以将 Spring Boot 应用部署到任何兼容 Servlet 3.0+ 的容器中。
+    -->
+
+    <groupId>com.rosydawn</groupId>
+    <artifactId>demo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <!-- Inherit defaults from Spring Boot -->
+    <!--
+          spring-boot-starter-parent是Spring Boot的核心启动器，包含了自动配置、日志和YAML等大量默认的配置，大大简化了我们的开发。
+          引入相关的starter之后就不需要添加相关依赖和插件的version配置了，spring boot会自动选择最合适的版本进行添加。
+          如果感觉spring-boot-starter-parent的默认配置不合适，则继承自定义的parent POM即可。
+
+          1.x 版本默认编译的JDK,为1.6， 2.x版本默认的编译JDK为1.8。其他starters的版本会默认采用spring-boot-starter-parent的版本，
+          所以，只需在该依赖上指定Spring Boot版本，如果导入其他的starters，放心的省略版本号好了。
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.4.RELEASE</version>
+    </parent>
+    <!--
+        如果要部署到其他Web容器中，则需要指定打包为war包
+     -->
+    <!--<packaging>jar</packaging>-->
+    <packaging>war</packaging>
+
+    <name>hello</name>
+    <url>http://maven.apache.org</url>
+
+    <!-- spring-boot-starter-parent 中已经包含了关于JDK版本和编码的配置 -->
+    <properties>
+        <spring.boot.version>2.1.4.RELEASE</spring.boot.version>
+        <druid.version>1.1.18</druid.version>
+        <spring.cloud.version></spring.cloud.version>
+        <jsonwebtoken.version>0.8.0</jsonwebtoken.version>
+        <springfox-swagger.version>2.3.1</springfox-swagger.version>
+        <lombok.version>1.18.8</lombok.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
+        <thymeleaf-springsecurity4.version>3.0.4.RELEASE</thymeleaf-springsecurity4.version>
+    </properties>
+
+    <!-- Add typical dependencies for an application -->
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <!-- 用于自动生成 API 文档 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-swagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--spring-boot-starter-web包含了Spring Boot预定义的一些Web开发的常用依赖包如: spring-webmvc,Tomcat等-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 从 spring-boot-starter-web 中去掉 logback 的依赖-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 如果使用Log4j2替代Logback打印日志，则需要pom文件中的第一个starter（一般都依赖于spring-boot-starter依赖）中排除
+        日志依赖（Logback实现），因为一旦签名引入了spring-boot-starter依赖依赖，后面的starter即使依赖与spring-boot-starter依赖，
+        也不会重复引入spring-boot-starter依赖了。然后再添加spring-boot-starter-log4j2依赖（SL4J和Log4J2）-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+        <!--如果需要部署到其他Web容器中，则指定spring-boot-starter-tomcat的scope为provided，就不会打包到war包中-->
+        <!--<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
+        <!-- 用于编译JSP -->
+        <!--<dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
+        <!-- 页面技术使用thymeleaf实现 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+            <version>3.0.4.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+        <!-- 验证码 -->
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>${kaptcha.version}</version>
+        </dependency>
+
+        <!-- pagehelper-spring-boot-starter 依赖于 mybatis-spring-boot-stater -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.18</version>
+        </dependency>
+
+        <!-- 用户加解密的依赖。如果使用 @SpringBootApplication或@EnableAutoConfiguration注解允许在整个Spring环境（系统变量、
+        环境变量、命令行属性、以及配置属性等）中就可以使用加密的属性值。 -->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+        <!--
+            spring-boot-devtools 模块可以included到任何模块中，以提供development-time特性（如热部署、自动禁用缓存等）。
+            在运行一个完整的，打包过的应用时，开发者工具（devtools） 会被自动禁用。如果应用使用 java -jar 或特殊的类加载器启动，都会
+            被认为是一个产品级的应用（production application） ，从而禁用开发者工具。为了防止devtools传递到项目中的其他模块，设置该
+            依赖为optional就不会被打包到所在模块的包中。如果想确保devtools绝对不会包含在一个产品级构建中，你可以使用excludeDevtools
+            构建属性彻底移除该JAR，Maven和Gradle都支持该属性。-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.58</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>demo</finalName>
+        <!-- 打包时拷贝MyBatis的映射文件 -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/mapping/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                    <archive>
+                        <manifestEntries>
+                            <Weblogic-Application-Version>${project.version}</Weblogic-Application-Version>
+                        </manifestEntries>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <addClasspath>lib/</addClasspath>
+                        </manifest>
+                    </archive>
+                    <webResources>
+                        <resource>
+                            <directory>${project.basedir}/src/main/resources/static</directory>
+                        </resource>
+                        <resource>
+                            <directory>${project.basedir}/src/main/webapp</directory>
+                        </resource>
+                    </webResources>
+                    <warName>${project.artifactId}</warName>
+                </configuration>
+            </plugin>
+
+            <!--
+                spring-boot-maven-plugin可以用于创建可执行的jar包或war包。需要Maven 3.2及以上版本。
+                打出jar包还是war包依赖于<packaging/>配置。
+                如果使用Spring Boot starter parent pom，你只需添加该插件而无需配置它，除非你想改变定义在parent中的设置。
+            -->
+            <!-- 插件说明：https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle//#build-tool-plugins -->
+            <!-- 插件文档：https://docs.spring.io/spring-boot/docs/2.1.4.RELEASE/maven-plugin/ -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>BOOT</classifier>
+                    <!-- 设置fork为true，配合spring-boot-devtools依赖即可启用热部署。 -->
+                    <fork>true</fork>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!--
+                            Java没有提供任何标准方式，用于加载包含在jar包中的jar文件，这对分发自包含应用来说是个问题，使用
+                            spring-boot-maven-plugin插件可以解决这个问题，在继承parent POM的基础上只需要在<execution>中配置
+                            repackage的goal即可，改配置在Maven的package生命周期中重新打包，会在编译目录下生成两个包。
+                            spring-boot-starter-parent POM包含绑定到repackage目标的<executions>配置。如果不使用parent POM，
+                            就需要自己参考该插件的文档进行配置了。
+
+                            Spring Boot Loader兼容的可执行jar文件中依赖的jar文件存放在该jar包中的lib目录下。Spring Boot Loader兼容的
+                            war文件中依赖的jar存放在WEB-INF/lib目录和WEB-INF/lib-provided目录（该目录包含了scope为provided的依
+                            赖，这样，既可以在外部容器中运行，也可以使用jar -jar命令在命令行在不依赖于外部容器的情况下运行war包）下。
+                            Spring Boot通过org.springframework.boot.loader.jar.JarFile类来加载内嵌的jar包。
+                        -->
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- 使用Spring Boot的正式版时无需下面的Spring Boot的repository配置 -->
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <url>http://repo.spring.io/milestone</url>
+        </repository>
+        <!-- you don't need snapshot repository configuration if you are using a .RELEASE version -->
+        <repository>
+            <id>spring-snapshots</id>
+            <url>http://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <url>http://repo.spring.io/milestone</url>
+        </pluginRepository>
+        <!-- you don't need snapshot repository configuration if you are using a .RELEASE version -->
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <url>http://repo.spring.io/snapshot</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

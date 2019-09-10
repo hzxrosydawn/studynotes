@@ -1,0 +1,34 @@
+# 该文件或application.properties会使用${}来filter属性配置，故Maven的filter需要使用@@引入属性配置以示区别
+server:
+  port: 8080
+  servlet:
+    context-path: /rosydawn
+
+spring:
+  mvc:
+    static-path-pattern: /resources/**  # relocate the static resources in /resources/ directory
+  thymeleaf:  # default thymeleaf configuration
+    enabled: true
+    prefix: classpath:/templates/ # Prefix that gets prepended to view names when building a URL
+    mode: HTML # Template mode to be applied to templates. See also Thymeleaf's TemplateMode enum
+    suffix: .html # Suffix that gets appended to view names when building a URL
+    encoding: UTF-8 # Template files encoding
+    cache: true # Whether to enable template caching
+    check-template: true  # Whether to check that the template exists before rendering it
+    check-template-location: true # Whether to check that the templates location exists
+    enable-spring-el-compiler: false # Enable the SpringEL compiler in SpringEL expressions
+    template-resolver-order: # Order of the template resolver in the chain
+    servlet:
+      content-type: text/html # Content-Type value written to HTTP responses
+      produce-partial-output-while-processing: true # Whether Thymeleaf should start writing partial output as soon as possible or buffer until template processing is finished
+#    reactive:
+#      chunked-mode-view-names: # Comma-separated list of view names (patterns allowed) that should be the only ones executed in CHUNKED mode when a max chunk size is set
+#      full-mode-view-names: # Comma-separated list of view names (patterns allowed) that should be executed in FULL mode even if a max chunk size is set
+#      max-chunk-size: 0B # Maximum size of data buffers used for writing to the response
+#      media-types: # Media types supported by the view technology
+#    view-names: # Comma-separated list of view names (patterns allowed) that can be resolved
+#    excluded-view-names: # Comma-separated list of view names (patterns allowed) that should be excluded from resolution
+#    render-hidden-markers-before-checkboxes: false # Whether hidden form inputs acting as markers for checkboxes should be rendered before the checkbox element itself
+  http:
+    log-request-details: false
+
