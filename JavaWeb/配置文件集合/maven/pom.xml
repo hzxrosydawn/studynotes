@@ -128,7 +128,7 @@
 
         <!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
         建议使用 2.x 版本（1.x 版本功能有限且与难用，除非是古董级的项目） -->
-        <quartz.version>2.2.1</quartz.version>
+        <quartz.version>2.3.2</quartz.version>
 
         <!-- javax.mail-api 1.6.x 需要 JDK 1.7＋，javax.mail-api 1.5.x 需要 JDK 1.5+ -->
         <javax.mail.version>1.5.6</javax.mail.version>
