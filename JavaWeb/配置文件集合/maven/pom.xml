@@ -52,7 +52,7 @@
         <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
         <!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
         详见：https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions.html 。-->
-        <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
+        <mysql-connector-java.version>8.0.16</mysql-connector-java.version>
         <!-- Oracle 数据库驱动。由于 Oracle 版权限制，需要去官网下载驱动，然后手动 install 再添加-->
         <ojdbc6.version>11.2.0.1</ojdbc6.version>
         <druid.version>1.1.10</druid.version>
