@@ -49,7 +49,7 @@
         <hessian.version>4.0.38</hessian.version>
 
         <!-- hibernate-validator 6.0 需要  JDK 1.8+ 和 Bean Validation 2.0，hibernate-validator 5.4 需要  JDK 1.6+ 和 Bean Validation 1.1 -->
-        <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
+        <hibernate-validator.version>5.4.2.Final</hibernate-validator.version>
         <!-- mysql-connector-java 5.1 可以运行在 JRE 1.5.x、1.6.x、1.7.x* 和 1.8.x** 上。
         详见：https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions.html 。-->
         <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
