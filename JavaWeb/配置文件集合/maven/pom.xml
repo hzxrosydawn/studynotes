@@ -44,7 +44,7 @@
         Spring Security 4.2.5.RELEASE针对Spring Framework 4.3.12.RELEASE构建，
         但Spring Security 5.x和4.x应该可以与Spring Framework4.0.x一起使用。 -->
         <spring-security.version>4.2.5.RELEASE</spring-security.version>
-        <shiro.version>1.3.2</shiro.version>
+        <shiro.version>1.7.1</shiro.version>
         <!-- As of Spring 4.0, Spring requires Hessian 4.0 or above. -->
         <hessian.version>4.0.38</hessian.version>
 
