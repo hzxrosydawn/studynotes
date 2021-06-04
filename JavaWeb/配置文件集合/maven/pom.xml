@@ -61,7 +61,7 @@
         <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <!--HttpClient 4.4.x 和 4.5.x 需要 Java 1.6+，HttpClient 5.x.x 需要 Java 1.7+ -->
-        <httpclient.version>4.5.2</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <!-- c3p0 0.9.5 可以在 Java 6 上运行。而后续的 c3p0 0.9.6 需要 Java 7 才能运行。-->
         <c3p0.version>0.9.5.2</c3p0.version>
         <!-- mybatis 自 3.2 开始需要 JDK 1.6 及以上， mybatis 3.4 也可以运行在 JDK 6、7、8 上，MyBatis 3.5.0 requires Java 8 and later -->
