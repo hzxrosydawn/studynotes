@@ -116,7 +116,7 @@
             甚至也支持语音编码转换。 Codec 1.6~1.11 需要 JDK 1.6。-->
         <commons-codec.version>1.10</commons-codec.version>
         <!--bcprov-jdk15on.jar 包提供了加密增强的支持。1.59 版本支持 JDK1.5~JDK1.8-->
-        <bcprov-jdk15on.version>1.59</bcprov-jdk15on.version>
+        <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
 
         <!-- Json 数据转换。
         jackson-databind 包是 spring-webmvc 包的可选依赖，该包还依赖于 jackson-core 包和 jackson-annotations 包。
