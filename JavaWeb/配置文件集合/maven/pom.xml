@@ -122,7 +122,7 @@
         jackson-databind 包是 spring-webmvc 包的可选依赖，该包还依赖于 jackson-core 包和 jackson-annotations 包。
         从 jackson 2.4 开始需要 JDK 1.6+，从 jackson 2.7 开始, JDK 的基线为 1.7，但并没有全部使用 JDK 1.7 的新特性，所以
         jackson 2.7 应该可以用于 JDK 1.6，但从 jackson 2.8 开始，JDK 1.7+ 是必须的。 -->
-        <jackson.version>2.6.7</jackson.version>
+        <jackson.version>2.9.10.8</jackson.version>
         <!-- fastjson 1.2.44 needs JDK 6.0+ -->
         <fastjson.version>1.2.44</fastjson.version>
 
