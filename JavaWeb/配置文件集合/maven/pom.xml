@@ -88,7 +88,7 @@
 
         <!--Log4j2 进行日志打印。Log4j 2 用于 web 项目时需要 Servlet 3.0+。log4j-web 包依赖于 log4j-api 和 log4j-core 两个包。
         Log4j 2.4 及以上版本需要 1.7 及以上的 JDK，Log4j 2.0-alpha1 到 2.3 版本需要 1.6 及以上的 JDK。-->
-        <log4j2.version>2.3</log4j2.version>
+        <log4j2.version>2.15.0</log4j2.version>
         <log4j.version>1.2.17</log4j.version>
 
         <!-- 某些框架仅包含了slf4j-api的简单抽象，故需要添加slf4j binding才行。
