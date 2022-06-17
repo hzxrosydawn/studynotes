@@ -124,7 +124,7 @@
         jackson 2.7 应该可以用于 JDK 1.6，但从 jackson 2.8 开始，JDK 1.7+ 是必须的。 -->
         <jackson.version>2.6.7</jackson.version>
         <!-- fastjson 1.2.44 needs JDK 6.0+ -->
-        <fastjson.version>1.2.44</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
 
         <!-- 使用Quartz框架的定时任务功能。Quartz 2.x 版本需要 JDK 1.6+ 支持， Quartz 1.x 版本只有一个jar包，需要 JDK 1.4+ 支持 。
         建议使用 2.x 版本（1.x 版本功能有限且与难用，除非是古董级的项目） -->
