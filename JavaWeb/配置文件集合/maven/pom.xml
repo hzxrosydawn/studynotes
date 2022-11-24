@@ -72,7 +72,7 @@
         <!-- Hibernate 5.2 需要 JDK 1.8+ ，Hibernate 5.1、5.0 和 4.3 需要 JDK 1.6+。Hibernate 4.3~5.2 需要 JPA 2.1+。
         Spring 从 4.0 开始要求 Hibernate 版本必需为 3.6 或更高版本。由于Hibernate 3 和 4 已不再更新，
         Spring 4 推荐使用 Hibernate 5.x-->
-        <hibernate-core.version>5.1.13.Final</hibernate-core.version>
+        <hibernate-core.version>5.3.20.Final</hibernate-core.version>
 
         <!-- servlet 3.x.x api -->
         <!--<javax.servlet-api.version>3.1.0</javax.servlet-api.version>-->
